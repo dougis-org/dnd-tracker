@@ -1,8 +1,8 @@
 # Product Requirements Document (PRD)
 
 **Product Name:** D&D Encounter Tracker Web App
-**Version:** 2.3
-**Date:** June 8, 2025
+**Version:** 3.0
+**Date:** August 20, 2025
 
 ## 1. Purpose
 
@@ -206,14 +206,14 @@ monetize advanced features while providing a robust free tier for new users.
 ### 6.2 Security
 
 - **Data Encryption**: TLS 1.3 for data in transit, AES-256 for data at rest
-- **Authentication**: NextAuth.js with JWT tokens and refresh token rotation
+- **Authentication**: Clerk for user authentication, session management, and user profiles
 - **Payment Security**: PCI DSS compliance through payment processor
 - **Data Privacy**: GDPR compliance with data export/deletion
 
 ### 6.3 Integration
 
 - **Payment Processors**: Stripe (primary) for comprehensive payment handling
-- **Analytics**: Vercel Analytics for user behavior and performance insights
+- **Analytics**: Fly.io Analytics and third-party services for user behavior and performance insights
 - **Support**: Intercom for customer support and user communication
 - **Email Service**: Resend for transactional emails and notifications
 
@@ -221,91 +221,95 @@ monetize advanced features while providing a robust free tier for new users.
 
 ### 7.1 Core Framework & Runtime
 
-- **Framework**: Next.js 15 with TypeScript and App Router
+- **Framework**: Next.js 15.0+ with TypeScript and App Router
 - **Runtime**: Node.js 22 LTS with Edge Runtime support
-- **Language**: TypeScript 5.0+ for type safety across frontend and
-  backend
-- **Package Manager**: pnpm for efficient dependency management
+- **Language**: TypeScript 5.6+ for type safety across frontend and backend
+- **Package Manager**: pnpm 9.0+ for efficient dependency management
 
 ### 7.2 Frontend & UI
 
-- **UI Library**: React 18 with Server Components and Client Components
+- **UI Library**: React 18.3+ with Server Components and Client Components
 - **Styling**: Tailwind CSS 3.4+ with custom design system
-- **Component Library**: shadcn/ui for consistent, accessible components
-- **Icons**: Lucide React for consistent iconography
+- **Component Library**: shadcn/ui v2.0+ for consistent, accessible components and layout system
+- **UI Primitives**: Radix UI primitives via shadcn/ui for accessibility and customization
+- **Icons**: Lucide React 0.400+ for consistent iconography
 - **Fonts**: Inter via next/font for optimized web fonts
+- **Layout System**: shadcn/ui layout components for responsive design patterns
 
 ### 7.3 Backend & Database
 
-- **Database**: MongoDB 7.0+ with Atlas cloud hosting
-- **ODM**: Mongoose 8.0+ for schema modeling and validation
-- **API Layer**: Next.js App Router API routes with edge optimization
-- **Validation**: Zod for runtime type validation and schema definition
-- **Data Fetching**: Native fetch with Next.js caching strategies
+- **Database**: MongoDB 8.0+ with Atlas cloud hosting
+- **ODM**: Mongoose 8.5+ for schema modeling and validation
+- **API Layer**: Next.js 15 App Router API routes with edge optimization
+- **Validation**: Zod 3.23+ for runtime type validation and schema definition
+- **Data Fetching**: Native fetch with Next.js 15 caching strategies
 
 ### 7.4 State Management & Data
 
-- **Client State**: Zustand for lightweight state management
-- **Server State**: TanStack Query (React Query) for server state caching
-- **Form Handling**: React Hook Form with Zod validation
-- **Real-time**: Pusher or Socket.IO for live collaboration features
+- **Client State**: Zustand 4.5+ for lightweight state management
+- **Server State**: TanStack Query (React Query) v5.0+ for server state caching
+- **Form Handling**: React Hook Form 7.52+ with Zod validation
+- **Real-time**: Pusher 8.4+ or Socket.IO 4.7+ for live collaboration features
 
 ### 7.5 Authentication & Security
 
-- **Authentication**: NextAuth.js (Auth.js) v5 with JWT strategy
-- **Session Management**: NextAuth.js database sessions with MongoDB
-  adapter
-- **Authorization**: Role-based access control (RBAC) with middleware
-- **Security Headers**: Next.js built-in security headers + Helmet.js
+- **Authentication**: Clerk 5.0+ for user authentication, session management, and user profiles
+- **User Management**: Clerk Dashboard for user administration and analytics
+- **Social Login**: Clerk-supported OAuth providers (Google, GitHub, Discord)
+- **Session Management**: Clerk automatic session handling with secure token management
+- **Authorization**: Role-based access control (RBAC) with Clerk organizations and roles
+- **Security Headers**: Next.js built-in security headers + Helmet.js 7.1+
 - **Rate Limiting**: Built-in Next.js rate limiting for API routes
 
 ### 7.6 Payments & Monetization
 
-- **Payment Processor**: Stripe with Next.js integration
+- **Payment Processor**: Stripe 16.0+ with Next.js integration
 - **Webhook Handling**: Stripe webhooks via Next.js API routes
-- **Subscription Management**: Stripe Customer Portal integration
+- **Subscription Management**: Stripe Customer Portal integration with Clerk user sync
 - **Tax Handling**: Stripe Tax for global compliance
 
 ### 7.7 File Storage & CDN
 
-- **File Storage**: Vercel Blob for user uploads and assets
-- **Image Optimization**: Next.js Image component with automatic
-  optimization
-- **CDN**: Vercel Edge Network for global content delivery
-- **Static Assets**: Next.js static file serving with caching
+- **File Storage**: Fly.io Volumes for persistent storage and user uploads
+- **Image Optimization**: Next.js 15 Image component with automatic optimization
+- **CDN**: Fly.io Edge Network for global content delivery
+- **Static Assets**: Next.js static file serving with caching via Fly.io edge locations
 
 ### 7.8 Testing & Quality
 
-- **Unit Testing**: Jest + React Testing Library
-- **E2E Testing**: Playwright for cross-browser testing
-- **Component Testing**: Storybook for UI component development
-- **Code Quality**: ESLint + Prettier with Next.js recommended configs
-- **Type Checking**: TypeScript strict mode with Next.js integration
+- **Unit Testing**: Jest 29.7+ + React Testing Library 16.0+
+- **E2E Testing**: Playwright 1.46+ for cross-browser testing
+- **Component Testing**: Storybook 8.2+ for UI component development
+- **Code Quality**: ESLint 9.0+ + Prettier 3.3+ with Next.js recommended configs
+- **Type Checking**: TypeScript 5.6+ strict mode with Next.js integration
 
 ### 7.9 Monitoring & Analytics
 
-- **Error Tracking**: Sentry for error monitoring and performance tracking
-- **Analytics**: Vercel Analytics for web vitals and user insights
-- **Performance**: Vercel Speed Insights for Core Web Vitals monitoring
-- **Logging**: Next.js built-in logging with structured JSON output
-- **Uptime Monitoring**: Vercel built-in monitoring with custom alerts
+- **Error Tracking**: Sentry 8.0+ for error monitoring and performance tracking
+- **Analytics**: Fly.io monitoring and third-party analytics for user insights
+- **Performance**: Fly.io Metrics for application performance monitoring
+- **User Analytics**: Clerk Analytics for authentication and user behavior insights
+- **Logging**: Next.js built-in logging with structured JSON output via Fly.io logs
+- **Uptime Monitoring**: Fly.io health checks with custom alerts and monitoring
 
 ### 7.10 Development & Deployment
 
-- **Hosting**: Vercel with automatic deployments and preview environments
+- **Hosting**: Fly.io with automatic deployments and multiple regions
 - **Version Control**: Git with GitHub integration
-- **CI/CD**: Vercel automatic deployments with GitHub Actions for testing
-- **Environment Management**: Vercel environment variables with
-  preview/production separation
+- **CI/CD**: GitHub Actions with Fly.io deployment automation
+- **Environment Management**: Fly.io secrets and environment variables with staging/production separation
 - **Database Migrations**: Custom MongoDB migration scripts via API routes
+- **Scaling**: Fly.io auto-scaling based on demand and geographic distribution
 
 ### 7.11 Developer Experience
 
-- **Development Server**: Next.js dev server with Fast Refresh
-- **Code Editor**: VS Code with Next.js and TypeScript extensions
+- **Development Server**: Next.js 15 dev server with Fast Refresh and Turbopack
+- **Code Editor**: VS Code with Next.js, TypeScript, and Tailwind CSS extensions
 - **API Documentation**: Swagger/OpenAPI with next-swagger-doc
 - **Database GUI**: MongoDB Compass for development database management
-- **Debugging**: React Developer Tools + Next.js debugging tools
+- **Debugging**: React Developer Tools + Next.js debugging tools + Fly.io logs
+- **UI Development**: shadcn/ui CLI for component generation and management
+- **Deployment**: Fly.io CLI for streamlined deployment and scaling management
 
 ## 8. Success Metrics
 
