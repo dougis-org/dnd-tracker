@@ -1,5 +1,7 @@
 # MongoDB Atlas Setup
 
+**GitHub Issue:** [#5](https://github.com/dougis-org/dnd-tracker/issues/5)
+
 ## Objective
 
 Configure MongoDB connection and basic schemas

@@ -1,5 +1,7 @@
 # Project Setup
 
+**GitHub Issue:** [#3](https://github.com/dougis-org/dnd-tracker/issues/3)
+
 ## Objective
 
 Initialize Next.js 15 application with TypeScript and core dependencies.

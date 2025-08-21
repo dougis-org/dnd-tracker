@@ -1,5 +1,7 @@
 # Testing Setup
 
+**GitHub Issue:** [#10](https://github.com/dougis-org/dnd-tracker/issues/10)
+
 **Objective:** Configure Jest and Playwright for unit and end-to-end testing.
 
 **Tasks:**

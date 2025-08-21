@@ -1,5 +1,7 @@
 # Base UI Components Setup
 
+**GitHub Issue:** [#6](https://github.com/dougis-org/dnd-tracker/issues/6)
+
 ## Objective
 
 Set up shadcn/ui and Tailwind CSS for a consistent, modern UI foundation.
