@@ -1,5 +1,7 @@
 # Character Assignment to Parties
 
+[Issue #24](https://github.com/dougis-org/dnd-tracker/issues/24)
+
 **Objective:** Enable assigning and removing characters from parties.
 
 ## Tasks

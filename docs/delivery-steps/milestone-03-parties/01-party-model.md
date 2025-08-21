@@ -1,5 +1,7 @@
 # Party Model Implementation
 
+[Issue #21](https://github.com/dougis-org/dnd-tracker/issues/21)
+
 **Objective:** Create a robust party schema for grouping characters, managing campaigns, sharing, and supporting templates, with tier-based limits.
 
 **Schema Definition:**
