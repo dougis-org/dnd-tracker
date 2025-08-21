@@ -257,7 +257,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestones 1-9  
 **Goal:** Optimize performance and polish the user experience
 
-### Deliverables:
+### Deliverables (Milestone 8)
 
 1. **01-performance-optimization.md** - Optimize load times and responsiveness
 2. **02-mobile-responsive.md** - Perfect mobile experience
@@ -268,7 +268,7 @@ Z:\dev\Code\dnd-tracker\docs\
 7. **07-seo-optimization.md** - Implement SEO best practices
 8. **08-final-testing.md** - Comprehensive testing suite
 
-### Success Criteria:
+### Success Criteria (Milestone 8)
 
 - Page load < 3 seconds
 - Mobile experience is smooth
@@ -322,11 +322,11 @@ M1: Foundation → M2: Characters → M3: Parties → M4: Encounters → M5: Com
 - **Real-time Sync:** Prototype early in M4
 - **Payment Integration:** Begin Stripe setup in M1
 
-## Overview
+## Overview (Appendix)
 
 This document outlines the complete implementation plan for the D&D Encounter Tracker Web App, organized into 10 iterative milestones. Each milestone builds upon the previous ones and can be tested independently.
 
-## Directory Structure
+## Directory Structure (Appendix)
 
 ```text
 Z:\dev\Code\dnd-tracker\docs\
@@ -346,13 +346,13 @@ Z:\dev\Code\dnd-tracker\docs\
 
 ---
 
-## Milestone 1: Foundation & Authentication
+## Milestone 1: Foundation & Authentication (Appendix)
 
 **Duration:** 1 week  
 **Dependencies:** None  
 **Goal:** Establish the basic application structure with authentication and deployment
 
-### Deliverables
+### Deliverables (Appendix)
 
 [#3](https://github.com/dougis-org/dnd-tracker/issues/3) **01-project-setup.md** - Initialize Next.js 15 with TypeScript
 
@@ -370,7 +370,7 @@ Z:\dev\Code\dnd-tracker\docs\
 
 [#10](https://github.com/dougis-org/dnd-tracker/issues/10) **08-testing-setup.md** - Configure Jest and Playwright
 
-### Success Criteria
+### Success Criteria (Appendix)
 
 - Users can sign up and sign in via Clerk
 - Application deploys successfully to Fly.io
