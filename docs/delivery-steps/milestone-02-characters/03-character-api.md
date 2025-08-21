@@ -40,17 +40,26 @@ export async function POST(req: Request) {
 }
 ```
 
-**Implementation Tasks:**
+## Implementation Tasks
 
 - [ ] Create all CRUD endpoints
-- [ ] Add validation middleware
-- [ ] Implement error handling
+- [ ] Add validation middleware (Zod or similar)
+- [ ] Implement error handling for all endpoints
 - [ ] Add pagination support
 - [ ] Create character duplication endpoint
+- [ ] Validate and sanitize all input to API endpoints
+- [ ] Write failing tests for API before implementation (TDD)
+- [ ] Write tests for all API logic (CRUD, validation, error, edge cases)
+- [ ] Document all new environment variables in `.env.example` (if any)
+- [ ] Update API documentation for all endpoints
 
-**Acceptance Criteria:**
+## Acceptance Criteria
 
-- All CRUD endpoints are implemented
-- Validation and error handling are present
-- Pagination and duplication are supported
-- API passes all tests
+- All CRUD endpoints are implemented and follow RESTful conventions
+- Validation and error handling are present for all endpoints (invalid input returns correct HTTP status and message)
+- Pagination and duplication are supported and tested
+- All input to API endpoints is validated and sanitized
+- Automated tests (unit and integration) cover all API logic, validation, and error handling (80%+ coverage)
+- Manual testing confirms CRUD, validation, and error scenarios
+- All new environment variables (if any) are documented in `.env.example` and loaded correctly
+- All new API endpoints are documented in the project API docs

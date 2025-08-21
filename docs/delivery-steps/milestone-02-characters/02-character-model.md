@@ -39,17 +39,26 @@ export interface ICharacter {
 }
 ```
 
-**Implementation Tasks:**
+## Implementation Tasks
 
 - [ ] Create complete schema with all D&D fields
 - [ ] Add calculated fields (modifiers, proficiency bonus)
 - [ ] Implement multiclassing validation
 - [ ] Add skill proficiencies
 - [ ] Create spellcasting support
+- [ ] Validate and sanitize all input to the character model
+- [ ] Write failing tests for character model before implementation (TDD)
+- [ ] Write tests for all model logic (CRUD, validation, edge cases)
+- [ ] Document all new environment variables in `.env.example` (if any)
+- [ ] Update documentation for character model and integration
 
-**Acceptance Criteria:**
+## Acceptance Criteria
 
-- Character schema supports all D&D 5e fields
-- Multiclassing is supported and validated
-- Calculated fields are present
-- Model passes all tests
+- Character schema supports all D&D 5e fields, including multiclassing, skills, and spellcasting
+- Calculated fields (modifiers, proficiency bonus) are present and correct
+- Multiclassing is supported and validated according to D&D 5e rules
+- All input to the character model is validated and sanitized
+- Automated tests (unit and integration) cover all model logic, validation, and error handling (80%+ coverage)
+- Manual testing confirms CRUD, validation, and error scenarios
+- All new environment variables (if any) are documented in `.env.example` and loaded correctly
+- All new setup and usage steps are documented in the project README

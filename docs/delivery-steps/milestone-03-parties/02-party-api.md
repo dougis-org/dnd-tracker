@@ -29,7 +29,7 @@ export async function GET() {
 }
 ```
 
-**Implementation Tasks:**
+## Implementation Tasks
 
 - [ ] Create all CRUD endpoints
 - [ ] Add character assignment and removal endpoints
@@ -37,13 +37,21 @@ export async function GET() {
 - [ ] Add template conversion endpoints
 - [ ] Enforce party and character limits by tier
 - [ ] Implement import/export endpoints
-- [ ] Add error handling and validation
-- [ ] Write tests for all endpoints
+- [ ] Add error handling and validation for all endpoints
+- [ ] Validate and sanitize all input to API endpoints
+- [ ] Write failing tests for API before implementation (TDD)
+- [ ] Write tests for all API logic (CRUD, validation, error, edge cases)
+- [ ] Document all new environment variables in `.env.example` (if any)
+- [ ] Update API documentation for all endpoints
 
-**Acceptance Criteria:**
+## Acceptance Criteria
 
-- All endpoints are implemented and documented
-- Tier and sharing rules are enforced
-- Templates and import/export work as expected
-- API returns clear errors for invalid actions
-- All endpoints are covered by tests
+- All endpoints are implemented, follow RESTful conventions, and are documented
+- Tier and sharing rules are enforced and tested for all scenarios
+- Templates and import/export work as expected, with correct data and error handling
+- API returns clear, actionable errors for all invalid actions and edge cases
+- All input to API endpoints is validated and sanitized
+- Automated tests (unit and integration) cover all API logic, validation, and error handling (80%+ coverage)
+- Manual testing confirms all API flows, validation, and error scenarios
+- All new environment variables (if any) are documented in `.env.example` and loaded correctly
+- All new API endpoints are documented in the project API docs
