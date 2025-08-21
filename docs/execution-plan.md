@@ -33,15 +33,14 @@ Z:\dev\Code\dnd-tracker\docs\
 ### Deliverables
 
 1. **01-project-setup.md** - Initialize Next.js 15 with TypeScript
-
-   [#3](https://github.com/dougis-org/dnd-tracker/issues/3) **01-project-setup.md** - Initialize Next.js 15 with TypeScript
-   [#4](https://github.com/dougis-org/dnd-tracker/issues/4) **02-clerk-integration.md** - Implement Clerk authentication
-   [#5](https://github.com/dougis-org/dnd-tracker/issues/5) **03-mongodb-setup.md** - Configure MongoDB Atlas connection
-   [#6](https://github.com/dougis-org/dnd-tracker/issues/6) **04-base-ui-components.md** - Set up shadcn/ui and Tailwind CSS
-   [#7](https://github.com/dougis-org/dnd-tracker/issues/7) **05-deployment-config.md** - Configure Fly.io deployment
-   [#8](https://github.com/dougis-org/dnd-tracker/issues/8) **06-environment-variables.md** - Set up environment configuration
-   [#9](https://github.com/dougis-org/dnd-tracker/issues/9) **07-basic-navigation.md** - Create app layout and navigation
-   [#10](https://github.com/dougis-org/dnd-tracker/issues/10) **08-testing-setup.md** - Configure Jest and Playwright
+   - [#3](https://github.com/dougis-org/dnd-tracker/issues/3) **01-project-setup.md** - Initialize Next.js 15 with TypeScript
+   - [#4](https://github.com/dougis-org/dnd-tracker/issues/4) **02-clerk-integration.md** - Implement Clerk authentication
+   - [#5](https://github.com/dougis-org/dnd-tracker/issues/5) **03-mongodb-setup.md** - Configure MongoDB Atlas connection
+   - [#6](https://github.com/dougis-org/dnd-tracker/issues/6) **04-base-ui-components.md** - Set up shadcn/ui and Tailwind CSS
+   - [#7](https://github.com/dougis-org/dnd-tracker/issues/7) **05-deployment-config.md** - Configure Fly.io deployment
+   - [#8](https://github.com/dougis-org/dnd-tracker/issues/8) **06-environment-variables.md** - Set up environment configuration
+   - [#9](https://github.com/dougis-org/dnd-tracker/issues/9) **07-basic-navigation.md** - Create app layout and navigation
+   - [#10](https://github.com/dougis-org/dnd-tracker/issues/10) **08-testing-setup.md** - Configure Jest and Playwright
 
 ### Success Criteria
 
