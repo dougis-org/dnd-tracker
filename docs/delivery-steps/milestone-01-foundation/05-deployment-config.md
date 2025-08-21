@@ -1,5 +1,7 @@
 # Deployment Configuration (Fly.io)
 
+**GitHub Issue:** [#7](https://github.com/dougis-org/dnd-tracker/issues/7)
+
 **Objective:** Configure deployment pipeline to Fly.io for staging/production.
 
 **Tasks:**

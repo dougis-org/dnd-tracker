@@ -1,5 +1,7 @@
 # Basic Navigation & Layout
 
+**GitHub Issue:** [#9](https://github.com/dougis-org/dnd-tracker/issues/9)
+
 ## Objective
 
 Create the main app layout and navigation structure.

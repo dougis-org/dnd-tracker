@@ -1,5 +1,7 @@
 # Clerk Authentication Integration
 
+**GitHub Issue:** [#4](https://github.com/dougis-org/dnd-tracker/issues/4)
+
 ## Objective
 
 Implement complete authentication system using Clerk.

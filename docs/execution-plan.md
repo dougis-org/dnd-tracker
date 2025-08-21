@@ -1,9 +1,11 @@
 # D&D Tracker - Complete Execution Plan
 
 ## Overview
+
 This document outlines the complete implementation plan for the D&D Encounter Tracker Web App, organized into 10 iterative milestones. Each milestone builds upon the previous ones and can be tested independently.
 
 ## Directory Structure
+
 ```
 Z:\dev\Code\dnd-tracker\docs\
 ├── Execution-Plan.md (this document)
@@ -23,20 +25,26 @@ Z:\dev\Code\dnd-tracker\docs\
 ---
 
 ## Milestone 1: Foundation & Authentication
+
 **Duration:** 1 week  
 **Dependencies:** None  
 **Goal:** Establish the basic application structure with authentication and deployment
 
 ### Deliverables:
+
 1. **01-project-setup.md** - Initialize Next.js 15 with TypeScript
-2. **02-clerk-integration.md** - Implement Clerk authentication
-3. **03-mongodb-setup.md** - Configure MongoDB Atlas connection
-4. **04-base-ui-components.md** - Set up shadcn/ui and Tailwind CSS
-5. **05-deployment-config.md** - Configure Fly.io deployment6. **06-environment-variables.md** - Set up environment configuration
-7. **07-basic-navigation.md** - Create app layout and navigation
-8. **08-testing-setup.md** - Configure Jest and Playwright
+
+   [#3](https://github.com/dougis-org/dnd-tracker/issues/3) **01-project-setup.md** - Initialize Next.js 15 with TypeScript
+   [#4](https://github.com/dougis-org/dnd-tracker/issues/4) **02-clerk-integration.md** - Implement Clerk authentication
+   [#5](https://github.com/dougis-org/dnd-tracker/issues/5) **03-mongodb-setup.md** - Configure MongoDB Atlas connection
+   [#6](https://github.com/dougis-org/dnd-tracker/issues/6) **04-base-ui-components.md** - Set up shadcn/ui and Tailwind CSS
+   [#7](https://github.com/dougis-org/dnd-tracker/issues/7) **05-deployment-config.md** - Configure Fly.io deployment
+   [#8](https://github.com/dougis-org/dnd-tracker/issues/8) **06-environment-variables.md** - Set up environment configuration
+   [#9](https://github.com/dougis-org/dnd-tracker/issues/9) **07-basic-navigation.md** - Create app layout and navigation
+   [#10](https://github.com/dougis-org/dnd-tracker/issues/10) **08-testing-setup.md** - Configure Jest and Playwright
 
 ### Success Criteria:
+
 - Users can sign up and sign in via Clerk
 - Application deploys successfully to Fly.io
 - MongoDB connection is established
@@ -45,11 +53,13 @@ Z:\dev\Code\dnd-tracker\docs\
 ---
 
 ## Milestone 2: User & Character Management
+
 **Duration:** 1.5 weeks  
 **Dependencies:** Milestone 1  
 **Goal:** Enable users to create and manage D&D characters
 
 ### Deliverables:
+
 1. **01-user-model.md** - Create User schema with Clerk integration
 2. **02-character-model.md** - Implement Character schema with all D&D fields
 3. **03-character-api.md** - Build CRUD API endpoints for characters
@@ -58,7 +68,9 @@ Z:\dev\Code\dnd-tracker\docs\
 6. **06-character-details.md** - Implement character detail page
 7. **07-multiclassing-support.md** - Add multiclassing functionality
 8. **08-character-validation.md** - Implement field validation and business rules
+
 ### Success Criteria:
+
 - Users can create, view, edit, and delete characters
 - All D&D character fields are supported
 - Multiclassing works correctly
@@ -67,11 +79,13 @@ Z:\dev\Code\dnd-tracker\docs\
 ---
 
 ## Milestone 3: Party Management
+
 **Duration:** 1 week  
 **Dependencies:** Milestone 2  
 **Goal:** Allow users to organize characters into parties
 
 ### Deliverables:
+
 1. **01-party-model.md** - Create Party schema
 2. **02-party-api.md** - Build party CRUD endpoints
 3. **03-party-ui.md** - Create party management interface
@@ -80,18 +94,22 @@ Z:\dev\Code\dnd-tracker\docs\
 6. **06-import-export.md** - Add JSON import/export for parties
 
 ### Success Criteria:
+
 - Users can create and manage multiple parties
 - Characters can be assigned to parties
 - Party templates can be saved and reused
 - Import/export functionality works
+
 ---
 
 ## Milestone 4: Encounter & Creature Management
+
 **Duration:** 1.5 weeks  
 **Dependencies:** Milestone 3  
 **Goal:** Build the encounter and creature management system
 
 ### Deliverables:
+
 1. **01-creature-model.md** - Create Creature/Monster schema
 2. **02-encounter-model.md** - Implement Encounter schema
 3. **03-creature-library.md** - Build searchable creature database
@@ -101,18 +119,22 @@ Z:\dev\Code\dnd-tracker\docs\
 7. **07-lair-configuration.md** - Define lair action structures
 
 ### Success Criteria:
+
 - Full creature CRUD functionality
 - Encounter builder with CR calculation
 - Searchable creature library
 - Lair action configuration available
+
 ---
 
 ## Milestone 5: Combat Tracker Core
+
 **Duration:** 2 weeks  
 **Dependencies:** Milestone 4  
 **Goal:** Implement the core combat tracking functionality
 
 ### Deliverables:
+
 1. **01-initiative-system.md** - Build initiative rolling and sorting
 2. **02-turn-tracker.md** - Implement turn and round management
 3. **03-hp-tracking.md** - Create HP damage/healing system
@@ -122,18 +144,22 @@ Z:\dev\Code\dnd-tracker\docs\
 7. **07-undo-system.md** - Add undo/redo functionality
 
 ### Success Criteria:
+
 - Initiative tracking works with proper sorting
 - Turn order management is smooth
 - HP tracking with damage/healing
 - Dexterity tiebreakers function correctly
+
 ---
 
 ## Milestone 6: Advanced Combat Features
+
 **Duration:** 2 weeks  
 **Dependencies:** Milestone 5  
 **Goal:** Add advanced combat mechanics
 
 ### Deliverables:
+
 1. **01-status-effects.md** - Implement condition tracking
 2. **02-legendary-actions.md** - Add legendary action system
 3. **03-lair-actions.md** - Implement lair action triggers
@@ -143,18 +169,22 @@ Z:\dev\Code\dnd-tracker\docs\
 7. **07-environmental-effects.md** - Implement environmental mechanics
 
 ### Success Criteria:
+
 - All status effects track correctly
 - Legendary actions work as specified
 - Lair actions trigger on initiative 20
 - Combat log captures all actions
+
 ---
 
 ## Milestone 7: Monetization & Subscriptions
+
 **Duration:** 2 weeks  
 **Dependencies:** Milestone 1 (can run parallel with 2-6)  
 **Goal:** Implement the subscription and payment system
 
 ### Deliverables:
+
 1. **01-stripe-integration.md** - Set up Stripe payment processing
 2. **02-subscription-tiers.md** - Implement 5-tier subscription model
 3. **03-feature-gating.md** - Build feature access control
@@ -165,18 +195,22 @@ Z:\dev\Code\dnd-tracker\docs\
 8. **08-upgrade-flows.md** - Build upgrade/downgrade flows
 
 ### Success Criteria:
+
 - Payment processing works correctly
 - Feature gating enforces limits
 - Users can upgrade/downgrade
 - Trial system functions properly
+
 ---
 
 ## Milestone 8: Data Persistence & Sync
+
 **Duration:** 1.5 weeks  
 **Dependencies:** Milestone 7  
 **Goal:** Implement cloud sync and data persistence features
 
 ### Deliverables:
+
 1. **01-local-storage.md** - Implement IndexedDB for offline
 2. **02-cloud-sync.md** - Build real-time sync for paid tiers
 3. **03-backup-system.md** - Create automated backup system
@@ -185,18 +219,22 @@ Z:\dev\Code\dnd-tracker\docs\
 6. **06-data-migration.md** - Build migration system
 
 ### Success Criteria:
+
 - Offline mode works for free tier
 - Cloud sync works for paid tiers
 - Backups run automatically
 - Export features function correctly
+
 ---
 
 ## Milestone 9: Collaborative Features
+
 **Duration:** 2 weeks  
 **Dependencies:** Milestone 8  
 **Goal:** Enable multi-user collaboration
 
 ### Deliverables:
+
 1. **01-realtime-setup.md** - Configure Pusher/Socket.IO
 2. **02-shared-campaigns.md** - Implement campaign sharing
 3. **03-live-updates.md** - Build real-time combat updates
@@ -205,18 +243,22 @@ Z:\dev\Code\dnd-tracker\docs\
 6. **06-collaboration-ui.md** - Create collaboration interface
 
 ### Success Criteria:
+
 - Real-time updates work smoothly
 - Multiple users can share campaigns
 - Permissions are enforced correctly
 - Organizations can manage users
+
 ---
 
 ## Milestone 10: Polish & Optimization
+
 **Duration:** 2 weeks  
 **Dependencies:** Milestones 1-9  
 **Goal:** Optimize performance and polish the user experience
 
 ### Deliverables:
+
 1. **01-performance-optimization.md** - Optimize load times and responsiveness
 2. **02-mobile-responsive.md** - Perfect mobile experience
 3. **03-accessibility.md** - Ensure WCAG 2.1 AA compliance
@@ -227,32 +269,39 @@ Z:\dev\Code\dnd-tracker\docs\
 8. **08-final-testing.md** - Comprehensive testing suite
 
 ### Success Criteria:
+
 - Page load < 3 seconds
 - Mobile experience is smooth
 - Accessibility standards met
 - Analytics and monitoring active
+
 ---
 
 ## Parallel Development Tracks
 
 ### Track A: Core Features (Milestones 1-6)
+
 **Team:** 2-3 developers  
 **Focus:** Building the core D&D tracking functionality
 
 ### Track B: Monetization (Milestone 7)
+
 **Team:** 1 developer  
 **Focus:** Payment and subscription system  
 **Can Start:** After Milestone 1
 
 ### Track C: Infrastructure (Milestones 8-9)
+
 **Team:** 1-2 developers  
 **Focus:** Data sync and collaboration  
 **Can Start:** After Milestone 5
 
 ### Track D: UI/UX (Continuous)
+
 **Team:** 1 designer/developer  
 **Focus:** UI components and design system  
 **Can Start:** Immediately
+
 ---
 
 ## Critical Path Dependencies
@@ -268,55 +317,70 @@ M1: Foundation → M2: Characters → M3: Parties → M4: Encounters → M5: Com
 ## Risk Mitigation
 
 ### Technical Risks
+
 - **MongoDB Performance:** Start with indexing strategy in M1
 - **Real-time Sync:** Prototype early in M4
 - **Payment Integration:** Begin Stripe setup in M1
 
-### Business Risks
-- **Feature Scope:** MVP complete by M6
-- **Monetization:** Can launch with M7 minimum
-- **User Adoption:** Focus groups after M3
+## Overview
+
+This document outlines the complete implementation plan for the D&D Encounter Tracker Web App, organized into 10 iterative milestones. Each milestone builds upon the previous ones and can be tested independently.
+
+## Directory Structure
+
+```text
+Z:\dev\Code\dnd-tracker\docs\
+├── Execution-Plan.md (this document)
+└── delivery-steps\
+    ├── milestone-01-foundation\
+    ├── milestone-02-characters\
+    ├── milestone-03-parties\
+    ├── milestone-04-encounters\
+    ├── milestone-05-combat-core\
+    ├── milestone-06-combat-advanced\
+    ├── milestone-07-monetization\
+    ├── milestone-08-data-sync\
+    ├── milestone-09-collaboration\
+    └── milestone-10-polish\
+```
+
 ---
 
-## Timeline Summary
+## Milestone 1: Foundation & Authentication
 
-**Total Duration:** 14-16 weeks
+**Duration:** 1 week  
+**Dependencies:** None  
+**Goal:** Establish the basic application structure with authentication and deployment
 
-### Phase 1: MVP (Weeks 1-8)
-- Milestones 1-6
-- Core functionality complete
-- Ready for beta testing
+### Deliverables
 
-### Phase 2: Monetization (Weeks 9-11)
-- Milestone 7-8
-- Payment system active
-- Ready for paid launch
+[#3](https://github.com/dougis-org/dnd-tracker/issues/3) **01-project-setup.md** - Initialize Next.js 15 with TypeScript
 
-### Phase 3: Enhancement (Weeks 12-16)
-- Milestones 9-10
-- Advanced features
-- Full production release
----
+[#4](https://github.com/dougis-org/dnd-tracker/issues/4) **02-clerk-integration.md** - Implement Clerk authentication
 
-## Success Metrics
+[#5](https://github.com/dougis-org/dnd-tracker/issues/5) **03-mongodb-setup.md** - Configure MongoDB Atlas connection
 
-### Technical Metrics
-- [ ] All unit tests passing (>80% coverage)
-- [ ] E2E tests for critical paths
-- [ ] Performance benchmarks met
-- [ ] Security audit passed
+[#6](https://github.com/dougis-org/dnd-tracker/issues/6) **04-base-ui-components.md** - Set up shadcn/ui and Tailwind CSS
 
-### Business Metrics
-- [ ] 100 beta users acquired
-- [ ] 10% conversion rate achieved
-- [ ] $1,000 MRR within first month
-- [ ] NPS score > 50
+[#7](https://github.com/dougis-org/dnd-tracker/issues/7) **05-deployment-config.md** - Configure Fly.io deployment
 
-### User Experience Metrics
+[#8](https://github.com/dougis-org/dnd-tracker/issues/8) **06-environment-variables.md** - Set up environment configuration
+
+[#9](https://github.com/dougis-org/dnd-tracker/issues/9) **07-basic-navigation.md** - Create app layout and navigation
+
+[#10](https://github.com/dougis-org/dnd-tracker/issues/10) **08-testing-setup.md** - Configure Jest and Playwright
+
+### Success Criteria
+
+- Users can sign up and sign in via Clerk
+- Application deploys successfully to Fly.io
+- MongoDB connection is established
+- Basic UI framework is in place
 - [ ] Onboarding completion > 80%
 - [ ] Feature adoption > 70%
 - [ ] Support tickets < 5% of users
 - [ ] Mobile usage > 30%
+
 ---
 
 ## Next Steps
@@ -333,6 +397,7 @@ M1: Foundation → M2: Characters → M3: Parties → M4: Encounters → M5: Com
 ## Appendix: Technology Checklist
 
 ### Accounts to Create
+
 - [ ] GitHub repository
 - [ ] Clerk account
 - [ ] MongoDB Atlas account
@@ -340,7 +405,9 @@ M1: Foundation → M2: Characters → M3: Parties → M4: Encounters → M5: Com
 - [ ] Fly.io account
 - [ ] Sentry account
 - [ ] Pusher/Socket.IO account
+
 ### Development Tools
+
 - [ ] Node.js 22 LTS
 - [ ] pnpm 9.0+
 - [ ] VS Code with extensions
@@ -348,6 +415,7 @@ M1: Foundation → M2: Characters → M3: Parties → M4: Encounters → M5: Com
 - [ ] Postman/Insomnia
 
 ### Environment Variables
+
 - [ ] Clerk keys
 - [ ] MongoDB connection string
 - [ ] Stripe keys
