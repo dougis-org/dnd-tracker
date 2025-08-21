@@ -96,6 +96,7 @@ Before creating a PR, ensure:
   - Provide proper TypeScript types for request/response.
   - Implement error handling with correct HTTP status codes.
   - Follow RESTful conventions.
+- Use ES6 (and later) features and syntax.
 
 ### Database & Security
 
