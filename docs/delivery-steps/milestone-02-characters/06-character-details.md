@@ -1,4 +1,4 @@
-# Character Detail Page
+# Character Detail Page ([#17](https://github.com/dougis-org/dnd-tracker/issues/17))
 
 **Objective:** Implement a detailed view for a single character, showing all attributes and actions.
 

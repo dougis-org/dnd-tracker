@@ -1,4 +1,4 @@
-# Character API Implementation
+# Character API Implementation ([#14](https://github.com/dougis-org/dnd-tracker/issues/14))
 
 **Objective:** Build RESTful API endpoints for character CRUD operations.
 

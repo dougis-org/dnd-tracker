@@ -60,14 +60,14 @@ Z:\dev\Code\dnd-tracker\docs\
 
 ### Deliverables:
 
-1. **01-user-model.md** - Create User schema with Clerk integration
-2. **02-character-model.md** - Implement Character schema with all D&D fields
-3. **03-character-api.md** - Build CRUD API endpoints for characters
-4. **04-character-forms.md** - Create character creation/edit forms
-5. **05-character-list.md** - Build character list view
-6. **06-character-details.md** - Implement character detail page
-7. **07-multiclassing-support.md** - Add multiclassing functionality
-8. **08-character-validation.md** - Implement field validation and business rules
+1. **01-user-model.md** - Create User schema with Clerk integration ([#12](https://github.com/dougis-org/dnd-tracker/issues/12))
+2. **02-character-model.md** - Implement Character schema with all D&D fields ([#13](https://github.com/dougis-org/dnd-tracker/issues/13))
+3. **03-character-api.md** - Build CRUD API endpoints for characters ([#14](https://github.com/dougis-org/dnd-tracker/issues/14))
+4. **04-character-forms.md** - Create character creation/edit forms ([#15](https://github.com/dougis-org/dnd-tracker/issues/15))
+5. **05-character-list.md** - Build character list view ([#16](https://github.com/dougis-org/dnd-tracker/issues/16))
+6. **06-character-details.md** - Implement character detail page ([#17](https://github.com/dougis-org/dnd-tracker/issues/17))
+7. **07-multiclassing-support.md** - Add multiclassing functionality ([#18](https://github.com/dougis-org/dnd-tracker/issues/18))
+8. **08-character-validation.md** - Implement field validation and business rules ([#19](https://github.com/dougis-org/dnd-tracker/issues/19))
 
 ### Success Criteria:
 

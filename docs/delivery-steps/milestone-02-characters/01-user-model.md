@@ -1,4 +1,4 @@
-# User Model Implementation
+# User Model Implementation ([#12](https://github.com/dougis-org/dnd-tracker/issues/12))
 
 **Objective:** Create User schema with Clerk integration and subscription tracking.
 

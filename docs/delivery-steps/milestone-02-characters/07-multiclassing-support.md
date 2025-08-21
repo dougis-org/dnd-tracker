@@ -1,4 +1,4 @@
-# Multiclassing Support
+# Multiclassing Support ([#18](https://github.com/dougis-org/dnd-tracker/issues/18))
 
 **Objective:** Add logic and UI for multiclassing in character creation and editing.
 

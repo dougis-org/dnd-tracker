@@ -1,4 +1,4 @@
-# Character Forms Implementation
+# Character Forms Implementation ([#15](https://github.com/dougis-org/dnd-tracker/issues/15))
 
 **Objective:** Create comprehensive character creation and edit forms with validation.
 

@@ -1,4 +1,4 @@
-# Character Model Implementation
+# Character Model Implementation ([#13](https://github.com/dougis-org/dnd-tracker/issues/13))
 
 **Objective:** Create comprehensive D&D 5e character schema with multiclassing support.
 
