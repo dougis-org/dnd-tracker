@@ -1,4 +1,4 @@
-# Character List View
+# Character List View ([#16](https://github.com/dougis-org/dnd-tracker/issues/16))
 
 **Objective:** Build a component to display a list of all user characters with sorting and filtering.
 

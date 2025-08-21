@@ -1,4 +1,4 @@
-# Character Validation & Business Rules
+# Character Validation & Business Rules ([#19](https://github.com/dougis-org/dnd-tracker/issues/19))
 
 **Objective:** Enforce D&D 5e rules and custom business logic for character creation and editing.
 

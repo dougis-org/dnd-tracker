@@ -6,7 +6,7 @@ This document outlines the complete implementation plan for the D&D Encounter Tr
 
 ## Directory Structure
 
-```
+```text
 Z:\dev\Code\dnd-tracker\docs\
 ├── Execution-Plan.md (this document)
 └── delivery-steps\
@@ -30,7 +30,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** None  
 **Goal:** Establish the basic application structure with authentication and deployment
 
-### Deliverables:
+### Deliverables
 
 1. **01-project-setup.md** - Initialize Next.js 15 with TypeScript
 
@@ -43,7 +43,7 @@ Z:\dev\Code\dnd-tracker\docs\
    [#9](https://github.com/dougis-org/dnd-tracker/issues/9) **07-basic-navigation.md** - Create app layout and navigation
    [#10](https://github.com/dougis-org/dnd-tracker/issues/10) **08-testing-setup.md** - Configure Jest and Playwright
 
-### Success Criteria:
+### Success Criteria
 
 - Users can sign up and sign in via Clerk
 - Application deploys successfully to Fly.io
@@ -58,18 +58,18 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestone 1  
 **Goal:** Enable users to create and manage D&D characters
 
-### Deliverables:
+### Deliverables (Party Management)
 
-1. **01-user-model.md** - Create User schema with Clerk integration
-2. **02-character-model.md** - Implement Character schema with all D&D fields
-3. **03-character-api.md** - Build CRUD API endpoints for characters
-4. **04-character-forms.md** - Create character creation/edit forms
-5. **05-character-list.md** - Build character list view
-6. **06-character-details.md** - Implement character detail page
-7. **07-multiclassing-support.md** - Add multiclassing functionality
-8. **08-character-validation.md** - Implement field validation and business rules
+1. [#12](https://github.com/dougis-org/dnd-tracker/issues/12) **01-user-model.md** - Create User schema with Clerk integration
+2. [#13](https://github.com/dougis-org/dnd-tracker/issues/13) **02-character-model.md** - Implement Character schema with all D&D fields
+3. [#14](https://github.com/dougis-org/dnd-tracker/issues/14) **03-character-api.md** - Build CRUD API endpoints for characters
+4. [#15](https://github.com/dougis-org/dnd-tracker/issues/15) **04-character-forms.md** - Create character creation/edit forms
+5. [#16](https://github.com/dougis-org/dnd-tracker/issues/16) **05-character-list.md** - Build character list view
+6. [#17](https://github.com/dougis-org/dnd-tracker/issues/17) **06-character-details.md** - Implement character detail page
+7. [#18](https://github.com/dougis-org/dnd-tracker/issues/18) **07-multiclassing-support.md** - Add multiclassing functionality
+8. [#19](https://github.com/dougis-org/dnd-tracker/issues/19) **08-character-validation.md** - Implement field validation and business rules
 
-### Success Criteria:
+### Success Criteria (Party Management)
 
 - Users can create, view, edit, and delete characters
 - All D&D character fields are supported
@@ -84,7 +84,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestone 2  
 **Goal:** Allow users to organize characters into parties
 
-### Deliverables:
+### Deliverables (Encounter & Creature Management)
 
 1. **01-party-model.md** - Create Party schema
 2. **02-party-api.md** - Build party CRUD endpoints
@@ -93,7 +93,7 @@ Z:\dev\Code\dnd-tracker\docs\
 5. **05-party-templates.md** - Implement party template system
 6. **06-import-export.md** - Add JSON import/export for parties
 
-### Success Criteria:
+### Success Criteria (Encounter & Creature Management)
 
 - Users can create and manage multiple parties
 - Characters can be assigned to parties
@@ -108,7 +108,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestone 3  
 **Goal:** Build the encounter and creature management system
 
-### Deliverables:
+### Deliverables (Combat Tracker Core)
 
 1. **01-creature-model.md** - Create Creature/Monster schema
 2. **02-encounter-model.md** - Implement Encounter schema
@@ -118,7 +118,7 @@ Z:\dev\Code\dnd-tracker\docs\
 6. **06-creature-templates.md** - Add creature template system
 7. **07-lair-configuration.md** - Define lair action structures
 
-### Success Criteria:
+### Success Criteria (Combat Tracker Core)
 
 - Full creature CRUD functionality
 - Encounter builder with CR calculation
@@ -133,7 +133,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestone 4  
 **Goal:** Implement the core combat tracking functionality
 
-### Deliverables:
+### Deliverables (Advanced Combat Features)
 
 1. **01-initiative-system.md** - Build initiative rolling and sorting
 2. **02-turn-tracker.md** - Implement turn and round management
@@ -143,7 +143,7 @@ Z:\dev\Code\dnd-tracker\docs\
 6. **06-combat-state.md** - Manage combat state with Zustand
 7. **07-undo-system.md** - Add undo/redo functionality
 
-### Success Criteria:
+### Success Criteria (Advanced Combat Features)
 
 - Initiative tracking works with proper sorting
 - Turn order management is smooth
@@ -158,7 +158,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestone 5  
 **Goal:** Add advanced combat mechanics
 
-### Deliverables:
+### Deliverables (Monetization & Subscriptions)
 
 1. **01-status-effects.md** - Implement condition tracking
 2. **02-legendary-actions.md** - Add legendary action system
@@ -168,7 +168,7 @@ Z:\dev\Code\dnd-tracker\docs\
 6. **06-action-descriptions.md** - Add action description system
 7. **07-environmental-effects.md** - Implement environmental mechanics
 
-### Success Criteria:
+### Success Criteria (Monetization & Subscriptions)
 
 - All status effects track correctly
 - Legendary actions work as specified
@@ -183,7 +183,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestone 1 (can run parallel with 2-6)  
 **Goal:** Implement the subscription and payment system
 
-### Deliverables:
+### Deliverables (Data Sync)
 
 1. **01-stripe-integration.md** - Set up Stripe payment processing
 2. **02-subscription-tiers.md** - Implement 5-tier subscription model
@@ -194,7 +194,7 @@ Z:\dev\Code\dnd-tracker\docs\
 7. **07-trial-system.md** - Implement 14-day trial
 8. **08-upgrade-flows.md** - Build upgrade/downgrade flows
 
-### Success Criteria:
+### Success Criteria (Data Sync)
 
 - Payment processing works correctly
 - Feature gating enforces limits
@@ -209,7 +209,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestone 7  
 **Goal:** Implement cloud sync and data persistence features
 
-### Deliverables:
+### Deliverables (Collaboration)
 
 1. **01-local-storage.md** - Implement IndexedDB for offline
 2. **02-cloud-sync.md** - Build real-time sync for paid tiers
@@ -218,7 +218,7 @@ Z:\dev\Code\dnd-tracker\docs\
 5. **05-conflict-resolution.md** - Handle sync conflicts
 6. **06-data-migration.md** - Build migration system
 
-### Success Criteria:
+### Success Criteria (Collaboration)
 
 - Offline mode works for free tier
 - Cloud sync works for paid tiers
@@ -233,7 +233,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestone 8  
 **Goal:** Enable multi-user collaboration
 
-### Deliverables:
+### Deliverables (Polish)
 
 1. **01-realtime-setup.md** - Configure Pusher/Socket.IO
 2. **02-shared-campaigns.md** - Implement campaign sharing
@@ -242,7 +242,7 @@ Z:\dev\Code\dnd-tracker\docs\
 5. **05-organization-mgmt.md** - Build organization features
 6. **06-collaboration-ui.md** - Create collaboration interface
 
-### Success Criteria:
+### Success Criteria (Polish)
 
 - Real-time updates work smoothly
 - Multiple users can share campaigns
@@ -257,7 +257,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestones 1-9  
 **Goal:** Optimize performance and polish the user experience
 
-### Deliverables:
+### Deliverables (Milestone 8)
 
 1. **01-performance-optimization.md** - Optimize load times and responsiveness
 2. **02-mobile-responsive.md** - Perfect mobile experience
@@ -268,7 +268,7 @@ Z:\dev\Code\dnd-tracker\docs\
 7. **07-seo-optimization.md** - Implement SEO best practices
 8. **08-final-testing.md** - Comprehensive testing suite
 
-### Success Criteria:
+### Success Criteria (Milestone 8)
 
 - Page load < 3 seconds
 - Mobile experience is smooth
@@ -306,7 +306,7 @@ Z:\dev\Code\dnd-tracker\docs\
 
 ## Critical Path Dependencies
 
-```
+```text
 M1: Foundation → M2: Characters → M3: Parties → M4: Encounters → M5: Combat Core → M6: Combat Advanced
                 ↘                                                                    ↗
                  M7: Monetization → M8: Data Sync → M9: Collaboration → M10: Polish
@@ -322,11 +322,11 @@ M1: Foundation → M2: Characters → M3: Parties → M4: Encounters → M5: Com
 - **Real-time Sync:** Prototype early in M4
 - **Payment Integration:** Begin Stripe setup in M1
 
-## Overview
+## Overview (Appendix)
 
 This document outlines the complete implementation plan for the D&D Encounter Tracker Web App, organized into 10 iterative milestones. Each milestone builds upon the previous ones and can be tested independently.
 
-## Directory Structure
+## Directory Structure (Appendix)
 
 ```text
 Z:\dev\Code\dnd-tracker\docs\
@@ -346,13 +346,13 @@ Z:\dev\Code\dnd-tracker\docs\
 
 ---
 
-## Milestone 1: Foundation & Authentication
+## Milestone 1: Foundation & Authentication (Appendix)
 
 **Duration:** 1 week  
 **Dependencies:** None  
 **Goal:** Establish the basic application structure with authentication and deployment
 
-### Deliverables
+### Deliverables (Appendix)
 
 [#3](https://github.com/dougis-org/dnd-tracker/issues/3) **01-project-setup.md** - Initialize Next.js 15 with TypeScript
 
@@ -370,7 +370,7 @@ Z:\dev\Code\dnd-tracker\docs\
 
 [#10](https://github.com/dougis-org/dnd-tracker/issues/10) **08-testing-setup.md** - Configure Jest and Playwright
 
-### Success Criteria
+### Success Criteria (Appendix)
 
 - Users can sign up and sign in via Clerk
 - Application deploys successfully to Fly.io
