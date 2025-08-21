@@ -1,5 +1,7 @@
 # Party Templates
 
+[Issue #25](https://github.com/dougis-org/dnd-tracker/issues/25)
+
 **Objective:** Allow users to save and reuse party templates for quick setup.
 
 ## Tasks

@@ -1,8 +1,10 @@
 # Party API Implementation
 
+[Issue #22](https://github.com/dougis-org/dnd-tracker/issues/22)
+
 **Objective:** Build robust API endpoints for party management, including CRUD, sharing, templates, tier enforcement, and error handling.
 
-**API Endpoints:**
+## API Endpoints
 
 - **GET /api/parties** – List all parties owned by or shared with the user (with character and template info)
 - **POST /api/parties** – Create a new party (enforces tier limits)
@@ -13,7 +15,7 @@
 - **POST /api/parties/import** – Import party from JSON
 - **GET /api/parties/export/:id** – Export party to JSON
 
-**Example: GET all parties for user**
+### Example: GET all parties for user
 
 ```typescript
 // app/api/parties/route.ts

@@ -1,5 +1,7 @@
 # Party Management UI
 
+[Issue #23](https://github.com/dougis-org/dnd-tracker/issues/23)
+
 **Objective:** Build the user interface for creating, editing, and managing parties.
 
 ## Tasks

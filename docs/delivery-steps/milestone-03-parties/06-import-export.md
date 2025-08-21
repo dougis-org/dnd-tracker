@@ -1,5 +1,7 @@
 # Party Import & Export
 
+[Issue #26](https://github.com/dougis-org/dnd-tracker/issues/26)
+
 **Objective:** Enable import and export of party data in JSON format.
 
 ## Tasks
