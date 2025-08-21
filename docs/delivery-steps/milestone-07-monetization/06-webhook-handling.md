@@ -2,7 +2,6 @@
 
 **Objective:** Process Stripe webhook events for payments, upgrades, and cancellations.
 
-
 ## Tasks
 
 - [ ] Set up secure webhook endpoint

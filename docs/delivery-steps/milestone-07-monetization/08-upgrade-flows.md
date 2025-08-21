@@ -2,7 +2,6 @@
 
 **Objective:** Implement user flows for upgrading and downgrading subscription tiers.
 
-
 ## Tasks
 
 - [ ] Add UI for upgrade/downgrade actions

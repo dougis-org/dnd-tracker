@@ -2,7 +2,6 @@
 
 **Objective:** Add 14-day trial system with conversion to paid subscription.
 
-
 ## Tasks
 
 - [ ] Implement trial status and expiration logic
