@@ -32,7 +32,7 @@ Z:\dev\Code\dnd-tracker\docs\
 
 ### Deliverables
 
-1. [#3](https://github.com/dougis-org/dnd-tracker/issues/3) **01-project-setup.md** - Initialize Next.js 15 with TypeScript
+1. [#3](https://github.com/dougis-org/dnd-tracker/issues/3) ✅ **01-project-setup.md** - Initialize Next.js 15 with TypeScript
 2. [#4](https://github.com/dougis-org/dnd-tracker/issues/4) **02-clerk-integration.md** - Implement Clerk authentication
 3. [#5](https://github.com/dougis-org/dnd-tracker/issues/5) **03-mongodb-setup.md** - Configure MongoDB Atlas connection
 4. [#6](https://github.com/dougis-org/dnd-tracker/issues/6) **04-base-ui-components.md** - Set up shadcn/ui and Tailwind CSS
@@ -352,7 +352,7 @@ Z:\dev\Code\dnd-tracker\docs\
 
 ### Deliverables (Appendix)
 
-[#3](https://github.com/dougis-org/dnd-tracker/issues/3) **01-project-setup.md** - Initialize Next.js 15 with TypeScript
+[#3](https://github.com/dougis-org/dnd-tracker/issues/3) ✅ **01-project-setup.md** - Initialize Next.js 15 with TypeScript
 
 [#4](https://github.com/dougis-org/dnd-tracker/issues/4) **02-clerk-integration.md** - Implement Clerk authentication
 
