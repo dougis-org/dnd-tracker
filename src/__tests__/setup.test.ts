@@ -3,15 +3,28 @@
  * Following TDD approach - these tests should fail initially
  */
 
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import path from 'path';
-import packageJson from '@/../package.json';
-import tsconfig from '@/../tsconfig.json';
+
+// Predefined safe folder names to prevent path traversal
+const ALLOWED_FOLDERS = [
+  'src/app',
+  'src/components', 
+  'src/lib',
+  'src/hooks',
+  'src/models',
+  'src/types',
+  'src/styles'
+];
+
+const packageJsonPath = path.join(process.cwd(), 'package.json');
+const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+const tsconfigPath = path.join(process.cwd(), 'tsconfig.json');
+const tsconfig = JSON.parse(readFileSync(tsconfigPath, 'utf-8'));
 
 describe('Project Setup', () => {
   describe('Next.js Configuration', () => {
     test('should have package.json with Next.js 15', () => {
-      const packageJsonPath = path.join(process.cwd(), 'package.json');
       expect(existsSync(packageJsonPath)).toBe(true);
       
       expect(packageJson.dependencies.next).toMatch(/^15\./);
@@ -20,7 +33,6 @@ describe('Project Setup', () => {
     });
 
     test('should have TypeScript configuration', () => {
-      const tsconfigPath = path.join(process.cwd(), 'tsconfig.json');
       expect(existsSync(tsconfigPath)).toBe(true);
       
       expect(tsconfig.compilerOptions.strict).toBe(true);
@@ -29,17 +41,7 @@ describe('Project Setup', () => {
     });
 
     test('should have proper folder structure', () => {
-      const expectedFolders = [
-        'src/app',
-        'src/components', 
-        'src/lib',
-        'src/hooks',
-        'src/models',
-        'src/types',
-        'src/styles'
-      ];
-      
-      expectedFolders.forEach(folder => {
+      ALLOWED_FOLDERS.forEach(folder => {
         const folderPath = path.join(process.cwd(), folder);
         expect(existsSync(folderPath)).toBe(true);
       });
@@ -63,11 +65,8 @@ describe('Project Setup', () => {
       // For now, just verify the tsconfig has the right structure
       const paths = tsconfig.compilerOptions.paths;
       
-      expect(paths['@/components/*']).toEqual(['./src/components/*']);
-      expect(paths['@/lib/*']).toEqual(['./src/lib/*']);
-      expect(paths['@/hooks/*']).toEqual(['./src/hooks/*']);
-      expect(paths['@/models/*']).toEqual(['./src/models/*']);
-      expect(paths['@/types/*']).toEqual(['./src/types/*']);
+      expect(paths['@/*']).toEqual(['./src/*']);
+      expect(paths['@/../*']).toEqual(['./*']);
     });
   });
 });

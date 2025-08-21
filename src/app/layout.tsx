@@ -6,11 +6,11 @@ export const metadata: Metadata = {
   description: 'A comprehensive tool for managing D&D 5e combat encounters',
 }
 
-export default function RootLayout({
-  children,
-}: {
+interface RootLayoutProps {
   children: React.ReactNode
-}) {
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body>{children}</body>

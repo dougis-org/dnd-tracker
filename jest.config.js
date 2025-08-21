@@ -1,3 +1,5 @@
+/* global require, module */
+
 const nextJest = require('next/jest')
 
 const createJestConfig = nextJest({
@@ -12,11 +14,6 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@/../(.*)$': '<rootDir>/$1',
-    '^@/components/(.*)$': '<rootDir>/src/components/$1',
-    '^@/lib/(.*)$': '<rootDir>/src/lib/$1',
-    '^@/hooks/(.*)$': '<rootDir>/src/hooks/$1',
-    '^@/models/(.*)$': '<rootDir>/src/models/$1',
-    '^@/types/(.*)$': '<rootDir>/src/types/$1',
   },
 }
 

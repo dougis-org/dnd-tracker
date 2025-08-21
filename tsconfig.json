@@ -3,7 +3,7 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "es6"
+      "es2017"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -27,21 +27,6 @@
       ],
       "@/../*": [
         "./*"
-      ],
-      "@/components/*": [
-        "./src/components/*"
-      ],
-      "@/lib/*": [
-        "./src/lib/*"
-      ],
-      "@/hooks/*": [
-        "./src/hooks/*"
-      ],
-      "@/models/*": [
-        "./src/models/*"
-      ],
-      "@/types/*": [
-        "./src/types/*"
       ]
     },
     "target": "ES2017"
