@@ -36,7 +36,7 @@ Z:\dev\Code\dnd-tracker\docs\
 
 1. [#3](https://github.com/dougis-org/dnd-tracker/issues/3) ✅ **01-project-setup.md** - Initialize Next.js 15 with TypeScript
 2. [#4](https://github.com/dougis-org/dnd-tracker/issues/4) **02-clerk-integration.md** - Implement Clerk authentication
-3. [#5](https://github.com/dougis-org/dnd-tracker/issues/5) **03-mongodb-setup.md** - Configure MongoDB Atlas connection
+3. [#5](https://github.com/dougis-org/dnd-tracker/issues/5) ✅ **03-mongodb-setup.md** - Configure MongoDB Atlas connection
 4. [#6](https://github.com/dougis-org/dnd-tracker/issues/6) **04-base-ui-components.md** - Set up shadcn/ui and Tailwind CSS
 5. [#7](https://github.com/dougis-org/dnd-tracker/issues/7)
    **05-deployment-config.md** - Configure Fly.io deployment
@@ -371,7 +371,7 @@ Z:\dev\Code\dnd-tracker\docs\
 
 [#4](https://github.com/dougis-org/dnd-tracker/issues/4) **02-clerk-integration.md** - Implement Clerk authentication
 
-[#5](https://github.com/dougis-org/dnd-tracker/issues/5) **03-mongodb-setup.md** - Configure MongoDB Atlas connection
+[#5](https://github.com/dougis-org/dnd-tracker/issues/5) ✅ **03-mongodb-setup.md** - Configure MongoDB Atlas connection
 
 [#6](https://github.com/dougis-org/dnd-tracker/issues/6) **04-base-ui-components.md** - Set up shadcn/ui and Tailwind CSS
 
