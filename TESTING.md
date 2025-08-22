@@ -112,6 +112,7 @@ Tests run automatically in CI with:
 ## Debugging Tests
 
 ### Jest Debug
+
 - Use `console.log()` or `debug()` from Testing Library
 - Run `npm run test:watch` for interactive debugging
 
