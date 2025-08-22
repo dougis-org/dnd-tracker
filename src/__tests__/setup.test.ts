@@ -43,6 +43,9 @@ describe('Project Setup', () => {
     test('should have proper folder structure', () => {
       ALLOWED_FOLDERS.forEach(folder => {
         const folderPath = path.join(process.cwd(), folder);
+        if (!existsSync(folderPath)) {
+          console.error(`Missing folder: ${folder} (full path: ${folderPath})`);
+        }
         expect(existsSync(folderPath)).toBe(true);
       });
     });
