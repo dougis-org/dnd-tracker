@@ -168,7 +168,7 @@ export function loadEnvConfig(): EnvConfig {
   }
   
   // Validate optional but important variables if they're set
-  const optionalVars = ['NEXT_PUBLIC_APP_URL', 'MONGODB_URI'];
+  const optionalVars = ['NEXT_PUBLIC_APP_URL'];
   for (const varName of optionalVars) {
     const value = process.env[varName];
     if (value) {
