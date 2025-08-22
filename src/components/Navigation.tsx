@@ -28,7 +28,7 @@ export default function Navigation({ className }: NavigationProps) {
   return (
     <nav className={cn('flex flex-col space-y-2', className)} role="navigation">
       {navigationItems.map((item) => {
-        const isActive = pathname === item.href;
+        const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
         return (
           <Link
             key={item.href}
