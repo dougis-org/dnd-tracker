@@ -43,7 +43,7 @@ Z:\dev\Code\dnd-tracker\docs\
    **05-deployment-config.md** - Configure Fly.io deployment
 6. [#8](https://github.com/dougis-org/dnd-tracker/issues/8) ✅
    **06-environment-variables.md** - Set up environment configuration
-7. [#9](https://github.com/dougis-org/dnd-tracker/issues/9)
+7. [#9](https://github.com/dougis-org/dnd-tracker/issues/9) ✅
    **07-basic-navigation.md** - Create app layout and navigation
 8. [#10](https://github.com/dougis-org/dnd-tracker/issues/10) ✅
    **08-testing-setup.md** - Configure Jest and Playwright
