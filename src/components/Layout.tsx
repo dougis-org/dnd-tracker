@@ -42,7 +42,7 @@ export default function Layout({ children }: LayoutProps) {
         {/* Sidebar for larger screens */}
         <aside className="hidden md:block md:w-64 md:border-r bg-card" data-testid="sidebar">
           <div className="p-4">
-            <Navigation />
+<Navigation aria-label="Main navigation" />
           </div>
         </aside>
 
