@@ -1,13 +1,10 @@
 import mongoose from 'mongoose';
+import { getDatabaseConfig } from './env';
 
 let isConnected = false;
 
 export async function connectToDatabase(): Promise<void> {
-  const MONGODB_URI = process.env.MONGODB_URI;
-  
-  if (!MONGODB_URI || MONGODB_URI.trim() === '') {
-    throw new Error('Please define MONGODB_URI in .env.local');
-  }
+  const { uri: MONGODB_URI } = getDatabaseConfig();
 
   if (isConnected && mongoose.connection.readyState === 1) {
     return;

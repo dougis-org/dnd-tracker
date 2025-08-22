@@ -10,13 +10,23 @@ jest.mock('mongoose', () => ({
   },
 }));
 
+// Mock env module
+jest.mock('../env', () => ({
+  getDatabaseConfig: jest.fn(),
+  resetEnvConfig: jest.fn(),
+}));
+
+import { getDatabaseConfig, resetEnvConfig } from '../env';
+
 const mockedMongoose = mongoose as jest.Mocked<typeof mongoose>;
+const mockedGetDatabaseConfig = getDatabaseConfig as jest.MockedFunction<typeof getDatabaseConfig>;
+const mockedResetEnvConfig = resetEnvConfig as jest.MockedFunction<typeof resetEnvConfig>;
 
 describe('MongoDB Connection Utility', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Reset environment variable
-    delete process.env.MONGODB_URI;
+    // Reset environment config cache
+    mockedResetEnvConfig.mockImplementation(() => {});
   });
 
   afterEach(async () => {
@@ -25,21 +35,11 @@ describe('MongoDB Connection Utility', () => {
   });
 
   describe('connectToDatabase', () => {
-    it('should throw error when MONGODB_URI is not defined', async () => {
-      await expect(connectToDatabase()).rejects.toThrow(
-        'Please define MONGODB_URI in .env.local'
-      );
-    });
-
-    it('should throw error when MONGODB_URI is empty string', async () => {
-      process.env.MONGODB_URI = '';
-      await expect(connectToDatabase()).rejects.toThrow(
-        'Please define MONGODB_URI in .env.local'
-      );
-    });
-
-    it('should connect to database when MONGODB_URI is valid', async () => {
-      process.env.MONGODB_URI = 'mongodb://localhost:27017/test';
+    it('should connect to database when configuration is valid', async () => {
+      mockedGetDatabaseConfig.mockReturnValue({
+        uri: 'mongodb://localhost:27017/test',
+        dbName: 'dnd-tracker'
+      });
       mockedMongoose.connect.mockResolvedValueOnce(mockedMongoose);
       
       await connectToDatabase();
@@ -53,7 +53,10 @@ describe('MongoDB Connection Utility', () => {
     });
 
     it('should not reconnect if already connected', async () => {
-      process.env.MONGODB_URI = 'mongodb://localhost:27017/test';
+      mockedGetDatabaseConfig.mockReturnValue({
+        uri: 'mongodb://localhost:27017/test',
+        dbName: 'dnd-tracker'
+      });
       mockedMongoose.connection.readyState = 1; // Connected state
       
       await connectToDatabase();
@@ -62,15 +65,21 @@ describe('MongoDB Connection Utility', () => {
     });
 
     it('should handle connection errors gracefully', async () => {
-      process.env.MONGODB_URI = 'mongodb://localhost:27017/test';
+      mockedGetDatabaseConfig.mockReturnValue({
+        uri: 'mongodb://localhost:27017/test',
+        dbName: 'dnd-tracker'
+      });
       const connectionError = new Error('Connection failed');
       mockedMongoose.connect.mockRejectedValueOnce(connectionError);
       
       await expect(connectToDatabase()).rejects.toThrow('Connection failed');
     });
 
-    it('should use connection pooling options', async () => {
-      process.env.MONGODB_URI = 'mongodb+srv://user:pass@cluster.mongodb.net/db';
+    it('should use connection pooling options with Atlas URI', async () => {
+      mockedGetDatabaseConfig.mockReturnValue({
+        uri: 'mongodb+srv://user:pass@cluster.mongodb.net/db',
+        dbName: 'dnd-tracker'
+      });
       mockedMongoose.connect.mockResolvedValueOnce(mockedMongoose);
       
       await connectToDatabase();
@@ -81,6 +90,14 @@ describe('MongoDB Connection Utility', () => {
           bufferCommands: false,
         }
       );
+    });
+
+    it('should throw error when getDatabaseConfig throws', async () => {
+      mockedGetDatabaseConfig.mockImplementation(() => {
+        throw new Error('Environment configuration error');
+      });
+      
+      await expect(connectToDatabase()).rejects.toThrow('Environment configuration error');
     });
   });
 
