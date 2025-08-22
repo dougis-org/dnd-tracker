@@ -7,7 +7,7 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends('next/core-web-vitals'),
   {
-    ignores: ['node_modules/**', '.next/**', 'out/**', '.codacy/**'],
+    ignores: ['node_modules/**', '.next/**', 'out/**', '.codacy/**', 'coverage/**'],
   },
   {
     files: ['*.config.js', '*.config.mjs', 'jest.setup.js', 'babel.config.js'],
@@ -22,6 +22,7 @@ const eslintConfig = [
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       'no-undef': 'off',
+      'import/no-anonymous-default-export': 'off',
     },
   },
   {
