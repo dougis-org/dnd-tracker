@@ -50,7 +50,7 @@ describe('Project Setup', () => {
 
   describe('Development Tools', () => {
     test('should have ESLint configuration', () => {
-      const eslintPath = path.join(process.cwd(), '.eslintrc.json');
+      const eslintPath = path.join(process.cwd(), 'eslint.config.js');
       expect(existsSync(eslintPath)).toBe(true);
     });
 
