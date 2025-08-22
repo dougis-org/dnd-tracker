@@ -78,6 +78,7 @@ test('user can navigate to page', async ({ page }) => {
 ### Jest Configuration
 
 Jest is configured in `jest.config.js` with:
+
 - Next.js integration
 - jsdom test environment
 - Path aliases (`@/` maps to `src/`)
