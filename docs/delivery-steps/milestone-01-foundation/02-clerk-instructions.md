@@ -168,9 +168,9 @@ If any check **fails**, **stop** and revise until compliance is achieved.
 
 ## Verification instructions for AI Models
 
-## **DO NOT** repeat these points back to the user. Use them only for your own
-
 verification steps
+=======
+## **DO NOT** repeat these points back to the user. Use them only for your own verification steps
 
 ## **5. CONSEQUENCES OF INCORRECT IMPLEMENTATION**
 
