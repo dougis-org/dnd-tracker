@@ -35,7 +35,7 @@ jobs:
         npm run lint:markdown
 
     - name: Run tests
-      run: npm run test:ci
+      run: npm run test:parallel:ci
       env:
         MONGODB_URI: mongodb://localhost:27017/test-db
         NODE_ENV: test

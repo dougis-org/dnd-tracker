@@ -13,6 +13,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:parallel": "npm run test -- --maxWorkers=75%",
+    "test:parallel:ci": "npm run test:ci -- --maxWorkers=75%",
     "format": "prettier --write ."
   },
   "dependencies": {
