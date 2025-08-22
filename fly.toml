@@ -27,33 +27,3 @@ primary_region = 'sea'
 [deploy]
   release_command = 'echo "Deploy starting..."'
 
-# Optional: Health checks
-[[services]]
-  protocol = 'tcp'
-  internal_port = 3000
-
-  [[services.ports]]
-    port = 80
-    handlers = ['http']
-    force_https = true
-
-  [[services.ports]]
-    port = 443
-    handlers = ['tls', 'http']
-
-  [services.concurrency]
-    type = 'connections'
-    hard_limit = 25
-    soft_limit = 20
-
-  [[services.tcp_checks]]
-    interval = '15s'
-    timeout = '2s'
-    grace_period = '1s'
-
-  [[services.http_checks]]
-    interval = '10s'
-    timeout = '2s'
-    grace_period = '5s'
-    method = 'get'
-    path = '/'
