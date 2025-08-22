@@ -3,8 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import type { Route } from 'next';
 
-const navigationItems = [
+interface NavigationItem {
+  name: string;
+  href: Route;
+}
+
+const navigationItems: NavigationItem[] = [
   { name: 'Dashboard', href: '/' },
   { name: 'Characters', href: '/characters' },
   { name: 'Parties', href: '/parties' },
