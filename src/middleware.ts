@@ -4,6 +4,7 @@ export default clerkMiddleware();
 
 export const config = {
   matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
     // This regex matches all routes except:
     // - Next.js internals (e.g., paths starting with "_next")
     // - Static files with the following extensions: html, htm, css, js (but not json), jpg, jpeg, webp, png, gif, svg, ttf, woff, woff2, ico, csv, doc, docx, xls, xlsx, zip, webmanifest
