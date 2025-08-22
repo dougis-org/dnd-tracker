@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 // Mock Clerk components to avoid ESM issues in Jest
+// Set global flag to indicate Clerk components should be mocked.
+// This is required for Jest to avoid ESM import issues with @clerk/nextjs.
 globalThis.__CLERK_MOCK__ = true;
 jest.mock('@clerk/nextjs', () => ({
   ClerkProvider: ({ children }: any) => <div data-testid="clerk-provider">{children}</div>,
