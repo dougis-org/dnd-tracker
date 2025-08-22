@@ -10,7 +10,7 @@ const eslintConfig = [
     ignores: ['node_modules/**', '.next/**', 'out/**', 'eslint.config.js', '.codacy/**'],
   },
   {
-    files: ['*.config.js', '*.config.mjs', 'jest.setup.js', 'babel.config.js', 'eslint.config.js'],
+    files: ['*.config.js', '*.config.mjs', 'jest.setup.js', 'babel.config.js'],
     languageOptions: {
       globals: {
         require: 'readonly',
