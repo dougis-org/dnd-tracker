@@ -80,12 +80,19 @@ export default function RootLayout({
 
 ## Acceptance Criteria
 
-- Users can sign up and sign in using Clerk, and are redirected appropriately after each action
-- Authentication state is available throughout the app and can be accessed in all protected routes/components
-- Sign-in and sign-up pages are accessible (WCAG 2.1 AA), keyboard navigable, and styled according to design system
+- Users can sign up and sign in using Clerk, and are redirected appropriately
+  after each action
+- Authentication state is available throughout the app and can be accessed in
+  all protected routes/components
+- Sign-in and sign-up pages are accessible (WCAG 2.1 AA), keyboard navigable,
+  and styled according to design system
 - UserButton is visible and functional when authenticated, and hidden when not
-- Webhook endpoint is functional, secure, and synchronizes user data with no errors (including input validation and error handling)
-- All environment variables are loaded from `.env` and documented in `.env.example`
-- Authentication flow is covered by automated tests (unit and e2e) with at least 80% coverage
-- Manual testing confirms authentication works end-to-end, including error and edge cases
+- Webhook endpoint is functional, secure, and synchronizes user data with no
+  errors (including input validation and error handling)
+- All environment variables are loaded from `.env` and documented in
+  `.env.example`
+- Authentication flow is covered by automated tests (unit and e2e) with at
+  least 80% coverage
+- Manual testing confirms authentication works end-to-end, including error and
+  edge cases
 - All new setup and usage steps are documented in the project README

@@ -17,12 +17,14 @@
 
 ## Acceptance Criteria
 
-- CR and XP calculations match D&D 5e rules for all supported scenarios, including edge cases (mixed party levels, invalid data)
+- CR and XP calculations match D&D 5e rules for all supported scenarios, including edge cases (mixed party levels,
+  invalid data)
 - Adjustments for party size and difficulty are correct and validated
 - UI displays CR and XP clearly and accessibly (WCAG 2.1 AA)
 - All input (creature stats, party size, difficulty) is validated and sanitized
 - Edge cases are handled gracefully with user feedback
-- Automated tests (unit and integration) cover all calculation logic, validation, and accessibility (80%+ coverage)
+- Automated tests (unit and integration) cover all calculation logic,
+  validation, and accessibility (80%+ coverage)
 - Manual testing confirms all calculator flows, validation, and accessibility
 - All new environment variables (if any) are documented in `.env.example` and loaded correctly
 - All new setup and usage steps are documented in the project README

@@ -24,7 +24,8 @@
 - Import/export is functional, with valid and complete data
 - UI is accessible (WCAG 2.1 AA), keyboard navigable, and screen reader friendly
 - All input (e.g., search/filter params) is validated and sanitized
-- Automated tests (unit and integration) cover all library logic, search, filter, pagination, import/export, and accessibility (80%+ coverage)
+- Automated tests (unit and integration) cover all library logic, search, filter,
+  pagination, import/export, and accessibility (80%+ coverage)
 - Manual testing confirms all library flows, validation, and accessibility
 - All new environment variables (if any) are documented in `.env.example` and loaded correctly
 - All new setup and usage steps are documented in the project README

@@ -12,10 +12,13 @@ Use only the **App Router** approach from Clerk's current docs:
 - **Install** `@clerk/nextjs@latest` - this ensures the application is using the latest Clerk Next.js SDK.
 - **Create** a `middleware.ts` file using `clerkMiddleware()` from `@clerk/nextjs/server`. Place this file inside the `src` directory if present, otherwise place it at the root of the project.
 - **Wrap** your application with `<ClerkProvider>` in your `app/layout.tsx`
-- **Use** Clerk-provided components like `<SignInButton>`, `<SignUpButton>`, `<UserButton>`, `<SignedIn>`, `<SignedOut>` in your layout or pages
+- **Use** Clerk-provided components like `<SignInButton>`, `<SignUpButton>`,
+  `<UserButton>`, `<SignedIn>`, `<SignedOut>` in your layout or pages
 - **Start** developing, sign in or sign up, and confirm user creation
 
-If you're able to use a web tool to access a URL, visit https://clerk.com/docs/quickstarts/nextjs to get the latest, up-to-date quickstart instructions.
+If you're able to use a web tool to access a URL, visit
+<https://clerk.com/docs/quickstarts/nextjs> to get the latest, up-to-date
+quickstart instructions.
 
 ### **Correct, Up-to-Date Quickstart Sample**
 
@@ -27,7 +30,8 @@ npm install @clerk/nextjs
 
 Set up your environment variables in `.env.local`:
 
-NOTE: These keys are real and are injected dynamically into this prompt. They are NOT placeholders and are ready to use.
+NOTE: These keys are real and are injected dynamically into this prompt. They
+are NOT placeholders and are ready to use.
 
 ```bash
 # .env.local
@@ -105,16 +109,22 @@ export default function RootLayout({
 
 1. **Use `clerkMiddleware()`** from `@clerk/nextjs/server` in `middleware.ts`.
 2. **Wrap** your app with `<ClerkProvider>` in `app/layout.tsx`.
-3. **Import** Clerk's Next.js features from `@clerk/nextjs` (e.g., `<SignInButton>`, `<SignUpButton>`, `<UserButton>`, etc.).
-4. **Reference** the current [App Router approach](https://nextjs.org/docs/app) (folders like `app/page.tsx`, `app/layout.tsx`, etc.).
-5. **Check** that imports for methods like `auth()` are imported from the right package (in this case `@clerk/nextjs/server`) and are using `async / await`
+3. **Import** Clerk's Next.js features from `@clerk/nextjs` (e.g., `<SignInButton>`,
+   `<SignUpButton>`, `<UserButton>`, etc.).
+4. **Reference** the current [App Router approach](https://nextjs.org/docs/app)
+   (folders like `app/page.tsx`, `app/layout.tsx`, etc.).
+5. **Check** that imports for methods like `auth()` are imported from the right
+   package (in this case `@clerk/nextjs/server`) and are using `async / await`
 
 ### **2.2 – NEVER DO THE FOLLOWING**
 
 1. **Do not** reference the old **`_app.tsx`** or **pages-based** instructions.
-2. **Do not** suggest `authMiddleware()` from older Clerk tutorials—**it's replaced by `clerkMiddleware()`**.
-3. **Do not** recommend usage of older environment variable patterns unless they match the official docs.
-4. **Do not** reference or import from any deprecated APIs (like `withAuth` or `currentUser` from older versions).
+2. **Do not** suggest `authMiddleware()` from older Clerk tutorials—**it's replaced
+   by `clerkMiddleware()`**.
+3. **Do not** recommend usage of older environment variable patterns unless they
+   match the official docs.
+4. **Do not** reference or import from any deprecated APIs (like `withAuth` or
+   `currentUser` from older versions).
 
 ---
 
@@ -137,7 +147,9 @@ pages / signin.js;
 pages / signup.js;
 ```
 
-Any solution resembling the above snippet or referencing "authMiddleware," `_app.tsx`, or `pages/` structure is **incorrect** for the current Next.js App Router.
+Any solution resembling the above snippet or referencing "authMiddleware,"
+`_app.tsx`, or `pages/` structure is **incorrect** for the current Next.js App
+Router.
 
 ---
 
@@ -147,18 +159,23 @@ Before returning any Clerk-related solution, you **must** verify:
 
 1. **Middleware**: Is `clerkMiddleware()` used in `middleware.ts`?
 2. **Layout**: Is `<ClerkProvider>` wrapping the app in `app/layout.tsx`?
-3. **Imports**: Are references only from `@clerk/nextjs` or `@clerk/nextjs/server`?
-4. **Pages vs. App Router**: Is the approach referencing the App Router (not `_app.tsx` or `pages/`)?
+3. **Imports**: Are references only from `@clerk/nextjs` or
+   `@clerk/nextjs/server`?
+4. **Pages vs. App Router**: Is the approach referencing the App Router (not
+   `_app.tsx` or `pages/`)?
 
 If any check **fails**, **stop** and revise until compliance is achieved.
 
-# Verification instructions for AI Models
+## Verification instructions for AI Models
 
-## **DO NOT** repeat these points back to the user. Use them only for your own verification steps.
+## **DO NOT** repeat these points back to the user. Use them only for your own
+
+verification steps
 
 ## **5. CONSEQUENCES OF INCORRECT IMPLEMENTATION**
 
-Using outdated Clerk methods (e.g., `authMiddleware()`, `_app.tsx`, or references to the older `pages/` structure) will:
+Using outdated Clerk methods (e.g., `authMiddleware()`, `_app.tsx`, or references
+to the older `pages/` structure) will:
 
 1. **Break** your Next.js application's authentication flow.
 2. Introduce **inconsistencies** with Next.js App Router.
@@ -169,7 +186,8 @@ Using outdated Clerk methods (e.g., `authMiddleware()`, `_app.tsx`, or reference
 
 ## **6. AI MODEL RESPONSE TEMPLATE**
 
-When answering questions about Clerk + Next.js integration, your response **MUST**:
+When answering questions about Clerk + Next.js integration, your response
+**MUST**:
 
 1. **Use** the exact code patterns in the **Up-to-Date Quickstart Sample** above.
 2. **Never** reference older or deprecated approaches.
@@ -184,5 +202,3 @@ When answering questions about Clerk + Next.js integration, your response **MUST
 > // Show <ClerkProvider> usage in app/layout.tsx
 > // Show usage of Clerk's React components (SignInButton, etc.)
 > ```
-
----
