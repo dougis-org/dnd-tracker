@@ -1,17 +1,22 @@
 import { render, screen } from '@testing-library/react'
-import { Welcome } from '../Welcome'
-
-// Mock the useWelcome hook
-jest.mock('@/hooks/useWelcome', () => ({
-  useWelcome: () => ({
-    message: {
-      title: 'Test Welcome Title',
-      description: 'Test welcome description'
-    }
-  })
-}))
 
 describe('Welcome Component', () => {
+  let Welcome: typeof import('../Welcome').Welcome
+
+  beforeEach(async () => {
+    jest.resetModules()
+    jest.doMock('@/hooks/useWelcome', () => ({
+      useWelcome: () => ({
+        message: {
+          title: 'Test Welcome Title',
+          description: 'Test welcome description'
+        }
+      })
+    }))
+    // Dynamically import after mocking
+    Welcome = (await import('../Welcome')).Welcome
+  })
+
   it('renders the welcome message', () => {
     render(<Welcome />)
     
