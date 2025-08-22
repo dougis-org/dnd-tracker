@@ -7,7 +7,7 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends('next/core-web-vitals'),
   {
-    ignores: ['node_modules/**', '.next/**', 'out/**', 'eslint.config.js', '.codacy/**'],
+    ignores: ['node_modules/**', '.next/**', 'out/**', '.codacy/**'],
   },
   {
     files: ['*.config.js', '*.config.mjs', 'jest.setup.js', 'babel.config.js'],
