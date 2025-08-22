@@ -43,7 +43,7 @@ describe('Deployment Configuration', () => {
     it('fly.toml should have correct app name', () => {
       const flyTomlPath = join(rootDir, 'fly.toml');
       const flyTomlContent = readFileSync(flyTomlPath, 'utf-8');
-      expect(flyTomlContent).toContain('app = \'dnd-tracker-next-js\'');
+      expect(flyTomlContent).toContain('app = \'dnd-tracker\'');
     });
 
     it('fly.toml should configure internal port 3000', () => {
