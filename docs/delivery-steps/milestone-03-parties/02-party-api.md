@@ -2,7 +2,8 @@
 
 [Issue #22](https://github.com/dougis-org/dnd-tracker/issues/22)
 
-**Objective:** Build robust API endpoints for party management, including CRUD, sharing, templates, tier enforcement, and error handling.
+**Objective:** Build robust API endpoints for party management, including CRUD,
+sharing, templates, tier enforcement, and error handling.
 
 ## API Endpoints
 

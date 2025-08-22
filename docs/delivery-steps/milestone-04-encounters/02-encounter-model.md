@@ -43,7 +43,8 @@ export interface IEncounter {
 
 ## Acceptance Criteria
 
-- Encounter schema supports all required fields (party, creatures, state, CR/XP, lair/legendary actions) and matches the schema definition
+- Encounter schema supports all required fields (party, creatures, state, CR/XP,
+  lair/legendary actions) and matches the schema definition
 - Links to party and creature models are functional and tested
 - Lair and legendary actions are supported and validated
 - CR and XP are calculated and stored correctly

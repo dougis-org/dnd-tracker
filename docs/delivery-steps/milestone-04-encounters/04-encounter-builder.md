@@ -1,6 +1,7 @@
 # Encounter Builder
 
-**Objective:** Create a drag-and-drop interface for building encounters with parties and creatures, including real-time CR/XP calculation and validation.
+**Objective:** Create a drag-and-drop interface for building encounters with
+parties and creatures, including real-time CR/XP calculation and validation.
 
 ## Tasks
 
