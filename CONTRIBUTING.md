@@ -42,7 +42,7 @@ Before creating a PR, ensure:
 - [ ] ESLint passes without errors (`npm run lint`)
 - [ ] Markdownlint passes without errors (`npm run lint:markdown:fix`)
 - [ ] All tests pass (`npm run test:ci`)
-- [ ] Build completes successfully (`pnpm build`)
+- [ ] Build completes successfully (`npm run build`)
 - [ ] All new dependencies are installed and scanned (see Security below)
 - [ ] Environment variables are documented in `.env.example`
 - [ ] Code follows all project conventions and best practices

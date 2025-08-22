@@ -18,7 +18,7 @@ describe('Deployment Configuration', () => {
     it('Dockerfile should use correct Node.js version', () => {
       const dockerfilePath = join(rootDir, 'Dockerfile');
       const dockerfileContent = readFileSync(dockerfilePath, 'utf-8');
-      expect(dockerfileContent).toContain('FROM node:20-alpine');
+      expect(dockerfileContent).toContain('FROM node:24-alpine');
     });
 
     it('Dockerfile should expose port 3000', () => {

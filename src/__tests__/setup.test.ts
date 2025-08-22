@@ -54,8 +54,8 @@ describe('Project Setup', () => {
       expect(existsSync(eslintPath)).toBe(true);
     });
 
-    test('should have package manager configuration for pnpm', () => {
-      expect(packageJson.packageManager).toMatch(/pnpm@/);
+    test('should not have package manager configuration (uses npm by default)', () => {
+      expect(packageJson.packageManager).toBeUndefined();
     });
   });
 
