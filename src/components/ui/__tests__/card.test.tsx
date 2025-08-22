@@ -34,6 +34,22 @@ describe('Card Components', () => {
     })
   })
 
+  describe('CardTitle ref forwarding', () => {
+    it('forwards ref correctly to heading element', () => {
+      const ref = { current: null }
+      render(<CardTitle ref={ref}>Title</CardTitle>)
+      expect(ref.current).toBeInstanceOf(HTMLHeadingElement)
+    })
+  })
+
+  describe('CardDescription ref forwarding', () => {
+    it('forwards ref correctly to paragraph element', () => {
+      const ref = { current: null }
+      render(<CardDescription ref={ref}>Description</CardDescription>)
+      expect(ref.current).toBeInstanceOf(HTMLParagraphElement)
+    })
+  })
+
   describe('CardHeader', () => {
     it('renders with correct classes', () => {
       render(<CardHeader data-testid="header">Header content</CardHeader>)
@@ -46,9 +62,10 @@ describe('Card Components', () => {
   })
 
   describe('CardTitle', () => {
-    it('renders with correct typography classes', () => {
+    it('renders with correct typography classes and semantic heading', () => {
       render(<CardTitle data-testid="title">Card Title</CardTitle>)
       const title = screen.getByTestId('title')
+      expect(title.tagName).toBe('H3')
       expect(title).toHaveClass('text-2xl')
       expect(title).toHaveClass('font-semibold')
       expect(title).toHaveClass('leading-none')
@@ -57,9 +74,10 @@ describe('Card Components', () => {
   })
 
   describe('CardDescription', () => {
-    it('renders with correct text styling', () => {
+    it('renders with correct text styling and semantic paragraph', () => {
       render(<CardDescription data-testid="description">Description</CardDescription>)
       const description = screen.getByTestId('description')
+      expect(description.tagName).toBe('P')
       expect(description).toHaveClass('text-sm')
       expect(description).toHaveClass('text-muted-foreground')
     })
