@@ -66,4 +66,5 @@ ENV HOSTNAME=0.0.0.0
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
 # Force the hostname and port to ensure proper binding in containers
-CMD ["sh", "-c", "export HOSTNAME=0.0.0.0 && export PORT=3000 && node server.js"]
+ENTRYPOINT [ "./docker-entrypoint.js" ]
+CMD [ "npm", "run", "start" ]
