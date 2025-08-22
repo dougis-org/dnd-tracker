@@ -1,34 +1,27 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
-
-const inter = Inter({ subsets: ["latin"] });
+import type { Metadata } from 'next'
+import { ClerkProvider } from '@clerk/nextjs';
+import Layout from '@/components/Layout';
+import './globals.css'
 
 export const metadata: Metadata = {
-  title: "D&D Encounter Tracker",
-  description: "Track your D&D encounters, parties, and adventures",
-};
+  title: 'D&D Combat Tracker',
+  description: 'A comprehensive tool for managing D&D 5e combat encounters',
+}
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface RootLayoutProps {
+  children: React.ReactNode
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+    <ClerkProvider>
+      <html lang="en">
+        <body>
+          <Layout>
+            {children}
+          </Layout>
+        </body>
+      </html>
+    </ClerkProvider>
+  )
 }
