@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-
+fatal() {
+    echo "Error: $1" >&2
+    exit 1
+}
 set -eo pipefail
 
 # Set up paths first
