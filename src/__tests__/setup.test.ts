@@ -43,6 +43,9 @@ describe('Project Setup', () => {
     test('should have proper folder structure', () => {
       ALLOWED_FOLDERS.forEach(folder => {
         const folderPath = path.join(process.cwd(), folder);
+        if (!existsSync(folderPath)) {
+          console.error(`Missing folder: ${folder} (full path: ${folderPath})`);
+        }
         expect(existsSync(folderPath)).toBe(true);
       });
     });
@@ -50,12 +53,12 @@ describe('Project Setup', () => {
 
   describe('Development Tools', () => {
     test('should have ESLint configuration', () => {
-      const eslintPath = path.join(process.cwd(), '.eslintrc.json');
+      const eslintPath = path.join(process.cwd(), 'eslint.config.js');
       expect(existsSync(eslintPath)).toBe(true);
     });
 
-    test('should have package manager configuration for pnpm', () => {
-      expect(packageJson.packageManager).toMatch(/pnpm@/);
+    test('should not have package manager configuration (uses npm by default)', () => {
+      expect(packageJson.packageManager).toBeUndefined();
     });
   });
 

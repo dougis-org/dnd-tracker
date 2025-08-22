@@ -1,5 +1,5 @@
-# Use the official Node.js 20 image
-FROM node:20-alpine AS base
+# Use the official Node.js 24 image
+FROM node:24-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -9,8 +9,8 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json pnpm-lock.yaml* ./
-RUN corepack enable pnpm && pnpm i --frozen-lockfile
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -23,10 +23,7 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Temporarily move babel.config.js to avoid build issues with Next.js 15 + Node 24
-RUN mv babel.config.js babel.config.js.bak || true
-RUN corepack enable pnpm && pnpm run build
-RUN mv babel.config.js.bak babel.config.js || true
+RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
