@@ -58,11 +58,24 @@ describe('Deployment Configuration', () => {
       expect(flyTomlContent).toContain('force_https = true');
     });
 
-    it('fly.toml should have health checks configured', () => {
+    it('fly.toml should use modern http_service configuration', () => {
       const flyTomlPath = join(rootDir, 'fly.toml');
       const flyTomlContent = readFileSync(flyTomlPath, 'utf-8');
-      expect(flyTomlContent).toContain('[[services.http_checks]]');
-      expect(flyTomlContent).toContain('[[services.tcp_checks]]');
+      expect(flyTomlContent).toContain('[http_service]');
+      expect(flyTomlContent).toContain('auto_stop_machines');
+      expect(flyTomlContent).toContain('auto_start_machines');
+    });
+
+    it('fly.toml should not have conflicting http_service and services configuration', () => {
+      const flyTomlPath = join(rootDir, 'fly.toml');
+      const flyTomlContent = readFileSync(flyTomlPath, 'utf-8');
+      
+      const hasHttpService = flyTomlContent.includes('[http_service]');
+      const hasServicesSection = flyTomlContent.includes('[[services]]');
+      
+      // Should use http_service (modern) but not both
+      expect(hasHttpService).toBe(true);
+      expect(hasServicesSection).toBe(false);
     });
   });
 

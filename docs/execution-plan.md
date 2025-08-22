@@ -45,7 +45,7 @@ Z:\dev\Code\dnd-tracker\docs\
    **06-environment-variables.md** - Set up environment configuration
 7. [#9](https://github.com/dougis-org/dnd-tracker/issues/9)
    **07-basic-navigation.md** - Create app layout and navigation
-8. [#10](https://github.com/dougis-org/dnd-tracker/issues/10)
+8. [#10](https://github.com/dougis-org/dnd-tracker/issues/10) ✅
    **08-testing-setup.md** - Configure Jest and Playwright
 
 ### Success Criteria
@@ -385,7 +385,7 @@ Z:\dev\Code\dnd-tracker\docs\
 [#9](https://github.com/dougis-org/dnd-tracker/issues/9)
    **07-basic-navigation.md** - Create app layout and navigation
 
-[#10](https://github.com/dougis-org/dnd-tracker/issues/10) **08-testing-setup.md** - Configure Jest and Playwright
+[#10](https://github.com/dougis-org/dnd-tracker/issues/10) ✅ **08-testing-setup.md** - Configure Jest and Playwright
 
 ### Success Criteria (Appendix)
 
