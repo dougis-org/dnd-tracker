@@ -34,7 +34,7 @@ export default function Layout({ children }: LayoutProps) {
         </div>
         {/* Mobile Navigation */}
         <div className="md:hidden border-t px-4 py-2">
-          <Navigation />
+<Navigation aria-label="Mobile navigation" />
         </div>
       </header>
 
