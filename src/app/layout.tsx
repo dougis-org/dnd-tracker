@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs';
 import Layout from '@/components/Layout';
-import { getClerkConfig } from '@/lib/env';
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -14,10 +13,8 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
-  const clerkConfig = getClerkConfig();
-  
   return (
-    <ClerkProvider publishableKey={clerkConfig.publishableKey}>
+    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
       <html lang="en">
         <body>
           <Layout>
