@@ -1,7 +1,7 @@
 # fly.toml app configuration file generated for dnd-tracker on 2025-08-22T01:08:35Z
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 
-app = 'dnd-tracker-next-js'
+app = 'dnd-tracker'
 primary_region = 'sea'
 
 [build]
