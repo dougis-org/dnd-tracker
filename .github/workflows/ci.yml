@@ -12,7 +12,7 @@ jobs:
     
     services:
       mongodb:
-        image: mongo:6.0
+        image: mongo:8.0
         ports:
           - 27017:27017
 
@@ -35,7 +35,7 @@ jobs:
         npm run lint:markdown
 
     - name: Run tests
-      run: npm run test:ci
+      run: npm run test:parallel:ci
       env:
         MONGODB_URI: mongodb://localhost:27017/test-db
         NODE_ENV: test
@@ -47,27 +47,9 @@ jobs:
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
         CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
 
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v4
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    - name: Run Codacy Coverage Reporter
+      uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 # v1
       with:
-        file: ./coverage/lcov.info
-        flags: unittests
-        name: codecov-umbrella
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Fly CLI
-      uses: superfly/flyctl-actions/setup-flyctl@master
-
-    - name: Deploy to Fly.io
-      run: flyctl deploy --remote-only
-      env:
-        FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        project-token: ${{ secrets.CODACY_API_TOKEN }}
+        coverage-reports: ./coverage/lcov.info
+      continue-on-error: true

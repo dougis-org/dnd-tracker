@@ -85,11 +85,10 @@ describe('Deployment Configuration', () => {
       expect(workflowContent).toContain('test:');
     });
 
-    it('CI workflow should include deploy job', () => {
+    it('CI workflow should include coverage push job', () => {
       const workflowPath = join(rootDir, '.github/workflows/ci.yml');
       const workflowContent = readFileSync(workflowPath, 'utf-8');
-      expect(workflowContent).toContain('deploy:');
-      expect(workflowContent).toContain('flyctl deploy');
+      expect(workflowContent).toContain('Codacy Coverage');
     });
 
     it('CI workflow should use MongoDB service', () => {
