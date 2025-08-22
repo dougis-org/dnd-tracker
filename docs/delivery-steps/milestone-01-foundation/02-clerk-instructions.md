@@ -1,6 +1,7 @@
 # Add Clerk to Next.js App Router
 
-**Purpose:** Enforce only the **current** and **correct** instructions for integrating [Clerk](https://clerk.com/) into a Next.js (App Router) application.
+**Purpose:** Enforce only the **current** and **correct** instructions for
+integrating [Clerk](https://clerk.com/) into a Next.js (App Router) application.
 **Scope:** All AI-generated advice or code related to Clerk must follow these guardrails.
 
 ---
@@ -9,8 +10,11 @@
 
 Use only the **App Router** approach from Clerk's current docs:
 
-- **Install** `@clerk/nextjs@latest` - this ensures the application is using the latest Clerk Next.js SDK.
-- **Create** a `middleware.ts` file using `clerkMiddleware()` from `@clerk/nextjs/server`. Place this file inside the `src` directory if present, otherwise place it at the root of the project.
+- **Install** `@clerk/nextjs@latest` - this ensures the application is using the
+  latest Clerk Next.js SDK.
+- **Create** a `middleware.ts` file using `clerkMiddleware()` from
+  `@clerk/nextjs/server`. Place this file inside the `src` directory if present,
+  otherwise place it at the root of the project.
 - **Wrap** your application with `<ClerkProvider>` in your `app/layout.tsx`
 - **Use** Clerk-provided components like `<SignInButton>`, `<SignUpButton>`,
   `<UserButton>`, `<SignedIn>`, `<SignedOut>` in your layout or pages
@@ -168,8 +172,7 @@ If any check **fails**, **stop** and revise until compliance is achieved.
 
 ## Verification instructions for AI Models
 
-verification steps
-=======
+## Verification Steps
 
 ## **DO NOT** repeat these points back to the user. Use them only for your own verification steps
 
