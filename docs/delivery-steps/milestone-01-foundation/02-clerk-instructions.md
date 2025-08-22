@@ -15,7 +15,7 @@ Use only the **App Router** approach from Clerk's current docs:
 - **Use** Clerk-provided components like `<SignInButton>`, `<SignUpButton>`, `<UserButton>`, `<SignedIn>`, `<SignedOut>` in your layout or pages
 - **Start** developing, sign in or sign up, and confirm user creation
 
-If you're able to use a web tool to access a URL, visit https://clerk.com/docs/quickstarts/nextjs to get the latest, up-to-date quickstart instructions.
+If you're able to use a web tool to access a URL, visit <https://clerk.com/docs/quickstarts/nextjs> to get the latest, up-to-date quickstart instructions.
 
 ### **Correct, Up-to-Date Quickstart Sample**
 
@@ -154,7 +154,7 @@ If any check **fails**, **stop** and revise until compliance is achieved.
 
 # Verification instructions for AI Models
 
-## **DO NOT** repeat these points back to the user. Use them only for your own verification steps.
+## **DO NOT** repeat these points back to the user. Use them only for your own verification steps
 
 ## **5. CONSEQUENCES OF INCORRECT IMPLEMENTATION**
 
