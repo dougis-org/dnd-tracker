@@ -6,11 +6,11 @@ import '@testing-library/jest-dom';
 // This is required for Jest to avoid ESM import issues with @clerk/nextjs.
 globalThis.__CLERK_MOCK__ = true;
 jest.mock('@clerk/nextjs', () => ({
-  ClerkProvider: ({ children }: any) => <div data-testid="clerk-provider">{children}</div>,
+  ClerkProvider: ({ children }: { children: React.ReactNode }) => <div data-testid="clerk-provider">{children}</div>,
   SignInButton: () => <button>Sign In</button>,
   SignUpButton: () => <button>Sign Up</button>,
-  SignedIn: ({ children }: any) => <div data-testid="signed-in">{children}</div>,
-  SignedOut: ({ children }: any) => <div data-testid="signed-out">{children}</div>,
+  SignedIn: ({ children }: { children: React.ReactNode }) => <div data-testid="signed-in">{children}</div>,
+  SignedOut: ({ children }: { children: React.ReactNode }) => <div data-testid="signed-out">{children}</div>,
   UserButton: () => <div data-testid="user-button">User</div>,
 }));
 
