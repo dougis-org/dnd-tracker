@@ -88,6 +88,7 @@ Jest is configured in `jest.config.js` with:
 ### Playwright Configuration
 
 Playwright is configured in `playwright.config.ts` with:
+
 - Multiple browser support (Chromium, Firefox, WebKit)
 - Automatic dev server startup
 - Test parallelization
@@ -105,6 +106,7 @@ Playwright is configured in `playwright.config.ts` with:
 ## Continuous Integration
 
 Tests run automatically in CI with:
+
 - `npm run test:ci` for unit tests with coverage
 - `npm run test:e2e` for e2e tests
 - ESLint for code quality
@@ -118,6 +120,7 @@ Tests run automatically in CI with:
 - Run `npm run test:watch` for interactive debugging
 
 ### Playwright Debug
+
 - Use `npm run test:e2e:headed` to see browser actions
 - Use `npm run test:e2e:ui` for interactive debugging
 - Add `await page.pause()` in tests for step-through debugging

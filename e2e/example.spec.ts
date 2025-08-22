@@ -10,10 +10,10 @@ test('homepage loads correctly', async ({ page }) => {
   await expect(page.locator('body')).toBeVisible();
 });
 
-test('navigation works', async ({ page }) => {
+test('navigation menu is visible', async ({ page }) => {
   await page.goto('/');
-  
-  // Test basic navigation if there are nav links
-  // This is a placeholder test - update based on actual UI
-  await expect(page.locator('body')).toBeVisible();
+
+  // This is a placeholder test - update selector based on actual UI
+  // For example, look for a <nav> element or an element with a specific role or test ID.
+  await expect(page.getByRole('navigation')).toBeVisible();
 });
