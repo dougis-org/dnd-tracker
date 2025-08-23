@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   return (
     <main className="container mx-auto py-8 space-y-8">

@@ -5,6 +5,7 @@ app = 'dnd-tracker'
 primary_region = 'sea'
 
 [build]
+  secret = ["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY", "MONGODB_URI", "CLERK_SECRET_KEY"]
 
 [env]
   NODE_ENV = 'production'

@@ -23,10 +23,7 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Temporary build-time env vars to allow static generation (real values used at runtime)
-ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_buildtime_placeholder_1234567890abcdefghijklmnopqrstuvwxyz1234567890
-ENV MONGODB_URI=mongodb://localhost:27017/buildtime
-ENV CLERK_SECRET_KEY=sk_test_buildtime_placeholder_1234567890abcdefghijklmnopqrstuvwxyz1234567890
+# Build secrets are automatically available as environment variables
 
 RUN npm run build
 
