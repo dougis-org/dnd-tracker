@@ -2,7 +2,7 @@
 
 **Product Name:** D&D Encounter Tracker Web App
 **Version:** 3.0
-**Date:** August 20, 2025
+**Date:** August 23, 2025
 
 ## 1. Purpose
 
@@ -311,30 +311,229 @@ monetize advanced features while providing a robust free tier for new users.
 - **UI Development**: shadcn/ui CLI for component generation and management
 - **Deployment**: Fly.io CLI for streamlined deployment and scaling management
 
-## 8. Success Metrics
+## 8. User Dashboard & Landing Page Requirements
 
-### 8.1 Business Metrics
+### 8.1 Landing Page for Non-Authenticated Users
 
-- **Monthly Recurring Revenue (MRR)**: Target $10k MRR within 12 months
-- **Customer Acquisition Cost (CAC)**: < $25 per paid customer
-- **Lifetime Value (LTV)**: > $100 per paid customer
-- **Churn Rate**: < 5% monthly churn for paid subscribers
+#### 8.1.1 Hero Section
 
-### 8.2 Product Metrics
+- **Primary Headline**: "Master Your D&D Combat Encounters"
+- **Sub-headline**: "The comprehensive tool that makes combat tracking effortless for Dungeon Masters"
+- **Call-to-Action**: Prominent "Start Free Trial" button leading to sign-up
+- **Visual Element**: Animated D&D dice or combat scene illustration
+- **Trust Indicators**: "Trusted by 10,000+ Dungeon Masters" with user avatars
 
-- **Free-to-Paid Conversion**: > 5% of free users upgrade within 30 days
-- **Feature Adoption**: > 70% of premium users use advanced features
-- **User Engagement**: > 4 sessions per month for active users
-- **NPS Score**: > 50 Net Promoter Score from user surveys
-- **Lair Action Usage**: > 60% of encounters with legendary creatures also
-  use lair actions
+#### 8.1.2 Value Proposition Section
 
-### 8.3 Technical Metrics
+**Core Benefits Showcase** (3-column layout):
 
-- **Uptime**: 99.9% availability SLA
-- **Performance**: < 3s page load time, < 100ms API response time
-- **Error Rate**: < 0.1% of requests result in errors
-- **Data Loss**: Zero tolerance for user data loss
+1. **"Streamline Combat Flow"**
+   - Icon: ⚔️ Crossed swords
+   - Description: "Track initiative, HP, and status effects in real-time"
+   - Example: Screenshot of active combat tracker with sample characters
+
+2. **"Never Lose Progress"**
+   - Icon: ☁️ Cloud sync
+   - Description: "Cloud sync keeps your campaigns safe across all devices"
+   - Example: Multi-device illustration showing sync
+
+3. **"Scale Your Adventures"**
+   - Icon: 🏰 Castle
+   - Description: "From single encounters to epic campaigns with unlimited possibilities"
+   - Example: Tier comparison visual
+
+#### 8.1.3 Feature Preview Section
+
+**Interactive Demo** (tabbed interface):
+
+- **Tab 1: "Initiative Tracker"**
+  - Live example showing:
+    - 4 sample characters: "Thorin (Fighter)", "Lyra (Wizard)", "Goblin Archer", "Orc Warrior"
+    - Initiative order: 18, 15, 12, 8
+    - Current turn indicator on "Lyra"
+    - HP bars: Thorin (45/45), Lyra (28/32), Goblin (7/7), Orc (15/15)
+
+- **Tab 2: "Lair Actions"**
+  - Example lair action on initiative 20:
+    - "The ancient dragon's lair trembles. Choose one:"
+    - "• Stalactites fall (DC 15 Dex save)"
+    - "• Poisonous gas fills area"
+    - Visual countdown timer showing "Next in 3 turns"
+
+- **Tab 3: "Status Effects"**
+  - Character with multiple conditions:
+    - "Kael Brightblade" with "Poisoned (3 rounds)", "Blessed (5 rounds)"
+    - Automatic duration tracking
+    - Color-coded status indicators
+
+#### 8.1.4 Subscription Tiers Comparison
+
+**Freemium Focus Table**:
+
+| Feature | Free Adventurer | Seasoned Adventurer | Expert DM |
+|---------|----------------|-------------------|-----------|
+| **Parties** | 1 | 3 | 10 |
+| **Encounters** | 3 | 15 | 50 |
+| **Max Participants** | 6 | 10 | 20 |
+| **Cloud Sync** | ❌ | ✅ | ✅ |
+| **Advanced Logging** | ❌ | ✅ | ✅ |
+| **Custom Themes** | ❌ | ❌ | ✅ |
+
+**Call-to-Action**: "Start with Free Forever Plan" with secondary "View All Plans" link
+
+#### 8.1.5 Social Proof Section
+
+**Testimonials** (3-card carousel):
+
+1. **"Game Changer for My Campaign"**
+   - "Finally, combat flows smoothly without losing track of anything. My players love how organized our sessions are now."
+   - Sarah K., DM for 5 years
+   - ⭐⭐⭐⭐⭐
+
+2. **"Perfect for New DMs"**
+   - "The automated initiative and lair actions helped me run my first dragon encounter confidently."
+   - Mike R., New DM
+   - ⭐⭐⭐⭐⭐
+
+3. **"Scales with My Needs"**
+   - "Started free, upgraded when my campaign grew. Worth every penny for the cloud sync alone."
+   - Alex T., Professional DM
+   - ⭐⭐⭐⭐⭐
+
+#### 8.1.6 Example Content for Non-Users
+
+**Sample Data Display**:
+
+- **Pre-loaded Demo Party**: "The Crimson Blades"
+  - Kael Brightblade (Human Paladin, Level 5)
+  - Whisper Shadowstep (Halfling Rogue, Level 4)
+  - Eldara Moonweaver (Elf Wizard, Level 5)
+  - Thorek Ironbeard (Dwarf Cleric, Level 4)
+
+- **Sample Encounter**: "Goblin Ambush"
+  - 2x Goblin Warriors (CR 1/4)
+  - 1x Goblin Boss (CR 1)
+  - Tactical map reference
+  - Pre-rolled initiatives
+
+- **Lair Action Example**: "Ancient Red Dragon's Lair"
+  - Initiative 20 effects
+  - Environmental hazards
+  - Timing indicators
+
+### 8.2 Dashboard for Authenticated Users
+
+#### 8.2.1 Quick Stats Overview
+
+**Dashboard Cards** (responsive grid):
+
+1. **Active Campaigns**
+   - Count: "3 Active Parties"
+   - Quick access to recent sessions
+   - "Continue Last Session" button
+
+2. **Usage Metrics** (tier-based)
+   - Progress bars showing limits:
+     - Parties: 2/3 used (Seasoned tier)
+     - Encounters: 8/15 used
+     - Creatures: 23/50 used
+   - Upgrade prompt when approaching limits
+
+3. **Recent Activity**
+   - Last 3 combat sessions
+   - Quick resume functionality
+   - Session duration and participants
+
+#### 8.2.2 Quick Actions Panel
+
+**Primary Actions** (large buttons):
+
+- "Start New Combat" (prominent primary button)
+- "Create Character"
+- "Build Encounter"
+- "Manage Parties"
+
+**Secondary Actions** (smaller buttons):
+
+- "Import from D&D Beyond"
+- "View Combat History"
+- "Export Campaign Data"
+
+#### 8.2.3 Content Shortcuts
+
+**Recently Used** (horizontal scroll):
+
+- Last 5 characters with quick edit access
+- Last 3 encounters with copy/modify options
+- Favorite creature templates
+
+#### 8.2.4 Onboarding for New Users
+
+**Progressive Disclosure**:
+
+1. **First Login**: Tutorial overlay with key feature highlights
+2. **First Week**: Weekly tips banner with dismiss option
+3. **Achievement System**: "First Combat Completed", "Week 1 Survivor", etc.
+
+### 8.3 Technical Implementation Requirements
+
+#### 8.3.1 Performance Standards
+
+- **Landing Page Load**: < 2 seconds on 3G connection
+- **Interactive Demo**: < 500ms response time
+- **Dashboard Load**: < 1.5 seconds for authenticated users
+- **Mobile Optimization**: 95+ Lighthouse mobile score
+
+#### 8.3.2 SEO & Accessibility
+
+- **Meta Tags**: Comprehensive OpenGraph and Twitter Card support
+- **Schema Markup**: SoftwareApplication and Organization schemas
+- **WCAG 2.1 AA**: Full compliance with screen reader testing
+- **Keyboard Navigation**: Tab order and focus management
+
+#### 8.3.3 Analytics & Conversion Tracking
+
+- **Key Metrics**:
+  - Landing page conversion rate
+  - Demo interaction rate
+  - Sign-up completion rate
+  - Free-to-paid conversion rate
+- **A/B Testing**: Ready for hero message and CTA button testing
+- **User Journey**: Funnel analysis from landing to first combat session
+
+#### 8.3.4 Content Management
+
+- **Dynamic Testimonials**: Admin panel for testimonial management
+- **Feature Flags**: Toggle for promotional banners and feature highlights
+- **Pricing Updates**: Dynamic pricing table with version control
+
+### 8.4 Security & Privacy Requirements
+
+#### 8.4.1 Data Protection
+
+- **Anonymous Demo**: No personal data collection for demo interactions
+- **GDPR Compliance**: Clear privacy policy and cookie consent
+- **Session Security**: Secure session handling for authenticated users
+
+#### 8.4.2 Rate Limiting
+
+- **Demo Protection**: Rate limiting on demo interactions to prevent abuse
+- **API Security**: Proper authentication for all dashboard data endpoints
+
+### 8.5 Success Metrics
+
+#### 8.5.1 Landing Page KPIs
+
+- **Conversion Rate**: > 3% visitor-to-signup
+- **Demo Engagement**: > 60% users interact with feature preview
+- **Bounce Rate**: < 40% for landing page
+- **Time on Page**: > 2 minutes average
+
+#### 8.5.2 Dashboard KPIs
+
+- **Daily Active Users**: Track engagement with dashboard features
+- **Feature Adoption**: Monitor usage of quick actions and shortcuts
+- **Retention Rate**: > 70% users return within 7 days of signup
 
 ## 9. Development Roadmap
 
