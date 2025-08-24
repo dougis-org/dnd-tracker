@@ -8,4 +8,4 @@ All AI agents working in this repository must follow the guidelines and directio
 
 **Summary:**
 
-> For all actions, always refer to and comply with the latest `CONTRIBUTING.md`.# AGENTS.md
+> For all actions, always refer to and comply with the latest `CONTRIBUTING.md`.
