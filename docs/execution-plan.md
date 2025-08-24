@@ -69,7 +69,7 @@ Z:\dev\Code\dnd-tracker\docs\
    **01-user-model.md** - Create User schema with Clerk integration
 2. [#13](https://github.com/dougis-org/dnd-tracker/issues/13) ✅
    **02-character-model.md** - Implement Character schema with all D&D fields
-3. [#14](https://github.com/dougis-org/dnd-tracker/issues/14)
+3. [#14](https://github.com/dougis-org/dnd-tracker/issues/14) ✅
    **03-character-api.md** - Build CRUD API endpoints for characters
 4. [#15](https://github.com/dougis-org/dnd-tracker/issues/15)
    **04-character-forms.md** - Create character creation/edit forms
