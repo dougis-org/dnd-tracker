@@ -3,13 +3,17 @@
  */
 import { GET, POST } from '../route';
 import { CharacterModel } from '@/models/schemas';
+import { auth } from '@clerk/nextjs/server';
+import { connectToDatabase } from '@/lib/mongodb';
 import {
   mockUserId,
   validCharacterData,
   setupAuthenticatedUser,
   setupUnauthenticatedUser,
   createMockRequest,
-} from './test-utils';
+  mockAuth,
+  mockConnectToDatabase
+} from '../_utils/test-utils';
 
 // Mock dependencies
 jest.mock('@clerk/nextjs/server', () => ({
@@ -26,10 +30,7 @@ jest.mock('@/models/schemas', () => ({
   },
 }));
 
-const mockAuth = auth as jest.MockedFunction<typeof auth>;
-const mockConnectToDatabase = connectToDatabase as jest.MockedFunction<
-  typeof connectToDatabase
->;
+// Remove duplicate mock declarations - they're imported from test-utils
 
 describe('/api/characters', () => {
   beforeEach(() => {
@@ -46,82 +47,78 @@ describe('/api/characters', () => {
       expect(response.status).toBe(401);
       expect(data).toEqual({ error: 'Unauthorized' });
     });
-    const mockUserId = 'user_12345';
-    const mockCharacters = [
-      {
-        _id: 'char_1',
-        userId: mockUserId,
-        name: 'Aragorn',
-        totalLevel: 5,
-        createdAt: '2025-08-24T04:08:58.104Z',
-        updatedAt: '2025-08-24T04:08:58.104Z',
-      },
-      {
-        _id: 'char_2',
-        userId: mockUserId,
-        name: 'Legolas',
-        totalLevel: 4,
-        createdAt: '2025-08-24T04:08:58.104Z',
-        updatedAt: '2025-08-24T04:08:58.104Z',
-      },
-    ];
 
-    mockAuth.mockReturnValue({ userId: mockUserId });
-    mockConnectToDatabase.mockResolvedValue(undefined);
-    (CharacterModel.countDocuments as jest.Mock).mockResolvedValue(2);
+    it('should return characters for authenticated user', async () => {
+      const mockCharacters = [
+        {
+          _id: 'char_1',
+          userId: mockUserId,
+          name: 'Aragorn',
+          totalLevel: 5,
+          createdAt: '2025-08-24T04:08:58.104Z',
+          updatedAt: '2025-08-24T04:08:58.104Z',
+        },
+        {
+          _id: 'char_2',
+          userId: mockUserId,
+          name: 'Legolas',
+          totalLevel: 4,
+          createdAt: '2025-08-24T04:08:58.104Z',
+          updatedAt: '2025-08-24T04:08:58.104Z',
+        },
+      ];
 
-    const mockSort = jest.fn().mockResolvedValue(mockCharacters);
-    const mockLimit = jest.fn().mockReturnValue({ sort: mockSort });
-    const mockSkip = jest.fn().mockReturnValue({ limit: mockLimit });
-    const mockFind = jest.fn().mockReturnValue({ skip: mockSkip });
-    setupAuthenticatedUser();
-    const response = await GET(
-      createMockRequest('http://localhost:3000/api/characters')
-    );
-    const data = await response.json();
-    expect(response.status).toBe(200);
-    expect(data.characters).toEqual(mockCharacters);
-    expect(data.pagination).toEqual({
-      page: 1,
-      limit: 10,
-      total: 2,
-      totalPages: 1,
+      setupAuthenticatedUser();
+      (CharacterModel.countDocuments as jest.Mock).mockResolvedValue(2);
+
+      const mockSort = jest.fn().mockResolvedValue(mockCharacters);
+      const mockLimit = jest.fn().mockReturnValue({ sort: mockSort });
+      const mockSkip = jest.fn().mockReturnValue({ limit: mockLimit });
+      (CharacterModel.find as jest.Mock).mockReturnValue({ skip: mockSkip });
+
+      const response = await GET(
+        createMockRequest('http://localhost:3000/api/characters')
+      );
+      const data = await response.json();
+      expect(response.status).toBe(200);
+      expect(data.characters).toEqual(mockCharacters);
+      expect(data.pagination).toEqual({
+        page: 1,
+        limit: 10,
+        total: 2,
+        totalPages: 1,
+      });
+      expect(CharacterModel.find).toHaveBeenCalledWith({ userId: mockUserId });
     });
-    expect(mockFind).toHaveBeenCalledWith({ userId: mockUserId });
-  });
 
-  it('should handle database connection errors', async () => {
-    mockAuth.mockReturnValue({ userId: 'user_12345' });
-    mockConnectToDatabase.mockRejectedValue(
-      new Error('Database connection failed')
-    );
+    it('should handle database connection errors', async () => {
+      setupAuthenticatedUser();
+      mockConnectToDatabase.mockRejectedValue(new Error('Database connection failed'));
 
-    const response = await GET(
-      createMockRequest('http://localhost:3000/api/characters')
-    );
-    const data = await response.json();
-    expect(response.status).toBe(500);
-    expect(data).toEqual({ error: 'Internal server error' });
-  });
+      const response = await GET(
+        createMockRequest('http://localhost:3000/api/characters')
+      );
+      const data = await response.json();
+      expect(response.status).toBe(500);
+      expect(data).toEqual({ error: 'Internal server error' });
+    });
 
-  it('should handle character query errors', async () => {
-    setupAuthenticatedUser();
-    mockConnectToDatabase.mockRejectedValue(
-      new Error('Database connection failed')
-    );
+    it('should handle character query errors', async () => {
+      setupAuthenticatedUser();
+      mockConnectToDatabase.mockResolvedValue(undefined);
 
-    const mockSort = jest.fn().mockRejectedValue(new Error('Query failed'));
-    const mockFind = jest.fn().mockReturnValue({ sort: mockSort });
-    (CharacterModel.find as jest.Mock) = mockFind;
+      const mockSort = jest.fn().mockRejectedValue(new Error('Query failed'));
+      (CharacterModel.find as jest.Mock).mockReturnValue({ sort: mockSort });
 
-    const response = await GET(
-      createMockRequest('http://localhost:3000/api/characters')
-    );
-    const data = await response.json();
-    expect(response.status).toBe(500);
+      const response = await GET(
+        createMockRequest('http://localhost:3000/api/characters')
+      );
+      const data = await response.json();
+      expect(response.status).toBe(500);
+      expect(data).toEqual({ error: 'Internal server error' });
+    });
 
     it('should support pagination with query parameters', async () => {
-      const mockUserId = 'user_12345';
       const mockCharacters = [
         {
           _id: 'char_1',
@@ -137,15 +134,13 @@ describe('/api/characters', () => {
         },
       ];
 
-      mockAuth.mockReturnValue({ userId: mockUserId });
-      mockConnectToDatabase.mockResolvedValue(undefined);
+      setupAuthenticatedUser();
       (CharacterModel.countDocuments as jest.Mock).mockResolvedValue(10);
 
       const mockSort = jest.fn().mockResolvedValue(mockCharacters);
       const mockLimit = jest.fn().mockReturnValue({ sort: mockSort });
       const mockSkip = jest.fn().mockReturnValue({ limit: mockLimit });
-      const mockFind = jest.fn().mockReturnValue({ skip: mockSkip });
-      (CharacterModel.find as jest.Mock) = mockFind;
+      (CharacterModel.find as jest.Mock).mockReturnValue({ skip: mockSkip });
 
       const request = createMockRequest(
         'http://localhost:3000/api/characters?page=2&limit=5'
@@ -164,29 +159,6 @@ describe('/api/characters', () => {
   });
 
   describe('POST /api/characters', () => {
-    const validCharacterData = {
-      name: 'Gandalf',
-      race: 'Human',
-      background: 'Hermit',
-      alignment: 'Neutral Good',
-      experiencePoints: 0,
-      classes: [
-        {
-          className: 'Wizard',
-          level: 1,
-          hitDiceSize: 6,
-          hitDiceUsed: 0,
-        },
-      ],
-      abilities: {
-        strength: 10,
-        dexterity: 14,
-        constitution: 12,
-        intelligence: 18,
-        wisdom: 16,
-        charisma: 13,
-      },
-    };
 
     it('should return 401 when user is not authenticated', async () => {
       setupUnauthenticatedUser();
@@ -207,7 +179,6 @@ describe('/api/characters', () => {
     });
 
     it('should create character for authenticated user with valid data', async () => {
-      const mockUserId = 'user_12345';
       const mockCreatedCharacter = {
         _id: 'char_123',
         ...validCharacterData,
@@ -218,8 +189,7 @@ describe('/api/characters', () => {
         updatedAt: '2025-08-24T04:08:58.131Z',
       };
 
-      mockAuth.mockReturnValue({ userId: mockUserId });
-      mockConnectToDatabase.mockResolvedValue(undefined);
+      setupAuthenticatedUser();
       (CharacterModel.create as jest.Mock).mockResolvedValue(
         mockCreatedCharacter
       );
@@ -245,8 +215,7 @@ describe('/api/characters', () => {
     });
 
     it('should return 400 with validation errors for invalid data', async () => {
-      mockAuth.mockReturnValue({ userId: 'user_12345' });
-      mockConnectToDatabase.mockResolvedValue(undefined);
+      setupAuthenticatedUser();
 
       const validationError = new Error('Validation failed');
       validationError.name = 'ValidationError';
@@ -268,7 +237,7 @@ describe('/api/characters', () => {
     });
 
     it('should return 400 for malformed JSON', async () => {
-      mockAuth.mockReturnValue({ userId: 'user_12345' });
+      setupAuthenticatedUser();
 
       const request = createMockRequest(
         'http://localhost:3000/api/characters',
@@ -287,17 +256,12 @@ describe('/api/characters', () => {
 
     it('should handle database connection errors during creation', async () => {
       setupAuthenticatedUser();
-      const { mockConnectToDatabase } = require('./test-utils');
-      mockConnectToDatabase.mockRejectedValue(
-        new Error('Database connection failed')
-      );
-      const request = createMockRequest(
-        'http://localhost:3000/api/characters',
-        {
-          method: 'POST',
-          body: JSON.stringify(validCharacterData),
-        }
-      );
+      mockConnectToDatabase.mockRejectedValue(new Error('Database connection failed'));
+
+      const request = createMockRequest('http://localhost:3000/api/characters', {
+        method: 'POST',
+        body: JSON.stringify(validCharacterData)
+      });
 
       const response = await POST(request);
       const data = await response.json();
