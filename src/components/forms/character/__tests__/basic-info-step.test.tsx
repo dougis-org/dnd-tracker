@@ -9,6 +9,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { BasicInfoStep } from '../basic-info-step';
 import { basicInfoSchema, type BasicInfoFormData } from '@/lib/validations/character';
 
+// Polyfills now globally available in jest.setup.js
+
 // Test wrapper component that provides form context
 function TestWrapper({ children, defaultValues = {} }: { 
   children: React.ReactNode; 
@@ -59,7 +61,7 @@ describe('BasicInfoStep', () => {
     );
 
     const nameInput = screen.getByLabelText(/character name/i);
-    const raceSelect = screen.getByLabelText(/race/i);
+    const raceSelect = screen.getByLabelText(/^race \*$/i);
     
     expect(nameInput).toHaveAttribute('aria-required', 'true');
     expect(raceSelect).toHaveAttribute('aria-required', 'true');
@@ -90,17 +92,17 @@ describe('BasicInfoStep', () => {
     );
 
     // Find the race select by its trigger
-    const raceSelectTrigger = screen.getByRole('combobox');
+    const raceSelectTrigger = screen.getByRole('combobox', { name: /^race \*$/i });
     expect(raceSelectTrigger).toHaveAttribute('aria-required', 'true');
     
     // Click to open dropdown
     await user.click(raceSelectTrigger);
     
-    // Should show common D&D races in the options
+    // Should show common D&D races in the options - use getAllByText for duplicate elements
     await waitFor(() => {
-      expect(screen.getByText('Human')).toBeInTheDocument();
-      expect(screen.getByText('Elf')).toBeInTheDocument();
-      expect(screen.getByText('Dwarf')).toBeInTheDocument();
+      expect(screen.getAllByText('Human').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Elf').length).toBeGreaterThan(0);  
+      expect(screen.getAllByText('Dwarf').length).toBeGreaterThan(0);
     });
   });
 
@@ -116,10 +118,12 @@ describe('BasicInfoStep', () => {
     const alignmentSelect = screen.getByRole('combobox', { name: /alignment/i });
     await user.click(alignmentSelect);
     
-    // Should show all 9 D&D alignments
-    expect(screen.getByText('Lawful Good')).toBeInTheDocument();
-    expect(screen.getByText('True Neutral')).toBeInTheDocument();
-    expect(screen.getByText('Chaotic Evil')).toBeInTheDocument();
+    // Should show all 9 D&D alignments - use getAllByText for potential duplicates
+    await waitFor(() => {
+      expect(screen.getAllByText('Lawful Good').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('True Neutral').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Chaotic Evil').length).toBeGreaterThan(0);
+    });
   });
 
   it('should make subrace optional', () => {
@@ -155,8 +159,8 @@ describe('BasicInfoStep', () => {
       </TestWrapper>
     );
 
-    const form = screen.getByRole('form');
-    fireEvent.submit(form);
+    const form = document.querySelector('form');
+    fireEvent.submit(form!);
 
     await waitFor(() => {
       expect(screen.getByText(/character name is required/i)).toBeInTheDocument();
@@ -179,8 +183,8 @@ describe('BasicInfoStep', () => {
     await user.type(nameInput, 'test');
     await user.clear(nameInput);
     
-    const form = screen.getByRole('form');
-    fireEvent.submit(form);
+    const form = document.querySelector('form');
+    fireEvent.submit(form!);
 
     await waitFor(() => {
       expect(screen.getByText(/character name is required/i)).toBeInTheDocument();
@@ -197,10 +201,11 @@ describe('BasicInfoStep', () => {
     );
 
     const nameInput = screen.getByLabelText(/character name/i);
-    await user.type(nameInput, 'a'.repeat(51)); // Over 50 character limit
+    // Bypass maxlength attribute to test validation
+    fireEvent.change(nameInput, { target: { value: 'a'.repeat(51) } });
     
-    const form = screen.getByRole('form');
-    fireEvent.submit(form);
+    const form = document.querySelector('form');
+    fireEvent.submit(form!);
 
     await waitFor(() => {
       expect(screen.getByText(/character name too long/i)).toBeInTheDocument();
@@ -208,19 +213,37 @@ describe('BasicInfoStep', () => {
   });
 
   it('should prevent negative experience points', async () => {
-    const user = userEvent.setup();
+    let formRef: any;
+    
+    function TestWrapperWithRef({ children }: { children: React.ReactNode }) {
+      const methods = useForm<BasicInfoFormData>({
+        resolver: zodResolver(basicInfoSchema),
+        defaultValues: {
+          name: 'Test Character',
+          race: 'Human', 
+          background: 'Acolyte',
+          alignment: 'Neutral Good',
+          experiencePoints: -100  // Set invalid value directly
+        }
+      });
+      
+      formRef = methods;
+
+      return (
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(() => {})}>{children}</form>
+        </FormProvider>
+      );
+    }
     
     render(
-      <TestWrapper>
+      <TestWrapperWithRef>
         <BasicInfoStep />
-      </TestWrapper>
+      </TestWrapperWithRef>
     );
 
-    const xpInput = screen.getByLabelText(/experience points/i);
-    await user.type(xpInput, '-100');
-    
-    const form = screen.getByRole('form');
-    fireEvent.submit(form);
+    const form = document.querySelector('form');
+    fireEvent.submit(form!);
 
     await waitFor(() => {
       expect(screen.getByText(/experience points cannot be negative/i)).toBeInTheDocument();
@@ -264,7 +287,7 @@ describe('BasicInfoStep', () => {
     expect(nameInput).toHaveFocus();
     
     await user.tab();
-    const raceSelect = screen.getByRole('combobox', { name: /race/i });
+    const raceSelect = screen.getByRole('combobox', { name: /^race \*$/i });
     expect(raceSelect).toHaveFocus();
   });
 

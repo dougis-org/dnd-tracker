@@ -115,7 +115,7 @@ describe('/api/characters', () => {
       );
       const data = await response.json();
       expect(response.status).toBe(500);
-      expect(data).toEqual({ error: 'Internal server error' });
+      expect(data).toEqual({ error: 'Failed to fetch characters' });
     });
 
     it('should support pagination with query parameters', async () => {

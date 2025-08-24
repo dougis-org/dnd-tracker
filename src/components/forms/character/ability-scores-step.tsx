@@ -77,19 +77,18 @@ export function AbilityScoresStep({ raceSelected }: AbilityScoresStepProps) {
   useEffect(() => {
     if (method === 'standard-array') {
       // Set abilities to standard array values
-      const abilities = { ...currentAbilities };
-      const assignedValues = [...STANDARD_ARRAY];
-      
-      // Assign in order: STR, DEX, CON, INT, WIS, CHA
-      DND_ABILITIES.forEach((ability, index) => {
-        if (assignedValues[index] !== undefined) {
-          abilities[ability] = assignedValues[index];
-        }
-      });
+      const abilities = {
+        strength: STANDARD_ARRAY[0],
+        dexterity: STANDARD_ARRAY[1],
+        constitution: STANDARD_ARRAY[2],
+        intelligence: STANDARD_ARRAY[3],
+        wisdom: STANDARD_ARRAY[4],
+        charisma: STANDARD_ARRAY[5]
+      };
       
       form.setValue('abilities', abilities);
     }
-  }, [method, form, currentAbilities]);
+  }, [method, form]);
 
   // Handle method change
   const handleMethodChange = (newMethod: AbilityScoreMethod) => {
@@ -97,10 +96,14 @@ export function AbilityScoresStep({ raceSelected }: AbilityScoresStepProps) {
     
     if (newMethod === 'point-buy') {
       // Reset to point buy starting values (8s)
-      const abilities = { ...currentAbilities };
-      DND_ABILITIES.forEach(ability => {
-        abilities[ability] = 8;
-      });
+      const abilities = {
+        strength: 8,
+        dexterity: 8,
+        constitution: 8,
+        intelligence: 8,
+        wisdom: 8,
+        charisma: 8
+      };
       form.setValue('abilities', abilities);
     }
   };

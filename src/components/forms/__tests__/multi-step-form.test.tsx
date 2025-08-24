@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { MultiStepForm } from '../multi-step-form';
 
 // Mock next/navigation
@@ -169,8 +169,8 @@ describe('MultiStepForm', () => {
     expect(validator).toHaveBeenCalledWith(0);
   });
 
-  it('should advance when validation passes', () => {
-    const validator = jest.fn().mockReturnValue(true);
+  it('should advance when validation passes', async () => {
+    const validator = jest.fn().mockResolvedValue(true);
     const propsWithValidator = {
       ...defaultProps,
       validateStep: validator
@@ -178,9 +178,13 @@ describe('MultiStepForm', () => {
     
     render(<MultiStepForm {...propsWithValidator} />);
     
-    fireEvent.click(screen.getByText('Next'));
+    await act(async () => {
+      fireEvent.click(screen.getByText('Next'));
+    });
     
-    expect(screen.getByTestId('step-2')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('step-2')).toBeInTheDocument();
+    });
     expect(validator).toHaveBeenCalledWith(0);
   });
 

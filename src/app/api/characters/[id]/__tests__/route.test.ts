@@ -3,6 +3,9 @@
  */
 import { NextRequest } from 'next/server';
 import { GET, PUT, DELETE } from '../route';
+import { auth } from '@clerk/nextjs/server';
+import { connectToDatabase } from '@/lib/mongodb';
+import { CharacterModel } from '@/models/schemas';
 import {
   mockUserId,
   mockCharacterId,
@@ -16,6 +19,21 @@ import {
   expectNotFoundResponse,
   expectInternalServerError
 } from '../../_utils/test-utils';
+
+// Mock dependencies
+jest.mock('@clerk/nextjs/server', () => ({
+  auth: jest.fn(),
+}));
+jest.mock('@/lib/mongodb', () => ({
+  connectToDatabase: jest.fn(),
+}));
+jest.mock('@/models/schemas', () => ({
+  CharacterModel: {
+    findOne: jest.fn(),
+    findOneAndUpdate: jest.fn(),
+    findOneAndDelete: jest.fn(),
+  },
+}));
 
 describe('/api/characters/[id]', () => {
   const params = createMockRouteParams(mockCharacterId);
