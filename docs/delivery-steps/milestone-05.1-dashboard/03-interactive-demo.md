@@ -144,25 +144,23 @@ export default function InitiativeTrackerDemo() {
   // Simulate turn progression every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setCharacters(prev => {
-        const currentIndex = prev.findIndex(char => char.isActive);
-        const nextIndex = (currentIndex + 1) % prev.length;
-        
-        return prev.map((char, index) => ({
+      setCharacters(prevChars => {
+        const currentIndex = prevChars.findIndex(char => char.isActive);
+        const nextIndex = (currentIndex + 1) % prevChars.length;
+
+        if (nextIndex === 0) {
+          setRound(prevRound => prevRound + 1);
+        }
+
+        return prevChars.map((char, index) => ({
           ...char,
-          isActive: index === nextIndex
+          isActive: index === nextIndex,
         }));
       });
-      
-      // Increment round when we cycle back to first character
-      const currentIndex = characters.findIndex(char => char.isActive);
-      if (currentIndex === characters.length - 1) {
-        setRound(prev => prev + 1);
-      }
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [characters]);
+  }, []);
 
   return (
     <Card className="max-w-2xl mx-auto">
