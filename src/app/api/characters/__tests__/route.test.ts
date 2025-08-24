@@ -38,21 +38,14 @@ describe('/api/characters', () => {
 
   describe('GET /api/characters', () => {
     it('should return 401 when user is not authenticated', async () => {
-      mockAuth.mockReturnValue({ userId: null });
-
+      setupUnauthenticatedUser();
       const response = await GET(
-        new NextRequest('http://localhost:3000/api/characters')
+        createMockRequest('http://localhost:3000/api/characters')
       );
       const data = await response.json();
-
       expect(response.status).toBe(401);
       expect(data).toEqual({ error: 'Unauthorized' });
     });
-
-    setupUnauthenticatedUser();
-    const response = await GET(
-      createMockRequest('http://localhost:3000/api/characters')
-    );
     const mockUserId = 'user_12345';
     const mockCharacters = [
       {
@@ -83,10 +76,9 @@ describe('/api/characters', () => {
     const mockFind = jest.fn().mockReturnValue({ skip: mockSkip });
     setupAuthenticatedUser();
     const response = await GET(
-      new NextRequest('http://localhost:3000/api/characters')
+      createMockRequest('http://localhost:3000/api/characters')
     );
     const data = await response.json();
-
     expect(response.status).toBe(200);
     expect(data.characters).toEqual(mockCharacters);
     expect(data.pagination).toEqual({
@@ -105,10 +97,9 @@ describe('/api/characters', () => {
     );
 
     const response = await GET(
-      new NextRequest('http://localhost:3000/api/characters')
+      createMockRequest('http://localhost:3000/api/characters')
     );
     const data = await response.json();
-
     expect(response.status).toBe(500);
     expect(data).toEqual({ error: 'Internal server error' });
   });
@@ -124,12 +115,10 @@ describe('/api/characters', () => {
     (CharacterModel.find as jest.Mock) = mockFind;
 
     const response = await GET(
-      new NextRequest('http://localhost:3000/api/characters')
+      createMockRequest('http://localhost:3000/api/characters')
     );
     const data = await response.json();
-
     expect(response.status).toBe(500);
-    setupAuthenticatedUser();
 
     it('should support pagination with query parameters', async () => {
       const mockUserId = 'user_12345';
@@ -158,12 +147,11 @@ describe('/api/characters', () => {
       const mockFind = jest.fn().mockReturnValue({ skip: mockSkip });
       (CharacterModel.find as jest.Mock) = mockFind;
 
-      const request = new NextRequest(
+      const request = createMockRequest(
         'http://localhost:3000/api/characters?page=2&limit=5'
       );
       const response = await GET(request);
       const data = await response.json();
-
       expect(response.status).toBe(200);
       expect(data.characters).toEqual(mockCharacters);
       expect(data.pagination).toEqual({
@@ -203,10 +191,13 @@ describe('/api/characters', () => {
     it('should return 401 when user is not authenticated', async () => {
       setupUnauthenticatedUser();
 
-      const request = new NextRequest('http://localhost:3000/api/characters', {
-        method: 'POST',
-        body: JSON.stringify(validCharacterData),
-      });
+      const request = createMockRequest(
+        'http://localhost:3000/api/characters',
+        {
+          method: 'POST',
+          body: JSON.stringify(validCharacterData),
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -233,11 +224,14 @@ describe('/api/characters', () => {
         mockCreatedCharacter
       );
 
-      const request = new NextRequest('http://localhost:3000/api/characters', {
-        method: 'POST',
-        body: JSON.stringify(validCharacterData),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = createMockRequest(
+        'http://localhost:3000/api/characters',
+        {
+          method: 'POST',
+          body: JSON.stringify(validCharacterData),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -258,10 +252,13 @@ describe('/api/characters', () => {
       validationError.name = 'ValidationError';
       (CharacterModel.create as jest.Mock).mockRejectedValue(validationError);
 
-      const request = new NextRequest('http://localhost:3000/api/characters', {
-        method: 'POST',
-        body: JSON.stringify({ name: '' }), // Invalid data
-      });
+      const request = createMockRequest(
+        'http://localhost:3000/api/characters',
+        {
+          method: 'POST',
+          body: JSON.stringify({ name: '' }), // Invalid data
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -273,10 +270,13 @@ describe('/api/characters', () => {
     it('should return 400 for malformed JSON', async () => {
       mockAuth.mockReturnValue({ userId: 'user_12345' });
 
-      const request = new NextRequest('http://localhost:3000/api/characters', {
-        method: 'POST',
-        body: 'invalid json',
-      });
+      const request = createMockRequest(
+        'http://localhost:3000/api/characters',
+        {
+          method: 'POST',
+          body: 'invalid json',
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
