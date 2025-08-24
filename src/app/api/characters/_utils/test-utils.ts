@@ -45,19 +45,19 @@ export const mockAuth = auth as jest.MockedFunction<typeof auth>;
 export const mockConnectToDatabase = connectToDatabase as jest.MockedFunction<typeof connectToDatabase>;
 
 export function setupAuthenticatedUser() {
-  mockAuth.mockReturnValue({ userId: mockUserId });
+  mockAuth.mockReturnValue({ userId: mockUserId } as any);
   mockConnectToDatabase.mockResolvedValue(undefined);
 }
 
 export function setupUnauthenticatedUser() {
-  mockAuth.mockReturnValue({ userId: null });
+  mockAuth.mockReturnValue({ userId: null } as any);
 }
 
 export function setupDatabaseError() {
   mockConnectToDatabase.mockRejectedValue(new Error('Database connection failed'));
 }
 
-export function createMockRequest(url: string, options?: RequestInit): NextRequest {
+export function createMockRequest(url: string, options?: any): NextRequest {
   return new NextRequest(url, options);
 }
 
