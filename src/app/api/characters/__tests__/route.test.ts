@@ -9,7 +9,7 @@ import {
   setupAuthenticatedUser,
   setupUnauthenticatedUser,
   createMockRequest
-} from './test-utils';
+} from '../_utils/test-utils';
 
 // Mock dependencies
 jest.mock('@clerk/nextjs/server', () => ({
@@ -87,7 +87,7 @@ describe('/api/characters', () => {
 
     it('should handle database connection errors', async () => {
       setupAuthenticatedUser();
-      const { mockConnectToDatabase } = require('./test-utils');
+      const { mockConnectToDatabase } = require('../_utils/test-utils');
       mockConnectToDatabase.mockRejectedValue(new Error('Database connection failed'));
 
       const response = await GET(createMockRequest('http://localhost:3000/api/characters'));
@@ -233,7 +233,7 @@ describe('/api/characters', () => {
 
     it('should handle database connection errors during creation', async () => {
       setupAuthenticatedUser();
-      const { mockConnectToDatabase } = require('./test-utils');
+      const { mockConnectToDatabase } = require('../_utils/test-utils');
       mockConnectToDatabase.mockRejectedValue(new Error('Database connection failed'));
 
       const request = createMockRequest('http://localhost:3000/api/characters', {
