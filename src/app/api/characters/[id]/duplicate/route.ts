@@ -33,28 +33,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       }
 
       // Create duplicate data (exclude MongoDB specific fields)
-      const duplicateData = {
-        userId,
-        name: `${originalCharacter.name} (Copy)`,
-        race: originalCharacter.race,
-        subrace: originalCharacter.subrace,
-        background: originalCharacter.background,
-        alignment: originalCharacter.alignment,
-        experiencePoints: originalCharacter.experiencePoints,
-        classes: originalCharacter.classes,
-        abilities: originalCharacter.abilities,
-        skillProficiencies: originalCharacter.skillProficiencies,
-        savingThrowProficiencies: originalCharacter.savingThrowProficiencies,
-        hitPoints: originalCharacter.hitPoints,
-        armorClass: originalCharacter.armorClass,
-        speed: originalCharacter.speed,
-        initiative: originalCharacter.initiative,
-        passivePerception: originalCharacter.passivePerception,
-        spellcasting: originalCharacter.spellcasting,
-        equipment: originalCharacter.equipment,
-        features: originalCharacter.features,
-        notes: originalCharacter.notes
-      };
+      const { _id, __v, createdAt, updatedAt, ...duplicateData } = originalCharacter.toObject();
+      duplicateData.name = `${originalCharacter.name} (Copy)`;
+      duplicateData.userId = userId;
 
       // Create the duplicated character
       const duplicatedCharacter = await CharacterModel.create(duplicateData);
