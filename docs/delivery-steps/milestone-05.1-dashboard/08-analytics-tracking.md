@@ -2,7 +2,8 @@
 
 ## Overview
 
-Implement comprehensive analytics tracking for landing page conversion optimization, user journey analysis, and dashboard engagement metrics.
+Implement comprehensive analytics tracking for landing page conversion optimization, user
+journey analysis, and dashboard engagement metrics.
 
 ## Objectives
 
@@ -17,18 +18,21 @@ Implement comprehensive analytics tracking for landing page conversion optimizat
 ### 1. Analytics Components
 
 **File:** `src/lib/analytics/tracking.ts`
+
 - Event tracking utilities
 - Conversion funnel management
 - User journey mapping
 - Privacy-compliant data collection
 
 **File:** `src/lib/analytics/events.ts`
+
 - Standardized event definitions
 - Landing page interaction events
 - Dashboard usage events
 - Conversion milestone events
 
 **File:** `src/components/analytics/AnalyticsProvider.tsx`
+
 - Analytics context provider
 - Event batching and optimization
 - Error handling and fallbacks
@@ -36,12 +40,14 @@ Implement comprehensive analytics tracking for landing page conversion optimizat
 ### 2. Conversion Optimization
 
 **File:** `src/lib/analytics/conversion.ts`
+
 - Conversion rate calculations
 - Funnel drop-off analysis
 - User segmentation utilities
 - A/B test result tracking
 
 **File:** `src/hooks/useAnalytics.ts`
+
 - React hook for component-level tracking
 - Automatic page view tracking
 - User interaction logging
@@ -183,7 +189,8 @@ class AnalyticsTracker {
     });
   }
 
-  trackUpgradePrompt(promptType: 'limit_reached' | 'feature_gate' | 'dashboard_card', action: 'shown' | 'clicked' | 'dismissed') {
+  trackUpgradePrompt(promptType: 'limit_reached' | 'feature_gate' | 'dashboard_card', 
+    action: 'shown' | 'clicked' | 'dismissed') {
     this.track({
       event: 'upgrade_prompt',
       category: 'monetization',
@@ -300,7 +307,8 @@ export function useAnalytics() {
   }, [pathname, user, isLoaded]);
 
   // Track demo interactions
-  const trackDemo = useCallback((demoType: 'initiative' | 'lair' | 'status', action: 'start' | 'interact' | 'complete') => {
+  const trackDemo = useCallback((demoType: 'initiative' | 'lair' | 'status', 
+    action: 'start' | 'interact' | 'complete') => {
     analytics.trackDemoInteraction(demoType, action);
   }, []);
 
@@ -310,7 +318,8 @@ export function useAnalytics() {
   }, []);
 
   // Track dashboard actions
-  const trackQuickAction = useCallback((action: 'start_combat' | 'create_character' | 'build_encounter' | 'manage_parties') => {
+  const trackQuickAction = useCallback((action: 'start_combat' | 'create_character' | 
+    'build_encounter' | 'manage_parties') => {
     analytics.trackQuickAction(action);
   }, []);
 
@@ -544,12 +553,14 @@ abTestManager.registerTest({
 ### Unit Tests
 
 **File:** `src/lib/analytics/__tests__/tracking.test.ts`
+
 - Event tracking functions work correctly
 - Batch flushing operates properly
 - Privacy compliance is maintained
 - Error handling for failed requests
 
 **File:** `src/hooks/__tests__/useAnalytics.test.tsx`
+
 - Hook tracks page views automatically
 - Event tracking functions work
 - User authentication state is handled
@@ -574,12 +585,14 @@ abTestManager.registerTest({
 ## Success Metrics
 
 ### Implementation KPIs
+
 - [ ] Analytics data capture rate >95%
 - [ ] API response time <100ms
 - [ ] Zero analytics-related client errors
 - [ ] A/B test assignment stability >99%
 
 ### Business KPIs
+
 - [ ] Landing page conversion rate tracking
 - [ ] Demo completion rate measurement
 - [ ] Feature adoption rate monitoring
@@ -588,6 +601,7 @@ abTestManager.registerTest({
 ## Next Steps
 
 After completing this step:
+
 1. Deploy analytics system to production
 2. Set up monitoring dashboards
 3. Begin A/B testing hero messages

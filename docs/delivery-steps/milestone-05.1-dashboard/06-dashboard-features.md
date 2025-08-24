@@ -2,7 +2,8 @@
 
 ## Overview
 
-Implement quick action buttons, content shortcuts, and onboarding features to maximize user engagement and feature discovery on the dashboard.
+Implement quick action buttons, content shortcuts, and onboarding features to maximize user
+engagement and feature discovery on the dashboard.
 
 ## Objectives
 
@@ -17,12 +18,14 @@ Implement quick action buttons, content shortcuts, and onboarding features to ma
 ### 1. Quick Actions Components
 
 **File:** `src/components/dashboard/QuickActions.tsx`
+
 - Primary action buttons (Start Combat, Create Character, etc.)
 - Secondary action buttons (Import, Export, etc.)
 - Responsive button layout
 - Analytics tracking for action clicks
 
 **File:** `src/components/dashboard/ContentShortcuts.tsx`
+
 - Recently used characters carousel
 - Recent encounters with copy/modify options
 - Favorite creature templates
@@ -31,12 +34,14 @@ Implement quick action buttons, content shortcuts, and onboarding features to ma
 ### 2. Onboarding Components
 
 **File:** `src/components/dashboard/OnboardingOverlay.tsx`
+
 - First-time user tutorial overlay
 - Feature highlight tooltips
 - Dismissible onboarding steps
 - Progress tracking
 
 **File:** `src/components/dashboard/TipsWidget.tsx`
+
 - Weekly tips banner
 - Achievement notifications
 - Feature announcements
@@ -534,18 +539,21 @@ export default function OnboardingOverlay({
 ### Unit Tests
 
 **File:** `src/components/dashboard/__tests__/QuickActions.test.tsx`
+
 - All primary actions render correctly
 - Button clicks navigate to correct routes
 - Responsive layout works on mobile
 - Analytics tracking fires on clicks
 
 **File:** `src/components/dashboard/__tests__/ContentShortcuts.test.tsx`
+
 - Section switching works properly
 - Item cards display correct information
 - Empty states show appropriate messages
 - Hover effects work on interactive elements
 
 **File:** `src/components/dashboard/__tests__/OnboardingOverlay.test.tsx`
+
 - Progress calculation is accurate
 - Dismissal works correctly
 - Completed steps show proper state
@@ -563,6 +571,7 @@ export default function OnboardingOverlay({
 ## Next Steps
 
 After completing this step:
+
 1. Test all quick action navigation flows
 2. Validate onboarding with new user accounts
 3. Test content shortcuts with real data

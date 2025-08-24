@@ -2,9 +2,9 @@
 
 ## Overview
 
-This document outlines the complete implementation plan for the D&D Encounter
-Tracker Web App, organized into 11 iterative milestones. Each milestone builds
-upon the previous ones and can be tested independently.
+This document outlines the complete implementation plan for the D&D Encounter Tracker Web App,
+organized into 11 iterative milestones. Each milestone builds upon the previous ones and can be
+tested independently.
 
 ## Directory Structure
 
@@ -146,7 +146,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestone 4  
 **Goal:** Implement the core combat tracking functionality
 
-### Deliverables
+### Deliverables (Milestone 5: Combat Tracker Core)
 
 1. **01-initiative-system.md** - Build initiative rolling and sorting
 2. **02-turn-tracker.md** - Implement turn and round management
@@ -156,7 +156,7 @@ Z:\dev\Code\dnd-tracker\docs\
 6. **06-combat-state.md** - Manage combat state with Zustand
 7. **07-undo-system.md** - Add undo/redo functionality
 
-### Success Criteria
+### Success Criteria (Milestone 5: Combat Tracker Core)
 
 - Initiative tracking works with proper sorting
 - Turn order management is smooth
@@ -171,7 +171,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestone 5 (Combat Core), Milestone 1 (Foundation)  
 **Goal:** Create conversion-optimized landing page and user dashboard showcasing combat features
 
-### Deliverables
+### Deliverables (Milestone 5.1: User Dashboard & Landing Page)
 
 1. **01-landing-page-layout.md** - Authentication-aware page routing and responsive layout
 2. **02-hero-section.md** - Compelling hero section with value propositions and trust indicators
@@ -182,7 +182,7 @@ Z:\dev\Code\dnd-tracker\docs\
 7. **07-sample-data.md** - Realistic D&D sample data including "The Crimson Blades" party and encounters
 8. **08-analytics-tracking.md** - Comprehensive conversion tracking and A/B testing framework
 
-### Success Criteria
+### Success Criteria (Milestone 5.1: User Dashboard & Landing Page)
 
 - Landing page converts >3% visitors to sign-ups
 - Interactive demos engage >60% of visitors with realistic D&D scenarios
@@ -199,7 +199,7 @@ Z:\dev\Code\dnd-tracker\docs\
 **Dependencies:** Milestone 5.1  
 **Goal:** Add advanced combat mechanics
 
-### Deliverables
+### Deliverables (Milestone 6: Advanced Combat Features)
 
 1. **01-status-effects.md** - Implement condition tracking
 2. **02-legendary-actions.md** - Add legendary action system
@@ -209,7 +209,7 @@ Z:\dev\Code\dnd-tracker\docs\
 6. **06-action-descriptions.md** - Add action description system
 7. **07-environmental-effects.md** - Implement environmental mechanics
 
-### Success Criteria
+### Success Criteria (Milestone 6: Advanced Combat Features)
 
 - All status effects track correctly
 - Legendary actions work as specified
@@ -364,6 +364,7 @@ M1: Foundation → M2: Characters → M3: Parties → M4: Encounters → M5: Com
 ## Updated Timeline with Dashboard
 
 ### Phase 1: Core Foundation (Weeks 1-8)
+
 - M1: Foundation (1 week)
 - M2: Characters (1.5 weeks)  
 - M3: Parties (1 week)
@@ -372,11 +373,13 @@ M1: Foundation → M2: Characters → M3: Parties → M4: Encounters → M5: Com
 - M5.1: Dashboard & Landing (3-4 weeks) **← NEW**
 
 ### Phase 2: Advanced Features (Weeks 9-13)
+
 - M6: Combat Advanced (2 weeks)
 - M7: Monetization (2 weeks, parallel)
 - M8: Data Sync (1.5 weeks)
 
 ### Phase 3: Collaboration & Polish (Weeks 14-18)
+
 - M9: Collaboration (2 weeks)
 - M10: Polish (2 weeks)
 

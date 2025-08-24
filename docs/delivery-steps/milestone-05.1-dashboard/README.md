@@ -2,9 +2,14 @@
 
 ## Overview
 
-This milestone implements a comprehensive user dashboard and landing page system that provides different experiences for authenticated and non-authenticated users. The implementation follows a progressive enhancement approach, starting with basic layouts and gradually adding interactive features.
+This milestone implements a comprehensive user dashboard and landing page system that provides
+different experiences for authenticated and non-authenticated users. The implementation follows
+a progressive enhancement approach, starting with basic layouts and gradually adding interactive
+features.
 
-**Note:** This milestone is positioned after Milestone 5 (Combat Tracker Core) and before Milestone 6 (Advanced Combat Features) to provide users with an intuitive interface once core combat functionality is available.
+**Note:** This milestone is positioned after Milestone 5 (Combat Tracker Core) and before
+Milestone 6 (Advanced Combat Features) to provide users with an intuitive interface once core
+combat functionality is available.
 
 ## Success Criteria
 
@@ -43,6 +48,7 @@ This milestone implements a comprehensive user dashboard and landing page system
 ## Quality Gates
 
 Each step must pass:
+
 - [ ] TypeScript compilation (`npm run type-check`)
 - [ ] ESLint validation (`npm run lint`)
 - [ ] Unit tests pass (`npm run test`)
@@ -60,6 +66,7 @@ Each step must pass:
 ## Integration with Combat Core
 
 This milestone leverages the combat tracking functionality from Milestone 5 to:
+
 - Demonstrate real combat scenarios in interactive demos
 - Show actual initiative tracking and turn management
 - Display sample combat data in dashboard recent activity

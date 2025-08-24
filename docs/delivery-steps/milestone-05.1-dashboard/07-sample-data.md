@@ -2,7 +2,8 @@
 
 ## Overview
 
-Create comprehensive sample data and content management system to showcase features for non-authenticated users and provide realistic examples in demos.
+Create comprehensive sample data and content management system to showcase features for
+non-authenticated users and provide realistic examples in demos.
 
 ## Objectives
 
@@ -17,18 +18,21 @@ Create comprehensive sample data and content management system to showcase featu
 ### 1. Sample Data Providers
 
 **File:** `src/lib/sample-data/characters.ts`
+
 - Pre-defined character data with realistic stats
 - Multiple character classes and races
 - Proper D&D 5e character progression
 - Sample equipment and abilities
 
 **File:** `src/lib/sample-data/encounters.ts`
+
 - Balanced encounter designs
 - Multiple difficulty levels
 - Environmental descriptions
 - Tactical positioning suggestions
 
 **File:** `src/lib/sample-data/creatures.ts`
+
 - Monster stat blocks with lair actions
 - Organized by challenge rating
 - Environmental themes
@@ -37,6 +41,7 @@ Create comprehensive sample data and content management system to showcase featu
 ### 2. Data Management Utilities
 
 **File:** `src/lib/sample-data/index.ts`
+
 - Centralized data export
 - Data validation schemas
 - Random data generation utilities
@@ -554,12 +559,14 @@ export const advanceInitiative = (current: DemoState): DemoState => {
 ### Unit Tests
 
 **File:** `src/lib/sample-data/__tests__/characters.test.ts`
+
 - Character data validates against schema
 - All required properties are present
 - Stats are within D&D 5e ranges
 - Random character function works
 
 **File:** `src/lib/sample-data/__tests__/encounters.test.ts`
+
 - Encounter balance calculations are correct
 - Lair actions format properly
 - Challenge ratings match creature totals
@@ -584,6 +591,7 @@ export const advanceInitiative = (current: DemoState): DemoState => {
 ## Next Steps
 
 After completing this step:
+
 1. Test sample data in all demo components
 2. Validate D&D 5e rule accuracy with subject matter experts
 3. Performance test with full sample datasets

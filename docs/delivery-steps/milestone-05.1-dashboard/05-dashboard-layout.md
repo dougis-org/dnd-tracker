@@ -2,7 +2,8 @@
 
 ## Overview
 
-Create the main dashboard layout for authenticated users with quick stats overview, usage metrics, and responsive card-based design.
+Create the main dashboard layout for authenticated users with quick stats overview, usage
+metrics, and responsive card-based design.
 
 ## Objectives
 
@@ -17,17 +18,20 @@ Create the main dashboard layout for authenticated users with quick stats overvi
 ### 1. Dashboard Components
 
 **File:** `src/components/Dashboard.tsx`
+
 - Main dashboard container component
 - Authentication state integration
 - Responsive grid system for dashboard cards
 - Loading states and error handling
 
 **File:** `src/components/dashboard/DashboardStats.tsx`
+
 - Usage metrics display with progress bars
 - Tier-specific limit visualization
 - Upgrade prompts and notifications
 
 **File:** `src/components/dashboard/RecentActivity.tsx`
+
 - Last combat sessions list
 - Quick resume functionality
 - Session metadata display
@@ -35,11 +39,13 @@ Create the main dashboard layout for authenticated users with quick stats overvi
 ### 2. Data Hooks and State
 
 **File:** `src/hooks/useDashboardData.ts`
+
 - Fetch user stats and recent activity
 - Cache management for dashboard data
 - Real-time usage updates
 
 **File:** `src/lib/dashboard-utils.ts`
+
 - Usage calculation utilities
 - Progress percentage calculations
 - Upgrade suggestion logic
@@ -393,12 +399,14 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
 ### Unit Tests
 
 **File:** `src/components/__tests__/Dashboard.test.tsx`
+
 - Renders correctly for authenticated users
 - Shows loading state while fetching data
 - Handles error states gracefully
 - Displays welcome message with user name
 
 **File:** `src/components/dashboard/__tests__/DashboardStats.test.tsx`
+
 - Usage percentages calculate correctly
 - Progress bars display proper values
 - Upgrade prompts appear at correct thresholds
@@ -423,5 +431,6 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
 ## Next Steps
 
 After completing this step:
+
 1. Test with different subscription tiers
 2. Validate usage calculation accuracy

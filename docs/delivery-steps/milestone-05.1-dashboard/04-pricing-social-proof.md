@@ -16,12 +16,14 @@ Implement the pricing comparison table focused on freemium conversion and add te
 ### 1. Pricing Components
 
 **File:** `src/components/landing/PricingSection.tsx`
+
 - Responsive pricing table
 - Highlight free tier benefits
 - Clear upgrade path visualization
 - Mobile-optimized card layout
 
 **File:** `src/components/landing/TestimonialsSection.tsx`
+
 - Carousel with smooth transitions
 - Star ratings display
 - User personas with realistic details
@@ -30,6 +32,7 @@ Implement the pricing comparison table focused on freemium conversion and add te
 ### 2. Data Structures
 
 **File:** `src/lib/pricing-data.ts`
+
 - Pricing tier definitions
 - Feature comparison matrix
 - Testimonial data with type safety
@@ -332,12 +335,14 @@ export default function TestimonialsSection() {
 ### Unit Tests
 
 **File:** `src/components/landing/__tests__/PricingSection.test.tsx`
+
 - All pricing tiers render correctly
 - Feature comparison displays properly
 - CTA buttons are functional
 - Popular tier highlighting works
 
 **File:** `src/components/landing/__tests__/TestimonialsSection.test.tsx`
+
 - Carousel navigation works
 - Auto-rotation functions
 - Star ratings display correctly
@@ -355,6 +360,7 @@ export default function TestimonialsSection() {
 ## Next Steps
 
 After completing this step:
+
 1. Test conversion flow from pricing to sign-up
 2. Validate carousel performance on mobile
 3. A/B test different testimonial orderings

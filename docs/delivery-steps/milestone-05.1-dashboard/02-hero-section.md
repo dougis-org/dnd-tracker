@@ -2,7 +2,8 @@
 
 ## Overview
 
-Implement the hero section with compelling messaging and the three-column value proposition showcase that highlights core benefits.
+Implement the hero section with compelling messaging and the three-column value proposition
+showcase that highlights core benefits.
 
 ## Objectives
 
@@ -16,12 +17,14 @@ Implement the hero section with compelling messaging and the three-column value 
 ### 1. Hero Section Components
 
 **File:** `src/components/landing/HeroSection.tsx`
+
 - Compelling headline and subheadline
 - Primary CTA button with analytics tracking
 - Trust indicators with user avatars
 - Responsive typography and spacing
 
 **File:** `src/components/landing/ValuePropositionSection.tsx`
+
 - Three-column grid layout
 - Icon integration (Lucide React)
 - Benefit descriptions with examples
@@ -30,6 +33,7 @@ Implement the hero section with compelling messaging and the three-column value 
 ### 2. Visual Assets
 
 **File:** `src/components/ui/icons.tsx` (enhance existing)
+
 - Combat-themed icons (crossed swords, cloud, castle)
 - Consistent sizing and styling
 - Accessibility attributes
@@ -52,13 +56,15 @@ export default function HeroSection() {
       <div className="max-w-4xl mx-auto px-4">
         <h1 
           id="hero-heading" 
-          className="text-4xl md:text-6xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent"
+          className="text-4xl md:text-6xl font-bold tracking-tight bg-gradient-to-r 
+          from-primary to-primary/80 bg-clip-text text-transparent"
         >
           Master Your D&D Combat Encounters
         </h1>
         
         <p className="mt-6 text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-          The comprehensive tool that makes combat tracking effortless for Dungeon Masters
+          The comprehensive tool that makes combat tracking effortless for Dungeon 
+          Masters
         </p>
         
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -80,7 +86,9 @@ export default function HeroSection() {
             {[1, 2, 3, 4, 5].map((i) => (
               <div
                 key={i}
-                className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 border-2 border-background flex items-center justify-center text-xs font-semibold text-white"
+                className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 
+                to-purple-500 border-2 border-background flex items-center 
+                justify-center text-xs font-semibold text-white"
               >
                 {String.fromCharCode(64 + i)}
               </div>
@@ -161,12 +169,14 @@ export default function ValuePropositionSection() {
 ### Unit Tests
 
 **File:** `src/components/landing/__tests__/HeroSection.test.tsx`
+
 - Renders hero headline correctly
 - Sign-up button is present and clickable
 - Trust indicators display properly
 - Responsive layout works
 
 **File:** `src/components/landing/__tests__/ValuePropositionSection.test.tsx`
+
 - All three benefits render
 - Icons display correctly
 - Card hover effects work
@@ -184,6 +194,7 @@ export default function ValuePropositionSection() {
 ## Next Steps
 
 After completing this step:
+
 1. Update `LandingPage.tsx` to include new sections
 2. Test visual hierarchy and spacing
 3. Validate mobile experience

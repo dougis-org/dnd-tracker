@@ -16,17 +16,20 @@ Create the foundational layout and routing structure for the new landing page th
 ### 1. Page Structure Setup
 
 **File:** `src/app/page.tsx`
+
 - Replace current demo page with proper landing page
 - Integrate with Clerk authentication state
 - Add proper TypeScript interfaces
 - Include SEO meta tags
 
 **File:** `src/components/LandingPage.tsx`
+
 - Main landing page component for non-authenticated users
 - Responsive grid layout using shadcn/ui
 - Semantic HTML structure for accessibility
 
 **File:** `src/components/Dashboard.tsx`
+
 - Main dashboard component for authenticated users
 - Card-based layout for stats and actions
 - Navigation integration
@@ -34,11 +37,13 @@ Create the foundational layout and routing structure for the new landing page th
 ### 2. Layout Components
 
 **File:** `src/components/landing/LandingLayout.tsx`
+
 - Container component for landing page sections
 - Responsive breakpoints
 - Proper spacing and typography scale
 
 **File:** `src/components/dashboard/DashboardLayout.tsx`
+
 - Container for authenticated user dashboard
 - Grid system for dashboard cards
 - Mobile-optimized layout
@@ -46,6 +51,7 @@ Create the foundational layout and routing structure for the new landing page th
 ### 3. SEO and Accessibility
 
 **File:** `src/app/layout.tsx` (update)
+
 - Enhanced meta tags for landing page
 - OpenGraph and Twitter Card support
 - Structured data markup
@@ -130,12 +136,14 @@ export default function LandingPage() {
 ### Unit Tests
 
 **File:** `src/components/__tests__/LandingPage.test.tsx`
+
 - Renders correctly for non-authenticated users
 - Contains proper semantic HTML structure
 - Includes accessibility landmarks
 - Sign-up button functionality
 
 **File:** `src/components/__tests__/Dashboard.test.tsx`
+
 - Renders correctly for authenticated users
 - Shows user-specific content
 - Navigation integration works
@@ -166,6 +174,7 @@ export default function LandingPage() {
 ## Next Steps
 
 After completing this step:
+
 1. Test authentication state switching
 2. Validate responsive design
 3. Run accessibility audit

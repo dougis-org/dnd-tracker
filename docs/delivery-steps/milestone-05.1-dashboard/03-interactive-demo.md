@@ -2,7 +2,8 @@
 
 ## Overview
 
-Build the interactive demo section with tabbed interface showcasing Initiative Tracker, Lair Actions, and Status Effects using realistic D&D examples.
+Build the interactive demo section with tabbed interface showcasing Initiative Tracker,
+Lair Actions, and Status Effects using realistic D&D examples.
 
 ## Objectives
 
@@ -17,12 +18,14 @@ Build the interactive demo section with tabbed interface showcasing Initiative T
 ### 1. Demo Container Components
 
 **File:** `src/components/landing/InteractiveDemoSection.tsx`
+
 - Tabbed interface using shadcn/ui Tabs
 - State management for active demo
 - Analytics tracking for engagement
 - Mobile-optimized tab navigation
 
 **File:** `src/components/demo/DemoTabs.tsx`
+
 - Tab switching logic
 - Smooth transitions between demos
 - Keyboard navigation support
@@ -30,18 +33,21 @@ Build the interactive demo section with tabbed interface showcasing Initiative T
 ### 2. Individual Demo Components
 
 **File:** `src/components/demo/InitiativeTrackerDemo.tsx`
+
 - Mock initiative order with 4 characters
 - Animated turn progression
 - HP bars with visual indicators
 - Real-time updates simulation
 
 **File:** `src/components/demo/LairActionsDemo.tsx`
+
 - Dragon lair example with initiative 20 triggers
 - Countdown timer animation
 - Environmental effect descriptions
 - Interactive action selection
 
 **File:** `src/components/demo/StatusEffectsDemo.tsx`
+
 - Character with multiple conditions
 - Duration countdown animations
 - Color-coded status indicators
@@ -304,12 +310,14 @@ export default function LairActionsDemo() {
 ### Unit Tests
 
 **File:** `src/components/demo/__tests__/InitiativeTrackerDemo.test.tsx`
+
 - Character list renders correctly
 - Turn progression animation works
 - HP bars display proper percentages
 - Round counter increments properly
 
 **File:** `src/components/demo/__tests__/LairActionsDemo.test.tsx`
+
 - Countdown timer functions correctly
 - Lair actions appear at proper timing
 - Action buttons are interactive
@@ -334,6 +342,7 @@ export default function LairActionsDemo() {
 ## Next Steps
 
 After completing this step:
+
 1. Integrate demos into main landing page
 2. Add analytics tracking for demo engagement
 3. Test performance with multiple running timers
