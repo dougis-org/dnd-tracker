@@ -38,7 +38,7 @@ Z:\dev\Code\dnd-tracker\docs\
 1. [#3](https://github.com/dougis-org/dnd-tracker/issues/3) ✅ **01-project-setup.md** - Initialize Next.js 15 with TypeScript
 2. [#4](https://github.com/dougis-org/dnd-tracker/issues/4) ✅ **02-clerk-integration.md** - Implement Clerk authentication
 3. [#5](https://github.com/dougis-org/dnd-tracker/issues/5) ✅ **03-mongodb-setup.md** - Configure MongoDB Atlas connection
-4. [#6](https://github.com/dougis-org/dnd-tracker/issues/6) ✅ **04-base-ui-components.md** - Set up shadcn/ui and Tailwind CSS
+4. [#6](https://github.com/dougis-org/dnd-tracker/issues/6) ✅ **04-base-ui-components.md** - Set up shadcn/ui and Tailwind
 5. [#7](https://github.com/dougis-org/dnd-tracker/issues/7) ✅ **05-deployment-config.md** - Configure Fly.io deployment
 6. [#8](https://github.com/dougis-org/dnd-tracker/issues/8) ✅ **06-environment-variables.md** - Set up environment configuration
 7. [#9](https://github.com/dougis-org/dnd-tracker/issues/9) ✅ **07-basic-navigation.md** - Create app layout and navigation
@@ -67,7 +67,7 @@ Z:\dev\Code\dnd-tracker\docs\
 
 1. [#12](https://github.com/dougis-org/dnd-tracker/issues/12)
    **01-user-model.md** - Create User schema with Clerk integration
-2. [#13](https://github.com/dougis-org/dnd-tracker/issues/13)
+2. [#13](https://github.com/dougis-org/dnd-tracker/issues/13) ✅
    **02-character-model.md** - Implement Character schema with all D&D fields
 3. [#14](https://github.com/dougis-org/dnd-tracker/issues/14)
    **03-character-api.md** - Build CRUD API endpoints for characters
