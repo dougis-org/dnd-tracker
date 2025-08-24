@@ -814,15 +814,15 @@ export function validateCharacter(data: any): ValidationResult {
 
   // Validate optional arrays
   if (data.skillProficiencies && Array.isArray(data.skillProficiencies)) {
-    sanitizedData.skillProficiencies = data.skillProficiencies.filter(skill => 
+    sanitizedData.skillProficiencies = data.skillProficiencies.filter((skill: any) => 
       typeof skill === 'string' && skill.trim().length > 0
-    ).map(skill => skill.trim());
+    ).map((skill: string) => skill.trim());
   }
 
   if (data.savingThrowProficiencies && Array.isArray(data.savingThrowProficiencies)) {
-    sanitizedData.savingThrowProficiencies = data.savingThrowProficiencies.filter(save => 
+    sanitizedData.savingThrowProficiencies = data.savingThrowProficiencies.filter((save: any) => 
       typeof save === 'string' && save.trim().length > 0
-    ).map(save => save.trim());
+    ).map((save: string) => save.trim());
   }
 
   // Validate hit points object
@@ -916,15 +916,15 @@ export function validateCharacter(data: any): ValidationResult {
 
     // Validate spell arrays
     if (data.spellcasting.spellsKnown && Array.isArray(data.spellcasting.spellsKnown)) {
-      sanitizedSpellcasting.spellsKnown = data.spellcasting.spellsKnown.filter(spell => 
+      sanitizedSpellcasting.spellsKnown = data.spellcasting.spellsKnown.filter((spell: any) => 
         typeof spell === 'string' && spell.trim().length > 0
-      ).map(spell => spell.trim());
+      ).map((spell: string) => spell.trim());
     }
 
     if (data.spellcasting.spellsPrepared && Array.isArray(data.spellcasting.spellsPrepared)) {
-      sanitizedSpellcasting.spellsPrepared = data.spellcasting.spellsPrepared.filter(spell => 
+      sanitizedSpellcasting.spellsPrepared = data.spellcasting.spellsPrepared.filter((spell: any) => 
         typeof spell === 'string' && spell.trim().length > 0
-      ).map(spell => spell.trim());
+      ).map((spell: string) => spell.trim());
     }
 
     if (Object.keys(sanitizedSpellcasting).length > 0) {
@@ -956,9 +956,9 @@ export function validateCharacter(data: any): ValidationResult {
 
   // Validate features and notes
   if (data.features && Array.isArray(data.features)) {
-    sanitizedData.features = data.features.filter(feature => 
+    sanitizedData.features = data.features.filter((feature: any) => 
       typeof feature === 'string' && feature.trim().length > 0
-    ).map(feature => feature.trim());
+    ).map((feature: string) => feature.trim());
   }
 
   if (data.notes && typeof data.notes === 'string') {
