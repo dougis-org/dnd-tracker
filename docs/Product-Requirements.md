@@ -362,7 +362,7 @@ monetize advanced features while providing a robust free tier for new users.
 
 - **Tab 3: "Status Effects"**
   - Character with multiple conditions:
-    - "Sir Galahad" with "Poisoned (3 rounds)", "Blessed (5 rounds)"
+    - "Kael Brightblade" with "Poisoned (3 rounds)", "Blessed (5 rounds)"
     - Automatic duration tracking
     - Color-coded status indicators
 
