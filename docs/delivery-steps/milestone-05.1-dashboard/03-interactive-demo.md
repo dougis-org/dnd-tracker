@@ -124,7 +124,7 @@ import { ChevronRight } from 'lucide-react';
 
 interface Character {
   name: string;
-  class: string;
+  characterClass: string;
   initiative: number;
   hp: { current: number; max: number };
   isActive: boolean;
