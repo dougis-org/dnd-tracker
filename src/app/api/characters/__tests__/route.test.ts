@@ -232,10 +232,11 @@ describe('/api/characters', () => {
     });
 
     it('should handle database connection errors during creation', async () => {
-      mockAuth.mockReturnValue({ userId: 'user_12345' });
+      setupAuthenticatedUser();
+      const { mockConnectToDatabase } = require('./test-utils');
       mockConnectToDatabase.mockRejectedValue(new Error('Database connection failed'));
 
-      const request = new NextRequest('http://localhost:3000/api/characters', {
+      const request = createMockRequest('http://localhost:3000/api/characters', {
         method: 'POST',
         body: JSON.stringify(validCharacterData)
       });
@@ -248,11 +249,10 @@ describe('/api/characters', () => {
     });
 
     it('should handle character creation errors', async () => {
-      mockAuth.mockReturnValue({ userId: 'user_12345' });
-      mockConnectToDatabase.mockResolvedValue(undefined);
+      setupAuthenticatedUser();
       (CharacterModel.create as jest.Mock).mockRejectedValue(new Error('Creation failed'));
 
-      const request = new NextRequest('http://localhost:3000/api/characters', {
+      const request = createMockRequest('http://localhost:3000/api/characters', {
         method: 'POST',
         body: JSON.stringify(validCharacterData)
       });
