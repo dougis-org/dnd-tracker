@@ -26,13 +26,161 @@ describe('MongoDB Schemas', () => {
       });
     });
 
-    describe('Character validation', () => {
-      it('should validate a valid character object', () => {
+    describe('Character validation - D&D 5e comprehensive', () => {
+      it('should validate a complete D&D 5e character object', () => {
         const validCharacter = {
+          userId: 'user_12345',
           name: 'Aragorn',
-          level: 5,
-          hitPoints: 45,
+          race: 'Human',
+          subrace: 'Variant',
+          background: 'Ranger',
+          alignment: 'Chaotic Good',
+          experiencePoints: 6500,
+          classes: [
+            {
+              className: 'Ranger',
+              level: 5,
+              subclass: 'Hunter',
+              hitDiceSize: 10,
+              hitDiceUsed: 2,
+            },
+          ],
+          totalLevel: 5,
+          abilities: {
+            strength: 16,
+            dexterity: 14,
+            constitution: 13,
+            intelligence: 12,
+            wisdom: 15,
+            charisma: 10,
+          },
+          skillProficiencies: ['Animal Handling', 'Investigation', 'Nature', 'Survival'],
+          savingThrowProficiencies: ['Strength', 'Dexterity'],
+          hitPoints: {
+            maximum: 45,
+            current: 45,
+            temporary: 0,
+          },
           armorClass: 16,
+          speed: 30,
+          initiative: 2,
+          proficiencyBonus: 3,
+          passivePerception: 14,
+          spellcasting: {
+            ability: 'Wisdom',
+            spellAttackBonus: 6,
+            spellSaveDC: 14,
+            spellSlots: {
+              level1: { total: 4, used: 1 },
+              level2: { total: 2, used: 0 },
+            },
+            spellsKnown: ['Cure Wounds', 'Hunter\'s Mark', 'Pass Without Trace'],
+          },
+          equipment: [
+            { name: 'Longsword', quantity: 1, category: 'weapon' },
+            { name: 'Leather Armor', quantity: 1, category: 'armor' },
+          ],
+          features: ['Fighting Style: Archery', 'Favored Enemy: Orcs', 'Natural Explorer: Forest'],
+          notes: 'Skilled tracker and hunter',
+        };
+
+        const result = validateCharacter(validCharacter);
+        expect(result.isValid).toBe(true);
+        expect(result.errors).toEqual([]);
+        expect(result.sanitizedData?.totalLevel).toBe(5);
+        expect(result.sanitizedData?.proficiencyBonus).toBe(3);
+      });
+
+      it('should validate a multiclass character', () => {
+        const multiclassCharacter = {
+          userId: 'user_12345',
+          name: 'Gandalf',
+          race: 'Human',
+          background: 'Sage',
+          alignment: 'Lawful Good',
+          experiencePoints: 23000,
+          classes: [
+            {
+              className: 'Wizard',
+              level: 4,
+              subclass: 'School of Evocation',
+              hitDiceSize: 6,
+              hitDiceUsed: 1,
+            },
+            {
+              className: 'Cleric',
+              level: 2,
+              subclass: 'Light Domain',
+              hitDiceSize: 8,
+              hitDiceUsed: 0,
+            },
+          ],
+          totalLevel: 6,
+          abilities: {
+            strength: 10,
+            dexterity: 14,
+            constitution: 15,
+            intelligence: 18,
+            wisdom: 16,
+            charisma: 12,
+          },
+          skillProficiencies: ['Arcana', 'History', 'Investigation', 'Religion'],
+          savingThrowProficiencies: ['Intelligence', 'Wisdom'],
+          hitPoints: {
+            maximum: 38,
+            current: 38,
+            temporary: 0,
+          },
+          armorClass: 12,
+          speed: 30,
+          initiative: 2,
+          proficiencyBonus: 3,
+          passivePerception: 13,
+          spellcasting: {
+            ability: 'Intelligence',
+            spellAttackBonus: 7,
+            spellSaveDC: 15,
+            spellSlots: {
+              level1: { total: 4, used: 1 },
+              level2: { total: 3, used: 0 },
+              level3: { total: 2, used: 1 },
+            },
+            spellsKnown: ['Magic Missile', 'Shield', 'Fireball', 'Cure Wounds'],
+          },
+        };
+
+        const result = validateCharacter(multiclassCharacter);
+        expect(result.isValid).toBe(true);
+        expect(result.errors).toEqual([]);
+        expect(result.sanitizedData?.classes).toHaveLength(2);
+        expect(result.sanitizedData?.totalLevel).toBe(6);
+      });
+
+      it('should validate a valid basic character object (backward compatibility)', () => {
+        const validCharacter = {
+          userId: 'user_12345',
+          name: 'Aragorn',
+          race: 'Human',
+          background: 'Folk Hero',
+          alignment: 'Chaotic Good',
+          experiencePoints: 0,
+          classes: [
+            {
+              className: 'Fighter',
+              level: 1,
+              hitDiceSize: 10,
+              hitDiceUsed: 0,
+            },
+          ],
+          totalLevel: 1,
+          abilities: {
+            strength: 15,
+            dexterity: 14,
+            constitution: 13,
+            intelligence: 12,
+            wisdom: 13,
+            charisma: 15,
+          },
         };
 
         const result = validateCharacter(validCharacter);
@@ -40,94 +188,261 @@ describe('MongoDB Schemas', () => {
         expect(result.errors).toEqual([]);
       });
 
-      it('should reject character with empty name', () => {
+      it('should reject character with missing required fields', () => {
         const invalidCharacter = {
           name: '',
-          level: 5,
-          hitPoints: 45,
-          armorClass: 16,
+          // Missing userId, race, background, alignment, classes, abilities
         };
 
         const result = validateCharacter(invalidCharacter);
         expect(result.isValid).toBe(false);
         expect(result.errors).toContain('Name is required');
+        expect(result.errors).toContain('User ID is required');
+        expect(result.errors).toContain('Race is required');
+        expect(result.errors).toContain('Background is required');
+        expect(result.errors).toContain('Alignment is required');
+        expect(result.errors).toContain('Classes are required');
+        expect(result.errors).toContain('Abilities are required');
       });
 
-      it('should reject character with invalid level', () => {
+      it('should reject character with invalid ability scores', () => {
         const invalidCharacter = {
-          name: 'Aragorn',
-          level: 0,
-          hitPoints: 45,
-          armorClass: 16,
+          userId: 'user_12345',
+          name: 'Test Character',
+          race: 'Human',
+          background: 'Folk Hero',
+          alignment: 'Neutral',
+          classes: [{ className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }],
+          abilities: {
+            strength: 0, // Too low
+            dexterity: 31, // Too high
+            constitution: 'invalid', // Not a number
+            intelligence: 12,
+            wisdom: 13,
+            charisma: 15,
+          },
         };
 
         const result = validateCharacter(invalidCharacter);
         expect(result.isValid).toBe(false);
-        expect(result.errors).toContain('Level must be between 1 and 20');
+        expect(result.errors).toContain('Ability scores must be between 1 and 30');
+        expect(result.errors).toContain('Ability scores must be numbers');
       });
 
-      it('should reject character with level above 20', () => {
+      it('should reject character with invalid multiclass configuration', () => {
         const invalidCharacter = {
-          name: 'Aragorn',
-          level: 25,
-          hitPoints: 45,
-          armorClass: 16,
+          userId: 'user_12345',
+          name: 'Test Character',
+          race: 'Human',
+          background: 'Folk Hero',
+          alignment: 'Neutral',
+          classes: [
+            { className: 'Fighter', level: 0, hitDiceSize: 10, hitDiceUsed: 0 }, // Invalid level
+            { className: '', level: 5, hitDiceSize: 8, hitDiceUsed: 0 }, // Empty class name
+          ],
+          totalLevel: 5,
+          abilities: {
+            strength: 15, dexterity: 14, constitution: 13,
+            intelligence: 12, wisdom: 13, charisma: 15,
+          },
         };
 
         const result = validateCharacter(invalidCharacter);
         expect(result.isValid).toBe(false);
-        expect(result.errors).toContain('Level must be between 1 and 20');
+        expect(result.errors).toContain('Class levels must be between 1 and 20');
+        expect(result.errors).toContain('Class name is required');
       });
 
-      it('should reject character with negative hit points', () => {
+      it('should reject character with mismatched total level', () => {
         const invalidCharacter = {
-          name: 'Aragorn',
-          level: 5,
-          hitPoints: -5,
-          armorClass: 16,
+          userId: 'user_12345',
+          name: 'Test Character',
+          race: 'Human',
+          background: 'Folk Hero',
+          alignment: 'Neutral',
+          classes: [
+            { className: 'Fighter', level: 3, hitDiceSize: 10, hitDiceUsed: 0 },
+            { className: 'Rogue', level: 2, hitDiceSize: 8, hitDiceUsed: 1 },
+          ],
+          totalLevel: 10, // Should be 5 (3+2)
+          abilities: {
+            strength: 15, dexterity: 14, constitution: 13,
+            intelligence: 12, wisdom: 13, charisma: 15,
+          },
         };
 
         const result = validateCharacter(invalidCharacter);
         expect(result.isValid).toBe(false);
-        expect(result.errors).toContain('Hit points cannot be negative');
+        expect(result.errors).toContain('Total level must equal sum of class levels');
       });
 
-      it('should reject character with invalid armor class', () => {
+      it('should reject character with invalid hit dice configuration', () => {
         const invalidCharacter = {
-          name: 'Aragorn',
-          level: 5,
-          hitPoints: 45,
-          armorClass: -2,
+          userId: 'user_12345',
+          name: 'Test Character',
+          race: 'Human',
+          background: 'Folk Hero',
+          alignment: 'Neutral',
+          classes: [
+            { className: 'Fighter', level: 3, hitDiceSize: 5, hitDiceUsed: 0 }, // Invalid hit dice size
+            { className: 'Rogue', level: 2, hitDiceSize: 8, hitDiceUsed: 10 }, // More used than available
+          ],
+          totalLevel: 5,
+          abilities: {
+            strength: 15, dexterity: 14, constitution: 13,
+            intelligence: 12, wisdom: 13, charisma: 15,
+          },
         };
 
         const result = validateCharacter(invalidCharacter);
         expect(result.isValid).toBe(false);
-        expect(result.errors).toContain('Armor class must be between 0 and 30');
+        expect(result.errors).toContain('Hit dice size must be 6, 8, 10, or 12');
+        expect(result.errors).toContain('Hit dice used cannot exceed level');
+      });
+
+      it('should calculate proficiency bonus correctly based on total level', () => {
+        const testCases = [
+          { level: 1, expectedBonus: 2 },
+          { level: 4, expectedBonus: 2 },
+          { level: 5, expectedBonus: 3 },
+          { level: 8, expectedBonus: 3 },
+          { level: 9, expectedBonus: 4 },
+          { level: 12, expectedBonus: 4 },
+          { level: 13, expectedBonus: 5 },
+          { level: 16, expectedBonus: 5 },
+          { level: 17, expectedBonus: 6 },
+          { level: 20, expectedBonus: 6 },
+        ];
+
+        testCases.forEach(({ level, expectedBonus }) => {
+          const character = {
+            userId: 'user_12345',
+            name: `Level ${level} Character`,
+            race: 'Human',
+            background: 'Folk Hero',
+            alignment: 'Neutral',
+            classes: [{ className: 'Fighter', level, hitDiceSize: 10, hitDiceUsed: 0 }],
+            totalLevel: level,
+            abilities: {
+              strength: 15, dexterity: 14, constitution: 13,
+              intelligence: 12, wisdom: 13, charisma: 15,
+            },
+          };
+
+          const result = validateCharacter(character);
+          expect(result.isValid).toBe(true);
+          expect(result.sanitizedData?.proficiencyBonus).toBe(expectedBonus);
+        });
+      });
+
+      it('should calculate ability modifiers correctly', () => {
+        const character = {
+          userId: 'user_12345',
+          name: 'Test Character',
+          race: 'Human',
+          background: 'Folk Hero',
+          alignment: 'Neutral',
+          classes: [{ className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }],
+          totalLevel: 1,
+          abilities: {
+            strength: 8, // -1
+            dexterity: 10, // +0
+            constitution: 12, // +1
+            intelligence: 14, // +2
+            wisdom: 16, // +3
+            charisma: 18, // +4
+          },
+        };
+
+        const result = validateCharacter(character);
+        expect(result.isValid).toBe(true);
+        expect(result.sanitizedData?.abilityModifiers).toEqual({
+          strength: -1,
+          dexterity: 0,
+          constitution: 1,
+          intelligence: 2,
+          wisdom: 3,
+          charisma: 4,
+        });
       });
 
       it('should sanitize character name by trimming whitespace', () => {
         const characterWithWhitespace = {
+          userId: 'user_12345',
           name: '  Aragorn  ',
-          level: 5,
-          hitPoints: 45,
-          armorClass: 16,
+          race: 'Human',
+          background: 'Folk Hero',
+          alignment: 'Neutral',
+          classes: [{ className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }],
+          totalLevel: 1,
+          abilities: {
+            strength: 15, dexterity: 14, constitution: 13,
+            intelligence: 12, wisdom: 13, charisma: 15,
+          },
         };
 
         const result = validateCharacter(characterWithWhitespace);
+        expect(result.isValid).toBe(true);
         expect(result.sanitizedData?.name).toBe('Aragorn');
       });
 
-      it('should handle missing required fields', () => {
-        const incompleteCharacter = {
-          name: 'Aragorn',
-          // Missing level, hitPoints, armorClass
+      it('should validate spellcasting for spellcasters', () => {
+        const spellcasterCharacter = {
+          userId: 'user_12345',
+          name: 'Wizard',
+          race: 'Elf',
+          background: 'Sage',
+          alignment: 'Lawful Good',
+          classes: [{ className: 'Wizard', level: 3, hitDiceSize: 6, hitDiceUsed: 0 }],
+          totalLevel: 3,
+          abilities: {
+            strength: 8, dexterity: 14, constitution: 13,
+            intelligence: 16, wisdom: 12, charisma: 10,
+          },
+          spellcasting: {
+            ability: 'Intelligence',
+            spellAttackBonus: 6,
+            spellSaveDC: 14,
+            spellSlots: {
+              level1: { total: 4, used: 1 },
+              level2: { total: 2, used: 0 },
+            },
+            spellsKnown: ['Magic Missile', 'Shield', 'Misty Step'],
+          },
         };
 
-        const result = validateCharacter(incompleteCharacter);
+        const result = validateCharacter(spellcasterCharacter);
+        expect(result.isValid).toBe(true);
+        expect(result.sanitizedData?.spellcasting?.ability).toBe('Intelligence');
+      });
+
+      it('should reject invalid spellcasting configuration', () => {
+        const invalidSpellcaster = {
+          userId: 'user_12345',
+          name: 'Bad Wizard',
+          race: 'Elf',
+          background: 'Sage',
+          alignment: 'Lawful Good',
+          classes: [{ className: 'Wizard', level: 3, hitDiceSize: 6, hitDiceUsed: 0 }],
+          totalLevel: 3,
+          abilities: {
+            strength: 8, dexterity: 14, constitution: 13,
+            intelligence: 16, wisdom: 12, charisma: 10,
+          },
+          spellcasting: {
+            ability: 'InvalidAbility', // Invalid spellcasting ability
+            spellAttackBonus: -10, // Invalid attack bonus
+            spellSaveDC: 5, // Too low
+            spellSlots: {
+              level1: { total: 4, used: 10 }, // Used more than total
+            },
+          },
+        };
+
+        const result = validateCharacter(invalidSpellcaster);
         expect(result.isValid).toBe(false);
-        expect(result.errors).toContain('Level is required');
-        expect(result.errors).toContain('Hit points is required');
-        expect(result.errors).toContain('Armor class is required');
+        expect(result.errors).toContain('Invalid spellcasting ability');
+        expect(result.errors).toContain('Spell slots used cannot exceed total');
       });
     });
   });

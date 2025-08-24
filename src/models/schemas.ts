@@ -1,16 +1,97 @@
 import mongoose, { Schema, Model, Document } from 'mongoose';
 
-// Character interface and schema
+// Character interface and schema for D&D 5e
 export interface ICharacter extends Document {
+  userId: string; // Clerk ID of owner
+
+  // Basic Information
   name: string;
-  level: number;
-  hitPoints: number;
-  armorClass: number;
+  race: string;
+  subrace?: string;
+  background: string;
+  alignment: string;
+  experiencePoints: number;
+
+  // Multiclassing Support
+  classes: Array<{
+    className: string;
+    level: number;
+    subclass?: string;
+    hitDiceSize: number; // d6, d8, d10, d12
+    hitDiceUsed: number;
+  }>;
+  totalLevel: number; // Sum of all class levels
+
+  // Ability Scores
+  abilities: {
+    strength: number;
+    dexterity: number;
+    constitution: number;
+    intelligence: number;
+    wisdom: number;
+    charisma: number;
+  };
+
+  // Calculated Fields
+  abilityModifiers?: {
+    strength: number;
+    dexterity: number;
+    constitution: number;
+    intelligence: number;
+    wisdom: number;
+    charisma: number;
+  };
+  proficiencyBonus?: number;
+
+  // Skills and Proficiencies
+  skillProficiencies?: string[];
+  savingThrowProficiencies?: string[];
+
+  // Combat Stats
+  hitPoints?: {
+    maximum: number;
+    current: number;
+    temporary: number;
+  };
+  armorClass?: number;
+  speed?: number;
+  initiative?: number;
+  passivePerception?: number;
+
+  // Spellcasting (optional)
+  spellcasting?: {
+    ability: string;
+    spellAttackBonus: number;
+    spellSaveDC: number;
+    spellSlots: {
+      [key: string]: { total: number; used: number };
+    };
+    spellsKnown?: string[];
+    spellsPrepared?: string[];
+  };
+
+  // Equipment and Features
+  equipment?: Array<{
+    name: string;
+    quantity: number;
+    category: string;
+  }>;
+  features?: string[];
+  notes?: string;
+
   createdAt: Date;
   updatedAt: Date;
 }
 
 const CharacterSchema = new Schema<ICharacter>({
+  userId: {
+    type: String,
+    required: [true, 'User ID is required'],
+    trim: true,
+    index: true,
+  },
+
+  // Basic Information
   name: {
     type: String,
     required: [true, 'Name is required'],
@@ -18,34 +99,245 @@ const CharacterSchema = new Schema<ICharacter>({
     minlength: [1, 'Name cannot be empty'],
     maxlength: [100, 'Name cannot exceed 100 characters'],
   },
-  level: {
+  race: {
+    type: String,
+    required: [true, 'Race is required'],
+    trim: true,
+  },
+  subrace: {
+    type: String,
+    trim: true,
+  },
+  background: {
+    type: String,
+    required: [true, 'Background is required'],
+    trim: true,
+  },
+  alignment: {
+    type: String,
+    required: [true, 'Alignment is required'],
+    trim: true,
+  },
+  experiencePoints: {
     type: Number,
-    required: [true, 'Level is required'],
-    min: [1, 'Level must be between 1 and 20'],
-    max: [20, 'Level must be between 1 and 20'],
+    default: 0,
+    min: [0, 'Experience points cannot be negative'],
     validate: {
       validator: Number.isInteger,
-      message: 'Level must be an integer',
+      message: 'Experience points must be an integer',
     },
   },
+
+  // Multiclassing Support
+  classes: [{
+    className: {
+      type: String,
+      required: [true, 'Class name is required'],
+      trim: true,
+    },
+    level: {
+      type: Number,
+      required: [true, 'Class level is required'],
+      min: [1, 'Class level must be between 1 and 20'],
+      max: [20, 'Class level must be between 1 and 20'],
+      validate: {
+        validator: Number.isInteger,
+        message: 'Class level must be an integer',
+      },
+    },
+    subclass: {
+      type: String,
+      trim: true,
+    },
+    hitDiceSize: {
+      type: Number,
+      required: [true, 'Hit dice size is required'],
+      enum: {
+        values: [6, 8, 10, 12],
+        message: 'Hit dice size must be 6, 8, 10, or 12',
+      },
+    },
+    hitDiceUsed: {
+      type: Number,
+      default: 0,
+      min: [0, 'Hit dice used cannot be negative'],
+      validate: {
+        validator: Number.isInteger,
+        message: 'Hit dice used must be an integer',
+      },
+    },
+  }],
+  totalLevel: {
+    type: Number,
+    required: [true, 'Total level is required'],
+    min: [1, 'Total level must be between 1 and 20'],
+    max: [20, 'Total level must be between 1 and 20'],
+    validate: {
+      validator: Number.isInteger,
+      message: 'Total level must be an integer',
+    },
+  },
+
+  // Ability Scores
+  abilities: {
+    strength: {
+      type: Number,
+      required: [true, 'Strength is required'],
+      min: [1, 'Ability scores must be between 1 and 30'],
+      max: [30, 'Ability scores must be between 1 and 30'],
+      validate: {
+        validator: Number.isInteger,
+        message: 'Ability scores must be integers',
+      },
+    },
+    dexterity: {
+      type: Number,
+      required: [true, 'Dexterity is required'],
+      min: [1, 'Ability scores must be between 1 and 30'],
+      max: [30, 'Ability scores must be between 1 and 30'],
+      validate: {
+        validator: Number.isInteger,
+        message: 'Ability scores must be integers',
+      },
+    },
+    constitution: {
+      type: Number,
+      required: [true, 'Constitution is required'],
+      min: [1, 'Ability scores must be between 1 and 30'],
+      max: [30, 'Ability scores must be between 1 and 30'],
+      validate: {
+        validator: Number.isInteger,
+        message: 'Ability scores must be integers',
+      },
+    },
+    intelligence: {
+      type: Number,
+      required: [true, 'Intelligence is required'],
+      min: [1, 'Ability scores must be between 1 and 30'],
+      max: [30, 'Ability scores must be between 1 and 30'],
+      validate: {
+        validator: Number.isInteger,
+        message: 'Ability scores must be integers',
+      },
+    },
+    wisdom: {
+      type: Number,
+      required: [true, 'Wisdom is required'],
+      min: [1, 'Ability scores must be between 1 and 30'],
+      max: [30, 'Ability scores must be between 1 and 30'],
+      validate: {
+        validator: Number.isInteger,
+        message: 'Ability scores must be integers',
+      },
+    },
+    charisma: {
+      type: Number,
+      required: [true, 'Charisma is required'],
+      min: [1, 'Ability scores must be between 1 and 30'],
+      max: [30, 'Ability scores must be between 1 and 30'],
+      validate: {
+        validator: Number.isInteger,
+        message: 'Ability scores must be integers',
+      },
+    },
+  },
+
+  // Optional fields
+  skillProficiencies: [String],
+  savingThrowProficiencies: [String],
+
   hitPoints: {
-    type: Number,
-    required: [true, 'Hit points is required'],
-    min: [0, 'Hit points cannot be negative'],
-    validate: {
-      validator: Number.isInteger,
-      message: 'Hit points must be an integer',
+    maximum: {
+      type: Number,
+      min: [0, 'Hit points cannot be negative'],
+    },
+    current: {
+      type: Number,
+      min: [0, 'Current hit points cannot be negative'],
+    },
+    temporary: {
+      type: Number,
+      default: 0,
+      min: [0, 'Temporary hit points cannot be negative'],
     },
   },
+
   armorClass: {
     type: Number,
-    required: [true, 'Armor class is required'],
-    min: [0, 'Armor class must be between 0 and 30'],
-    max: [30, 'Armor class must be between 0 and 30'],
-    validate: {
-      validator: Number.isInteger,
-      message: 'Armor class must be an integer',
+    min: [0, 'Armor class cannot be negative'],
+    max: [50, 'Armor class seems unreasonably high'],
+  },
+
+  speed: {
+    type: Number,
+    min: [0, 'Speed cannot be negative'],
+  },
+
+  initiative: {
+    type: Number,
+  },
+
+  passivePerception: {
+    type: Number,
+    min: [0, 'Passive perception cannot be negative'],
+  },
+
+  spellcasting: {
+    ability: {
+      type: String,
+      enum: {
+        values: ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'],
+        message: 'Invalid spellcasting ability',
+      },
     },
+    spellAttackBonus: {
+      type: Number,
+    },
+    spellSaveDC: {
+      type: Number,
+      min: [8, 'Spell save DC cannot be below 8'],
+    },
+    spellSlots: {
+      type: Map,
+      of: {
+        total: {
+          type: Number,
+          min: [0, 'Spell slot total cannot be negative'],
+        },
+        used: {
+          type: Number,
+          min: [0, 'Spell slots used cannot be negative'],
+        },
+      },
+    },
+    spellsKnown: [String],
+    spellsPrepared: [String],
+  },
+
+  equipment: [{
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    quantity: {
+      type: Number,
+      min: [0, 'Equipment quantity cannot be negative'],
+      validate: {
+        validator: Number.isInteger,
+        message: 'Equipment quantity must be an integer',
+      },
+    },
+    category: {
+      type: String,
+      trim: true,
+    },
+  }],
+
+  features: [String],
+  notes: {
+    type: String,
+    trim: true,
   },
 }, {
   timestamps: true,
@@ -318,62 +610,361 @@ interface ValidationResult {
   sanitizedData?: any;
 }
 
-// Character validation function
+/**
+ * Validates and sanitizes D&D 5e character data according to comprehensive rules.
+ * 
+ * This function performs validation of all character fields including multiclassing,
+ * ability scores, calculated fields, and optional features. It follows D&D 5e rules
+ * for proficiency bonus calculation, ability modifiers, and class restrictions.
+ * 
+ * @param data - Raw character data object to validate
+ * @returns ValidationResult with isValid flag, errors array, and sanitizedData
+ */
 export function validateCharacter(data: any): ValidationResult {
   const errors: string[] = [];
   const sanitizedData: any = {};
 
-  // Validate name
+  // Helper function to calculate ability modifier
+  const calculateAbilityModifier = (score: number): number => {
+    return Math.floor((score - 10) / 2);
+  };
+
+  // Helper function to calculate proficiency bonus from total level
+  const calculateProficiencyBonus = (totalLevel: number): number => {
+    return Math.ceil(totalLevel / 4) + 1;
+  };
+
+  // Validate required basic fields
+  if (!data.userId || typeof data.userId !== 'string') {
+    errors.push('User ID is required');
+  } else {
+    sanitizedData.userId = data.userId.trim();
+  }
+
   if (!data.name || typeof data.name !== 'string') {
     errors.push('Name is required');
   } else {
     const trimmedName = data.name.trim();
     if (trimmedName.length === 0) {
       errors.push('Name is required');
+    } else if (trimmedName.length > 100) {
+      errors.push('Name cannot exceed 100 characters');
     } else {
       sanitizedData.name = trimmedName;
     }
   }
 
-  // Validate level
-  if (data.level === undefined || data.level === null) {
-    errors.push('Level is required');
+  if (!data.race || typeof data.race !== 'string') {
+    errors.push('Race is required');
   } else {
-    const level = Number(data.level);
-    if (isNaN(level) || !Number.isInteger(level)) {
-      errors.push('Level must be an integer');
-    } else if (level < 1 || level > 20) {
-      errors.push('Level must be between 1 and 20');
+    sanitizedData.race = data.race.trim();
+  }
+
+  if (data.subrace && typeof data.subrace === 'string') {
+    sanitizedData.subrace = data.subrace.trim();
+  }
+
+  if (!data.background || typeof data.background !== 'string') {
+    errors.push('Background is required');
+  } else {
+    sanitizedData.background = data.background.trim();
+  }
+
+  if (!data.alignment || typeof data.alignment !== 'string') {
+    errors.push('Alignment is required');
+  } else {
+    sanitizedData.alignment = data.alignment.trim();
+  }
+
+  // Validate experience points
+  if (data.experiencePoints !== undefined) {
+    const xp = Number(data.experiencePoints);
+    if (isNaN(xp) || !Number.isInteger(xp) || xp < 0) {
+      errors.push('Experience points must be a non-negative integer');
     } else {
-      sanitizedData.level = level;
+      sanitizedData.experiencePoints = xp;
+    }
+  } else {
+    sanitizedData.experiencePoints = 0;
+  }
+
+  // Validate classes (multiclassing support)
+  if (!data.classes || !Array.isArray(data.classes) || data.classes.length === 0) {
+    errors.push('Classes are required');
+  } else {
+    const sanitizedClasses: any[] = [];
+    let calculatedTotalLevel = 0;
+
+    for (const classData of data.classes) {
+      const sanitizedClass: any = {};
+
+      if (!classData.className || typeof classData.className !== 'string') {
+        errors.push('Class name is required');
+        continue;
+      } else {
+        sanitizedClass.className = classData.className.trim();
+      }
+
+      if (classData.level === undefined || classData.level === null) {
+        errors.push('Class levels must be between 1 and 20');
+        continue;
+      } else {
+        const level = Number(classData.level);
+        if (isNaN(level) || !Number.isInteger(level) || level < 1 || level > 20) {
+          errors.push('Class levels must be between 1 and 20');
+          continue;
+        } else {
+          sanitizedClass.level = level;
+          calculatedTotalLevel += level;
+        }
+      }
+
+      if (classData.subclass && typeof classData.subclass === 'string') {
+        sanitizedClass.subclass = classData.subclass.trim();
+      }
+
+      if (classData.hitDiceSize === undefined) {
+        errors.push('Hit dice size must be 6, 8, 10, or 12');
+        continue;
+      } else {
+        const hitDiceSize = Number(classData.hitDiceSize);
+        if (![6, 8, 10, 12].includes(hitDiceSize)) {
+          errors.push('Hit dice size must be 6, 8, 10, or 12');
+          continue;
+        } else {
+          sanitizedClass.hitDiceSize = hitDiceSize;
+        }
+      }
+
+      const hitDiceUsed = Number(classData.hitDiceUsed || 0);
+      if (isNaN(hitDiceUsed) || !Number.isInteger(hitDiceUsed) || hitDiceUsed < 0) {
+        errors.push('Hit dice used must be a non-negative integer');
+        continue;
+      } else if (hitDiceUsed > sanitizedClass.level) {
+        errors.push('Hit dice used cannot exceed level');
+        continue;
+      } else {
+        sanitizedClass.hitDiceUsed = hitDiceUsed;
+      }
+
+      sanitizedClasses.push(sanitizedClass);
+    }
+
+    sanitizedData.classes = sanitizedClasses;
+
+    // Validate total level matches sum of class levels
+    if (data.totalLevel !== undefined) {
+      const totalLevel = Number(data.totalLevel);
+      if (isNaN(totalLevel) || !Number.isInteger(totalLevel)) {
+        errors.push('Total level must be an integer');
+      } else if (totalLevel !== calculatedTotalLevel) {
+        errors.push('Total level must equal sum of class levels');
+      } else {
+        sanitizedData.totalLevel = totalLevel;
+      }
+    } else {
+      sanitizedData.totalLevel = calculatedTotalLevel;
     }
   }
 
-  // Validate hit points
-  if (data.hitPoints === undefined || data.hitPoints === null) {
-    errors.push('Hit points is required');
+  // Validate abilities
+  if (!data.abilities || typeof data.abilities !== 'object') {
+    errors.push('Abilities are required');
   } else {
-    const hitPoints = Number(data.hitPoints);
-    if (isNaN(hitPoints) || !Number.isInteger(hitPoints)) {
-      errors.push('Hit points must be an integer');
-    } else if (hitPoints < 0) {
-      errors.push('Hit points cannot be negative');
-    } else {
-      sanitizedData.hitPoints = hitPoints;
+    const abilityNames = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+    const sanitizedAbilities: any = {};
+    const abilityModifiers: any = {};
+
+    for (const ability of abilityNames) {
+      if (data.abilities[ability] === undefined || data.abilities[ability] === null) {
+        errors.push(`${ability.charAt(0).toUpperCase() + ability.slice(1)} is required`);
+        continue;
+      }
+
+      const score = Number(data.abilities[ability]);
+      if (isNaN(score)) {
+        errors.push('Ability scores must be numbers');
+        continue;
+      }
+
+      if (!Number.isInteger(score)) {
+        errors.push('Ability scores must be integers');
+        continue;
+      }
+
+      if (score < 1 || score > 30) {
+        errors.push('Ability scores must be between 1 and 30');
+        continue;
+      }
+
+      sanitizedAbilities[ability] = score;
+      abilityModifiers[ability] = calculateAbilityModifier(score);
+    }
+
+    sanitizedData.abilities = sanitizedAbilities;
+    if (Object.keys(abilityModifiers).length === 6) {
+      sanitizedData.abilityModifiers = abilityModifiers;
     }
   }
 
-  // Validate armor class
-  if (data.armorClass === undefined || data.armorClass === null) {
-    errors.push('Armor class is required');
-  } else {
-    const armorClass = Number(data.armorClass);
-    if (isNaN(armorClass) || !Number.isInteger(armorClass)) {
-      errors.push('Armor class must be an integer');
-    } else if (armorClass < 0 || armorClass > 30) {
-      errors.push('Armor class must be between 0 and 30');
-    } else {
-      sanitizedData.armorClass = armorClass;
+  // Calculate proficiency bonus if total level is valid
+  if (sanitizedData.totalLevel) {
+    sanitizedData.proficiencyBonus = calculateProficiencyBonus(sanitizedData.totalLevel);
+  }
+
+  // Validate optional arrays
+  if (data.skillProficiencies && Array.isArray(data.skillProficiencies)) {
+    sanitizedData.skillProficiencies = data.skillProficiencies.filter(skill => 
+      typeof skill === 'string' && skill.trim().length > 0
+    ).map(skill => skill.trim());
+  }
+
+  if (data.savingThrowProficiencies && Array.isArray(data.savingThrowProficiencies)) {
+    sanitizedData.savingThrowProficiencies = data.savingThrowProficiencies.filter(save => 
+      typeof save === 'string' && save.trim().length > 0
+    ).map(save => save.trim());
+  }
+
+  // Validate hit points object
+  if (data.hitPoints && typeof data.hitPoints === 'object') {
+    const sanitizedHitPoints: any = {};
+    
+    if (data.hitPoints.maximum !== undefined) {
+      const max = Number(data.hitPoints.maximum);
+      if (!isNaN(max) && max >= 0) {
+        sanitizedHitPoints.maximum = max;
+      }
+    }
+
+    if (data.hitPoints.current !== undefined) {
+      const current = Number(data.hitPoints.current);
+      if (!isNaN(current) && current >= 0) {
+        sanitizedHitPoints.current = current;
+      }
+    }
+
+    const temp = Number(data.hitPoints.temporary || 0);
+    if (!isNaN(temp) && temp >= 0) {
+      sanitizedHitPoints.temporary = temp;
+    }
+
+    if (Object.keys(sanitizedHitPoints).length > 0) {
+      sanitizedData.hitPoints = sanitizedHitPoints;
+    }
+  }
+
+  // Validate optional numeric fields
+  const optionalNumbers = ['armorClass', 'speed', 'initiative', 'passivePerception'];
+  for (const field of optionalNumbers) {
+    if (data[field] !== undefined) {
+      const value = Number(data[field]);
+      if (!isNaN(value)) {
+        sanitizedData[field] = value;
+      }
+    }
+  }
+
+  // Validate spellcasting
+  if (data.spellcasting && typeof data.spellcasting === 'object') {
+    const sanitizedSpellcasting: any = {};
+
+    if (data.spellcasting.ability) {
+      const validAbilities = ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'];
+      if (validAbilities.includes(data.spellcasting.ability)) {
+        sanitizedSpellcasting.ability = data.spellcasting.ability;
+      } else {
+        errors.push('Invalid spellcasting ability');
+      }
+    }
+
+    if (data.spellcasting.spellAttackBonus !== undefined) {
+      const bonus = Number(data.spellcasting.spellAttackBonus);
+      if (!isNaN(bonus)) {
+        sanitizedSpellcasting.spellAttackBonus = bonus;
+      }
+    }
+
+    if (data.spellcasting.spellSaveDC !== undefined) {
+      const dc = Number(data.spellcasting.spellSaveDC);
+      if (!isNaN(dc) && dc >= 8) {
+        sanitizedSpellcasting.spellSaveDC = dc;
+      }
+    }
+
+    // Validate spell slots
+    if (data.spellcasting.spellSlots && typeof data.spellcasting.spellSlots === 'object') {
+      const sanitizedSlots: any = {};
+      
+      for (const [level, slots] of Object.entries(data.spellcasting.spellSlots)) {
+        if (typeof slots === 'object' && slots !== null) {
+          const slotData = slots as any;
+          const total = Number(slotData.total || 0);
+          const used = Number(slotData.used || 0);
+          
+          if (!isNaN(total) && !isNaN(used) && total >= 0 && used >= 0) {
+            if (used > total) {
+              errors.push('Spell slots used cannot exceed total');
+              continue;
+            }
+            sanitizedSlots[level] = { total, used };
+          }
+        }
+      }
+      
+      sanitizedSpellcasting.spellSlots = sanitizedSlots;
+    }
+
+    // Validate spell arrays
+    if (data.spellcasting.spellsKnown && Array.isArray(data.spellcasting.spellsKnown)) {
+      sanitizedSpellcasting.spellsKnown = data.spellcasting.spellsKnown.filter(spell => 
+        typeof spell === 'string' && spell.trim().length > 0
+      ).map(spell => spell.trim());
+    }
+
+    if (data.spellcasting.spellsPrepared && Array.isArray(data.spellcasting.spellsPrepared)) {
+      sanitizedSpellcasting.spellsPrepared = data.spellcasting.spellsPrepared.filter(spell => 
+        typeof spell === 'string' && spell.trim().length > 0
+      ).map(spell => spell.trim());
+    }
+
+    if (Object.keys(sanitizedSpellcasting).length > 0) {
+      sanitizedData.spellcasting = sanitizedSpellcasting;
+    }
+  }
+
+  // Validate equipment
+  if (data.equipment && Array.isArray(data.equipment)) {
+    const sanitizedEquipment: any[] = [];
+    
+    for (const item of data.equipment) {
+      if (typeof item === 'object' && item !== null && item.name && typeof item.name === 'string') {
+        const quantity = Number(item.quantity || 0);
+        if (!isNaN(quantity) && quantity >= 0) {
+          sanitizedEquipment.push({
+            name: item.name.trim(),
+            quantity,
+            category: typeof item.category === 'string' ? item.category.trim() : '',
+          });
+        }
+      }
+    }
+    
+    if (sanitizedEquipment.length > 0) {
+      sanitizedData.equipment = sanitizedEquipment;
+    }
+  }
+
+  // Validate features and notes
+  if (data.features && Array.isArray(data.features)) {
+    sanitizedData.features = data.features.filter(feature => 
+      typeof feature === 'string' && feature.trim().length > 0
+    ).map(feature => feature.trim());
+  }
+
+  if (data.notes && typeof data.notes === 'string') {
+    const trimmedNotes = data.notes.trim();
+    if (trimmedNotes.length > 0) {
+      sanitizedData.notes = trimmedNotes;
     }
   }
 
