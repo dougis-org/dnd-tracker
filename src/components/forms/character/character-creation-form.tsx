@@ -13,9 +13,11 @@ import { AbilityScoresStep } from './ability-scores-step';
 import { 
   characterFormSchema, 
   type CharacterFormData,
+  type CharacterFormInput,
   type BasicInfoFormData,
   type AbilitiesFormData
 } from '@/lib/validations/character';
+import type { z } from 'zod';
 
 interface CharacterCreationFormProps {
   onComplete?: (character: { id: string }) => void;
@@ -23,7 +25,7 @@ interface CharacterCreationFormProps {
 }
 
 interface ReviewStepProps {
-  formData: CharacterFormData;
+  formData: CharacterFormInput;
 }
 
 function ReviewStep({ formData }: ReviewStepProps) {
@@ -91,7 +93,7 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<CharacterFormData>({
+  const form = useForm<CharacterFormInput>({
     resolver: zodResolver(characterFormSchema),
     defaultValues: {
       name: '',
@@ -99,7 +101,14 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
       subrace: '',
       background: '',
       alignment: '',
-      experiencePoints: 0,
+      classes: [
+        {
+          className: 'Fighter',
+          level: 1,
+          hitDiceSize: 10,
+          hitDiceUsed: 0
+        }
+      ],
       abilities: {
         strength: 8,
         dexterity: 8,
@@ -107,12 +116,23 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
         intelligence: 8,
         wisdom: 8,
         charisma: 8
-      }
+      },
+      hitPoints: { maximum: 10, current: 10, temporary: 0 },
+      armorClass: 10,
+      speed: 30,
+      initiative: 0,
+      passivePerception: 10,
+      spellcasting: {
+        ability: undefined,
+        spellAttackBonus: 0,
+        spellSaveDC: 8
+      },
+      notes: ''
     },
     mode: 'onChange'
   });
 
-  const handleSubmit = async (data: CharacterFormData) => {
+  const handleSubmit = async (data: CharacterFormInput) => {
     setIsSubmitting(true);
     setError(null);
 
@@ -126,7 +146,7 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ error: 'Failed to create character' }));
         throw new Error(errorData.error || 'Failed to create character');
       }
 
@@ -135,7 +155,7 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
       if (onComplete) {
         onComplete(character);
       } else {
-        router.push(`/characters/${character.id}`);
+        router.push('/characters');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create character');
@@ -187,12 +207,21 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
     }
   ];
 
+  const validateStep = async (stepIndex: number) => {
+    const step = steps[stepIndex];
+    if (step.validate) {
+      return await step.validate();
+    }
+    return true;
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
           <MultiStepForm
             steps={steps}
+            validateStep={validateStep}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
             isSubmitting={isSubmitting}

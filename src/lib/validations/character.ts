@@ -44,7 +44,7 @@ const equipmentItemSchema = z.object({
 // Spellcasting schema
 const spellcastingSchema = z.object({
   ability: z.enum(['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'], {
-    errorMap: () => ({ message: 'Invalid spellcasting ability' })
+    message: 'Invalid spellcasting ability'
   }),
   spellAttackBonus: z.number()
     .int('Spell attack bonus must be an integer'),
@@ -202,6 +202,7 @@ export const equipmentSchema = characterFormSchema.pick({
 
 // Type definitions for form data
 export type CharacterFormData = z.infer<typeof characterFormSchema>;
+export type CharacterFormInput = z.input<typeof characterFormSchema>;
 export type BasicInfoFormData = z.infer<typeof basicInfoSchema>;
 export type ClassesFormData = z.infer<typeof classesSchema>;
 export type AbilitiesFormData = z.infer<typeof abilitiesSchema>;

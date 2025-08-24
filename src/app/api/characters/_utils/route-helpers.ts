@@ -48,15 +48,28 @@ export async function validateAndExtractId(params: RouteParams['params']): Promi
  * Higher-order function for routes that need ID validation
  */
 export function withAuthAndId<T extends any[]>(
-  handler: (userId: string, id: string, ...args: T) => Promise<Response>
+  handler: (userId: string, id: string, request?: NextRequest, ...args: T) => Promise<Response>
 ) {
-  return withAuth(async (userId: string, request: NextRequest, routeParams: RouteParams, ...args: T) => {
-    const idOrError = await validateAndExtractId(routeParams.params);
-    if (typeof idOrError !== 'string') {
-      return idOrError; // Return the error response
+  return async (request: NextRequest, context: { params: Promise<{ id: string }> }, ...args: T): Promise<Response> => {
+    try {
+      const { userId } = await auth();
+      if (!userId) {
+        return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+
+      await connectToDatabase();
+      
+      const idOrError = await validateAndExtractId(context.params);
+      if (typeof idOrError !== 'string') {
+        return idOrError; // Return the error response
+      }
+      
+      return handler(userId, idOrError, request, ...args);
+    } catch (error) {
+      console.error('Authentication or database error:', error);
+      return Response.json({ error: 'Internal server error' }, { status: 500 });
     }
-    return handler(userId, idOrError, request, ...args);
-  });
+  };
 }
 
 /**

@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { CharacterModel } from '@/models/schemas';
 import { withAuthAndId, handleDatabaseError, notFoundResponse, RouteParams } from '../../_utils/route-helpers';
 
-async function duplicateCharacter(userId: string, id: string, request: NextRequest): Promise<Response> {
+async function duplicateCharacter(userId: string, id: string, request?: NextRequest): Promise<Response> {
   try {
     // Find the original character
     const originalCharacter = await CharacterModel.findOne({ _id: id, userId });

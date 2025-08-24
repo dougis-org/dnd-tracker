@@ -118,12 +118,12 @@ export function AbilityScoresStep({ raceSelected }: AbilityScoresStepProps) {
       }, 0);
       
       if (newCost <= 27) {
-        form.setValue(`abilities.${ability}`, newScore);
+        form.setValue(`abilities.${ability}` as any, newScore);
       }
     } else {
       // Manual/roll method - allow full range
       const newScore = Math.max(1, Math.min(30, value));
-      form.setValue(`abilities.${ability}`, newScore);
+      form.setValue(`abilities.${ability}` as any, newScore);
     }
   };
 

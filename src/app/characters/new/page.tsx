@@ -7,7 +7,7 @@ export default function NewCharacterPage() {
   const router = useRouter();
 
   const handleComplete = (character: { id: string }) => {
-    router.push(`/characters/${character.id}`);
+    router.push(('/characters/' + character.id) as any);
   };
 
   const handleCancel = () => {

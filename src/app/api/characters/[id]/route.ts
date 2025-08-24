@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { CharacterModel } from '@/models/schemas';
 import { withAuthAndId, handleDatabaseError, notFoundResponse, RouteParams, parseRequestJSON } from '../_utils/route-helpers';
 
-async function getCharacter(userId: string, id: string, request: NextRequest): Promise<Response> {
+async function getCharacter(userId: string, id: string, request?: NextRequest): Promise<Response> {
   try {
     const character = await CharacterModel.findOne({ _id: id, userId });
     
@@ -18,7 +18,10 @@ async function getCharacter(userId: string, id: string, request: NextRequest): P
 
 export const GET = withAuthAndId(getCharacter);
 
-async function updateCharacter(userId: string, id: string, request: NextRequest): Promise<Response> {
+async function updateCharacter(userId: string, id: string, request?: NextRequest): Promise<Response> {
+  if (!request) {
+    return Response.json({ error: 'Request is required' }, { status: 400 });
+  }
   const dataOrError = await parseRequestJSON(request);
   if (dataOrError instanceof Response) {
     return dataOrError; // Return the error response
@@ -43,7 +46,7 @@ async function updateCharacter(userId: string, id: string, request: NextRequest)
 
 export const PUT = withAuthAndId(updateCharacter);
 
-async function deleteCharacter(userId: string, id: string, request: NextRequest): Promise<Response> {
+async function deleteCharacter(userId: string, id: string, request?: NextRequest): Promise<Response> {
   try {
     const character = await CharacterModel.findOneAndDelete({ _id: id, userId });
     

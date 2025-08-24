@@ -9,28 +9,41 @@ export interface FormStep {
   title: string;
   description: string;
   component: React.ComponentType<any>;
+  validate?: () => boolean | Promise<boolean>;
 }
 
 export interface MultiStepFormProps {
   steps: FormStep[];
-  onComplete: () => void;
+  onComplete?: () => void;
+  onSubmit?: (data: any) => void | Promise<void>;
   onCancel: () => void;
-  validateStep?: (stepIndex: number) => boolean;
+  validateStep?: (stepIndex: number) => boolean | Promise<boolean>;
   isLoading?: boolean;
+  isSubmitting?: boolean;
   initialStep?: number;
   stepComponentProps?: Record<string, any>;
   className?: string;
+  submitLabel?: string;
+  submittingLabel?: string;
+  error?: string | null;
+  form?: any;
 }
 
 export function MultiStepForm({
   steps,
   onComplete,
+  onSubmit,
   onCancel,
   validateStep,
   isLoading = false,
+  isSubmitting = false,
   initialStep = 0,
   stepComponentProps = {},
-  className
+  className,
+  submitLabel = "Complete",
+  submittingLabel = "Submitting...",
+  error,
+  form
 }: MultiStepFormProps) {
   const [currentStep, setCurrentStep] = useState(initialStep);
   
@@ -38,10 +51,13 @@ export function MultiStepForm({
   const isLastStep = currentStep === steps.length - 1;
   const currentStepData = steps[currentStep];
 
-  const handleNext = useCallback(() => {
+  const handleNext = useCallback(async () => {
     // Validate current step if validator is provided
-    if (validateStep && !validateStep(currentStep)) {
-      return;
+    if (validateStep) {
+      const isValid = await validateStep(currentStep);
+      if (!isValid) {
+        return;
+      }
     }
 
     if (!isLastStep) {
@@ -55,13 +71,23 @@ export function MultiStepForm({
     }
   }, [isFirstStep]);
 
-  const handleComplete = useCallback(() => {
+  const handleComplete = useCallback(async () => {
     // Validate final step if validator is provided
-    if (validateStep && !validateStep(currentStep)) {
-      return;
+    if (validateStep) {
+      const isValid = await validateStep(currentStep);
+      if (!isValid) {
+        return;
+      }
     }
-    onComplete();
-  }, [currentStep, validateStep, onComplete]);
+    
+    if (onSubmit && form) {
+      // Handle form submission
+      const formData = form.getValues();
+      await onSubmit(formData);
+    } else if (onComplete) {
+      onComplete();
+    }
+  }, [currentStep, validateStep, onComplete, onSubmit, form]);
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent, action: () => void) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -135,7 +161,7 @@ export function MultiStepForm({
               variant="outline"
               onClick={handlePrevious}
               onKeyDown={(e) => handleKeyDown(e, handlePrevious)}
-              disabled={isLoading}
+              disabled={isLoading || isSubmitting}
               aria-label="Go to previous step"
             >
               Previous
@@ -149,7 +175,7 @@ export function MultiStepForm({
             variant="outline"
             onClick={onCancel}
             onKeyDown={(e) => handleKeyDown(e, onCancel)}
-            disabled={isLoading}
+            disabled={isLoading || isSubmitting}
             aria-label="Cancel form"
           >
             Cancel
@@ -160,17 +186,17 @@ export function MultiStepForm({
               type="button"
               onClick={handleComplete}
               onKeyDown={(e) => handleKeyDown(e, handleComplete)}
-              disabled={isLoading}
+              disabled={isLoading || isSubmitting}
               aria-label="Complete form submission"
             >
-              {isLoading ? 'Completing...' : 'Complete'}
+              {(isLoading || isSubmitting) ? submittingLabel : submitLabel}
             </Button>
           ) : (
             <Button
               type="button"
               onClick={handleNext}
               onKeyDown={(e) => handleKeyDown(e, handleNext)}
-              disabled={isLoading}
+              disabled={isLoading || isSubmitting}
               aria-label="Go to next step"
             >
               {isLoading ? 'Loading...' : 'Next'}
@@ -178,6 +204,15 @@ export function MultiStepForm({
           )}
         </div>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <div className="mt-4 p-3 bg-destructive/15 border border-destructive rounded-md" role="alert">
+          <p className="text-sm text-destructive font-medium">
+            {error}
+          </p>
+        </div>
+      )}
 
       {/* Screen Reader Navigation Hints */}
       <div className="sr-only" aria-live="polite">

@@ -204,6 +204,20 @@ describe('CharacterCreationForm', () => {
 
     // Navigate to final step and submit
     await user.type(screen.getByRole('textbox', { name: /character name/i }), 'Test');
+    
+    // Fill required fields to pass validation
+    const raceSelect = screen.getByRole('combobox', { name: /^race \*$/i });
+    await user.click(raceSelect);
+    await user.click(screen.getByText('Human'));
+    
+    const backgroundSelect = screen.getByRole('combobox', { name: /background/i });
+    await user.click(backgroundSelect);
+    await user.click(screen.getByText('Acolyte'));
+    
+    const alignmentSelect = screen.getByRole('combobox', { name: /alignment/i });
+    await user.click(alignmentSelect);
+    await user.click(screen.getByText('Lawful Good'));
+    
     await user.click(screen.getByText('Next'));
     await user.click(screen.getByText('Next'));
     
@@ -245,7 +259,7 @@ describe('CharacterCreationForm', () => {
 
     // Should show error message
     await waitFor(() => {
-      expect(screen.getByText(/failed to create character/i)).toBeInTheDocument();
+      expect(screen.getByText(/validation failed/i)).toBeInTheDocument();
     });
 
     // Should not call onComplete
