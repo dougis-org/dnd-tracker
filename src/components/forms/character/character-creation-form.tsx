@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,10 +22,12 @@ import {
   type SkillsFormData
 } from '@/lib/validations/character';
 import type { z } from 'zod';
+import { useCharacterDraft } from '@/hooks/use-character-draft';
 
 interface CharacterCreationFormProps {
   onComplete?: (character: { id: string }) => void;
   onCancel?: () => void;
+  draftId?: string; // If editing an existing draft
 }
 
 interface ReviewStepProps {
@@ -222,10 +224,14 @@ function ReviewStep({ formData }: ReviewStepProps) {
   );
 }
 
-export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreationFormProps) {
+export function CharacterCreationForm({ onComplete, onCancel, draftId }: CharacterCreationFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentDraftId, setCurrentDraftId] = useState<string | undefined>(draftId);
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+  
+  const { loadDraft, saveDraft, updateDraft, autoSaveDraft } = useCharacterDraft();
 
   const form = useForm<CharacterFormInput>({
     resolver: zodResolver(characterFormSchema),
@@ -265,6 +271,58 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
     },
     mode: 'onChange'
   });
+
+  // Load draft on mount if draftId is provided
+  useEffect(() => {
+    const loadExistingDraft = async () => {
+      if (draftId) {
+        const draft = await loadDraft(draftId);
+        if (draft) {
+          form.reset(draft.formData);
+          setCurrentDraftId(draft._id);
+        }
+      }
+    };
+
+    loadExistingDraft();
+  }, [draftId, loadDraft, form]);
+
+  // Auto-save form data when it changes
+  const formData = form.watch();
+  
+  useEffect(() => {
+    if (autoSaveEnabled && formData.name && formData.name.trim()) {
+      // Only auto-save if the form has meaningful data (at least a name)
+      const cleanup = autoSaveDraft(formData, currentDraftId, formData.name);
+      return cleanup; // Return cleanup function to clear timeout on unmount/change
+    }
+  }, [formData, autoSaveEnabled, currentDraftId, autoSaveDraft]);
+
+  // Save draft manually
+  const handleSaveDraft = useCallback(async () => {
+    const currentFormData = form.getValues();
+    if (!currentFormData.name || !currentFormData.name.trim()) {
+      setError('Please enter a character name before saving draft');
+      return;
+    }
+    
+    setAutoSaveEnabled(false); // Temporarily disable auto-save
+    
+    try {
+      let result;
+      if (currentDraftId) {
+        result = await updateDraft(currentDraftId, currentFormData, currentFormData.name);
+      } else {
+        result = await saveDraft(currentFormData, currentFormData.name);
+      }
+      
+      if (result && !currentDraftId) {
+        setCurrentDraftId(result._id);
+      }
+    } finally {
+      setAutoSaveEnabled(true); // Re-enable auto-save
+    }
+  }, [form, currentDraftId, updateDraft, saveDraft]);
 
   const handleSubmit = async (data: CharacterFormInput) => {
     setIsSubmitting(true);
@@ -404,11 +462,13 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
             validateStep={validateStep}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
+            onSaveDraft={handleSaveDraft}
             isSubmitting={isSubmitting}
             submitLabel="Complete"
             submittingLabel="Completing..."
             error={error}
             form={form}
+            showSaveDraft={true}
           />
         </form>
       </Form>

@@ -1,4 +1,6 @@
 import mongoose, { Schema, Model, Document } from 'mongoose';
+import { z } from 'zod';
+import { characterFormSchema, type CharacterFormInput } from '@/lib/validations/character';
 
 // Character interface and schema for D&D 5e
 export interface ICharacter extends Document {
@@ -350,6 +352,17 @@ export const CharacterModel: Model<ICharacter> =
   mongoose.models.Character || mongoose.model<ICharacter>('Character', CharacterSchema);
 
 export { UserModel };
+
+// Character Draft Zod schema
+export const CharacterDraft = z.object({
+  userId: z.string().min(1, 'User ID is required'),
+  name: z.string().min(1, 'Draft name is required').max(100, 'Name cannot exceed 100 characters'),
+  formData: characterFormSchema,
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+export type CharacterDraftType = z.infer<typeof CharacterDraft>;
 
 // Validation result interface
 interface ValidationResult {
