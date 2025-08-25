@@ -117,6 +117,48 @@ Before creating a PR, ensure:
 
 ---
 
+## Reducing Complexity & Duplication
+
+To maintain code quality and keep the codebase maintainable, all contributors must actively reduce complexity and duplication. Follow these steps:
+
+### 1. Extract Shared Logic
+
+- Move repeated code (validation, form setup, test utilities) into shared helper functions or modules.
+- For tests, use a `test-utils.ts` file for common setup, mocks, and data factories.
+- For API routes, extract authentication, error handling, and database logic into reusable middleware or utility functions.
+
+### 2. Parameterize Tests
+
+- Use test parameterization (e.g., `it.each` in Jest) to avoid copy-pasting similar test cases.
+- Prefer factories for generating test data over duplicating objects.
+
+### 3. Component Composition
+
+- Break large components into smaller, focused subcomponents.
+- Reuse UI primitives (form fields, validation messages) across steps and forms.
+
+### 4. DRY Up API Handlers
+
+- If multiple API routes share similar CRUD logic, use generic handlers or base classes.
+- Centralize Zod schemas and validation logic for reuse in both frontend and backend.
+
+### 5. Refactor Regularly
+
+- When adding new features or tests, always look for opportunities to refactor and remove duplication.
+- If you see similar code in multiple places, extract it to a shared location.
+
+### 6. Review Before PR
+
+- Check for code duplication and high complexity before submitting a PR.
+- Use tools like Codacy and ESLint to identify and address duplication and complexity issues.
+
+**Example:**
+
+- If you have similar test setup in multiple files, move it to `src/app/api/characters/_utils/test-utils.ts` and import it where needed.
+- For repeated form validation logic, create a `form-helpers.ts` in `src/lib/` and reuse across components.
+
+---
+
 ## Testing & Quality Checks
 
 - All code must pass:
