@@ -1,5 +1,4 @@
 import { Webhook } from 'svix';
-import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { UserModel } from '@/models/schemas';
@@ -12,11 +11,10 @@ export async function POST(req: Request) {
     throw new Error('Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local');
   }
 
-  // Get the headers
-  const headerPayload = await headers();
-  const svix_id = headerPayload.get("svix-id");
-  const svix_timestamp = headerPayload.get("svix-timestamp");
-  const svix_signature = headerPayload.get("svix-signature");
+  // Get the headers from the request
+  const svix_id = req.headers.get("svix-id");
+  const svix_timestamp = req.headers.get("svix-timestamp");
+  const svix_signature = req.headers.get("svix-signature");
 
   // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {

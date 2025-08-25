@@ -1,7 +1,15 @@
 import '@testing-library/jest-dom';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
+
+let mongoServer;
 
 // Polyfills for JSDOM missing methods required by Radix UI components
-beforeAll(() => {
+beforeAll(async () => {
+  mongoServer = await MongoMemoryServer.create();
+  const uri = mongoServer.getUri();
+  await mongoose.connect(uri);
+  
   // Only apply polyfills in JSDOM environment (for UI component tests)
   if (typeof Element !== 'undefined') {
     // Pointer capture methods used by Radix UI dropdown/select components
@@ -89,4 +97,9 @@ beforeAll(() => {
       onremove: null,
     });
   }
+});
+
+afterAll(async () => {
+  await mongoose.disconnect();
+  await mongoServer.stop();
 });
