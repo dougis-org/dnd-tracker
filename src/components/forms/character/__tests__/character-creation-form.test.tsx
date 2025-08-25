@@ -208,7 +208,7 @@ describe('CharacterCreationForm', () => {
     
     // Should show validation errors
     await waitFor(() => {
-      expect(screen.getByText(/character name is required/i)).toBeInTheDocument();
+      expect(screen.getByText(/name is required/i)).toBeInTheDocument();
     });
   });
 

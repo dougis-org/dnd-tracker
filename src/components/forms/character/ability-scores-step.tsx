@@ -206,7 +206,7 @@ export function AbilityScoresStep({ raceSelected }: AbilityScoresStepProps) {
       {/* Ability Scores Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {DND_ABILITIES.map((ability) => {
-          const score = currentAbilities[ability];
+          const score = currentAbilities[ability as keyof typeof currentAbilities];
           const modifier = calculateAbilityModifier(score);
           const modifierText = modifier >= 0 ? `+${modifier}` : `${modifier}`;
           
@@ -214,7 +214,7 @@ export function AbilityScoresStep({ raceSelected }: AbilityScoresStepProps) {
             <FormField
               key={ability}
               control={form.control}
-              name={`abilities.${ability}`}
+              name={`abilities.${ability}` as any}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="capitalize">
@@ -287,7 +287,7 @@ export function AbilityScoresStep({ raceSelected }: AbilityScoresStepProps) {
               onClick={() => {
                 const abilities = { ...currentAbilities };
                 DND_ABILITIES.forEach(ability => {
-                  abilities[ability] = 8; // Reset to base
+                  abilities[ability as keyof typeof abilities] = 8; // Reset to base
                 });
                 form.setValue('abilities', abilities);
               }}
@@ -303,7 +303,7 @@ export function AbilityScoresStep({ raceSelected }: AbilityScoresStepProps) {
                 const balanced = [13, 13, 13, 12, 10, 8];
                 const abilities = { ...currentAbilities };
                 DND_ABILITIES.forEach((ability, index) => {
-                  abilities[ability] = balanced[index];
+                  abilities[ability as keyof typeof abilities] = balanced[index];
                 });
                 form.setValue('abilities', abilities);
               }}
