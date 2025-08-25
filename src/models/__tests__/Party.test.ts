@@ -84,6 +84,7 @@ describe('Party Model', () => {
     expect(savedParty.sharedWith[0].role).toBe('viewer');
     expect(savedParty.sharedWith[1].role).toBe('editor');
   });
+
   it('should create a new party', async () => {
     const partyData: Partial<IParty> = {
       userId: 'user123',
