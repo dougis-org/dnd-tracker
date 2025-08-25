@@ -66,9 +66,7 @@ const SpellSlotsSchema = z.record(z.string(), z.object({
 
 // Define Zod schema for spellcasting
 const SpellcastingSchema = z.object({
-  ability: z.enum(['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'], {
-    errorMap: () => ({ message: 'Invalid spellcasting ability' }),
-  }).optional(),
+  ability: z.enum(['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']).optional(),
   spellAttackBonus: z.number().optional(),
   spellSaveDC: z.number().min(8, 'Spell save DC cannot be below 8').optional(),
   spellSlots: SpellSlotsSchema,

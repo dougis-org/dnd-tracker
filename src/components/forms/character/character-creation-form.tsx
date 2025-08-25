@@ -93,8 +93,8 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<CharacterFormInput>({
-    resolver: zodResolver(characterFormSchema),
+  const form = useForm<CharacterFormData>({
+    resolver: zodResolver(characterFormSchema) as any,
     defaultValues: {
       name: '',
       race: '',
