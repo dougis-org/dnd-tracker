@@ -163,7 +163,7 @@ describe('BasicInfoStep', () => {
     fireEvent.submit(form!);
 
     await waitFor(() => {
-      expect(screen.getByText(/character name is required/i)).toBeInTheDocument();
+      expect(screen.getByText(/name is required/i)).toBeInTheDocument();
       expect(screen.getByText(/race is required/i)).toBeInTheDocument();
       expect(screen.getByText(/background is required/i)).toBeInTheDocument();
       expect(screen.getByText(/alignment is required/i)).toBeInTheDocument();
@@ -187,7 +187,7 @@ describe('BasicInfoStep', () => {
     fireEvent.submit(form!);
 
     await waitFor(() => {
-      expect(screen.getByText(/character name is required/i)).toBeInTheDocument();
+      expect(screen.getByText(/name is required/i)).toBeInTheDocument();
     });
   });
 
@@ -202,13 +202,13 @@ describe('BasicInfoStep', () => {
 
     const nameInput = screen.getByLabelText(/character name/i);
     // Bypass maxlength attribute to test validation
-    fireEvent.change(nameInput, { target: { value: 'a'.repeat(51) } });
+    fireEvent.change(nameInput, { target: { value: 'a'.repeat(101) } });
     
     const form = document.querySelector('form');
     fireEvent.submit(form!);
 
     await waitFor(() => {
-      expect(screen.getByText(/character name too long/i)).toBeInTheDocument();
+      expect(screen.getByText(/name cannot exceed 100 characters/i)).toBeInTheDocument();
     });
   });
 

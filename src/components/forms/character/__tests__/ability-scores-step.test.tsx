@@ -225,7 +225,7 @@ describe('AbilityScoresStep', () => {
     fireEvent.submit(form!);
 
     await waitFor(() => {
-      expect(screen.getByText(/ability score cannot exceed 30/i)).toBeInTheDocument();
+      expect(screen.getByText(/ability scores must be between 1 and 30/i)).toBeInTheDocument();
     });
   });
 
