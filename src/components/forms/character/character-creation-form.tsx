@@ -11,6 +11,7 @@ import { MultiStepForm } from '../multi-step-form';
 import { BasicInfoStep } from './basic-info-step';
 import { AbilityScoresStep } from './ability-scores-step';
 import { SkillsProficienciesStep } from './skills-proficiencies-step';
+import { SpellcastingStep } from './spellcasting-step';
 import { EquipmentFeaturesStep } from './equipment-features-step';
 import { 
   characterFormSchema, 
@@ -75,6 +76,53 @@ function ReviewStep({ formData }: ReviewStepProps) {
                 <strong className="capitalize">{ability}:</strong> {score}
               </div>
             ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Spellcasting</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {formData.spellcasting?.ability ? (
+              <>
+                <div>
+                  <strong>Spellcasting Ability:</strong> <span className="capitalize">{formData.spellcasting.ability}</span>
+                </div>
+                <div>
+                  <strong>Spell Attack Bonus:</strong> {formData.spellcasting.spellAttackBonus >= 0 ? '+' : ''}{formData.spellcasting.spellAttackBonus}
+                </div>
+                <div>
+                  <strong>Spell Save DC:</strong> {formData.spellcasting.spellSaveDC}
+                </div>
+                {formData.knownSpells && formData.knownSpells.length > 0 && (
+                  <div>
+                    <strong>Known Spells:</strong>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {formData.knownSpells.map((spell, index) => (
+                        <span key={index} className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                          {spell.name} (Level {spell.level})
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {formData.preparedSpells && formData.preparedSpells.length > 0 && (
+                  <div>
+                    <strong>Prepared Spells:</strong>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {formData.preparedSpells.map((spell, index) => (
+                        <span key={index} className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                          {spell.name} (Level {spell.level})
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className="text-muted-foreground text-sm">No spellcasting abilities</p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -289,6 +337,28 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
       validate: async () => {
         const skillsFields: (keyof SkillsFormData)[] = ['skillProficiencies', 'savingThrowProficiencies'];
         const isValid = await form.trigger(skillsFields);
+        return isValid;
+      }
+    },
+    {
+      title: 'Spellcasting',
+      description: 'Spells and magical abilities',
+      component: (props: any) => <SpellcastingStep
+        classesSelected={form.watch('classes')}
+        {...props}
+      />,
+      validate: async () => {
+        // For non-caster classes, skip spellcasting validation
+        const classes = form.getValues('classes') || [];
+        const SPELLCASTING_CLASSES = ['Artificer', 'Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorcerer', 'Warlock', 'Wizard'];
+        const hasSpellcaster = classes.some(cls => SPELLCASTING_CLASSES.includes(cls.className));
+        
+        if (!hasSpellcaster) {
+          return true; // Always valid for non-casters
+        }
+        
+        const spellcastingFields = ['spellcasting', 'knownSpells', 'preparedSpells', 'spellSlots'] as const;
+        const isValid = await form.trigger(spellcastingFields);
         return isValid;
       }
     },
