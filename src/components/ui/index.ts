@@ -31,3 +31,6 @@ export {
   FormMessage,
   FormField,
 } from "./form"
+export { Badge, badgeVariants } from "./badge"
+export { Separator } from "./separator"
+export { Alert, AlertTitle, AlertDescription } from "./alert"
