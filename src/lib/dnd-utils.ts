@@ -15,5 +15,11 @@ export const calculateAbilityModifier = (score: number): number => {
  * @returns The calculated proficiency bonus.
  */
 export const calculateProficiencyBonus = (totalLevel: number): number => {
-  return Math.ceil(totalLevel / 4) + 1;
+  if (totalLevel >= 1 && totalLevel <= 4) return 2;
+  if (totalLevel >= 5 && totalLevel <= 8) return 3;
+  if (totalLevel >= 9 && totalLevel <= 12) return 4;
+  if (totalLevel >= 13 && totalLevel <= 16) return 5;
+  if (totalLevel >= 17 && totalLevel <= 20) return 6;
+  // Optionally, handle out-of-bounds levels
+  throw new Error("Level out of range for proficiency bonus calculation");
 };
