@@ -86,6 +86,38 @@ To get started with the D&D Encounter Tracker, you will need to have [Node.js](h
 
    Navigate to `http://localhost:3000` to see the application in action.
 
+## Database Migrations
+
+This project uses `migrate-mongoose` to manage database schema changes. Migrations are stored in the `migrations` directory.
+
+### Creating a Migration
+
+To create a new migration file, run the following command:
+
+```bash
+npm run migrate:create <migration-name>
+```
+
+Replace `<migration-name>` with a descriptive name for your migration (e.g., `add-new-field-to-character`).
+
+### Running Migrations
+
+To apply all pending migrations, run the following command:
+
+```bash
+npm run migrate:up
+```
+
+This will run all migrations that have not yet been applied to the database.
+
+### Rolling Back Migrations
+
+To roll back the most recent migration, run the following command:
+
+```bash
+npm run migrate:down
+```
+
 ## Contributing
 
 Contributions are welcome! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information on how to contribute to this project.
