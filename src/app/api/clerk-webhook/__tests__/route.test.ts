@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { POST } from '../route';
 import { Webhook } from 'svix';
 import { connectToDatabase, disconnectFromDatabase } from '@/lib/mongodb';
