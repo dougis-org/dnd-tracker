@@ -159,7 +159,7 @@ describe('CharacterCreationForm', () => {
 
     expect(screen.getByText('Character Information')).toBeInTheDocument();
     expect(screen.getByText('Character Name *')).toBeInTheDocument();
-    expect(screen.getByText('Step 1 of 4')).toBeInTheDocument();
+    expect(screen.getByText('Step 1 of 5')).toBeInTheDocument();
   });
 
   it('should show progress through steps', async () => {
@@ -184,7 +184,7 @@ describe('CharacterCreationForm', () => {
 
     // Should be on step 2
     await waitFor(() => {
-      expect(screen.getByText('Step 2 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 2 of 5')).toBeInTheDocument();
     });
     expect(screen.getByText('Ability Scores')).toBeInTheDocument();
   });
@@ -204,7 +204,7 @@ describe('CharacterCreationForm', () => {
     await user.click(nextButton);
 
     // Should still be on first step
-    expect(screen.getByText('Step 1 of 4')).toBeInTheDocument();
+    expect(screen.getByText('Step 1 of 5')).toBeInTheDocument();
     
     // Should show validation errors
     await waitFor(() => {
@@ -230,7 +230,7 @@ describe('CharacterCreationForm', () => {
 
     // Should be on step 2
     await waitFor(() => {
-      expect(screen.getByText('Step 2 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 2 of 5')).toBeInTheDocument();
     });
 
     // Go back
@@ -239,7 +239,7 @@ describe('CharacterCreationForm', () => {
 
     // Should be back on step 1
     await waitFor(() => {
-      expect(screen.getByText('Step 1 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 1 of 5')).toBeInTheDocument();
     });
     expect(screen.getByDisplayValue('Test Character')).toBeInTheDocument(); // Data preserved
   });
@@ -261,19 +261,25 @@ describe('CharacterCreationForm', () => {
 
     // Step 2 - ability scores are pre-filled with defaults
     await waitFor(() => {
-      expect(screen.getByText('Step 2 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 2 of 5')).toBeInTheDocument();
     });
     await user.click(screen.getByText('Next'));
 
     // Step 3 - skills & proficiencies (no required selections)
     await waitFor(() => {
-      expect(screen.getByText('Step 3 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 3 of 5')).toBeInTheDocument();
     });
     await user.click(screen.getByText('Next'));
 
-    // Step 4 - should show Complete button
+    // Step 4 - equipment & features (no required selections)
     await waitFor(() => {
-      expect(screen.getByText('Step 4 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 4 of 5')).toBeInTheDocument();
+    });
+    await user.click(screen.getByText('Next'));
+
+    // Step 5 - should show Complete button
+    await waitFor(() => {
+      expect(screen.getByText('Step 5 of 5')).toBeInTheDocument();
     });
     expect(screen.getByText('Complete')).toBeInTheDocument();
     expect(screen.queryByText('Next')).not.toBeInTheDocument();
@@ -294,12 +300,17 @@ describe('CharacterCreationForm', () => {
     await user.click(screen.getByText('Next'));
     
     await waitFor(() => {
-      expect(screen.getByText('Step 2 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 2 of 5')).toBeInTheDocument();
     });
     await user.click(screen.getByText('Next'));
 
     await waitFor(() => {
-      expect(screen.getByText('Step 3 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 3 of 5')).toBeInTheDocument();
+    });
+    await user.click(screen.getByText('Next'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Step 4 of 5')).toBeInTheDocument();
     });
     await user.click(screen.getByText('Next'));
 
@@ -359,12 +370,17 @@ describe('CharacterCreationForm', () => {
     await user.click(screen.getByText('Next'));
     
     await waitFor(() => {
-      expect(screen.getByText('Step 2 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 2 of 5')).toBeInTheDocument();
     });
     await user.click(screen.getByText('Next'));
     
     await waitFor(() => {
-      expect(screen.getByText('Step 3 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 3 of 5')).toBeInTheDocument();
+    });
+    await user.click(screen.getByText('Next'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('Step 4 of 5')).toBeInTheDocument();
     });
     await user.click(screen.getByText('Next'));
     
@@ -406,12 +422,17 @@ describe('CharacterCreationForm', () => {
     await user.click(screen.getByText('Next'));
     
     await waitFor(() => {
-      expect(screen.getByText('Step 2 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 2 of 5')).toBeInTheDocument();
     });
     await user.click(screen.getByText('Next'));
     
     await waitFor(() => {
-      expect(screen.getByText('Step 3 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 3 of 5')).toBeInTheDocument();
+    });
+    await user.click(screen.getByText('Next'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('Step 4 of 5')).toBeInTheDocument();
     });
     await user.click(screen.getByText('Next'));
     
@@ -446,13 +467,13 @@ describe('CharacterCreationForm', () => {
     await user.click(screen.getByText('Next'));
     
     await waitFor(() => {
-      expect(screen.getByText('Step 2 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 2 of 5')).toBeInTheDocument();
     });
     
     await user.click(screen.getByText('Previous'));
 
     await waitFor(() => {
-      expect(screen.getByText('Step 1 of 4')).toBeInTheDocument();
+      expect(screen.getByText('Step 1 of 5')).toBeInTheDocument();
     });
 
     // Data should be preserved
@@ -471,7 +492,7 @@ describe('CharacterCreationForm', () => {
     const mainContent = screen.getByRole('main');
     expect(mainContent).toHaveAttribute('aria-live', 'polite');
 
-    const progressIndicator = screen.getByText('Step 1 of 4');
+    const progressIndicator = screen.getByText('Step 1 of 5');
     expect(progressIndicator).toHaveAttribute('aria-label');
   });
 });

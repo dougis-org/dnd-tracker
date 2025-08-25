@@ -11,6 +11,7 @@ import { MultiStepForm } from '../multi-step-form';
 import { BasicInfoStep } from './basic-info-step';
 import { AbilityScoresStep } from './ability-scores-step';
 import { SkillsProficienciesStep } from './skills-proficiencies-step';
+import { EquipmentFeaturesStep } from './equipment-features-step';
 import { 
   characterFormSchema, 
   type CharacterFormData,
@@ -105,6 +106,61 @@ function ReviewStep({ formData }: ReviewStepProps) {
           </div>
         </CardContent>
       </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Equipment</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {formData.equipment && formData.equipment.length > 0 ? (
+              <div className="space-y-2">
+                {formData.equipment.map((item, index) => (
+                  <div key={index} className="flex justify-between items-center text-sm">
+                    <span>{item.name}</span>
+                    <span className="text-muted-foreground">
+                      {item.quantity > 1 && `×${item.quantity} `}
+                      <span className="capitalize">{item.category}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-sm">No equipment added</p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Features & Traits</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {formData.features && formData.features.length > 0 ? (
+              <div className="space-y-2">
+                {formData.features.map((feature, index) => (
+                  <div key={index} className="text-sm">
+                    {feature}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-sm">No features added</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {formData.notes && formData.notes.trim() && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Additional Notes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm whitespace-pre-wrap">{formData.notes}</p>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="text-sm text-muted-foreground border-l-4 border-muted pl-4">
         <p>
@@ -233,6 +289,20 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
       validate: async () => {
         const skillsFields: (keyof SkillsFormData)[] = ['skillProficiencies', 'savingThrowProficiencies'];
         const isValid = await form.trigger(skillsFields);
+        return isValid;
+      }
+    },
+    {
+      title: 'Equipment & Features',
+      description: 'Gear and special abilities',
+      component: (props: any) => <EquipmentFeaturesStep 
+        classesSelected={form.watch('classes')} 
+        backgroundSelected={form.watch('background')} 
+        {...props} 
+      />,
+      validate: async () => {
+        const equipmentFields = ['equipment', 'features', 'notes'] as const;
+        const isValid = await form.trigger(equipmentFields);
         return isValid;
       }
     },

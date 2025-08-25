@@ -23,7 +23,7 @@ import {
 } from '@/lib/validations/character';
 
 // Skill to ability mapping
-const SKILL_ABILITIES: Record<string, keyof typeof DND_ABILITIES> = {
+const SKILL_ABILITIES: Record<string, (typeof DND_ABILITIES)[number]> = {
   'Acrobatics': 'dexterity',
   'Animal Handling': 'wisdom',
   'Arcana': 'intelligence',
@@ -78,7 +78,7 @@ const BACKGROUND_SKILLS: Record<string, string[]> = {
 };
 
 // Class saving throw proficiencies
-const CLASS_SAVING_THROWS: Record<string, Array<keyof typeof DND_ABILITIES>> = {
+const CLASS_SAVING_THROWS: Record<string, Array<(typeof DND_ABILITIES)[number]>> = {
   'Artificer': ['constitution', 'intelligence'],
   'Barbarian': ['strength', 'constitution'],
   'Bard': ['dexterity', 'charisma'],
