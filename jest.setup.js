@@ -2,6 +2,13 @@ import '@testing-library/jest-dom';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.test' });
 
+// TextEncoder/TextDecoder polyfills for MSW
+if (!global.TextEncoder || !global.TextDecoder) {
+  const { TextEncoder, TextDecoder } = require('util');
+  global.TextEncoder = TextEncoder;
+  global.TextDecoder = TextDecoder;
+}
+
 // Polyfills for JSDOM missing methods required by Radix UI components
 beforeAll(async () => {
   // Only apply polyfills in JSDOM environment (for UI component tests)
