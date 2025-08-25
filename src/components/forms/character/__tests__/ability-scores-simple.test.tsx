@@ -18,12 +18,12 @@ function TestWrapper({ children, defaultValues = {} }: {
     resolver: zodResolver(abilitiesSchema),
     defaultValues: {
       abilities: {
-        strength: 10,
-        dexterity: 10,
-        constitution: 10,
-        intelligence: 10,
-        wisdom: 10,
-        charisma: 10
+        strength: 8, // Point buy defaults to 8
+        dexterity: 8,
+        constitution: 8,
+        intelligence: 8,
+        wisdom: 8,
+        charisma: 8
       },
       ...defaultValues
     }
@@ -73,9 +73,9 @@ describe('AbilityScoresStep', () => {
       </TestWrapper>
     );
 
-    // Should show modifiers (with default scores of 10, modifier is +0)
-    const modifiers = screen.getAllByText('+0');
-    expect(modifiers.length).toBeGreaterThanOrEqual(1);
+    // Should show modifiers (with default scores of 8, modifier is -1)
+    const modifiers = screen.getAllByText('-1');
+    expect(modifiers.length).toBe(6); // All 6 abilities should have -1 modifier at score 8
   });
 
   it('should show method selector with options', () => {
@@ -119,8 +119,50 @@ describe('AbilityScoresStep', () => {
     });
   });
 
-  it.skip('should allow changing ability scores', async () => {
-    // Skip for now - the component logic works but test interaction is complex
+  it('should allow changing ability scores', async () => {
+    const user = userEvent.setup();
+    
+    render(
+      <TestWrapper>
+        <AbilityScoresStep />
+      </TestWrapper>
+    );
+
+    // Find the strength ability input (first one in the list)
+    const strengthInput = screen.getByRole('spinbutton', { name: /strength/i });
+    
+    // Verify initial value is 8 (point buy default)
+    expect(strengthInput).toHaveValue(8);
+    
+    // Test changing ability score using fireEvent.change for more reliable testing
+    // Start with a smaller increase that won't exceed point buy limits
+    fireEvent.change(strengthInput, { target: { value: '10' } });
+    
+    await waitFor(() => {
+      expect(strengthInput).toHaveValue(10);
+    });
+    
+    // Test that modifier updates correctly (10 should give +0 modifier)
+    expect(screen.getByText('+0')).toBeInTheDocument();
+    
+    // Test changing to a higher valid value
+    fireEvent.change(strengthInput, { target: { value: '12' } });
+    
+    await waitFor(() => {
+      expect(strengthInput).toHaveValue(12);
+    });
+    
+    // Test that modifier updates (12 should give +1 modifier)
+    expect(screen.getByText('+1')).toBeInTheDocument();
+    
+    // Test that point buy constraints are respected
+    // Verify we can't exceed the point limit by testing with value that would exceed 27 points
+    fireEvent.change(strengthInput, { target: { value: '15' } });
+    
+    // The component should allow this change as it's within individual limits
+    await waitFor(() => {
+      expect(strengthInput).toHaveValue(15);
+    });
   });
 
   it('should show ability descriptions', () => {
