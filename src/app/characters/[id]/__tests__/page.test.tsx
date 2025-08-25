@@ -121,7 +121,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should display character basic information', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
@@ -134,7 +134,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should display character classes and multiclassing info', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
@@ -145,7 +145,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should display ability scores and modifiers', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
@@ -164,7 +164,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should display calculated fields', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
@@ -180,7 +180,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should display hit points information', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
@@ -190,7 +190,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should display spellcasting information', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
@@ -206,7 +206,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should display equipment list', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
@@ -220,7 +220,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should display character features', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
@@ -232,7 +232,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should display skill and saving throw proficiencies', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
@@ -246,7 +246,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should display character notes', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
@@ -256,7 +256,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should display edit and delete action buttons', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
@@ -274,7 +274,7 @@ describe('CharacterDetailPage', () => {
       () => new Promise(resolve => setTimeout(resolve, 100))
     );
 
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     expect(screen.getByText('Loading character details...')).toBeInTheDocument();
   });
@@ -286,7 +286,7 @@ describe('CharacterDetailPage', () => {
       json: async () => ({ error: 'Character not found' }),
     });
 
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Character not found')).toBeInTheDocument();
@@ -303,7 +303,7 @@ describe('CharacterDetailPage', () => {
       json: async () => ({ error: 'Internal server error' }),
     });
 
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Failed to load character')).toBeInTheDocument();
@@ -320,13 +320,13 @@ describe('CharacterDetailPage', () => {
       userId: null,
     } as any);
 
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     expect(screen.getByText('Please sign in to view character details')).toBeInTheDocument();
   });
 
   it('should validate character ID parameter', async () => {
-    render(<CharacterDetailPage params={{ id: 'invalid-id' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: 'invalid-id' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Invalid character ID')).toBeInTheDocument();
@@ -334,7 +334,7 @@ describe('CharacterDetailPage', () => {
   });
 
   it('should be accessible with proper ARIA labels and roles', async () => {
-    render(<CharacterDetailPage params={{ id: '507f1f77bcf86cd799439011' }} />);
+    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
 
     await waitFor(() => {
       expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();

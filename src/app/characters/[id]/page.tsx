@@ -84,7 +84,7 @@ interface Character {
 }
 
 interface CharacterDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 function formatModifier(modifier: number): string {
@@ -106,13 +106,14 @@ export default function CharacterDetailPage({ params }: CharacterDetailPageProps
   const [character, setCharacter] = useState<Character | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [characterId, setCharacterId] = useState<string | null>(null);
 
-  const fetchCharacter = useCallback(async () => {
+  const fetchCharacter = useCallback(async (id: string) => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/characters/${params.id}`);
+      const response = await fetch(`/api/characters/${id}`);
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -129,31 +130,39 @@ export default function CharacterDetailPage({ params }: CharacterDetailPageProps
     } finally {
       setLoading(false);
     }
-  }, [params.id]);
+  }, []);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    async function resolveParams() {
+      const resolvedParams = await params;
+      setCharacterId(resolvedParams.id);
+    }
+    resolveParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (!isLoaded || !characterId) return;
     
     if (!isSignedIn) {
       return;
     }
 
-    if (!isValidObjectId(params.id)) {
+    if (!isValidObjectId(characterId)) {
       setError('Invalid character ID');
       setLoading(false);
       return;
     }
 
-    fetchCharacter();
-  }, [isLoaded, isSignedIn, params.id, fetchCharacter]);
+    fetchCharacter(characterId);
+  }, [isLoaded, isSignedIn, characterId, fetchCharacter]);
 
   const handleDelete = async () => {
-    if (!character || !confirm(`Are you sure you want to delete ${character.name}? This action cannot be undone.`)) {
+    if (!character || !characterId || !confirm(`Are you sure you want to delete ${character.name}? This action cannot be undone.`)) {
       return;
     }
 
     try {
-      const response = await fetch(`/api/characters/${params.id}`, {
+      const response = await fetch(`/api/characters/${characterId}`, {
         method: 'DELETE',
       });
 
@@ -176,9 +185,6 @@ export default function CharacterDetailPage({ params }: CharacterDetailPageProps
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
           <p className="text-lg mb-4">Please sign in to view character details</p>
-          <Link href="/sign-in">
-            <Button>Sign In</Button>
-          </Link>
         </div>
       </div>
     );
@@ -200,7 +206,7 @@ export default function CharacterDetailPage({ params }: CharacterDetailPageProps
             <span>{error}</span>
             <div className="flex gap-2">
               {error === 'Failed to load character' && (
-                <Button variant="outline" size="sm" onClick={fetchCharacter}>
+                <Button variant="outline" size="sm" onClick={() => characterId && fetchCharacter(characterId)}>
                   Retry
                 </Button>
               )}
@@ -236,7 +242,7 @@ export default function CharacterDetailPage({ params }: CharacterDetailPageProps
         </div>
         
         <div className="flex gap-2">
-          <Link href={`/characters/${character._id}/edit`}>
+          <Link href={`/characters/${characterId}/edit` as any}>
             <Button 
               variant="outline" 
               size="sm"
