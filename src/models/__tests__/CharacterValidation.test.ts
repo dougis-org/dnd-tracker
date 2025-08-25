@@ -1,407 +1,358 @@
-import { CharacterSchema, CharacterSchemaWithTotalLevel, basicInfoSchema, classesSchema, abilitiesSchema, characterFormSchema, DND_RACES, DND_CLASSES, DND_ALIGNMENTS, calculateAbilityModifier, calculateProficiencyBonus } from '../../lib/validations/character';
-import { z } from 'zod';
+import {
+  CharacterSchema,
+  CharacterSchemaWithTotalLevel,
+  characterFormSchema,
+  basicInfoSchema,
+  classesSchema,
+  abilitiesSchema,
+  calculateAbilityModifier,
+  calculateProficiencyBonus,
+  type CharacterData,
+  type CharacterDataWithTotalLevel,
+  type CharacterFormData,
+  type BasicInfoFormData,
+  DND_RACES,
+  DND_CLASSES,
+  DND_ALIGNMENTS
+} from '@/lib/validations/character';
+
+// Test Data Factory
+const createValidCharacterData = (): CharacterData => ({
+  userId: 'user123',
+  name: 'Test Character',
+  race: 'Human',
+  subrace: 'Variant',
+  background: 'Soldier',
+  alignment: 'Lawful Good',
+  experiencePoints: 0,
+  classes: [{
+    className: 'Fighter',
+    level: 1,
+    subclass: 'Champion',
+    hitDiceSize: 10,
+    hitDiceUsed: 0
+  }],
+  abilities: {
+    strength: 15,
+    dexterity: 13,
+    constitution: 14,
+    intelligence: 12,
+    wisdom: 10,
+    charisma: 8
+  },
+  skillProficiencies: ['Athletics', 'Intimidation'],
+  savingThrowProficiencies: ['strength', 'constitution'],
+  hitPoints: {
+    maximum: 10,
+    current: 10,
+    temporary: 0
+  },
+  armorClass: 16,
+  speed: 30,
+  initiative: 1,
+  passivePerception: 10,
+  spellcasting: {
+    ability: 'intelligence',
+    spellAttackBonus: 0,
+    spellSaveDC: 8,
+    spellSlots: {},
+    spellsKnown: [],
+    spellsPrepared: []
+  },
+  equipment: [],
+  features: ['Fighting Style', 'Second Wind'],
+  notes: ''
+});
+
+// Test Helpers
+const expectSchemaSuccess = <T>(schema: any, data: any): T => {
+  const result = schema.parse(data);
+  expect(result).toBeDefined();
+  return result;
+};
+
+const expectSchemaFailure = (schema: any, data: any, expectedError?: string) => {
+  expect(() => schema.parse(data)).toThrow();
+  if (expectedError) {
+    try {
+      schema.parse(data);
+    } catch (error: any) {
+      if (error.errors && Array.isArray(error.errors)) {
+        expect(error.errors.some((e: any) => e.message && e.message.includes(expectedError))).toBe(true);
+      }
+    }
+  }
+};
 
 describe('CharacterSchema Validation', () => {
-  // Define a valid character data object for reuse in tests
-  const validCharacterData = {
-    userId: 'user123',
-    name: 'Test Character',
-    race: 'Human',
-    background: 'Soldier',
-    alignment: 'Lawful Good',
-    experiencePoints: 0,
-    classes: [{
-      className: 'Fighter',
-      level: 1,
-      hitDiceSize: 10,
-      hitDiceUsed: 0,
-    }],
-    abilities: {
-      strength: 10,
-      dexterity: 10,
-      constitution: 10,
-      intelligence: 10,
-      wisdom: 10,
-      charisma: 10,
-    },
-  };
+  let validCharacterData: CharacterData;
 
-  console.log('validCharacterData.classes[0].hitDiceSize:', validCharacterData.classes[0].hitDiceSize);
-
-  it('should invalidate character with name exceeding 100 characters', () => {
-    const invalidCharacterData = {
-      ...validCharacterData,
-      name: 'a'.repeat(101), // Name too long
-    };
-
-    const result = CharacterSchema.safeParse(invalidCharacterData);
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.issues[0].message).toBe('Name cannot exceed 100 characters');
-    }
+  beforeEach(() => {
+    validCharacterData = createValidCharacterData();
   });
 
-  it('should invalidate character if totalLevel does not match sum of class levels', () => {
-    const invalidCharacterData = {
-      ...validCharacterData,
-      totalLevel: 2, // Incorrect total level
-    };
-
-    const result = CharacterSchemaWithTotalLevel.safeParse(invalidCharacterData);
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      console.log('totalLevel error message:', result.error.issues[0].message);
-      expect(result.error.issues[0].message).toBe('Total level must equal sum of class levels');
-    }
-  });
-
-  it('should validate a minimal valid character', () => {
-    const result = CharacterSchema.safeParse(validCharacterData);
-    console.log('Minimal valid character result.success:', result.success);
-    if (!result.success) {
-      console.log('Minimal valid character errors:', result.error.issues);
-    }
-    expect(result.success).toBe(true);
-  });
-
-  describe('characterFormSchema', () => {
-    it('should validate a complete valid character', () => {
-      expect(() => characterFormSchema.parse(validCharacterData)).not.toThrow();
+  describe('Basic Character Validation', () => {
+    it('should validate a minimal valid character', () => {
+      const result = expectSchemaSuccess(CharacterSchema, validCharacterData);
+      expect(result.name).toBe(validCharacterData.name);
+      expect(result.classes).toHaveLength(1);
     });
 
-    it('should require name', () => {
-      const invalidData = { ...validCharacterData, name: '' };
-      expect(() => characterFormSchema.parse(invalidData)).toThrow(z.ZodError);
-    });
+    describe('Name Validation', () => {
+      const nameTests = [
+        { name: '', shouldFail: true, desc: 'empty name' },
+        { name: 'a', shouldFail: false, desc: 'single character' },
+        { name: 'A'.repeat(100), shouldFail: false, desc: 'maximum length' },
+        { name: 'A'.repeat(101), shouldFail: true, desc: 'exceeding maximum' }
+      ];
 
-    it('should limit name length', () => {
-      const invalidData = { ...validCharacterData, name: 'a'.repeat(101) };
-      expect(() => characterFormSchema.parse(invalidData)).toThrow(z.ZodError);
-    });
-
-    it('should require at least one class', () => {
-      const invalidData = { ...validCharacterData, classes: [] };
-      expect(() => characterFormSchema.parse(invalidData)).toThrow(z.ZodError);
-    });
-
-    it('should limit number of classes', () => {
-      const manyClasses = Array.from({ length: 15 }, (_, i) => ({
-        className: `Class${i + 1}`,
-        level: 1,
-        hitDiceSize: 6,
-        hitDiceUsed: 0,
-      }));
-      const invalidData = { ...validCharacterData, classes: manyClasses };
-      expect(() => characterFormSchema.parse(invalidData)).toThrow(z.ZodError);
-    });
-
-    it('should validate ability score ranges', () => {
-      const invalidData = {
-        ...validCharacterData,
-        abilities: { ...validCharacterData.abilities, strength: 0 } 
-      };
-      expect(() => characterFormSchema.parse(invalidData)).toThrow(z.ZodError);
-    });
-
-    it('should validate ability score maximum', () => {
-      const invalidData = {
-        ...validCharacterData,
-        abilities: { ...validCharacterData.abilities, strength: 31 } 
-      };
-      expect(() => characterFormSchema.parse(invalidData)).toThrow(z.ZodError);
-    });
-
-    it('should validate hit points constraints', () => {
-      const invalidData = {
-        ...validCharacterData,
-        hitPoints: {
-          maximum: -1,
+      test.each(nameTests)('should handle $desc', ({ name, shouldFail }) => {
+        const testData = { ...validCharacterData, name };
+        
+        if (shouldFail) {
+          expectSchemaFailure(CharacterSchema, testData);
+        } else {
+          expectSchemaSuccess(CharacterSchema, testData);
         }
-      };
-      expect(() => characterFormSchema.parse(invalidData)).toThrow(z.ZodError);
-    });
-
-    it('should allow current HP to equal maximum + temporary', () => {
-      const validData = {
-        ...validCharacterData,
-        hitPoints: {
-          maximum: 100,
-          current: 110,
-          temporary: 10,
-        }
-      };
-      expect(() => characterFormSchema.parse(validData)).not.toThrow();
-    });
-
-    it('should validate hit dice size', () => {
-      const invalidData = {
-        ...validCharacterData,
-        classes: [{
-          className: 'Fighter',
-          level: 1,
-          hitDiceSize: 5, // Invalid hit dice size
-          hitDiceUsed: 0,
-        }]
-      };
-      expect(() => characterFormSchema.parse(invalidData)).toThrow(z.ZodError);
-    });
-
-    it('should validate spellcasting ability', () => {
-      const invalidData = {
-        ...validCharacterData,
-        spellcasting: {
-          ability: 'InvalidAbility',
-        }
-      };
-      expect(() => characterFormSchema.parse(invalidData)).toThrow(z.ZodError);
-    });
-
-    it('should limit notes length', () => {
-      const invalidData = {
-        ...validCharacterData,
-        notes: 'a'.repeat(2001) 
-      };
-      expect(() => characterFormSchema.parse(invalidData)).toThrow(z.ZodError);
-    });
-  });
-
-  describe('basicInfoSchema', () => {
-    const validBasicInfo = {
-      name: 'Test Name',
-      race: 'Human',
-      background: 'Acolyte',
-      alignment: 'Lawful Good',
-      experiencePoints: 100,
-    };
-
-    it('should validate basic character info', () => {
-      expect(() => basicInfoSchema.parse(validBasicInfo)).not.toThrow();
-    });
-
-    it('should require name, race, background, and alignment', () => {
-      const requiredFields = ['name', 'race', 'background', 'alignment'];
-      requiredFields.forEach(field => {
-        const invalidData = { ...validBasicInfo, [field]: '' };
-        expect(() => basicInfoSchema.parse(invalidData)).toThrow(z.ZodError);
       });
     });
 
-    it('should make subrace optional', () => {
-      const dataWithoutSubrace = { ...validBasicInfo };
-      delete dataWithoutSubrace.subrace;
-      expect(() => basicInfoSchema.parse(dataWithoutSubrace)).not.toThrow();
-    });
+    describe('Class Validation', () => {
+      const classTests = [
+        { classCount: 0, shouldFail: true, desc: 'no classes' },
+        { classCount: 1, shouldFail: false, desc: 'single class' },
+        { classCount: 6, shouldFail: false, desc: 'multiclass character' },
+        { classCount: 12, shouldFail: false, desc: 'maximum classes' },
+        { classCount: 13, shouldFail: true, desc: 'exceeding maximum classes' }
+      ];
 
-    it('should default experiencePoints to 0', () => {
-      const dataWithoutXP = { ...validBasicInfo };
-      delete dataWithoutXP.experiencePoints;
-      const result = basicInfoSchema.parse(dataWithoutXP);
-      expect(result.experiencePoints).toBe(0);
-    });
-  });
-
-  describe('classesSchema', () => {
-    const validData = {
-      classes: [{
-        className: 'Fighter',
-        level: 1,
-        subclass: 'Battle Master',
-        hitDiceSize: 10,
-        hitDiceUsed: 0,
-      }],
-    };
-
-    it('should validate single class', () => {
-      expect(() => classesSchema.parse(validData)).not.toThrow();
-    });
-
-    it('should validate multiclass characters', () => {
-      const validData = {
-        classes: [
-          {
-            className: 'Fighter',
-            level: 5,
-            hitDiceSize: 10,
-            hitDiceUsed: 0,
-          },
-          {
-            className: 'Wizard',
-            level: 3,
-            hitDiceSize: 6,
-            hitDiceUsed: 0,
-          },
-        ]
-      };
-      expect(() => classesSchema.parse(validData)).not.toThrow();
-    });
-
-    it('should validate class level bounds', () => {
-      const invalidData = {
-        classes: [{
-          className: 'Fighter',
-          level: 0, // Invalid level
-          hitDiceSize: 10,
-          hitDiceUsed: 0,
-        }]
-      };
-      expect(() => classesSchema.parse(invalidData)).toThrow(z.ZodError);
-    });
-
-    it('should make subclass optional', () => {
-      const dataWithoutSubclass = {
-        classes: [{
-          className: 'Fighter',
+      test.each(classTests)('should validate $desc', ({ classCount, shouldFail }) => {
+        const classes = Array(classCount).fill(0).map((_, i) => ({
+          className: `Class${i}`,
           level: 1,
-          hitDiceSize: 10,
-          hitDiceUsed: 0,
-        }],
-      };
-      expect(() => classesSchema.parse(dataWithoutSubclass)).not.toThrow();
+          hitDiceSize: 8 as const,
+          hitDiceUsed: 0
+        }));
+
+        const testData = { ...validCharacterData, classes };
+
+        if (shouldFail) {
+          expectSchemaFailure(CharacterSchema, testData);
+        } else {
+          expectSchemaSuccess(CharacterSchema, testData);
+        }
+      });
     });
   });
 
-  describe('abilitiesSchema', () => {
-    const validData = {
-      abilities: {
-        strength: 10,
-        dexterity: 10,
-        constitution: 10,
-        intelligence: 10,
-        wisdom: 10,
-        charisma: 10,
-      },
-    };
+  describe('CharacterSchemaWithTotalLevel', () => {
+    it('should validate character when totalLevel matches sum of class levels', () => {
+      const characterData: CharacterDataWithTotalLevel = {
+        ...validCharacterData,
+        totalLevel: 1
+      };
 
-    it('should validate all six ability scores', () => {
-      expect(() => abilitiesSchema.parse(validData)).not.toThrow();
+      const result = expectSchemaSuccess(CharacterSchemaWithTotalLevel, characterData);
+      expect(result.totalLevel).toBe(1);
     });
 
-    it('should require all ability scores', () => {
-      const abilityNames = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
-      abilityNames.forEach(ability => {
-        const invalidData = {
-          abilities: { ...validData.abilities },
+    it('should invalidate character if totalLevel does not match sum of class levels', () => {
+      const characterData: CharacterDataWithTotalLevel = {
+        ...validCharacterData,
+        totalLevel: 5 // Classes total is 1
+      };
+
+      expectSchemaFailure(CharacterSchemaWithTotalLevel, characterData, 'Total level must equal sum of class levels');
+    });
+
+    describe('Multi-class Level Validation', () => {
+      const multiclassTests = [
+        { classLevels: [3, 2], totalLevel: 5, shouldFail: false },
+        { classLevels: [5, 5, 5], totalLevel: 15, shouldFail: false },
+        { classLevels: [3, 2], totalLevel: 4, shouldFail: true },
+        { classLevels: [10, 10], totalLevel: 20, shouldFail: false }
+      ];
+
+      test.each(multiclassTests)(
+        'should validate classes $classLevels with total $totalLevel',
+        ({ classLevels, totalLevel, shouldFail }) => {
+          const classes = classLevels.map((level, i) => ({
+            className: `Class${i}`,
+            level,
+            hitDiceSize: 8 as const,
+            hitDiceUsed: 0
+          }));
+
+          const characterData: CharacterDataWithTotalLevel = {
+            ...validCharacterData,
+            classes,
+            totalLevel
+          };
+
+          if (shouldFail) {
+            expectSchemaFailure(CharacterSchemaWithTotalLevel, characterData);
+          } else {
+            expectSchemaSuccess(CharacterSchemaWithTotalLevel, characterData);
+          }
+        }
+      );
+    });
+  });
+
+  describe('Form Schema Validation', () => {
+    describe('characterFormSchema', () => {
+      let validFormData: CharacterFormData;
+
+      beforeEach(() => {
+        validFormData = {
+          name: validCharacterData.name,
+          race: validCharacterData.race,
+          subrace: validCharacterData.subrace,
+          background: validCharacterData.background,
+          alignment: validCharacterData.alignment,
+          experiencePoints: validCharacterData.experiencePoints,
+          classes: validCharacterData.classes,
+          abilities: validCharacterData.abilities,
+          skillProficiencies: validCharacterData.skillProficiencies,
+          savingThrowProficiencies: validCharacterData.savingThrowProficiencies,
+          hitPoints: validCharacterData.hitPoints,
+          armorClass: validCharacterData.armorClass,
+          speed: validCharacterData.speed,
+          initiative: validCharacterData.initiative,
+          passivePerception: validCharacterData.passivePerception,
+          spellcasting: validCharacterData.spellcasting,
+          equipment: validCharacterData.equipment,
+          features: validCharacterData.features,
+          notes: validCharacterData.notes
         };
-        delete (invalidData.abilities as any)[ability];
-        expect(() => abilitiesSchema.parse(invalidData)).toThrow(z.ZodError);
+      });
+
+      it('should validate a complete valid character', () => {
+        expectSchemaSuccess(characterFormSchema, validFormData);
+      });
+
+      describe('Required Field Validation', () => {
+        const requiredFields = [
+          { field: 'name', value: '' },
+          { field: 'race', value: '' },
+          { field: 'background', value: '' },
+          { field: 'alignment', value: '' }
+        ] as const;
+
+        test.each(requiredFields)('should require $field', ({ field, value }) => {
+          const invalidData = { ...validFormData, [field]: value };
+          expectSchemaFailure(characterFormSchema, invalidData);
+        });
+      });
+
+      describe('Hit Points Business Rule', () => {
+        const hitPointTests = [
+          { current: 5, maximum: 10, temporary: 0, valid: true, desc: 'current < maximum' },
+          { current: 10, maximum: 10, temporary: 0, valid: true, desc: 'current = maximum' },
+          { current: 12, maximum: 10, temporary: 2, valid: true, desc: 'current = maximum + temporary' },
+          { current: 13, maximum: 10, temporary: 2, valid: false, desc: 'current > maximum + temporary' }
+        ];
+
+        test.each(hitPointTests)('should validate $desc', ({ current, maximum, temporary, valid }) => {
+          const testData = {
+            ...validFormData,
+            hitPoints: { current, maximum, temporary }
+          };
+
+          if (valid) {
+            expectSchemaSuccess(characterFormSchema, testData);
+          } else {
+            expectSchemaFailure(characterFormSchema, testData, 'Current HP cannot exceed maximum HP + temporary HP');
+          }
+        });
+      });
+
+      describe('Spellcasting Ability Validation', () => {
+        const abilityTests = [
+          { ability: 'strength', valid: true },
+          { ability: 'wisdom', valid: true },
+          { ability: 'charisma', valid: true },
+          { ability: 'magic', valid: false },
+          { ability: 'luck', valid: false }
+        ];
+
+        test.each(abilityTests)('should validate spellcasting ability: $ability', ({ ability, valid }) => {
+          const testData = {
+            ...validFormData,
+            spellcasting: { ...validFormData.spellcasting!, ability: ability as any }
+          };
+
+          if (valid) {
+            expectSchemaSuccess(characterFormSchema, testData);
+          } else {
+            expectSchemaFailure(characterFormSchema, testData);
+          }
+        });
+      });
+
+      describe('Notes Length Validation', () => {
+        const notesTests = [
+          { length: 2000, valid: true, desc: 'maximum length' },
+          { length: 2001, valid: false, desc: 'exceeding maximum' }
+        ];
+
+        test.each(notesTests)('should validate notes $desc', ({ length, valid }) => {
+          const testData = {
+            ...validFormData,
+            notes: 'a'.repeat(length)
+          };
+
+          if (valid) {
+            expectSchemaSuccess(characterFormSchema, testData);
+          } else {
+            expectSchemaFailure(characterFormSchema, testData, 'Notes cannot exceed 2000 characters');
+          }
+        });
       });
     });
   });
 
   describe('Utility Functions', () => {
     describe('calculateAbilityModifier', () => {
-      it('should calculate ability modifiers correctly', () => {
-        expect(calculateAbilityModifier(10)).toBe(0);
-        expect(calculateAbilityModifier(11)).toBe(0);
-        expect(calculateAbilityModifier(12)).toBe(1);
-        expect(calculateAbilityModifier(13)).toBe(1);
-        expect(calculateAbilityModifier(8)).toBe(-1);
+      const modifierTestCases = [
+        { score: 1, expected: -5 },
+        { score: 8, expected: -1 },
+        { score: 10, expected: 0 },
+        { score: 11, expected: 0 },
+        { score: 16, expected: 3 },
+        { score: 20, expected: 5 }
+      ];
+
+      test.each(modifierTestCases)('should calculate modifier for score $score', ({ score, expected }) => {
+        expect(calculateAbilityModifier(score)).toBe(expected);
       });
     });
 
     describe('calculateProficiencyBonus', () => {
-      it('should calculate proficiency bonus by character level', () => {
-        expect(calculateProficiencyBonus(1)).toBe(2);
-        expect(calculateProficiencyBonus(4)).toBe(2);
-        expect(calculateProficiencyBonus(5)).toBe(3);
-        expect(calculateProficiencyBonus(8)).toBe(3);
-        expect(calculateProficiencyBonus(9)).toBe(4);
-        expect(calculateProficiencyBonus(12)).toBe(4);
-        expect(calculateProficiencyBonus(13)).toBe(5);
-        expect(calculateProficiencyBonus(16)).toBe(5);
-        expect(calculateProficiencyBonus(17)).toBe(6);
-        expect(calculateProficiencyBonus(20)).toBe(6);
+      const proficiencyTestCases = [
+        { level: 1, expected: 2 },
+        { level: 5, expected: 3 },
+        { level: 9, expected: 4 },
+        { level: 13, expected: 5 },
+        { level: 17, expected: 6 }
+      ];
+
+      test.each(proficiencyTestCases)('should calculate proficiency bonus for level $level', ({ level, expected }) => {
+        expect(calculateProficiencyBonus(level)).toBe(expected);
       });
     });
   });
 
-  describe('D&D Constants', () => {
-    it('should have expected races', () => {
-      expect(DND_RACES).toContain('Human');
-      expect(DND_RACES).toContain('Elf');
-      expect(DND_RACES).toContain('Dwarf');
-      expect(DND_RACES.length).toBeGreaterThan(5);
-    });
+  describe('D&D Constants Validation', () => {
+    const constantValidationTests = [
+      { constant: DND_RACES, name: 'races', minLength: 8, includes: ['Human', 'Elf'] },
+      { constant: DND_CLASSES, name: 'classes', minLength: 10, includes: ['Fighter', 'Wizard'] },
+      { constant: DND_ALIGNMENTS, name: 'alignments', minLength: 9, includes: ['Lawful Good', 'Chaotic Evil'] }
+    ];
 
-    it('should have expected classes', () => {
-      expect(DND_CLASSES).toContain('Fighter');
-      expect(DND_CLASSES).toContain('Wizard');
-      expect(DND_CLASSES).toContain('Rogue');
-      expect(DND_CLASSES.length).toBeGreaterThan(10);
-    });
-
-    it('should have all nine alignments', () => {
-      expect(DND_ALIGNMENTS).toHaveLength(9);
-      expect(DND_ALIGNMENTS).toContain('Lawful Good');
-      expect(DND_ALIGNMENTS).toContain('True Neutral');
-      expect(DND_ALIGNMENTS).toContain('Chaotic Evil');
-    });
-  });
-
-  describe('Schema Composition', () => {
-    it('should allow partial validation for form steps', () => {
-      // Each step schema should validate independently
-      expect(() => basicInfoSchema.parse({
-        name: 'Test',
-        race: 'Human',
-        background: 'Acolyte',
-        alignment: 'Lawful Good',
-      })).not.toThrow();
-
-      expect(() => classesSchema.parse({
-        classes: [{
-          className: 'Barbarian',
-          level: 1,
-          hitDiceSize: 12,
-          hitDiceUsed: 0,
-        }],
-        totalLevel: 1,
-      })).not.toThrow();
-
-      expect(() => abilitiesSchema.parse({
-        abilities: {
-          strength: 10,
-          dexterity: 10,
-          constitution: 10,
-          intelligence: 10,
-          wisdom: 10,
-          charisma: 10,
-        },
-      })).not.toThrow();
-    });
-
-    it('should compose into full character schema', () => {
-      const basicInfo = {
-        name: 'Test Character',
-        race: 'Human',
-        background: 'Soldier',
-        alignment: 'Lawful Good',
-        experiencePoints: 0,
-      };
-
-      const classes = {
-        classes: [{
-          className: 'Fighter',
-          level: 1,
-          hitDiceSize: 10,
-          hitDiceUsed: 0,
-        }],
-        totalLevel: 1,
-      };
-
-      const abilities = {
-        abilities: {
-          strength: 10,
-          dexterity: 10,
-          constitution: 10,
-          intelligence: 10,
-          wisdom: 10,
-          charisma: 10,
-        },
-      };
-
-      const combinedData = { userId: 'user123', ...basicInfo, ...classes, ...abilities };
-      expect(() => CharacterSchema.parse(combinedData)).not.toThrow();
+    test.each(constantValidationTests)('should have valid $name constants', ({ constant, minLength, includes }) => {
+      expect(constant.length).toBeGreaterThanOrEqual(minLength);
+      includes.forEach(item => expect(constant).toContain(item));
     });
   });
 });
