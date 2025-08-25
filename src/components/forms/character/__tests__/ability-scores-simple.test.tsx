@@ -120,8 +120,6 @@ describe('AbilityScoresStep', () => {
   });
 
   it('should allow changing ability scores', async () => {
-    const user = userEvent.setup();
-    
     render(
       <TestWrapper>
         <AbilityScoresStep />
@@ -154,14 +152,38 @@ describe('AbilityScoresStep', () => {
     
     // Test that modifier updates (12 should give +1 modifier)
     expect(screen.getByText('+1')).toBeInTheDocument();
+  });
+
+  it('should enforce point buy constraints', async () => {
+    render(
+      <TestWrapper>
+        <AbilityScoresStep />
+      </TestWrapper>
+    );
+
+    // Get all ability inputs
+    const strengthInput = screen.getByRole('spinbutton', { name: /strength/i });
+    const dexterityInput = screen.getByRole('spinbutton', { name: /dexterity/i });
+    const constitutionInput = screen.getByRole('spinbutton', { name: /constitution/i });
+    const intelligenceInput = screen.getByRole('spinbutton', { name: /intelligence/i });
     
-    // Test that point buy constraints are respected
-    // Verify we can't exceed the point limit by testing with value that would exceed 27 points
+    // Set three abilities to 15 (uses 9 points each = 27 total points)
     fireEvent.change(strengthInput, { target: { value: '15' } });
+    fireEvent.change(dexterityInput, { target: { value: '15' } });  
+    fireEvent.change(constitutionInput, { target: { value: '15' } });
     
-    // The component should allow this change as it's within individual limits
     await waitFor(() => {
       expect(strengthInput).toHaveValue(15);
+      expect(dexterityInput).toHaveValue(15);
+      expect(constitutionInput).toHaveValue(15);
+    });
+
+    // Now try to increase intelligence from 8 to 9, which should fail as it would exceed 27 points
+    fireEvent.change(intelligenceInput, { target: { value: '9' } });
+
+    // The value should remain 8 as there are no points left
+    await waitFor(() => {
+      expect(intelligenceInput).toHaveValue(8);
     });
   });
 

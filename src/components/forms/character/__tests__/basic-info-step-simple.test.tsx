@@ -159,8 +159,6 @@ describe('BasicInfoStep', () => {
   });
 
   it('should handle non-negative experience points', async () => {
-    const user = userEvent.setup();
-    
     render(
       <TestWrapper>
         <BasicInfoStep />
