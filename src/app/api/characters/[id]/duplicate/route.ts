@@ -11,28 +11,15 @@ async function duplicateCharacter(userId: string, id: string, request?: NextRequ
       return notFoundResponse();
     }
 
-    // Create duplicate data (exclude MongoDB specific fields)
+    const originalObject = typeof originalCharacter.toObject === 'function' ? originalCharacter.toObject() : originalCharacter;
+    // Exclude MongoDB-specific fields and fields that should be regenerated
+    const { _id, createdAt, updatedAt, __v, ...rest } = originalObject;
+
+    // Create duplicate data, ensuring all fields from the original are carried over
     const duplicateData = {
+      ...rest,
       userId,
       name: `${originalCharacter.name} (Copy)`,
-      race: originalCharacter.race,
-      subrace: originalCharacter.subrace,
-      background: originalCharacter.background,
-      alignment: originalCharacter.alignment,
-      experiencePoints: originalCharacter.experiencePoints,
-      classes: originalCharacter.classes,
-      abilities: originalCharacter.abilities,
-      skillProficiencies: originalCharacter.skillProficiencies,
-      savingThrowProficiencies: originalCharacter.savingThrowProficiencies,
-      hitPoints: originalCharacter.hitPoints,
-      armorClass: originalCharacter.armorClass,
-      speed: originalCharacter.speed,
-      initiative: originalCharacter.initiative,
-      passivePerception: originalCharacter.passivePerception,
-      spellcasting: originalCharacter.spellcasting,
-      equipment: originalCharacter.equipment,
-      features: originalCharacter.features,
-      notes: originalCharacter.notes
     };
 
     // Create the duplicated character
