@@ -1,6 +1,11 @@
 import { NextRequest } from 'next/server';
-import { CharacterModel } from '@/models/schemas';
+import { CharacterModel, ICharacter } from '@/models/schemas';
 import { withAuth, handleDatabaseError, parseRequestJSON } from './_utils/route-helpers';
+import { FilterQuery } from 'mongoose';
+
+function escapeRegExp(string: string): string {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 async function getCharacters(userId: string, request: NextRequest): Promise<Response> {
   try {
@@ -14,11 +19,11 @@ async function getCharacters(userId: string, request: NextRequest): Promise<Resp
     const filterLevel = url.searchParams.get('level');
 
     // Build query filters
-    const query: any = { userId };
+    const query: FilterQuery<ICharacter> = { userId };
     
     // Filter by class (case-insensitive)
     if (filterClass) {
-      query['classes.className'] = { $regex: new RegExp(filterClass, 'i') };
+      query['classes.className'] = { $regex: new RegExp(escapeRegExp(filterClass), 'i') };
     }
     
     // Filter by level
@@ -30,7 +35,7 @@ async function getCharacters(userId: string, request: NextRequest): Promise<Resp
     }
 
     // Build sort options
-    let sortOptions: any = {};
+    let sortOptions: Record<string, 1 | -1> = {};
     switch (sortBy) {
       case 'name':
         sortOptions = { name: 1 };
