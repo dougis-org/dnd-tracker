@@ -92,7 +92,8 @@ describe('POST /api/characters/[id]/duplicate', () => {
       totalLevel: 5,
       proficiencyBonus: 3,
       createdAt: '2025-08-24T04:08:58.104Z',
-      updatedAt: '2025-08-24T04:08:58.104Z'
+      updatedAt: '2025-08-24T04:08:58.104Z',
+      toObject: () => originalCharacter,
     };
 
     const duplicatedCharacter = {
@@ -137,7 +138,7 @@ describe('POST /api/characters/[id]/duplicate', () => {
       _id: characterId, 
       userId: mockUserId 
     });
-    expect(CharacterModel.create).toHaveBeenCalledWith({
+    expect(CharacterModel.create).toHaveBeenCalledWith(expect.objectContaining({
       userId: mockUserId,
       name: 'Aragorn (Copy)',
       race: 'Human',
@@ -158,7 +159,7 @@ describe('POST /api/characters/[id]/duplicate', () => {
         wisdom: 15,
         charisma: 10
       }
-    });
+    }));
   });
 
   it('should handle duplicate name by adding (Copy) suffix', async () => {
@@ -169,7 +170,8 @@ describe('POST /api/characters/[id]/duplicate', () => {
       name: 'Gandalf (Copy)',
       race: 'Human',
       background: 'Hermit',
-      alignment: 'Neutral Good'
+      alignment: 'Neutral Good',
+      toObject: () => originalCharacter,
     };
 
     const duplicatedCharacter = {
@@ -214,7 +216,8 @@ describe('POST /api/characters/[id]/duplicate', () => {
     const originalCharacter = {
       _id: characterId,
       userId: mockUserId,
-      name: 'Aragorn'
+      name: 'Aragorn',
+      toObject: () => originalCharacter,
     };
 
     mockAuth.mockReturnValue({ userId: mockUserId });
@@ -234,7 +237,8 @@ describe('POST /api/characters/[id]/duplicate', () => {
     const originalCharacter = {
       _id: characterId,
       userId: mockUserId,
-      name: 'Aragorn'
+      name: 'Aragorn',
+      toObject: () => originalCharacter,
     };
 
     const validationError = new Error('Validation failed');

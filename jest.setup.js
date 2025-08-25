@@ -1,15 +1,16 @@
 import '@testing-library/jest-dom';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.test' });
 
-let mongoServer;
+// TextEncoder/TextDecoder polyfills for MSW
+if (!global.TextEncoder || !global.TextDecoder) {
+  const { TextEncoder, TextDecoder } = require('util');
+  global.TextEncoder = TextEncoder;
+  global.TextDecoder = TextDecoder;
+}
 
 // Polyfills for JSDOM missing methods required by Radix UI components
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
-  await mongoose.connect(uri);
-  
   // Only apply polyfills in JSDOM environment (for UI component tests)
   if (typeof Element !== 'undefined') {
     // Pointer capture methods used by Radix UI dropdown/select components
@@ -97,9 +98,4 @@ beforeAll(async () => {
       onremove: null,
     });
   }
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
 });

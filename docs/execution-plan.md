@@ -73,7 +73,7 @@ Z:\dev\Code\dnd-tracker\docs\
    **03-character-api.md** - Build CRUD API endpoints for characters
 4. [#15](https://github.com/dougis-org/dnd-tracker/issues/15) ✅
    **04-character-forms.md** - Create character creation/edit forms
-5. [#16](https://github.com/dougis-org/dnd-tracker/issues/16)
+5. [#16](https://github.com/dougis-org/dnd-tracker/issues/16) ✅
    **05-character-list.md** - Build character list view
 6. [#17](https://github.com/dougis-org/dnd-tracker/issues/17)
    **06-character-details.md** - Implement character detail page
