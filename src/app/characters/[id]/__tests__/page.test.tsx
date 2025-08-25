@@ -91,269 +91,254 @@ const mockCharacter = {
   updatedAt: '2024-01-15T00:00:00Z',
 };
 
+// Test helpers
+const setupDefaultMocks = () => {
+  mockUseAuth.mockReturnValue({
+    isLoaded: true,
+    isSignedIn: true,
+    userId: 'user_12345',
+    getToken: jest.fn(),
+  } as any);
+
+  mockUseUser.mockReturnValue({
+    isLoaded: true,
+    isSignedIn: true,
+    user: { id: 'user_12345' },
+  } as any);
+
+  mockUseRouter.mockReturnValue({
+    push: mockPush,
+    replace: mockReplace,
+  } as any);
+
+  (global.fetch as jest.Mock).mockResolvedValue({
+    ok: true,
+    json: async () => mockCharacter,
+  });
+};
+
+const renderCharacterPage = (characterId = '507f1f77bcf86cd799439011') => {
+  return render(<CharacterDetailPage params={Promise.resolve({ id: characterId })} />);
+};
+
+const waitForCharacterLoad = async () => {
+  await waitFor(() => {
+    expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
+  });
+};
+
+const getSection = (sectionName: string) => {
+  return screen.getByText(sectionName).closest('div')?.parentElement;
+};
 
 describe('CharacterDetailPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
-    mockUseAuth.mockReturnValue({
-      isLoaded: true,
-      isSignedIn: true,
-      userId: 'user_12345',
-      getToken: jest.fn(),
-    } as any);
+    setupDefaultMocks();
+  });
 
-    mockUseUser.mockReturnValue({
-      isLoaded: true,
-      isSignedIn: true,
-      user: { id: 'user_12345' },
-    } as any);
+  describe('Character Data Display', () => {
+    // Parameterized test for basic character data
+    const basicDataTests = [
+      { field: 'name', expected: 'Legolas Greenleaf' },
+      { field: 'subrace', expected: 'Wood Elf' },
+      { field: 'background', expected: 'Outlander' },
+      { field: 'alignment', expected: 'Chaotic Good' },
+      { field: 'experience', expected: '2,500' },
+    ];
 
-    mockUseRouter.mockReturnValue({
-      push: mockPush,
-      replace: mockReplace,
-    } as any);
+    test.each(basicDataTests)('should display character $field', async ({ expected }) => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
+      expect(screen.getByText(expected)).toBeInTheDocument();
+    });
 
-    (global.fetch as jest.Mock).mockResolvedValue({
-      ok: true,
-      json: async () => mockCharacter,
+    it('should display character classes and multiclassing info', async () => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
+
+      expect(screen.getByText('Ranger Level 5 (Hunter)')).toBeInTheDocument();
+      expect(screen.getByText('Total Level: 5')).toBeInTheDocument();
+    });
+
+    it('should display ability scores and modifiers', async () => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
+
+      const abilitySection = getSection('Ability Scores');
+      expect(abilitySection).toHaveTextContent('13'); // Strength
+      expect(abilitySection).toHaveTextContent('17'); // Dexterity
+      expect(abilitySection).toHaveTextContent('14'); // Constitution
+      expect(abilitySection).toHaveTextContent('+1'); // Strength modifier
+      expect(abilitySection).toHaveTextContent('+3'); // Dexterity modifier
+      expect(abilitySection).toHaveTextContent('+2'); // Constitution modifier
+    });
+
+    it('should display calculated fields', async () => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
+
+      const combatSection = getSection('Combat Stats');
+      expect(combatSection).toHaveTextContent('3'); // Proficiency bonus
+      expect(combatSection).toHaveTextContent('15'); // Armor class
+      expect(combatSection).toHaveTextContent('30 ft'); // Speed
+      expect(combatSection).toHaveTextContent('17'); // Passive perception
+      expect(combatSection).toHaveTextContent('+3'); // Initiative modifier
+    });
+
+    it('should display hit points information', async () => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
+      expect(screen.getByText('32 / 45')).toBeInTheDocument();
+    });
+
+    it('should display spellcasting information', async () => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
+
+      const spellSection = getSection('Spellcasting');
+      expect(spellSection).toHaveTextContent('Wisdom');
+      expect(spellSection).toHaveTextContent('+5');
+      expect(spellSection).toHaveTextContent('13');
+      expect(spellSection).toHaveTextContent('Level 1');
+      expect(spellSection).toHaveTextContent('1 / 2');
+    });
+
+    it('should display equipment list', async () => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
+
+      const equipmentSection = getSection('Equipment');
+      expect(equipmentSection).toHaveTextContent('Longbow');
+      expect(equipmentSection).toHaveTextContent('Arrows (60)');
+      expect(equipmentSection).toHaveTextContent('Leather Armor');
+    });
+
+    // Parameterized test for features
+    const featureTests = [
+      'Favored Enemy: Orcs',
+      'Natural Explorer: Forest',
+      'Fighting Style: Archery'
+    ];
+
+    test.each(featureTests)('should display feature: %s', async (feature) => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
+      expect(screen.getByText(feature)).toBeInTheDocument();
+    });
+
+    // Parameterized test for proficiencies
+    const proficiencyTests = [
+      'Perception',
+      'Survival',
+      'Animal Handling',
+      'Strength',
+      'Dexterity'
+    ];
+
+    test.each(proficiencyTests)('should display proficiency: %s', async (proficiency) => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
+      expect(screen.getByText(proficiency)).toBeInTheDocument();
+    });
+
+    it('should display character notes', async () => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
+      expect(screen.getByText('A skilled archer from the forests of Lothlórien.')).toBeInTheDocument();
     });
   });
 
-  it('should display character basic information', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
+  describe('User Interactions', () => {
+    it('should display edit and delete action buttons', async () => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
 
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('Wood Elf')).toBeInTheDocument();
-    expect(screen.getByText('Outlander')).toBeInTheDocument();
-    expect(screen.getByText('Chaotic Good')).toBeInTheDocument();
-    expect(screen.getByText('2,500')).toBeInTheDocument(); // Experience points with formatting
-  });
-
-  it('should display character classes and multiclassing info', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('Ranger Level 5 (Hunter)')).toBeInTheDocument();
-    expect(screen.getByText('Total Level: 5')).toBeInTheDocument();
-  });
-
-  it('should display ability scores and modifiers', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
-    });
-
-    // Check ability scores in ability section
-    const abilitySection = screen.getByText('Ability Scores').closest('div')?.parentElement;
-    expect(abilitySection).toHaveTextContent('13'); // Strength
-    expect(abilitySection).toHaveTextContent('17'); // Dexterity
-    expect(abilitySection).toHaveTextContent('14'); // Constitution
-    
-    // Check ability modifiers are displayed with the scores
-    expect(abilitySection).toHaveTextContent('+1'); // Strength modifier
-    expect(abilitySection).toHaveTextContent('+3'); // Dexterity modifier
-    expect(abilitySection).toHaveTextContent('+2'); // Constitution modifier
-  });
-
-  it('should display calculated fields', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
-    });
-
-    // Check calculated fields in combat stats section
-    const combatSection = screen.getByText('Combat Stats').closest('div')?.parentElement;
-    expect(combatSection).toHaveTextContent('3'); // Proficiency bonus
-    expect(combatSection).toHaveTextContent('15'); // Armor class
-    expect(combatSection).toHaveTextContent('30 ft'); // Speed
-    expect(combatSection).toHaveTextContent('17'); // Passive perception
-    expect(combatSection).toHaveTextContent('+3'); // Initiative modifier
-  });
-
-  it('should display hit points information', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('32 / 45')).toBeInTheDocument(); // Current/Max HP
-  });
-
-  it('should display spellcasting information', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
-    });
-
-    // Check spellcasting information in spellcasting section
-    const spellSection = screen.getByText('Spellcasting').closest('div')?.parentElement;
-    expect(spellSection).toHaveTextContent('Wisdom'); // Spellcasting ability
-    expect(spellSection).toHaveTextContent('+5'); // Spell attack bonus
-    expect(spellSection).toHaveTextContent('13'); // Spell save DC (for spell save DC, not ability score)
-    expect(spellSection).toHaveTextContent('Level 1'); // Spell slot level
-    expect(spellSection).toHaveTextContent('1 / 2'); // Used/Total spell slots
-  });
-
-  it('should display equipment list', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
-    });
-
-    // Check equipment in equipment section
-    const equipmentSection = screen.getByText('Equipment').closest('div')?.parentElement;
-    expect(equipmentSection).toHaveTextContent('Longbow');
-    expect(equipmentSection).toHaveTextContent('Arrows (60)');
-    expect(equipmentSection).toHaveTextContent('Leather Armor');
-  });
-
-  it('should display character features', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('Favored Enemy: Orcs')).toBeInTheDocument();
-    expect(screen.getByText('Natural Explorer: Forest')).toBeInTheDocument();
-    expect(screen.getByText('Fighting Style: Archery')).toBeInTheDocument();
-  });
-
-  it('should display skill and saving throw proficiencies', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('Perception')).toBeInTheDocument();
-    expect(screen.getByText('Survival')).toBeInTheDocument();
-    expect(screen.getByText('Animal Handling')).toBeInTheDocument();
-    expect(screen.getByText('Strength')).toBeInTheDocument();
-    expect(screen.getByText('Dexterity')).toBeInTheDocument();
-  });
-
-  it('should display character notes', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('A skilled archer from the forests of Lothlórien.')).toBeInTheDocument();
-  });
-
-  it('should display edit and delete action buttons', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
-    });
-
-    const editButton = screen.getByText('Edit Character');
-    const deleteButton = screen.getByText('Delete Character');
-    
-    expect(editButton).toBeInTheDocument();
-    expect(deleteButton).toBeInTheDocument();
-  });
-
-  it('should handle loading state', async () => {
-    (global.fetch as jest.Mock).mockImplementation(
-      () => new Promise(resolve => setTimeout(resolve, 100))
-    );
-
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    expect(screen.getByText('Loading character details...')).toBeInTheDocument();
-  });
-
-  it('should handle character not found', async () => {
-    (global.fetch as jest.Mock).mockResolvedValue({
-      ok: false,
-      status: 404,
-      json: async () => ({ error: 'Character not found' }),
-    });
-
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Character not found')).toBeInTheDocument();
-    });
-
-    const backButton = screen.getByText('Back to Characters');
-    expect(backButton).toBeInTheDocument();
-  });
-
-  it('should handle API errors', async () => {
-    (global.fetch as jest.Mock).mockResolvedValue({
-      ok: false,
-      status: 500,
-      json: async () => ({ error: 'Internal server error' }),
-    });
-
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Failed to load character')).toBeInTheDocument();
-    });
-
-    const retryButton = screen.getByRole('button', { name: /retry/i });
-    expect(retryButton).toBeInTheDocument();
-  });
-
-  it('should handle authentication redirect', () => {
-    mockUseAuth.mockReturnValue({
-      isLoaded: true,
-      isSignedIn: false,
-      userId: null,
-    } as any);
-
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
-
-    expect(screen.getByText('Please sign in to view character details')).toBeInTheDocument();
-  });
-
-  it('should validate character ID parameter', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: 'invalid-id' })} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Invalid character ID')).toBeInTheDocument();
+      expect(screen.getByText('Edit Character')).toBeInTheDocument();
+      expect(screen.getByText('Delete Character')).toBeInTheDocument();
     });
   });
 
-  it('should be accessible with proper ARIA labels and roles', async () => {
-    render(<CharacterDetailPage params={Promise.resolve({ id: '507f1f77bcf86cd799439011' })} />);
+  describe('Loading and Error States', () => {
+    it('should handle loading state', async () => {
+      (global.fetch as jest.Mock).mockImplementation(
+        () => new Promise(resolve => setTimeout(resolve, 100))
+      );
 
-    await waitFor(() => {
-      expect(screen.getByText('Legolas Greenleaf')).toBeInTheDocument();
+      renderCharacterPage();
+      expect(screen.getByText('Loading character details...')).toBeInTheDocument();
     });
 
-    // Check for proper headings hierarchy
-    const mainHeading = screen.getByRole('heading', { level: 1 });
-    expect(mainHeading).toHaveTextContent('Legolas Greenleaf');
+    // Parameterized test for error scenarios
+    const errorTests = [
+      {
+        name: 'character not found',
+        mockResponse: { ok: false, status: 404, json: async () => ({ error: 'Character not found' }) },
+        expectedMessage: 'Character not found',
+        expectedButton: 'Back to Characters'
+      },
+      {
+        name: 'API errors',
+        mockResponse: { ok: false, status: 500, json: async () => ({ error: 'Internal server error' }) },
+        expectedMessage: 'Failed to load character',
+        expectedButton: 'Retry'
+      }
+    ];
 
-    // Check for section headings
-    expect(screen.getByText('Basic Information')).toBeInTheDocument();
-    expect(screen.getByText('Ability Scores')).toBeInTheDocument();
-    expect(screen.getByText('Combat Stats')).toBeInTheDocument();
-    
-    // Check for button accessibility
-    const editButton = screen.getByLabelText('Edit Legolas Greenleaf');
-    expect(editButton).toBeInTheDocument();
+    test.each(errorTests)('should handle $name', async ({ mockResponse, expectedMessage, expectedButton }) => {
+      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      renderCharacterPage();
 
-    const deleteButton = screen.getByLabelText('Delete Legolas Greenleaf');
-    expect(deleteButton).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText(expectedMessage)).toBeInTheDocument();
+      });
+
+      const button = expectedButton === 'Retry' 
+        ? screen.getByRole('button', { name: /retry/i })
+        : screen.getByText(expectedButton);
+      expect(button).toBeInTheDocument();
+    });
+  });
+
+  describe('Authentication and Validation', () => {
+    it('should handle authentication redirect', () => {
+      mockUseAuth.mockReturnValue({
+        isLoaded: true,
+        isSignedIn: false,
+        userId: null,
+      } as any);
+
+      renderCharacterPage();
+      expect(screen.getByText('Please sign in to view character details')).toBeInTheDocument();
+    });
+
+    it('should validate character ID parameter', async () => {
+      renderCharacterPage('invalid-id');
+
+      await waitFor(() => {
+        expect(screen.getByText('Invalid character ID')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('should be accessible with proper ARIA labels and roles', async () => {
+      renderCharacterPage();
+      await waitForCharacterLoad();
+
+      // Check for proper headings hierarchy
+      const mainHeading = screen.getByRole('heading', { level: 1 });
+      expect(mainHeading).toHaveTextContent('Legolas Greenleaf');
+
+      // Parameterized test for section headings
+      const sectionHeadings = ['Basic Information', 'Ability Scores', 'Combat Stats'];
+      sectionHeadings.forEach(heading => {
+        expect(screen.getByText(heading)).toBeInTheDocument();
+      });
+      
+      // Check for button accessibility
+      expect(screen.getByLabelText('Edit Legolas Greenleaf')).toBeInTheDocument();
+      expect(screen.getByLabelText('Delete Legolas Greenleaf')).toBeInTheDocument();
+    });
   });
 });
