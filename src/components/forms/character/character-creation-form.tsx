@@ -10,12 +10,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MultiStepForm } from '../multi-step-form';
 import { BasicInfoStep } from './basic-info-step';
 import { AbilityScoresStep } from './ability-scores-step';
+import { SkillsProficienciesStep } from './skills-proficiencies-step';
 import { 
   characterFormSchema, 
   type CharacterFormData,
   type CharacterFormInput,
   type BasicInfoFormData,
-  type AbilitiesFormData
+  type AbilitiesFormData,
+  type SkillsFormData
 } from '@/lib/validations/character';
 import type { z } from 'zod';
 
@@ -75,6 +77,34 @@ function ReviewStep({ formData }: ReviewStepProps) {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Skills & Proficiencies</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div>
+            <strong>Skill Proficiencies:</strong>
+            {formData.skillProficiencies && formData.skillProficiencies.length > 0 ? (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {formData.skillProficiencies.map((skill) => (
+                  <span key={skill} className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <span className="text-muted-foreground ml-1">None selected</span>
+            )}
+          </div>
+          <div>
+            <strong>Class Features:</strong>
+            <div className="text-sm text-muted-foreground mt-1">
+              Saving throw proficiencies and class features will be automatically applied based on your selected class.
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="text-sm text-muted-foreground border-l-4 border-muted pl-4">
         <p>
@@ -193,6 +223,16 @@ export function CharacterCreationForm({ onComplete, onCancel }: CharacterCreatio
       validate: async () => {
         const abilityFields: (keyof AbilitiesFormData)[] = ['abilities'];
         const isValid = await form.trigger(abilityFields);
+        return isValid;
+      }
+    },
+    {
+      title: 'Skills & Proficiencies',
+      description: 'Choose your character skills',
+      component: SkillsProficienciesStep,
+      validate: async () => {
+        const skillsFields: (keyof SkillsFormData)[] = ['skillProficiencies', 'savingThrowProficiencies'];
+        const isValid = await form.trigger(skillsFields);
         return isValid;
       }
     },
