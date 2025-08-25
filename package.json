@@ -18,7 +18,10 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "migrate:create": "migrate-mongoose create",
+    "migrate:up": "migrate-mongoose up",
+    "migrate:down": "migrate-mongoose down"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.31.4",
@@ -60,6 +63,7 @@
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
     "markdownlint-cli": "^0.45.0",
+    "migrate-mongoose": "^4.0.0",
     "mongodb-memory-server": "^10.2.0",
     "msw": "^2.10.5",
     "postcss": "^8.5.6",
