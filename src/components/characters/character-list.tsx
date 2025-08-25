@@ -165,12 +165,12 @@ export default function CharacterList() {
                   ))}
                 </div>
                 <div className="flex gap-2 mt-4">
-                  <Link href={`/characters/${character._id}`} tabIndex={0}>
+                  <Link href={`/characters/${character._id}` as any} tabIndex={0}>
                     <Button variant="outline" size="sm">
                       View
                     </Button>
                   </Link>
-                  <Link href={`/characters/${character._id}/edit`} tabIndex={0}>
+                  <Link href={`/characters/${character._id}/edit` as any} tabIndex={0}>
                     <Button variant="outline" size="sm">
                       Edit
                     </Button>
