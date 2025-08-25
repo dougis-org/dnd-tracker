@@ -1,254 +1,173 @@
 import { z } from 'zod';
 
-// D&D 5e ability scores: typically 8-15 base, can go up to 30 with magic items
-const abilityScoreSchema = z.number()
-  .int('Ability score must be an integer')
-  .min(1, 'Ability score must be at least 1')
-  .max(30, 'Ability score cannot exceed 30');
+// D&D 5e Constants
+export const DND_RACES = [
+  'Dragonborn', 'Dwarf', 'Elf', 'Gnome', 'Half-Elf', 'Half-Orc', 'Halfling', 'Human', 'Tiefling',
+];
 
-// Character class schema for multiclassing
-const characterClassSchema = z.object({
-  className: z.string()
-    .min(1, 'Class name is required')
-    .max(50, 'Class name too long'),
-  level: z.number()
-    .int('Level must be an integer')
-    .min(1, 'Level must be at least 1')
-    .max(20, 'Level cannot exceed 20'),
-  subclass: z.string()
-    .max(50, 'Subclass name too long')
-    .optional(),
-  hitDiceSize: z.number()
-    .int('Hit dice size must be an integer')
-    .refine((val) => [6, 8, 10, 12].includes(val), {
-      message: 'Hit dice size must be 6, 8, 10, or 12'
-    }),
-  hitDiceUsed: z.number()
-    .int('Hit dice used must be an integer')
-    .min(0, 'Hit dice used cannot be negative')
+export const DND_CLASSES = [
+  'Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard',
+];
+
+export const DND_ALIGNMENTS = [
+  'Lawful Good', 'Neutral Good', 'Chaotic Good',
+  'Lawful Neutral', 'True Neutral', 'Chaotic Neutral',
+  'Lawful Evil', 'Neutral Evil', 'Chaotic Evil',
+];
+
+export const DND_ABILITIES = [
+  'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma',
+];
+
+export const ABILITY_SCORE_METHODS = [
+  'point-buy', 'standard-array', 'roll',
+];
+
+export type AbilityScoreMethod = typeof ABILITY_SCORE_METHODS[number];
+
+// Define Zod schema for individual class entries
+export const ClassSchema = z.object({
+  className: z.string().trim().min(1, 'Class name is required'),
+  level: z.number().int().min(1, 'Class level must be between 1 and 20').max(20, 'Class level must be between 1 and 20'),
+  subclass: z.string().trim().optional(),
+  hitDiceSize: z.union([z.literal(6), z.literal(8), z.literal(10), z.literal(12)]),
+  hitDiceUsed: z.number().int().min(0, 'Hit dice used cannot be negative').optional().default(0),
 });
 
-// Equipment item schema
-const equipmentItemSchema = z.object({
-  name: z.string()
-    .min(1, 'Equipment name is required')
-    .max(100, 'Equipment name too long'),
-  quantity: z.number()
-    .int('Quantity must be an integer')
-    .min(0, 'Quantity cannot be negative'),
-  category: z.string()
-    .min(1, 'Equipment category is required')
-    .max(50, 'Equipment category too long')
+// Define Zod schema for ability scores
+export const AbilityScoresSchema = z.object({
+  strength: z.number().int().min(1, 'Ability scores must be between 1 and 30').max(30, 'Ability scores must be between 1 and 30'),
+  dexterity: z.number().int().min(1, 'Ability scores must be between 1 and 30').max(30, 'Ability scores must be between 1 and 30'),
+  constitution: z.number().int().min(1, 'Ability scores must be between 1 and 30').max(30, 'Ability scores must be between 1 and 30'),
+  intelligence: z.number().int().min(1, 'Ability scores must be between 1 and 30').max(30, 'Ability scores must be between 1 and 30'),
+  wisdom: z.number().int().min(1, 'Ability scores must be between 1 and 30').max(30, 'Ability scores must be between 1 and 30'),
+  charisma: z.number().int().min(1, 'Ability scores must be between 1 and 30').max(30, 'Ability scores must be between 1 and 30'),
 });
 
-// Spellcasting schema
-const spellcastingSchema = z.object({
-  ability: z.enum(['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'], {
-    message: 'Invalid spellcasting ability'
-  }),
-  spellAttackBonus: z.number()
-    .int('Spell attack bonus must be an integer'),
-  spellSaveDC: z.number()
-    .int('Spell save DC must be an integer')
-    .min(8, 'Spell save DC must be at least 8'),
-  spellSlots: z.record(
-    z.string(),
-    z.object({
-      total: z.number().int().min(0),
-      used: z.number().int().min(0)
-    })
-  ).optional(),
-  spellsKnown: z.array(z.string()).optional(),
-  spellsPrepared: z.array(z.string()).optional()
+// Define Zod schema for hit points
+const HitPointsSchema = z.object({
+  maximum: z.number().min(0, 'Maximum hit points cannot be negative').optional(),
+  current: z.number().min(0, 'Current hit points cannot be negative').optional(),
+  temporary: z.number().min(0, 'Temporary hit points cannot be negative').default(0).optional(),
 }).optional();
 
-// Hit points schema
-const hitPointsSchema = z.object({
-  maximum: z.number()
-    .int('Maximum hit points must be an integer')
-    .min(1, 'Maximum hit points must be at least 1'),
-  current: z.number()
-    .int('Current hit points must be an integer'),
-  temporary: z.number()
-    .int('Temporary hit points must be an integer')
-    .min(0, 'Temporary hit points cannot be negative')
-    .default(0)
-}).refine((data) => data.current <= data.maximum + data.temporary, {
-  message: 'Current hit points cannot exceed maximum + temporary hit points',
-  path: ['current']
+// Define Zod schema for equipment
+const EquipmentSchema = z.object({
+  name: z.string().trim().min(1, 'Equipment name is required'),
+  quantity: z.number().int().min(0, 'Equipment quantity cannot be negative'),
+  category: z.string().trim().optional(),
 });
 
-// Main character schema for forms
-export const characterFormSchema = z.object({
-  // Basic Information
-  name: z.string()
-    .min(1, 'Character name is required')
-    .max(50, 'Character name too long')
-    .trim(),
-  race: z.string()
-    .min(1, 'Race is required')
-    .max(50, 'Race name too long'),
-  subrace: z.string()
-    .max(50, 'Subrace name too long')
-    .optional(),
-  background: z.string()
-    .min(1, 'Background is required')
-    .max(50, 'Background name too long'),
-  alignment: z.string()
-    .min(1, 'Alignment is required')
-    .max(50, 'Alignment too long'),
-  experiencePoints: z.number()
-    .int('Experience points must be an integer')
-    .min(0, 'Experience points cannot be negative')
-    .default(0),
+// Define Zod schema for spell slots
+const SpellSlotsSchema = z.record(z.string(), z.object({
+  total: z.number().int().min(0, 'Spell slot total cannot be negative'),
+  used: z.number().int().min(0, 'Spell slots used cannot be negative'),
+})).optional();
 
-  // Classes (multiclassing support)
-  classes: z.array(characterClassSchema)
-    .min(1, 'At least one class is required')
-    .max(10, 'Too many classes'), // Reasonable limit
+// Define Zod schema for spellcasting
+const SpellcastingSchema = z.object({
+  ability: z.enum(['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'], {
+    errorMap: () => ({ message: 'Invalid spellcasting ability' }),
+  }).optional(),
+  spellAttackBonus: z.number().optional(),
+  spellSaveDC: z.number().min(8, 'Spell save DC cannot be below 8').optional(),
+  spellSlots: SpellSlotsSchema,
+  spellsKnown: z.array(z.string().trim().min(1)).optional(),
+  spellsPrepared: z.array(z.string().trim().min(1)).optional(),
+}).optional();
 
-  // Ability Scores
-  abilities: z.object({
-    strength: abilityScoreSchema,
-    dexterity: abilityScoreSchema,
-    constitution: abilityScoreSchema,
-    intelligence: abilityScoreSchema,
-    wisdom: abilityScoreSchema,
-    charisma: abilityScoreSchema
-  }),
+// Main Character Zod Schema
+export const CharacterSchema = z.object({
+  userId: z.string().trim().min(1, 'User ID is required'),
+  name: z.string().trim().min(1, 'Name is required').max(100, 'Name cannot exceed 100 characters'),
+  race: z.string().trim().min(1, 'Race is required'),
+  subrace: z.string().trim().optional(),
+  background: z.string().trim().min(1, 'Background is required'),
+  alignment: z.string().trim().min(1, 'Alignment is required'),
+  experiencePoints: z.number().int().min(0, 'Experience points cannot be negative').default(0),
+  
+  classes: z.array(ClassSchema).min(1, 'At least one class is required').max(12, 'Character cannot have more than 12 classes'),
+  
+  abilities: AbilityScoresSchema,
 
-  // Skills and Proficiencies (arrays of strings)
-  skillProficiencies: z.array(z.string())
-    .optional()
-    .default([]),
-  savingThrowProficiencies: z.array(z.string())
-    .optional()
-    .default([]),
+  // Calculated fields (will be set by backend logic, not directly validated here for input)
+  abilityModifiers: z.object({
+    strength: z.number(),
+    dexterity: z.number(),
+    constitution: z.number(),
+    intelligence: z.number(),
+    wisdom: z.number(),
+    charisma: z.number(),
+  }).optional(),
+  proficiencyBonus: z.number().optional(),
 
-  // Combat Stats
-  hitPoints: hitPointsSchema.optional(),
-  armorClass: z.number()
-    .int('Armor class must be an integer')
-    .min(1, 'Armor class must be at least 1')
-    .max(30, 'Armor class cannot exceed 30')
-    .optional(),
-  speed: z.number()
-    .int('Speed must be an integer')
-    .min(0, 'Speed cannot be negative')
-    .optional(),
-  initiative: z.number()
-    .int('Initiative must be an integer')
-    .optional(),
-  passivePerception: z.number()
-    .int('Passive perception must be an integer')
-    .min(1, 'Passive perception must be at least 1')
-    .optional(),
+  skillProficiencies: z.array(z.string().trim().min(1)).optional(),
+  savingThrowProficiencies: z.array(z.string().trim().min(1)).optional(),
 
-  // Spellcasting
-  spellcasting: spellcastingSchema,
+  hitPoints: HitPointsSchema,
+  armorClass: z.number().min(0, 'Armor class cannot be negative').max(50, 'Armor class seems unreasonably high').optional(),
+  speed: z.number().min(0, 'Speed cannot be negative').optional(),
+  initiative: z.number().optional(),
+  passivePerception: z.number().min(0, 'Passive perception cannot be negative').optional(),
 
-  // Equipment and Features
-  equipment: z.array(equipmentItemSchema)
-    .optional()
-    .default([]),
-  features: z.array(z.string())
-    .optional()
-    .default([]),
-  notes: z.string()
-    .max(2000, 'Notes too long (max 2000 characters)')
-    .optional()
+  spellcasting: SpellcastingSchema,
+  equipment: z.array(EquipmentSchema).optional(),
+  features: z.array(z.string().trim().min(1)).optional(),
+  notes: z.string().trim().max(2000, { message: 'Notes cannot exceed 2000 characters' }).optional(),
+
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
-// Form step schemas for multi-step form validation
-export const basicInfoSchema = characterFormSchema.pick({
-  name: true,
-  race: true,
-  subrace: true,
-  background: true,
-  alignment: true,
-  experiencePoints: true
+// Define partial schemas for form steps
+export const basicInfoSchema = z.object({
+  name: CharacterSchema.shape.name,
+  race: CharacterSchema.shape.race,
+  subrace: CharacterSchema.shape.subrace,
+  background: CharacterSchema.shape.background,
+  alignment: CharacterSchema.shape.alignment,
+  experiencePoints: CharacterSchema.shape.experiencePoints,
 });
 
-export const classesSchema = characterFormSchema.pick({
-  classes: true
+export const classesSchema = z.object({
+  classes: CharacterSchema.shape.classes,
 });
 
-export const abilitiesSchema = characterFormSchema.pick({
-  abilities: true
+export const abilitiesSchema = z.object({
+  abilities: CharacterSchema.shape.abilities,
 });
 
-export const skillsSchema = characterFormSchema.pick({
-  skillProficiencies: true,
-  savingThrowProficiencies: true
+export const characterFormSchema = basicInfoSchema
+  .merge(classesSchema)
+  .merge(abilitiesSchema)
+  .extend({
+    hitPoints: HitPointsSchema.refine(hp => !hp || hp.current === undefined || hp.maximum === undefined || hp.current <= hp.maximum + (hp.temporary || 0), {
+      message: 'Current HP cannot exceed maximum HP + temporary HP',
+      path: ['current'],
+    }),
+    spellcasting: SpellcastingSchema,
+    notes: z.string().trim().max(2000, { message: 'Notes cannot exceed 2000 characters' }).optional(),
+  });
+
+export const CharacterSchemaWithTotalLevel = CharacterSchema.extend({
+  totalLevel: z.number().int().min(1, 'Total level must be between 1 and 20').max(20, 'Total level must be between 1 and 20'),
+}).refine(data => {
+  // Custom refinement for totalLevel based on sum of class levels
+  const calculatedTotalLevel = data.classes.reduce((sum, cls) => sum + cls.level, 0);
+  return data.totalLevel === calculatedTotalLevel;
+}, {
+  message: 'Total level must equal sum of class levels',
+  path: ['totalLevel'],
 });
 
-export const combatStatsSchema = characterFormSchema.pick({
-  hitPoints: true,
-  armorClass: true,
-  speed: true,
-  initiative: true,
-  passivePerception: true
-});
-
-export const spellcastingFormSchema = characterFormSchema.pick({
-  spellcasting: true
-});
-
-export const equipmentSchema = characterFormSchema.pick({
-  equipment: true,
-  features: true,
-  notes: true
-});
-
-// Type definitions for form data
-export type CharacterFormData = z.infer<typeof characterFormSchema>;
-export type CharacterFormInput = z.input<typeof characterFormSchema>;
-export type BasicInfoFormData = z.infer<typeof basicInfoSchema>;
-export type ClassesFormData = z.infer<typeof classesSchema>;
-export type AbilitiesFormData = z.infer<typeof abilitiesSchema>;
-export type SkillsFormData = z.infer<typeof skillsSchema>;
-export type CombatStatsFormData = z.infer<typeof combatStatsSchema>;
-export type SpellcastingFormData = z.infer<typeof spellcastingFormSchema>;
-export type EquipmentFormData = z.infer<typeof equipmentSchema>;
-
-// Utility function to calculate ability modifiers
 export function calculateAbilityModifier(score: number): number {
   return Math.floor((score - 10) / 2);
 }
 
-// Utility function to calculate proficiency bonus based on total level
-export function calculateProficiencyBonus(totalLevel: number): number {
-  return Math.ceil(totalLevel / 4) + 1;
+export function calculateProficiencyBonus(level: number): number {
+  if (level >= 17) return 6;
+  if (level >= 13) return 5;
+  if (level >= 9) return 4;
+  if (level >= 5) return 3;
+  return 2;
 }
-
-// D&D 5e constants for dropdowns
-export const DND_RACES = [
-  'Human', 'Elf', 'Dwarf', 'Halfling', 'Dragonborn', 'Gnome', 'Half-Elf', 'Half-Orc', 'Tiefling'
-] as const;
-
-export const DND_CLASSES = [
-  'Artificer', 'Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 
-  'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'
-] as const;
-
-export const DND_ALIGNMENTS = [
-  'Lawful Good', 'Neutral Good', 'Chaotic Good',
-  'Lawful Neutral', 'True Neutral', 'Chaotic Neutral', 
-  'Lawful Evil', 'Neutral Evil', 'Chaotic Evil'
-] as const;
-
-export const DND_ABILITIES = [
-  'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'
-] as const;
-
-export const DND_SKILLS = [
-  'Acrobatics', 'Animal Handling', 'Arcana', 'Athletics', 'Deception', 'History',
-  'Insight', 'Intimidation', 'Investigation', 'Medicine', 'Nature', 'Perception',
-  'Performance', 'Persuasion', 'Religion', 'Sleight of Hand', 'Stealth', 'Survival'
-] as const;
-
-export const ABILITY_SCORE_METHODS = [
-  'point-buy', 'standard-array', 'roll'
-] as const;
-
-export type AbilityScoreMethod = typeof ABILITY_SCORE_METHODS[number];
