@@ -4,8 +4,8 @@
 import { NextRequest } from 'next/server';
 import { POST } from '../route';
 import { auth } from '@clerk/nextjs/server';
-import { connectToDatabase } from '@/lib/mongodb';
-import { CharacterModel } from '@/models/schemas';
+import { connectToDatabase } from '../../../../lib/mongodb';
+import { CharacterModel } from '../../../../models/schemas';
 
 // Mock dependencies
 jest.mock('@clerk/nextjs/server', () => ({

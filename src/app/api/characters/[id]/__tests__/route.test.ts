@@ -4,8 +4,8 @@
 import { NextRequest } from 'next/server';
 import { GET, PUT, DELETE } from '../route';
 import { auth } from '@clerk/nextjs/server';
-import { connectToDatabase } from '@/lib/mongodb';
-import { CharacterModel } from '@/models/schemas';
+import { connectToDatabase } from '../../../../lib/mongodb';
+import { CharacterModel } from '../../../../models/schemas';
 import {
   mockUserId,
   mockCharacterId,
@@ -24,10 +24,10 @@ import {
 jest.mock('@clerk/nextjs/server', () => ({
   auth: jest.fn(),
 }));
-jest.mock('@/lib/mongodb', () => ({
+jest.mock('../../../../lib/mongodb', () => ({
   connectToDatabase: jest.fn(),
 }));
-jest.mock('@/models/schemas', () => ({
+jest.mock('../../../../models/schemas', () => ({
   CharacterModel: {
     findOne: jest.fn(),
     findOneAndUpdate: jest.fn(),

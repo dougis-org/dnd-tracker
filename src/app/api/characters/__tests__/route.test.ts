@@ -2,9 +2,9 @@
  * @jest-environment node
  */
 import { GET, POST } from '../route';
-import { CharacterModel } from '@/models/schemas';
+import { CharacterModel } from '../../../models/schemas';
 import { auth } from '@clerk/nextjs/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import { connectToDatabase } from '../../../lib/mongodb';
 import {
   mockUserId,
   validCharacterData,
@@ -19,7 +19,7 @@ import {
 jest.mock('@clerk/nextjs/server', () => ({
   auth: jest.fn(),
 }));
-jest.mock('@/lib/mongodb', () => ({
+jest.mock('../../../lib/mongodb', () => ({
   connectToDatabase: jest.fn(),
 }));
 jest.mock('@/models/schemas', () => ({

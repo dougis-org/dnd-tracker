@@ -7,7 +7,7 @@ import { connectToDatabase, disconnectFromDatabase } from '@/lib/mongodb';
 import { UserModel } from '@/models/schemas';
 
 jest.mock('svix');
-jest.mock('@/lib/mongodb');
+jest.mock('../../../lib/mongodb');
 jest.mock('@/models/schemas', () => ({
   UserModel: jest.fn().mockImplementation(() => ({
     save: jest.fn().mockResolvedValue({}),
