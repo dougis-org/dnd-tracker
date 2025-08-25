@@ -31,7 +31,7 @@ export const ClassSchema = z.object({
   level: z.number().int().min(1, 'Class level must be between 1 and 20').max(20, 'Class level must be between 1 and 20'),
   subclass: z.string().trim().optional(),
   hitDiceSize: z.union([z.literal(6), z.literal(8), z.literal(10), z.literal(12)]),
-  hitDiceUsed: z.number().int().min(0, 'Hit dice used cannot be negative').optional().default(0),
+  hitDiceUsed: z.number().int().min(0, 'Hit dice used cannot be negative').default(0),
 });
 
 // Define Zod schema for ability scores
@@ -137,15 +137,43 @@ export const abilitiesSchema = z.object({
   abilities: CharacterSchema.shape.abilities,
 });
 
+export const skillsSchema = z.object({
+  skillProficiencies: z.array(z.string().trim().min(1)).optional(),
+});
+
+export const combatStatsSchema = z.object({
+  hitPoints: HitPointsSchema,
+  armorClass: z.number().min(0, 'Armor class cannot be negative').max(50, 'Armor class seems unreasonably high').optional(),
+  speed: z.number().min(0, 'Speed cannot be negative').optional(),
+  initiative: z.number().optional(),
+  passivePerception: z.number().min(0, 'Passive perception cannot be negative').optional(),
+});
+
+export const spellcastingFormSchema = z.object({
+  spellcasting: SpellcastingSchema,
+});
+
+export const equipmentSchema = z.object({
+  equipment: z.array(EquipmentSchema).optional(),
+});
+
 export const characterFormSchema = basicInfoSchema
   .merge(classesSchema)
   .merge(abilitiesSchema)
   .extend({
+    skillProficiencies: z.array(z.string().trim().min(1)).optional(),
+    savingThrowProficiencies: z.array(z.string().trim().min(1)).optional(),
     hitPoints: HitPointsSchema.refine(hp => !hp || hp.current === undefined || hp.maximum === undefined || hp.current <= hp.maximum + (hp.temporary || 0), {
       message: 'Current HP cannot exceed maximum HP + temporary HP',
       path: ['current'],
     }),
+    armorClass: z.number().min(0, 'Armor class cannot be negative').max(50, 'Armor class seems unreasonably high').optional(),
+    speed: z.number().min(0, 'Speed cannot be negative').optional(),
+    initiative: z.number().optional(),
+    passivePerception: z.number().min(0, 'Passive perception cannot be negative').optional(),
     spellcasting: SpellcastingSchema,
+    equipment: z.array(EquipmentSchema).optional(),
+    features: z.array(z.string().trim().min(1)).optional(),
     notes: z.string().trim().max(2000, { message: 'Notes cannot exceed 2000 characters' }).optional(),
   });
 
@@ -171,3 +199,13 @@ export function calculateProficiencyBonus(level: number): number {
   if (level >= 5) return 3;
   return 2;
 }
+
+// Type exports
+export type CharacterFormData = z.infer<typeof characterFormSchema>;
+export type CharacterFormInput = CharacterFormData; // Alias for compatibility
+export type BasicInfoFormData = z.infer<typeof basicInfoSchema>;
+export type AbilitiesFormData = z.infer<typeof abilitiesSchema>;
+export type CharacterData = z.infer<typeof CharacterSchema>;
+export type CharacterDataWithTotalLevel = z.infer<typeof CharacterSchemaWithTotalLevel>;
+export type ClassData = z.infer<typeof ClassSchema>;
+export type AbilityScores = z.infer<typeof AbilityScoresSchema>;

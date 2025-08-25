@@ -85,7 +85,7 @@ describe('Character Form Validation', () => {
     });
 
     it('should limit name length', () => {
-      const invalidData = { ...validCharacterData, name: 'a'.repeat(51) };
+      const invalidData = { ...validCharacterData, name: 'a'.repeat(101) };
       expect(() => characterFormSchema.parse(invalidData)).toThrow(ZodError);
     });
 
@@ -95,7 +95,7 @@ describe('Character Form Validation', () => {
     });
 
     it('should limit number of classes', () => {
-      const manyClasses = Array(11).fill(0).map((_, i) => ({
+      const manyClasses = Array(13).fill(0).map((_, i) => ({
         className: `Class${i}`,
         level: 1,
         hitDiceSize: 8,
