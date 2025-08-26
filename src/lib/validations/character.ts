@@ -19,6 +19,12 @@ export const DND_ABILITIES = [
   'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma',
 ];
 
+export const DND_SKILLS = [
+  'Acrobatics', 'Animal Handling', 'Arcana', 'Athletics', 'Deception', 'History', 
+  'Insight', 'Intimidation', 'Investigation', 'Medicine', 'Nature', 'Perception', 
+  'Performance', 'Persuasion', 'Religion', 'Sleight of Hand', 'Stealth', 'Survival'
+];
+
 export const ABILITY_SCORE_METHODS = [
   'point-buy', 'standard-array', 'roll',
 ];
@@ -137,6 +143,7 @@ export const abilitiesSchema = z.object({
 
 export const skillsSchema = z.object({
   skillProficiencies: z.array(z.string().trim().min(1)).optional(),
+  savingThrowProficiencies: z.array(z.string().trim().min(1)).optional(),
 });
 
 export const combatStatsSchema = z.object({
@@ -203,6 +210,7 @@ export type CharacterFormData = z.infer<typeof characterFormSchema>;
 export type CharacterFormInput = CharacterFormData; // Alias for compatibility
 export type BasicInfoFormData = z.infer<typeof basicInfoSchema>;
 export type AbilitiesFormData = z.infer<typeof abilitiesSchema>;
+export type SkillsFormData = z.infer<typeof skillsSchema>;
 export type CharacterData = z.infer<typeof CharacterSchema>;
 export type CharacterDataWithTotalLevel = z.infer<typeof CharacterSchemaWithTotalLevel>;
 export type ClassData = z.infer<typeof ClassSchema>;

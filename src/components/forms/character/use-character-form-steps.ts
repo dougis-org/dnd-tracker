@@ -1,17 +1,16 @@
 import { UseFormReturn } from 'react-hook-form';
-import { ClassSpecificStep } from './class-specific-step';
 import { BasicInfoStep } from './basic-info-step';
 import { AbilityScoresStep } from './ability-scores-step';
 import { SkillsProficienciesStep } from './skills-proficiencies-step';
 import { SpellcastingStep } from './spellcasting-step';
 import { EquipmentFeaturesStep } from './equipment-features-step';
 import { ReviewStep } from './review-step';
+import { CHARACTER_FORM_STEPS } from '@/constants/character-form-steps';
 import type { 
   CharacterFormInput, 
   BasicInfoFormData,
   AbilitiesFormData,
-  SkillsFormData,
-  ClassSpecificFormData
+  SkillsFormData
 } from '@/lib/validations/character';
 
 const SPELLCASTING_CLASSES = [
@@ -30,12 +29,6 @@ async function validateBasicInfo(form: any) {
   return await form.trigger(basicInfoFields);
 }
 
-async function validateClassSpecific(form: any) {
-  const classSpecificFields: (keyof ClassSpecificFormData)[] = [
-    'fightingStyle', 'classFeatures'
-  ];
-  return await form.trigger(classSpecificFields);
-}
 
 async function validateAbilities(form: any) {
   const abilityFields: (keyof AbilitiesFormData)[] = ['abilities'];
@@ -71,44 +64,38 @@ async function validateReview(form: any) {
 export function useCharacterFormSteps(form: any) {
   return [
     {
-      title: 'Character Information',
-      description: 'Basic character details',
+      title: CHARACTER_FORM_STEPS.BASIC_INFO.title,
+      description: CHARACTER_FORM_STEPS.BASIC_INFO.description,
       component: BasicInfoStep,
       validate: () => validateBasicInfo(form)
     },
     {
-      title: 'Class Features', 
-      description: 'Configure your class abilities',
-      component: ClassSpecificStep,
-      validate: () => validateClassSpecific(form)
-    },
-    {
-      title: 'Ability Scores',
-      description: 'Set your character\'s abilities',
+      title: CHARACTER_FORM_STEPS.ABILITY_SCORES.title,
+      description: CHARACTER_FORM_STEPS.ABILITY_SCORES.description,
       component: AbilityScoresStep,
       validate: () => validateAbilities(form)
     },
     {
-      title: 'Skills & Proficiencies',
-      description: 'Choose skills and proficiencies',
+      title: CHARACTER_FORM_STEPS.SKILLS_PROFICIENCIES.title,
+      description: CHARACTER_FORM_STEPS.SKILLS_PROFICIENCIES.description,
       component: SkillsProficienciesStep,
       validate: () => validateSkills(form)
     },
     {
-      title: 'Spellcasting',
-      description: 'Configure spells and magic',
+      title: CHARACTER_FORM_STEPS.SPELLCASTING.title,
+      description: CHARACTER_FORM_STEPS.SPELLCASTING.description,
       component: SpellcastingStep,
       validate: () => validateSpellcasting(form)
     },
     {
-      title: 'Equipment & Features',
-      description: 'Add equipment and features',
+      title: CHARACTER_FORM_STEPS.EQUIPMENT_FEATURES.title,
+      description: CHARACTER_FORM_STEPS.EQUIPMENT_FEATURES.description,
       component: EquipmentFeaturesStep,
       validate: () => validateEquipment(form)
     },
     {
-      title: 'Review & Complete',
-      description: 'Review and finalize your character',
+      title: CHARACTER_FORM_STEPS.REVIEW_COMPLETE.title,
+      description: CHARACTER_FORM_STEPS.REVIEW_COMPLETE.description,
       component: (props: any) => ReviewStep({
         formData: form.watch(),
         ...props

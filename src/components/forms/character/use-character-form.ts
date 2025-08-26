@@ -19,7 +19,7 @@ export function useCharacterForm({ draftId, onComplete, onCancel }: UseCharacter
   const { loadDraft, saveDraft, updateDraft, autoSaveDraft } = useCharacterDraft();
 
   const form = useForm<CharacterFormInput>({
-    resolver: zodResolver(characterFormSchema),
+    resolver: zodResolver(characterFormSchema) as any,
     defaultValues: {
       name: '',
       race: '',

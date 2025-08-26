@@ -24,8 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, X, Package, Scroll } from 'lucide-react';
 import { 
-  type CharacterFormInput,
-  type EquipmentFormData 
+  type CharacterFormInput
 } from '@/lib/validations/character';
 import {
   EQUIPMENT_CATEGORIES,

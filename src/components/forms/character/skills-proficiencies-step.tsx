@@ -62,7 +62,7 @@ export function SkillsProficienciesStep() {
   
   // Calculate skill bonus for display
   const getSkillBonus = (skill: string): number => {
-    const ability = SKILL_ABILITIES[skill];
+    const ability = SKILL_ABILITIES[skill] as keyof typeof abilities;
     const abilityModifier = calculateAbilityModifier(abilities[ability]);
     const isProficient = skillProficiencies.includes(skill);
     return abilityModifier + (isProficient ? proficiencyBonus : 0);
@@ -243,7 +243,7 @@ export function SkillsProficienciesStep() {
                 <div role="group" aria-labelledby="saving-throws-label" className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {DND_ABILITIES.map((ability) => {
                     const isProficient = classSavingThrows.includes(ability);
-                    const abilityScore = abilities[ability];
+                    const abilityScore = abilities[ability as keyof typeof abilities];
                     const modifier = calculateAbilityModifier(abilityScore);
                     const savingThrowBonus = modifier + (isProficient ? proficiencyBonus : 0);
                     
