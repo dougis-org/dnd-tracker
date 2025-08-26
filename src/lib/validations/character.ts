@@ -38,6 +38,9 @@ export const ClassSchema = z.object({
   subclass: z.string().trim().optional(),
   hitDiceSize: z.union([z.literal(6), z.literal(8), z.literal(10), z.literal(12)]),
   hitDiceUsed: z.number().int().min(0, 'Hit dice used cannot be negative').default(0),
+}).refine(data => data.hitDiceUsed <= data.level, {
+  message: 'Hit dice used cannot exceed class level',
+  path: ['hitDiceUsed'],
 });
 
 // Define Zod schema for ability scores

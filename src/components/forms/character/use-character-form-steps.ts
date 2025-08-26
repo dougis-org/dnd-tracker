@@ -1,5 +1,6 @@
 import { UseFormReturn } from 'react-hook-form';
 import { BasicInfoStep } from './basic-info-step';
+import { ClassesStep } from './classes-step';
 import { AbilityScoresStep } from './ability-scores-step';
 import { SkillsProficienciesStep } from './skills-proficiencies-step';
 import { SpellcastingStep } from './spellcasting-step';
@@ -27,6 +28,10 @@ async function validateBasicInfo(form: any) {
     'name', 'race', 'background', 'alignment'
   ];
   return await form.trigger(basicInfoFields);
+}
+
+async function validateClasses(form: any) {
+  return await form.trigger('classes');
 }
 
 
@@ -68,6 +73,12 @@ export function useCharacterFormSteps(form: any) {
       description: CHARACTER_FORM_STEPS.BASIC_INFO.description,
       component: BasicInfoStep,
       validate: () => validateBasicInfo(form)
+    },
+    {
+      title: CHARACTER_FORM_STEPS.CLASSES.title,
+      description: CHARACTER_FORM_STEPS.CLASSES.description,
+      component: ClassesStep,
+      validate: () => validateClasses(form)
     },
     {
       title: CHARACTER_FORM_STEPS.ABILITY_SCORES.title,

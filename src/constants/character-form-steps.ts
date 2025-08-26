@@ -8,6 +8,10 @@ export const CHARACTER_FORM_STEPS = {
     title: 'Character Information',
     description: 'Basic character details'
   },
+  CLASSES: {
+    title: 'Classes & Multiclassing',
+    description: 'Choose your character classes'
+  },
   ABILITY_SCORES: {
     title: 'Ability Scores',
     description: 'Set your character\'s abilities'
