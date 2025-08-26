@@ -122,14 +122,17 @@ describe('EquipmentFeaturesStep', () => {
         classesSelected={[{ className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }]}
         backgroundSelected="Soldier"
       >
-        <EquipmentFeaturesStep />
+        <EquipmentFeaturesStep 
+          classesSelected={[{ className: 'Fighter', level: 1 }]}
+          backgroundSelected="Soldier"
+        />
       </TestWrapper>
     );
 
     // Should show starting equipment suggestions
     expect(screen.getByText('Starting Equipment')).toBeInTheDocument();
-    expect(screen.getAllByText(/fighter/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/soldier/i).length).toBeGreaterThan(0);
+    expect(screen.getByText('Fighter Starting Equipment:')).toBeInTheDocument();
+    expect(screen.getByText('Soldier Background Equipment:')).toBeInTheDocument();
   });
 
   it('should allow adding and editing features', async () => {
