@@ -96,13 +96,58 @@ describe('SpellcastingStep', () => {
     expect(screen.queryByLabelText(/spellcasting ability/i)).not.toBeInTheDocument();
   });
 
-  // Disabled due to auto-calculation removal to prevent infinite loops
-  it.skip('should calculate spell attack bonus correctly', () => {
-    // TODO: Re-enable when auto-calculation is fixed
+  it('should calculate spell attack bonus correctly', async () => {
+    const user = userEvent.setup();
+    
+    render(
+      <TestWrapper>
+        <SpellcastingStep />
+      </TestWrapper>
+    );
+
+    // Select Intelligence as spellcasting ability (modifier +3, proficiency +2 = +5 total)
+    const abilitySelect = screen.getByLabelText(/spellcasting ability/i);
+    await user.click(abilitySelect);
+    
+    // Wait for dropdown to open and find Intelligence option
+    await waitFor(() => {
+      expect(screen.getByRole('option', { name: /intelligence/i })).toBeInTheDocument();
+    });
+    
+    await user.click(screen.getByRole('option', { name: /intelligence/i }));
+
+    // Check that the spell attack bonus field shows the calculated value
+    await waitFor(() => {
+      const spellAttackInput = screen.getByDisplayValue('5');
+      expect(spellAttackInput).toBeInTheDocument();
+    });
   });
 
-  it.skip('should calculate spell save DC correctly', () => {
-    // TODO: Re-enable when auto-calculation is fixed
+  it('should calculate spell save DC correctly', async () => {
+    const user = userEvent.setup();
+    
+    render(
+      <TestWrapper>
+        <SpellcastingStep />
+      </TestWrapper>
+    );
+
+    // Select Intelligence as spellcasting ability (8 + 3 modifier + 2 proficiency = 13 DC)
+    const abilitySelect = screen.getByLabelText(/spellcasting ability/i);
+    await user.click(abilitySelect);
+    
+    // Wait for dropdown to open and find Intelligence option
+    await waitFor(() => {
+      expect(screen.getByRole('option', { name: /intelligence/i })).toBeInTheDocument();
+    });
+    
+    await user.click(screen.getByRole('option', { name: /intelligence/i }));
+
+    // Check that the spell save DC field shows the calculated value
+    await waitFor(() => {
+      const spellSaveDCInput = screen.getByDisplayValue('13');
+      expect(spellSaveDCInput).toBeInTheDocument();
+    });
   });
 
   it('should show spell slots for appropriate levels', () => {

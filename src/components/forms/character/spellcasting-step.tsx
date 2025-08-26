@@ -50,8 +50,40 @@ export function SpellcastingStep() {
   const spellSlots = useMemo(() => calculateSpellSlots(classes), [classes]);
   const spellListType = getSpellListType(primaryClass);
 
-  // Note: Auto-update disabled to prevent infinite loops in tests
-  // TODO: Re-implement auto-update with proper dependency management
+  // Auto-update spell attack bonus and save DC when stats change
+  useEffect(() => {
+    if (spellStats && spellStats.spellcastingAbility) {
+      const currentValues = form.getValues('spellcasting');
+      let hasChanges = false;
+      
+      if (currentValues.spellAttackBonus !== spellStats.spellAttackBonus) {
+        form.setValue('spellcasting.spellAttackBonus', spellStats.spellAttackBonus, { 
+          shouldTouch: false, 
+          shouldValidate: false,
+          shouldDirty: false
+        });
+        hasChanges = true;
+      }
+      
+      if (currentValues.spellSaveDC !== spellStats.spellSaveDC) {
+        form.setValue('spellcasting.spellSaveDC', spellStats.spellSaveDC, { 
+          shouldTouch: false, 
+          shouldValidate: false,
+          shouldDirty: false
+        });
+        hasChanges = true;
+      }
+      
+      if (currentValues.ability !== spellStats.spellcastingAbility) {
+        form.setValue('spellcasting.ability', spellStats.spellcastingAbility, { 
+          shouldTouch: false, 
+          shouldValidate: false,
+          shouldDirty: false
+        });
+        hasChanges = true;
+      }
+    }
+  }, [spellStats?.spellAttackBonus, spellStats?.spellSaveDC, spellStats?.spellcastingAbility, form]);
 
   if (!spellcastingInfo) {
     return (

@@ -297,7 +297,7 @@ describe('CharacterCreationForm', () => {
     expect(screen.queryByText('Next')).not.toBeInTheDocument();
   });
 
-  it.skip('should submit form when complete is clicked', async () => {
+  it('should submit form when complete is clicked', async () => {
     const user = userEvent.setup();
     
     render(
@@ -356,7 +356,7 @@ describe('CharacterCreationForm', () => {
     });
   });
 
-  it.skip('should call onCancel when cancel is clicked', async () => {
+  it('should call onCancel when cancel is clicked', async () => {
     const user = userEvent.setup();
     
     render(
@@ -366,13 +366,13 @@ describe('CharacterCreationForm', () => {
       />
     );
 
-    const cancelButton = screen.getByText('Cancel');
+    const cancelButton = screen.getByLabelText('Cancel form');
     await user.click(cancelButton);
 
     expect(mockOnCancel).toHaveBeenCalled();
   });
 
-  it.skip('should show loading state during submission', async () => {
+  it('should show loading state during submission', async () => {
     const user = userEvent.setup();
     
     // Mock slow API response
@@ -423,7 +423,7 @@ describe('CharacterCreationForm', () => {
     await user.click(completeButton);
 
     // Should show loading state
-    expect(screen.getByText('Completing...')).toBeInTheDocument();
+    expect(screen.getByText('Submitting...')).toBeInTheDocument();
     
     // Buttons should be disabled
     const buttons = screen.getAllByRole('button');
@@ -432,7 +432,7 @@ describe('CharacterCreationForm', () => {
     });
   });
 
-  it.skip('should handle API errors gracefully', async () => {
+  it('should handle API errors gracefully', async () => {
     const user = userEvent.setup();
     
     // Mock API error

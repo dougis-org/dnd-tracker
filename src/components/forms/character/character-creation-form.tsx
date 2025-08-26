@@ -90,9 +90,10 @@ export function CharacterCreationForm({ onComplete, onCancel, draftId }: Charact
         <MultiStepForm
           steps={steps}
           validateStep={validateStep}
-          onSubmit={form.handleSubmit(handleSubmit as any)}
+          onSubmit={handleSubmit}
           onCancel={handleCancel}
           isSubmitting={isSubmitting}
+          form={form}
         />
       </form>
     </Form>
