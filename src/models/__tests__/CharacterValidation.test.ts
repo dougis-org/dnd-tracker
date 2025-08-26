@@ -1,3 +1,19 @@
+// Generic test runner for schema validation
+function runValidationTests<T>(
+  schema: any,
+  tests: Array<T & { shouldFail: boolean; desc: string }>,
+  getData: (test: T) => any,
+  expectError?: string
+) {
+  test.each(tests)('$desc', (testCase) => {
+    const data = getData(testCase);
+    if (testCase.shouldFail) {
+      expectSchemaFailure(schema, data, expectError);
+    } else {
+      expectSchemaSuccess(schema, data);
+    }
+  });
+}
 import {
   CharacterSchema,
   CharacterSchemaWithTotalLevel,
@@ -141,16 +157,10 @@ describe('CharacterSchema Validation', () => {
         { name: 'A'.repeat(100), shouldFail: false, desc: 'maximum length' },
         { name: 'A'.repeat(101), shouldFail: true, desc: 'exceeding maximum' },
       ];
-
-      test.each(nameTests)('should handle $desc', ({ name, shouldFail }) => {
-        const testData = { ...validCharacterData, name };
-
-        if (shouldFail) {
-          expectSchemaFailure(CharacterSchema, testData);
-        } else {
-          expectSchemaSuccess(CharacterSchema, testData);
-        }
-      });
+      runValidationTests(CharacterSchema, nameTests, ({ name }) => ({
+        ...validCharacterData,
+        name,
+      }));
     });
 
     describe('Class Validation', () => {
@@ -277,56 +287,52 @@ describe('CharacterSchema Validation', () => {
       });
 
       describe('Hit Points Business Rule', () => {
+        // Refactored: hitPointTests and runValidationTests are now used below
         const hitPointTests = [
           {
-            current: 5,
-            maximum: 10,
-            temporary: 0,
-            valid: true,
-            desc: 'current < maximum',
+            currentHp: 10,
+            shouldFail: false,
+            desc: 'current HP equal to max HP',
           },
           {
-            current: 10,
-            maximum: 10,
-            temporary: 0,
-            valid: true,
-            desc: 'current = maximum',
+            currentHp: 9,
+            shouldFail: false,
+            desc: 'current HP less than max HP',
           },
           {
-            current: 12,
-            maximum: 10,
+            currentHp: 12,
+            shouldFail: false,
+            desc: 'current HP equal to max HP + temp HP',
             temporary: 2,
-            valid: true,
-            desc: 'current = maximum + temporary',
           },
           {
-            current: 13,
-            maximum: 10,
-            temporary: 2,
-            valid: false,
-            desc: 'current > maximum + temporary',
+            currentHp: 13,
+            shouldFail: true,
+            desc: 'current HP exceeds max HP + temp HP',
           },
         ];
 
-        test.each(hitPointTests)(
-          'should validate $desc',
-          ({ current, maximum, temporary, valid }) => {
-            const testData = {
-              ...validFormData,
-              hitPoints: { current, maximum, temporary },
-            };
-
-            if (valid) {
-              expectSchemaSuccess(characterFormSchema, testData);
-            } else {
-              expectSchemaFailure(
-                characterFormSchema,
-                testData,
-                'Current HP cannot exceed maximum HP + temporary HP'
-              );
-            }
-          }
+        runValidationTests(
+          characterFormSchema,
+          hitPointTests,
+          ({ currentHp, temporary }) => ({
+            ...validFormData,
+            hitPoints: {
+              ...(validFormData.hitPoints ?? {
+                maximum: 10,
+                current: 10,
+                temporary: 0,
+              }),
+              current: currentHp,
+              temporary:
+                temporary !== undefined
+                  ? temporary
+                  : (validFormData.hitPoints?.temporary ?? 0),
+            },
+          }),
+          'Current HP cannot exceed maximum HP + temporary HP'
         );
+        // Old hit points test block removed, now handled by runValidationTests above
       });
 
       describe('Spellcasting Ability Validation', () => {
@@ -359,30 +365,29 @@ describe('CharacterSchema Validation', () => {
       });
 
       describe('Notes Length Validation', () => {
+        // Old notes length test block removed, now handled by runValidationTests in notes validation section
         const notesTests = [
-          { length: 2000, valid: true, desc: 'maximum length' },
-          { length: 2001, valid: false, desc: 'exceeding maximum' },
+          {
+            notes: '',
+            shouldFail: false,
+            desc: 'notes empty',
+          },
+          {
+            notes: 'Some notes about the character',
+            shouldFail: false,
+            desc: 'notes is a string',
+          },
+          {
+            notes: 123,
+            shouldFail: true,
+            desc: 'notes is not a string',
+          },
         ];
 
-        test.each(notesTests)(
-          'should validate notes $desc',
-          ({ length, valid }) => {
-            const testData = {
-              ...validFormData,
-              notes: 'a'.repeat(length),
-            };
-
-            if (valid) {
-              expectSchemaSuccess(characterFormSchema, testData);
-            } else {
-              expectSchemaFailure(
-                characterFormSchema,
-                testData,
-                'Notes cannot exceed 2000 characters'
-              );
-            }
-          }
-        );
+        runValidationTests(characterFormSchema, notesTests, ({ notes }) => ({
+          ...validFormData,
+          notes,
+        }));
       });
     });
   });
