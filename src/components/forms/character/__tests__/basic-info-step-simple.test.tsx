@@ -158,9 +158,26 @@ describe('BasicInfoStep', () => {
     expect(nameInput.value.length).toBeLessThanOrEqual(50);
   });
 
-  it.skip('should handle non-negative experience points', async () => {
-    // Skip this test for now - the component logic works but test environment handling is complex
-    // The actual component properly handles negative values via onBlur
+  it('should handle non-negative experience points', async () => {
+    const user = userEvent.setup();
+    
+    render(
+      <TestWrapper>
+        <BasicInfoStep />
+      </TestWrapper>
+    );
+
+    const xpInput = screen.getByRole('spinbutton', { name: /experience points/i });
+    
+    // Try to enter a negative value
+    await user.clear(xpInput);
+    await user.type(xpInput, '-100');
+    fireEvent.blur(xpInput);
+    
+    // Should be corrected to 0 (minimum value)
+    await waitFor(() => {
+      expect(xpInput).toHaveValue(0);
+    });
   });
 
   it('should convert decimal experience points to integers', async () => {

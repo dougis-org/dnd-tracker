@@ -119,8 +119,25 @@ describe('AbilityScoresStep', () => {
     });
   });
 
-  it.skip('should allow changing ability scores', async () => {
-    // Skip for now - the component logic works but test interaction is complex
+  it('should allow changing ability scores', async () => {
+    const user = userEvent.setup();
+    
+    render(
+      <TestWrapper>
+        <AbilityScoresStep />
+      </TestWrapper>
+    );
+
+    // Find the strength input and change its value
+    const strengthInput = screen.getAllByRole('spinbutton')[0]; // First ability input
+    
+    await user.clear(strengthInput);
+    await user.type(strengthInput, '14');
+    fireEvent.blur(strengthInput);
+    
+    await waitFor(() => {
+      expect(strengthInput).toHaveValue(14);
+    });
   });
 
   it('should show ability descriptions', () => {
