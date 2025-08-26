@@ -156,7 +156,15 @@ export const characterFormSchema = z.object({
     .default([]),
   notes: z.string()
     .max(2000, 'Notes too long (max 2000 characters)')
+    .optional(),
+
+  // Class-specific Features
+  fightingStyle: z.string()
+    .max(50, 'Fighting style name too long')
+    .optional(),
+  classFeatures: z.array(z.string())
     .optional()
+    .default([])
 });
 
 // Form step schemas for multi-step form validation
@@ -200,6 +208,11 @@ export const equipmentSchema = characterFormSchema.pick({
   notes: true
 });
 
+export const classSpecificSchema = characterFormSchema.pick({
+  fightingStyle: true,
+  classFeatures: true
+});
+
 // Type definitions for form data
 export type CharacterFormData = z.infer<typeof characterFormSchema>;
 export type CharacterFormInput = z.input<typeof characterFormSchema>;
@@ -210,6 +223,7 @@ export type SkillsFormData = z.infer<typeof skillsSchema>;
 export type CombatStatsFormData = z.infer<typeof combatStatsSchema>;
 export type SpellcastingFormData = z.infer<typeof spellcastingFormSchema>;
 export type EquipmentFormData = z.infer<typeof equipmentSchema>;
+export type ClassSpecificFormData = z.infer<typeof classSpecificSchema>;
 
 // Utility function to calculate ability modifiers
 export function calculateAbilityModifier(score: number): number {

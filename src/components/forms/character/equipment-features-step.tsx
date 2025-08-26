@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useFormContext, useFieldArray } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import {
   FormField,
   FormItem,
@@ -75,24 +75,39 @@ const BACKGROUND_STARTING_EQUIPMENT: Record<string, string[]> = {
   'Sailor': ['Navigator\'s tools', '50 feet of silk rope', 'Lucky charm', 'Common clothes', 'Pouch (10 gp)']
 };
 
-export function EquipmentFeaturesStep() {
+interface EquipmentFeaturesStepProps {
+  classesSelected?: Array<{
+    className: string;
+    level: number;
+  }>;
+  backgroundSelected?: string;
+}
+
+export function EquipmentFeaturesStep({ classesSelected = [], backgroundSelected }: EquipmentFeaturesStepProps) {
   const form = useFormContext<CharacterFormInput>();
   const [isAddingEquipment, setIsAddingEquipment] = useState(false);
   const [isAddingFeature, setIsAddingFeature] = useState(false);
   const [newEquipment, setNewEquipment] = useState({ name: '', quantity: 1, category: '' });
   const [newFeature, setNewFeature] = useState('');
   
-  const formData = form.watch();
-  const { classes, background, equipment = [], features = [], notes = '' } = formData;
+  // Use provided props or get from form
+  const classes = classesSelected || form.watch('classes') || [];
+  const background = backgroundSelected || form.watch('background') || '';
+  const equipment = form.watch('equipment') || [];
+  const features = form.watch('features') || [];
+  const notes = form.watch('notes') || '';
   
-  const { 
-    fields: equipmentFields, 
-    append: appendEquipment, 
-    remove: removeEquipment 
-  } = useFieldArray({
-    control: form.control,
-    name: 'equipment'
-  });
+  // Handle equipment directly through form values to avoid useFieldArray infinite loops
+  const addEquipment = (item: { name: string; quantity: number; category: string }) => {
+    const currentEquipment = form.getValues('equipment') || [];
+    form.setValue('equipment', [...currentEquipment, item]);
+  };
+
+  const removeEquipment = (index: number) => {
+    const currentEquipment = form.getValues('equipment') || [];
+    const updatedEquipment = currentEquipment.filter((_, i) => i !== index);
+    form.setValue('equipment', updatedEquipment);
+  };
 
   // Handle features as simple string array
   const addFeature = (feature: string) => {
@@ -114,7 +129,7 @@ export function EquipmentFeaturesStep() {
   // Handle adding new equipment
   const handleAddEquipment = () => {
     if (newEquipment.name.trim() && newEquipment.category) {
-      appendEquipment(newEquipment);
+      addEquipment(newEquipment);
       setNewEquipment({ name: '', quantity: 1, category: '' });
       setIsAddingEquipment(false);
     }
@@ -275,18 +290,18 @@ export function EquipmentFeaturesStep() {
         )}
 
         {/* Equipment List */}
-        {equipmentFields.length > 0 && (
+        {equipment.length > 0 && (
           <div className="space-y-2">
-            {equipmentFields.map((field, index) => (
-              <div key={field.id} className="flex items-center justify-between p-3 border rounded-lg">
+            {equipment.map((item, index) => (
+              <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                 <div className="flex items-center gap-3">
                   <div>
-                    <p className="font-medium">{equipment[index]?.name}</p>
+                    <p className="font-medium">{item.name}</p>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Badge variant="outline" className="text-xs">
-                        {equipment[index]?.category}
+                        {item.category}
                       </Badge>
-                      <span>Quantity: {equipment[index]?.quantity}</span>
+                      <span>Quantity: {item.quantity}</span>
                     </div>
                   </div>
                 </div>
@@ -295,7 +310,7 @@ export function EquipmentFeaturesStep() {
                   variant="ghost"
                   size="sm"
                   onClick={() => removeEquipment(index)}
-                  aria-label={`Remove ${equipment[index]?.name}`}
+                  aria-label={`Remove ${item.name}`}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -304,7 +319,7 @@ export function EquipmentFeaturesStep() {
           </div>
         )}
 
-        {equipmentFields.length === 0 && !isAddingEquipment && (
+        {equipment.length === 0 && !isAddingEquipment && (
           <div className="text-center py-8 text-muted-foreground">
             <Package className="h-12 w-12 mx-auto mb-2 opacity-50" />
             <p>No additional equipment added yet.</p>

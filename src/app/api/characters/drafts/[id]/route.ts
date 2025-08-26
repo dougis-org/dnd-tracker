@@ -1,32 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { connectToDatabase } from '@/lib/mongodb';
-import { ObjectId } from 'mongodb';
-import { CharacterDraft } from '@/models/schemas';
+import { CharacterDraftModel } from '@/models/schemas';
 import type { CharacterFormInput } from '@/lib/validations/character';
 
 interface RouteParams {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!ObjectId.isValid(params.id)) {
-      return NextResponse.json({ error: 'Invalid draft ID' }, { status: 400 });
-    }
+    const { id } = await params;
 
-    const { db } = await connectToDatabase();
+    await connectToDatabase();
     
-    const draft = await db.collection('character_drafts').findOne({
-      _id: new ObjectId(params.id),
+    const draft = await CharacterDraftModel.findOne({
+      _id: id,
       userId
     });
 
@@ -43,15 +38,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!ObjectId.isValid(params.id)) {
-      return NextResponse.json({ error: 'Invalid draft ID' }, { status: 400 });
-    }
+    const { id } = await params;
 
     const body = await request.json();
     const { formData, name } = body;
@@ -61,25 +54,24 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'Invalid form data' }, { status: 400 });
     }
 
-    const { db } = await connectToDatabase();
+    await connectToDatabase();
     
     const updateData = {
       name: name || formData.name || 'Unnamed Character',
-      formData: formData as CharacterFormInput,
-      updatedAt: new Date()
+      formData: formData as CharacterFormInput
     };
 
-    const result = await db.collection('character_drafts').findOneAndUpdate(
-      { _id: new ObjectId(params.id), userId },
-      { $set: updateData },
-      { returnDocument: 'after' }
+    const draft = await CharacterDraftModel.findOneAndUpdate(
+      { _id: id, userId },
+      updateData,
+      { new: true }
     );
 
-    if (!result) {
+    if (!draft) {
       return NextResponse.json({ error: 'Draft not found' }, { status: 404 });
     }
 
-    return NextResponse.json(result);
+    return NextResponse.json(draft);
   } catch (error) {
     console.error('Error updating draft:', error);
     return NextResponse.json({ error: 'Failed to update draft' }, { status: 500 });
@@ -88,24 +80,22 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!ObjectId.isValid(params.id)) {
-      return NextResponse.json({ error: 'Invalid draft ID' }, { status: 400 });
-    }
+    const { id } = await params;
 
-    const { db } = await connectToDatabase();
+    await connectToDatabase();
     
-    const result = await db.collection('character_drafts').deleteOne({
-      _id: new ObjectId(params.id),
+    const draft = await CharacterDraftModel.findOneAndDelete({
+      _id: id,
       userId
     });
 
-    if (result.deletedCount === 0) {
+    if (!draft) {
       return NextResponse.json({ error: 'Draft not found' }, { status: 404 });
     }
 

@@ -1,23 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { connectToDatabase } from '@/lib/mongodb';
-import { CharacterDraft } from '@/models/schemas';
+import { CharacterDraftModel } from '@/models/schemas';
 import type { CharacterFormInput } from '@/lib/validations/character';
 
 export async function GET() {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { db } = await connectToDatabase();
+    await connectToDatabase();
     
-    const drafts = await db.collection('character_drafts')
+    const drafts = await CharacterDraftModel
       .find({ userId })
-      .sort({ updatedAt: -1 })
-      .toArray();
+      .sort({ updatedAt: -1 });
 
     return NextResponse.json(drafts);
   } catch (error) {
@@ -28,7 +27,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -42,22 +41,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid form data' }, { status: 400 });
     }
 
-    const { db } = await connectToDatabase();
+    await connectToDatabase();
     
-    const draftData = {
+    const draft = await CharacterDraftModel.create({
       userId,
       name: name || formData.name || 'Unnamed Character',
-      formData: formData as CharacterFormInput,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    // Validate draft data against schema
-    const validatedDraft = CharacterDraft.parse(draftData);
-    
-    const result = await db.collection('character_drafts').insertOne(validatedDraft);
-    
-    const draft = await db.collection('character_drafts').findOne({ _id: result.insertedId });
+      formData: formData as CharacterFormInput
+    });
 
     return NextResponse.json(draft, { status: 201 });
   } catch (error) {

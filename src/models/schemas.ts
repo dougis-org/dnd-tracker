@@ -364,6 +364,26 @@ export const CharacterDraft = z.object({
 
 export type CharacterDraftType = z.infer<typeof CharacterDraft>;
 
+// Character Draft Mongoose Schema
+export interface ICharacterDraft extends Document {
+  userId: string;
+  name: string;
+  formData: CharacterFormInput;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const CharacterDraftSchema = new mongoose.Schema<ICharacterDraft>({
+  userId: { type: String, required: true, index: true },
+  name: { type: String, required: true, maxlength: 100 },
+  formData: { type: mongoose.Schema.Types.Mixed, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+}, { timestamps: true });
+
+export const CharacterDraftModel: Model<ICharacterDraft> = 
+  mongoose.models.CharacterDraft || mongoose.model<ICharacterDraft>('CharacterDraft', CharacterDraftSchema);
+
 // Validation result interface
 interface ValidationResult {
   isValid: boolean;

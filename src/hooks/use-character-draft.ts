@@ -1,223 +1,134 @@
 import { useState, useCallback } from 'react';
 import { toast } from '@/hooks/use-toast';
 import type { CharacterFormInput } from '@/lib/validations/character';
-import type { CharacterDraftType } from '@/models/schemas';
+import { useAutoSaveDraft } from './use-auto-save-draft';
+import { 
+  fetchAllDrafts, 
+  createDraft, 
+  updateDraft, 
+  loadDraft, 
+  deleteDraft,
+  type CharacterDraft
+} from '@/lib/api/character-draft-api';
 
-export interface CharacterDraft {
-  _id: string;
-  userId: string;
-  name: string;
-  formData: CharacterFormInput;
-  createdAt: string;
-  updatedAt: string;
-}
+export { type CharacterDraft } from '@/lib/api/character-draft-api';
 
 export function useCharacterDraft() {
   const [drafts, setDrafts] = useState<CharacterDraft[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { autoSaveDraft } = useAutoSaveDraft();
 
-  // Fetch all user's drafts
+  const handleError = useCallback((error: unknown, context: string) => {
+    const message = error instanceof Error ? error.message : `Failed to ${context}`;
+    setError(message);
+    toast({
+      title: 'Error',
+      description: message,
+      variant: 'destructive',
+    });
+  }, []);
+
   const fetchDrafts = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     
     try {
-      const response = await fetch('/api/characters/drafts');
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Failed to fetch drafts' }));
-        throw new Error(errorData.error || 'Failed to fetch drafts');
-      }
-      
-      const data = await response.json();
+      const data = await fetchAllDrafts();
       setDrafts(data);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch drafts';
-      setError(errorMessage);
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+    } catch (error) {
+      handleError(error, 'fetch drafts');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [handleError]);
 
-  // Save a new draft
-  const saveDraft = useCallback(async (formData: CharacterFormInput, name?: string): Promise<CharacterDraft | null> => {
+  const saveDraft = useCallback(async (
+    formData: CharacterFormInput, 
+    name?: string
+  ): Promise<CharacterDraft | null> => {
     setIsLoading(true);
     setError(null);
     
     try {
-      const response = await fetch('/api/characters/drafts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          formData,
-          name: name || formData.name || 'Unnamed Character',
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Failed to save draft' }));
-        throw new Error(errorData.error || 'Failed to save draft');
-      }
-      
-      const newDraft = await response.json();
+      const newDraft = await createDraft(formData, name);
       setDrafts(prev => [newDraft, ...prev]);
       
       toast({
         title: 'Success',
-        description: 'Character draft saved successfully',
+        description: 'Draft saved successfully',
       });
       
       return newDraft;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to save draft';
-      setError(errorMessage);
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+    } catch (error) {
+      handleError(error, 'save draft');
       return null;
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [handleError]);
 
-  // Update an existing draft
-  const updateDraft = useCallback(async (draftId: string, formData: CharacterFormInput, name?: string): Promise<CharacterDraft | null> => {
+  const updateExistingDraft = useCallback(async (
+    draftId: string, 
+    formData: CharacterFormInput, 
+    name?: string
+  ): Promise<CharacterDraft | null> => {
     setIsLoading(true);
     setError(null);
     
     try {
-      const response = await fetch(`/api/characters/drafts/${draftId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          formData,
-          name: name || formData.name || 'Unnamed Character',
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Failed to update draft' }));
-        throw new Error(errorData.error || 'Failed to update draft');
-      }
-      
-      const updatedDraft = await response.json();
-      setDrafts(prev => prev.map(draft => draft._id === draftId ? updatedDraft : draft));
+      const updatedDraft = await updateDraft(draftId, formData, name);
+      setDrafts(prev => prev.map(d => d._id === draftId ? updatedDraft : d));
       
       toast({
         title: 'Success',
-        description: 'Character draft updated successfully',
+        description: 'Draft updated successfully',
       });
       
       return updatedDraft;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update draft';
-      setError(errorMessage);
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+    } catch (error) {
+      handleError(error, 'update draft');
       return null;
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [handleError]);
 
-  // Load a specific draft
-  const loadDraft = useCallback(async (draftId: string): Promise<CharacterDraft | null> => {
+  const loadExistingDraft = useCallback(async (draftId: string): Promise<CharacterDraft | null> => {
     setIsLoading(true);
     setError(null);
     
     try {
-      const response = await fetch(`/api/characters/drafts/${draftId}`);
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Failed to load draft' }));
-        throw new Error(errorData.error || 'Failed to load draft');
-      }
-      
-      const draft = await response.json();
-      return draft;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load draft';
-      setError(errorMessage);
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+      return await loadDraft(draftId);
+    } catch (error) {
+      handleError(error, 'load draft');
       return null;
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [handleError]);
 
-  // Delete a draft
-  const deleteDraft = useCallback(async (draftId: string): Promise<boolean> => {
+  const removeExistingDraft = useCallback(async (draftId: string): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
     
     try {
-      const response = await fetch(`/api/characters/drafts/${draftId}`, {
-        method: 'DELETE',
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Failed to delete draft' }));
-        throw new Error(errorData.error || 'Failed to delete draft');
-      }
-      
-      setDrafts(prev => prev.filter(draft => draft._id !== draftId));
+      await deleteDraft(draftId);
+      setDrafts(prev => prev.filter(d => d._id !== draftId));
       
       toast({
         title: 'Success',
-        description: 'Character draft deleted successfully',
+        description: 'Draft deleted successfully',
       });
       
       return true;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete draft';
-      setError(errorMessage);
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+    } catch (error) {
+      handleError(error, 'delete draft');
       return false;
     } finally {
       setIsLoading(false);
     }
-  }, []);
-
-  // Auto-save draft with debouncing
-  const autoSaveDraft = useCallback((formData: CharacterFormInput, currentDraftId?: string, name?: string) => {
-    const timeoutId = setTimeout(async () => {
-      try {
-        if (currentDraftId) {
-          await updateDraft(currentDraftId, formData, name);
-        } else {
-          await saveDraft(formData, name);
-        }
-      } catch (error) {
-        console.error('Auto-save failed:', error);
-      }
-    }, 2000); // Auto-save after 2 seconds of inactivity
-
-    // Return cleanup function
-    return () => clearTimeout(timeoutId);
-  }, [updateDraft, saveDraft]);
+  }, [handleError]);
 
   return {
     drafts,
@@ -225,9 +136,9 @@ export function useCharacterDraft() {
     error,
     fetchDrafts,
     saveDraft,
-    updateDraft,
-    loadDraft,
-    deleteDraft,
-    autoSaveDraft,
+    updateDraft: updateExistingDraft,
+    loadDraft: loadExistingDraft,
+    deleteDraft: removeExistingDraft,
+    autoSaveDraft
   };
 }
