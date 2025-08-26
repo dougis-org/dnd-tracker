@@ -17,6 +17,7 @@ export interface MultiStepFormProps {
   onComplete?: () => void;
   onSubmit?: (data: any) => void | Promise<void>;
   onCancel: () => void;
+  onSaveDraft?: () => void | Promise<void>;
   validateStep?: (stepIndex: number) => boolean | Promise<boolean>;
   isLoading?: boolean;
   isSubmitting?: boolean;
@@ -27,6 +28,7 @@ export interface MultiStepFormProps {
   submittingLabel?: string;
   error?: string | null;
   form?: any;
+  showSaveDraft?: boolean;
 }
 
 export function MultiStepForm({
@@ -34,6 +36,7 @@ export function MultiStepForm({
   onComplete,
   onSubmit,
   onCancel,
+  onSaveDraft,
   validateStep,
   isLoading = false,
   isSubmitting = false,
@@ -43,7 +46,8 @@ export function MultiStepForm({
   submitLabel = "Complete",
   submittingLabel = "Submitting...",
   error,
-  form
+  form,
+  showSaveDraft = false
 }: MultiStepFormProps) {
   const [currentStep, setCurrentStep] = useState(initialStep);
   
@@ -180,6 +184,18 @@ export function MultiStepForm({
           >
             Cancel
           </Button>
+          
+          {showSaveDraft && onSaveDraft && (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={onSaveDraft}
+              disabled={isLoading || isSubmitting}
+              aria-label="Save draft"
+            >
+              Save Draft
+            </Button>
+          )}
           
           {isLastStep ? (
             <Button
