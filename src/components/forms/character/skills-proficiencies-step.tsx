@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import {
   FormField,
@@ -112,7 +112,19 @@ export function SkillsProficienciesStep() {
   const backgroundSkills = background ? BACKGROUND_SKILLS[background] || [] : [];
   
   // Get class saving throw proficiencies
-  const classSavingThrows = primaryClass ? CLASS_SAVING_THROWS[primaryClass] || [] : [];
+  const classSavingThrows = useMemo(() => {
+    return primaryClass ? CLASS_SAVING_THROWS[primaryClass] || [] : [];
+  }, [primaryClass]);
+
+  // Auto-update saving throw proficiencies when class changes
+  useEffect(() => {
+    const currentSavingThrows = form.getValues('savingThrowProficiencies');
+    
+    // Avoid unnecessary re-renders if the value is already correct
+    if (JSON.stringify(currentSavingThrows) !== JSON.stringify(classSavingThrows)) {
+      form.setValue('savingThrowProficiencies', classSavingThrows, { shouldValidate: true });
+    }
+  }, [primaryClass, form, classSavingThrows]);
   
   // Calculate skill bonus for display
   const getSkillBonus = (skill: string): number => {

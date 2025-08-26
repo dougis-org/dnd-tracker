@@ -394,7 +394,7 @@ export function EquipmentFeaturesStep({ classesSelected = [], backgroundSelected
         {features.length > 0 && (
           <div className="space-y-2">
             {features.map((feature, index) => (
-              <div key={index} className="flex items-start justify-between p-3 border rounded-lg">
+              <div key={`feature-${feature.slice(0, 20)}-${index}`} className="flex items-start justify-between p-3 border rounded-lg">
                 <div className="flex-1">
                   <p className="text-sm whitespace-pre-wrap">{feature}</p>
                 </div>
