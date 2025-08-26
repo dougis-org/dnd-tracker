@@ -1,14 +1,27 @@
 // Mock mongoose before importing
-jest.mock('mongoose', () => ({
-  Schema: jest.fn().mockImplementation(() => ({})),
-  models: {},
-  model: jest.fn().mockImplementation((name: string) => ({
-    modelName: name,
-  })),
-  connection: {
-    readyState: 0,
-  },
-}));
+jest.mock('mongoose', () => {
+  const mockSchemaConstructor = jest.fn().mockImplementation(() => ({}));
+  mockSchemaConstructor.Types = {
+    Mixed: {},
+    ObjectId: {},
+    String: String,
+    Number: Number,
+    Date: Date,
+    Boolean: Boolean,
+    Array: Array,
+  };
+
+  return {
+    Schema: mockSchemaConstructor,
+    models: {},
+    model: jest.fn().mockImplementation((name: string) => ({
+      modelName: name,
+    })),
+    connection: {
+      readyState: 0,
+    },
+  };
+});
 
 import mongoose from 'mongoose';
 import { CharacterModel, UserModel, validateCharacter, validateUser } from '../schemas';
