@@ -172,27 +172,17 @@ describe('CharacterSchema Validation', () => {
         { classCount: 13, shouldFail: true, desc: 'exceeding maximum classes' },
       ];
 
-      test.each(classTests)(
-        'should validate $desc',
-        ({ classCount, shouldFail }) => {
-          const classes = Array(classCount)
-            .fill(0)
-            .map((_, i) => ({
-              className: `Class${i}`,
-              level: 1,
-              hitDiceSize: 8 as const,
-              hitDiceUsed: 0,
-            }));
-
-          const testData = { ...validCharacterData, classes };
-
-          if (shouldFail) {
-            expectSchemaFailure(CharacterSchema, testData);
-          } else {
-            expectSchemaSuccess(CharacterSchema, testData);
-          }
-        }
-      );
+      runValidationTests(CharacterSchema, classTests, ({ classCount }) => ({
+        ...validCharacterData,
+        classes: Array(classCount)
+          .fill(0)
+          .map((_, i) => ({
+            className: `Class${i}`,
+            level: 1,
+            hitDiceSize: 8 as const,
+            hitDiceUsed: 0,
+          })),
+      }));
     });
   });
 
@@ -225,34 +215,45 @@ describe('CharacterSchema Validation', () => {
 
     describe('Multi-class Level Validation', () => {
       const multiclassTests = [
-        { classLevels: [3, 2], totalLevel: 5, shouldFail: false },
-        { classLevels: [5, 5, 5], totalLevel: 15, shouldFail: false },
-        { classLevels: [3, 2], totalLevel: 4, shouldFail: true },
-        { classLevels: [10, 10], totalLevel: 20, shouldFail: false },
+        {
+          classLevels: [3, 2],
+          totalLevel: 5,
+          shouldFail: false,
+          desc: 'valid multiclass',
+        },
+        {
+          classLevels: [5, 5, 5],
+          totalLevel: 15,
+          shouldFail: false,
+          desc: 'valid three classes',
+        },
+        {
+          classLevels: [3, 2],
+          totalLevel: 4,
+          shouldFail: true,
+          desc: 'invalid total level',
+        },
+        {
+          classLevels: [10, 10],
+          totalLevel: 20,
+          shouldFail: false,
+          desc: 'valid two classes',
+        },
       ];
 
-      test.each(multiclassTests)(
-        'should validate classes $classLevels with total $totalLevel',
-        ({ classLevels, totalLevel, shouldFail }) => {
-          const classes = classLevels.map((level, i) => ({
+      runValidationTests(
+        CharacterSchemaWithTotalLevel,
+        multiclassTests,
+        ({ classLevels, totalLevel }) => ({
+          ...validCharacterData,
+          classes: classLevels.map((level, i) => ({
             className: `Class${i}`,
             level,
             hitDiceSize: 8 as const,
             hitDiceUsed: 0,
-          }));
-
-          const characterData: CharacterDataWithTotalLevel = {
-            ...validCharacterData,
-            classes,
-            totalLevel,
-          };
-
-          if (shouldFail) {
-            expectSchemaFailure(CharacterSchemaWithTotalLevel, characterData);
-          } else {
-            expectSchemaSuccess(CharacterSchemaWithTotalLevel, characterData);
-          }
-        }
+          })),
+          totalLevel,
+        })
       );
     });
   });

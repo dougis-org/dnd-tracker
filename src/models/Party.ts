@@ -1,7 +1,11 @@
+import mongoose from 'mongoose';
 
-import mongoose from "mongoose";
+export const SHARED_ROLES = ['viewer', 'editor'] as const;
+export type SharedRole = (typeof SHARED_ROLES)[number];
 
-export interface IParty {
+import mongoose, { Document } from 'mongoose';
+
+export interface IParty extends Document {
   userId: string; // Owner's Clerk ID
   name: string;
   description?: string;
@@ -19,7 +23,7 @@ export interface IParty {
   // Sharing & Collaboration
   sharedWith: Array<{
     userId: string;
-    role: "viewer" | "editor";
+    role: SharedRole;
     sharedAt: Date;
   }>;
 
@@ -33,45 +37,61 @@ export interface IParty {
   updatedAt: Date;
 }
 
-const PartySchema = new mongoose.Schema<IParty>({
+const PartySchema = new mongoose.Schema<IParty>(
+  {
     userId: { type: String, required: true },
     name: { type: String, required: true },
     description: { type: String },
     campaignName: { type: String },
     characters: {
-        type: [
-            {
-                characterId: { type: mongoose.Schema.Types.ObjectId, ref: "Character" },
-                playerName: { type: String },
-                playerEmail: { type: String },
-                isActive: { type: Boolean, default: true },
-                joinedAt: { type: Date, default: Date.now },
+      type: [
+        {
+          characterId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Character',
+          },
+          playerName: { type: String },
+          playerEmail: {
+            type: String,
+            trim: true,
+            lowercase: true,
+            validate: {
+              validator: (email: string) =>
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+              message: 'Invalid email format',
             },
-        ],
-        validate: {
-            validator: function (v: any[]) {
-                // @ts-ignore
-                return v.length <= this.maxSize;
-            },
-            message: (props: { value: { length: any; }; }) => `Party exceeds character limit of ${props.value.length} for subscription tier.`,
+          },
+          isActive: { type: Boolean, default: true },
+          joinedAt: { type: Date, default: Date.now },
         },
+      ],
+      validate: {
+        validator: function (v: any[]) {
+          // @ts-ignore
+          return v.length <= this.maxSize;
+        },
+        message: (props: { value: { length: any } }) =>
+          `Party exceeds character limit of ${props.value.length} for subscription tier.`,
+      },
     },
     sharedWith: [
-        {
-            userId: { type: String, required: true },
-            role: { type: String, enum: ["viewer", "editor"], required: true },
-            sharedAt: { type: Date, default: Date.now },
-        },
+      {
+        userId: { type: String, required: true },
+        role: { type: String, enum: SHARED_ROLES, required: true },
+        sharedAt: { type: Date, default: Date.now },
+      },
     ],
     isTemplate: { type: Boolean, default: false },
     templateCategory: { type: String },
     maxSize: { type: Number, default: 5 },
-}, { timestamps: true });
+  },
+  { timestamps: true }
+);
 
 PartySchema.index({ userId: 1 });
 PartySchema.index({ name: 1 });
 PartySchema.index({ campaignName: 1 });
 PartySchema.index({ isTemplate: 1 });
 
-
-export const Party = mongoose.models.Party || mongoose.model<IParty>("Party", PartySchema);
+export const Party =
+  mongoose.models.Party || mongoose.model<IParty>('Party', PartySchema);

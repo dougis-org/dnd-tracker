@@ -1,0 +1,83 @@
+// Shared character test data factory and D&D constants
+import {
+  DND_RACES,
+  DND_CLASSES,
+  DND_ALIGNMENTS,
+  characterFormSchema,
+  basicInfoSchema,
+  classesSchema,
+  abilitiesSchema,
+  skillsSchema,
+  combatStatsSchema,
+  spellcastingFormSchema,
+  equipmentSchema,
+  calculateAbilityModifier,
+  calculateProficiencyBonus,
+  type CharacterFormData,
+  type BasicInfoFormData,
+} from '@/lib/validations/character';
+
+export const createValidCharacterData = (): CharacterFormData => ({
+  name: 'Aragorn',
+  race: 'Human',
+  subrace: 'Variant',
+  background: 'Folk Hero',
+  alignment: 'Chaotic Good',
+  experiencePoints: 300,
+  classes: [
+    {
+      className: 'Ranger',
+      level: 3,
+      subclass: 'Hunter',
+      hitDiceSize: 10,
+      hitDiceUsed: 1,
+    },
+  ],
+  abilities: {
+    strength: 16,
+    dexterity: 14,
+    constitution: 15,
+    intelligence: 12,
+    wisdom: 13,
+    charisma: 10,
+  },
+  skillProficiencies: ['Athletics', 'Survival'],
+  savingThrowProficiencies: ['strength', 'dexterity'],
+  hitPoints: {
+    maximum: 25,
+    current: 20,
+    temporary: 5,
+  },
+  armorClass: 15,
+  speed: 30,
+  initiative: 2,
+  passivePerception: 13,
+  spellcasting: {
+    ability: 'wisdom',
+    spellAttackBonus: 5,
+    spellSaveDC: 13,
+    spellSlots: {},
+    spellsKnown: [],
+    spellsPrepared: [],
+  },
+  equipment: [
+    { name: 'Longsword', quantity: 1, category: 'Weapon' },
+    { name: 'Leather Armor', quantity: 1, category: 'Armor' },
+  ],
+});
+
+export {
+  DND_RACES,
+  DND_CLASSES,
+  DND_ALIGNMENTS,
+  characterFormSchema,
+  basicInfoSchema,
+  classesSchema,
+  abilitiesSchema,
+  skillsSchema,
+  combatStatsSchema,
+  spellcastingFormSchema,
+  equipmentSchema,
+  calculateAbilityModifier,
+  calculateProficiencyBonus,
+};

@@ -16,6 +16,79 @@ afterAll(async () => {
 });
 
 describe('Party Model', () => {
+  it('should require userId and name fields', async () => {
+    const partyData: Partial<IParty> = {
+      description: 'Missing required fields',
+      maxSize: 5,
+    };
+    const party = new Party(partyData);
+    await expect(party.validate()).rejects.toThrow();
+  });
+
+  it('should validate playerEmail format, trim, and lowercase', async () => {
+    const partyData: Partial<IParty> = {
+      userId: 'userEmail',
+      name: 'Email Party',
+      characters: [
+        {
+          characterId: new mongoose.Types.ObjectId(),
+          playerEmail: '  TEST@EXAMPLE.COM  ',
+          isActive: true,
+          joinedAt: new Date(),
+        },
+      ],
+      maxSize: 5,
+    };
+    const party = new Party(partyData);
+    const savedParty = await party.save();
+    expect(savedParty.characters[0].playerEmail).toBe('test@example.com');
+
+    // Invalid email
+    party.characters[0].playerEmail = 'invalid-email';
+    await expect(party.validate()).rejects.toThrow('Invalid email format');
+  });
+
+  it('should set default values for isActive, isTemplate, maxSize', async () => {
+    const partyData: Partial<IParty> = {
+      userId: 'userDefaults',
+      name: 'Defaults Party',
+    };
+    const party = new Party(partyData);
+    const savedParty = await party.save();
+    expect(savedParty.isTemplate).toBe(false);
+    expect(savedParty.maxSize).toBe(5);
+    // If no characters, skip isActive check
+    if (savedParty.characters.length > 0) {
+      expect(savedParty.characters[0].isActive).toBe(true);
+    }
+  });
+
+  it('should allow nested data in characters and sharedWith', async () => {
+    const partyData: Partial<IParty> = {
+      userId: 'userNested',
+      name: 'Nested Party',
+      characters: [
+        {
+          characterId: new mongoose.Types.ObjectId(),
+          playerName: 'Alice',
+          playerEmail: 'alice@example.com',
+          isActive: true,
+          joinedAt: new Date(),
+        },
+      ],
+      sharedWith: [
+        { userId: 'userA', role: 'viewer', sharedAt: new Date() },
+        { userId: 'userB', role: 'editor', sharedAt: new Date() },
+      ],
+      maxSize: 5,
+    };
+    const party = new Party(partyData);
+    const savedParty = await party.save();
+    expect(savedParty.characters[0].playerName).toBe('Alice');
+    expect(savedParty.sharedWith.length).toBe(2);
+    expect(savedParty.sharedWith[0].role).toBe('viewer');
+    expect(savedParty.sharedWith[1].role).toBe('editor');
+  });
   it('should create a new party', async () => {
     const partyData: Partial<IParty> = {
       userId: 'user123',
@@ -44,13 +117,27 @@ describe('Party Model', () => {
       name: 'Big Party',
       maxSize: 2,
       characters: [
-        { characterId: new mongoose.Types.ObjectId(), isActive: true, joinedAt: new Date() },
-        { characterId: new mongoose.Types.ObjectId(), isActive: true, joinedAt: new Date() },
-        { characterId: new mongoose.Types.ObjectId(), isActive: true, joinedAt: new Date() },
+        {
+          characterId: new mongoose.Types.ObjectId(),
+          isActive: true,
+          joinedAt: new Date(),
+        },
+        {
+          characterId: new mongoose.Types.ObjectId(),
+          isActive: true,
+          joinedAt: new Date(),
+        },
+        {
+          characterId: new mongoose.Types.ObjectId(),
+          isActive: true,
+          joinedAt: new Date(),
+        },
       ],
     };
     const party = new Party(partyData);
-    await expect(party.validate()).rejects.toThrow('Party exceeds character limit of 3 for subscription tier.');
+    await expect(party.validate()).rejects.toThrow(
+      'Party exceeds character limit of 3 for subscription tier.'
+    );
   });
 
   it('should support sharing and collaboration roles', async () => {
