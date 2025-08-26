@@ -38,15 +38,24 @@ const PartySchema = new mongoose.Schema<IParty>({
     name: { type: String, required: true },
     description: { type: String },
     campaignName: { type: String },
-    characters: [
-        {
-            characterId: { type: mongoose.Schema.Types.ObjectId, ref: "Character" },
-            playerName: { type: String },
-            playerEmail: { type: String },
-            isActive: { type: Boolean, default: true },
-            joinedAt: { type: Date, default: Date.now },
+    characters: {
+        type: [
+            {
+                characterId: { type: mongoose.Schema.Types.ObjectId, ref: "Character" },
+                playerName: { type: String },
+                playerEmail: { type: String },
+                isActive: { type: Boolean, default: true },
+                joinedAt: { type: Date, default: Date.now },
+            },
+        ],
+        validate: {
+            validator: function (v: any[]) {
+                // @ts-ignore
+                return v.length <= this.maxSize;
+            },
+            message: (props: { value: { length: any; }; }) => `Party exceeds character limit of ${props.value.length} for subscription tier.`,
         },
-    ],
+    },
     sharedWith: [
         {
             userId: { type: String, required: true },

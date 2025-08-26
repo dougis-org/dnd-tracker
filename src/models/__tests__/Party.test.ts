@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Party, IParty } from '../Party';
@@ -37,5 +36,51 @@ describe('Party Model', () => {
     expect(savedParty.maxSize).toBe(partyData.maxSize);
     expect(savedParty.createdAt).toBeDefined();
     expect(savedParty.updatedAt).toBeDefined();
+  });
+
+  it('should fail validation if character limit is exceeded', async () => {
+    const partyData: Partial<IParty> = {
+      userId: 'user456',
+      name: 'Big Party',
+      maxSize: 2,
+      characters: [
+        { characterId: new mongoose.Types.ObjectId(), isActive: true, joinedAt: new Date() },
+        { characterId: new mongoose.Types.ObjectId(), isActive: true, joinedAt: new Date() },
+        { characterId: new mongoose.Types.ObjectId(), isActive: true, joinedAt: new Date() },
+      ],
+    };
+    const party = new Party(partyData);
+    await expect(party.validate()).rejects.toThrow('Party exceeds character limit of 3 for subscription tier.');
+  });
+
+  it('should support sharing and collaboration roles', async () => {
+    const partyData: Partial<IParty> = {
+      userId: 'user789',
+      name: 'Shared Party',
+      sharedWith: [
+        { userId: 'userA', role: 'viewer', sharedAt: new Date() },
+        { userId: 'userB', role: 'editor', sharedAt: new Date() },
+      ],
+      maxSize: 5,
+    };
+    const party = new Party(partyData);
+    const savedParty = await party.save();
+    expect(savedParty.sharedWith.length).toBe(2);
+    expect(savedParty.sharedWith[0].role).toBe('viewer');
+    expect(savedParty.sharedWith[1].role).toBe('editor');
+  });
+
+  it('should support template creation and categorization', async () => {
+    const partyData: Partial<IParty> = {
+      userId: 'userTemplate',
+      name: 'Template Party',
+      isTemplate: true,
+      templateCategory: 'Dungeon Crawl',
+      maxSize: 6,
+    };
+    const party = new Party(partyData);
+    const savedParty = await party.save();
+    expect(savedParty.isTemplate).toBe(true);
+    expect(savedParty.templateCategory).toBe('Dungeon Crawl');
   });
 });
