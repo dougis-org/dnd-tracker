@@ -18,7 +18,7 @@ function TestWrapper({ children, defaultValues = {} }: {
     resolver: zodResolver(abilitiesSchema),
     defaultValues: {
       abilities: {
-        strength: 8,
+        strength: 8, // Point buy defaults to 8
         dexterity: 8,
         constitution: 8,
         intelligence: 8,
@@ -75,7 +75,7 @@ describe('AbilityScoresStep', () => {
 
     // Should show modifiers (with default scores of 8, modifier is -1)
     const modifiers = screen.getAllByText('-1');
-    expect(modifiers.length).toBeGreaterThanOrEqual(1);
+    expect(modifiers.length).toBe(6); // All 6 abilities should have -1 modifier at score 8
   });
 
   it('should show method selector with options', () => {
@@ -120,36 +120,70 @@ describe('AbilityScoresStep', () => {
   });
 
   it('should allow changing ability scores', async () => {
-    const user = userEvent.setup();
-    
     render(
       <TestWrapper>
         <AbilityScoresStep />
       </TestWrapper>
     );
 
-    // First, switch to "roll" method to avoid point-buy constraints
-    const methodSelect = screen.getByRole('combobox');
-    await user.click(methodSelect);
+    // Find the strength ability input (first one in the list)
+    const strengthInput = screen.getByRole('spinbutton', { name: /strength/i });
     
-    // Wait for dropdown and click the Manual/Rolling option
-    const rollOptions = await screen.findAllByText('Manual/Rolling');
-    // Click the one that's in the dropdown (the span element, not the hidden option)
-    await user.click(rollOptions[1]); // Second occurrence is the visible dropdown item
-
-    // Wait for the method to change before proceeding
+    // Verify initial value is 8 (point buy default)
+    expect(strengthInput).toHaveValue(8);
+    
+    // Test changing ability score using fireEvent.change for more reliable testing
+    // Start with a smaller increase that won't exceed point buy limits
+    fireEvent.change(strengthInput, { target: { value: '10' } });
+    
     await waitFor(() => {
-      expect(screen.queryByText('Point Buy System')).not.toBeInTheDocument();
+      expect(strengthInput).toHaveValue(10);
     });
-
-    // Find the strength input and change its value
-    const strengthInput = screen.getAllByRole('spinbutton')[0]; // First ability input
     
-    // Use fireEvent.change for more direct control
+    // Test that modifier updates correctly (10 should give +0 modifier)
+    expect(screen.getByText('+0')).toBeInTheDocument();
+    
+    // Test changing to a higher valid value
     fireEvent.change(strengthInput, { target: { value: '12' } });
     
     await waitFor(() => {
       expect(strengthInput).toHaveValue(12);
+    });
+    
+    // Test that modifier updates (12 should give +1 modifier)
+    expect(screen.getByText('+1')).toBeInTheDocument();
+  });
+
+  it('should enforce point buy constraints', async () => {
+    render(
+      <TestWrapper>
+        <AbilityScoresStep />
+      </TestWrapper>
+    );
+
+    // Get all ability inputs
+    const strengthInput = screen.getByRole('spinbutton', { name: /strength/i });
+    const dexterityInput = screen.getByRole('spinbutton', { name: /dexterity/i });
+    const constitutionInput = screen.getByRole('spinbutton', { name: /constitution/i });
+    const intelligenceInput = screen.getByRole('spinbutton', { name: /intelligence/i });
+    
+    // Set three abilities to 15 (uses 9 points each = 27 total points)
+    fireEvent.change(strengthInput, { target: { value: '15' } });
+    fireEvent.change(dexterityInput, { target: { value: '15' } });  
+    fireEvent.change(constitutionInput, { target: { value: '15' } });
+    
+    await waitFor(() => {
+      expect(strengthInput).toHaveValue(15);
+      expect(dexterityInput).toHaveValue(15);
+      expect(constitutionInput).toHaveValue(15);
+    });
+
+    // Now try to increase intelligence from 8 to 9, which should fail as it would exceed 27 points
+    fireEvent.change(intelligenceInput, { target: { value: '9' } });
+
+    // The value should remain 8 as there are no points left
+    await waitFor(() => {
+      expect(intelligenceInput).toHaveValue(8);
     });
   });
 

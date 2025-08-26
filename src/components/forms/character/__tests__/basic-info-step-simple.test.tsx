@@ -159,8 +159,6 @@ describe('BasicInfoStep', () => {
   });
 
   it('should handle non-negative experience points', async () => {
-    const user = userEvent.setup();
-    
     render(
       <TestWrapper>
         <BasicInfoStep />
@@ -169,17 +167,31 @@ describe('BasicInfoStep', () => {
 
     const xpInput = screen.getByRole('spinbutton', { name: /experience points/i });
     
-    // Try to set a negative value directly and trigger blur
-    await user.clear(xpInput);
+    // Start fresh - ensure the input starts at 0
+    expect(xpInput).toHaveValue(0);
     
-    // Set the value directly to simulate pasting negative value
+    // Test direct input change with negative value
     fireEvent.change(xpInput, { target: { value: '-100' } });
-    fireEvent.blur(xpInput);
     
-    // Should be corrected to 0 (minimum value) by onBlur handler
+    // The onChange handler should have converted negative to 0
     await waitFor(() => {
       expect(xpInput).toHaveValue(0);
     });
+    
+    // Test onBlur with invalid negative input
+    fireEvent.change(xpInput, { target: { value: '50' } }); // Set to positive first
+    expect(xpInput).toHaveValue(50);
+    
+    fireEvent.change(xpInput, { target: { value: '-25' } }); // Then set negative
+    fireEvent.blur(xpInput); // Trigger onBlur
+    
+    await waitFor(() => {
+      expect(xpInput).toHaveValue(0);
+    });
+    
+    // Test positive values work normally
+    fireEvent.change(xpInput, { target: { value: '500' } });
+    expect(xpInput).toHaveValue(500);
   });
 
   it('should convert decimal experience points to integers', async () => {

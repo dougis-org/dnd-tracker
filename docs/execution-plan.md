@@ -71,7 +71,7 @@ Z:\dev\Code\dnd-tracker\docs\
    **02-character-model.md** - Implement Character schema with all D&D fields
 3. [#14](https://github.com/dougis-org/dnd-tracker/issues/14) ✅
    **03-character-api.md** - Build CRUD API endpoints for characters
-4. [#15](https://github.com/dougis-org/dnd-tracker/issues/15)
+4. [#15](https://github.com/dougis-org/dnd-tracker/issues/15) ✅
    **04-character-forms.md** - Create character creation/edit forms
 5. [#16](https://github.com/dougis-org/dnd-tracker/issues/16) ✅
    **05-character-list.md** - Build character list view
@@ -79,7 +79,7 @@ Z:\dev\Code\dnd-tracker\docs\
    **06-character-details.md** - Implement character detail page
 7. [#18](https://github.com/dougis-org/dnd-tracker/issues/18)
    **07-multiclassing-support.md** - Add multiclassing functionality
-8. [#19](https://github.com/dougis-org/dnd-tracker/issues/19)
+8. [#19](https://github.com/dougis-org/dnd-tracker/issues/19) ✅
    **08-character-validation.md** - Implement field validation and business rules
 
 ### Success Criteria (Party Management)
