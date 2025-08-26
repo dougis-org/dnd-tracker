@@ -122,10 +122,7 @@ describe('EquipmentFeaturesStep', () => {
         classesSelected={[{ className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }]}
         backgroundSelected="Soldier"
       >
-        <EquipmentFeaturesStep 
-          classesSelected={[{ className: 'Fighter', level: 1 }]}
-          backgroundSelected="Soldier"
-        />
+        <EquipmentFeaturesStep />
       </TestWrapper>
     );
 

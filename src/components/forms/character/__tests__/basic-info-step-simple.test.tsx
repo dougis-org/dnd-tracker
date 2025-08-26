@@ -169,12 +169,14 @@ describe('BasicInfoStep', () => {
 
     const xpInput = screen.getByRole('spinbutton', { name: /experience points/i });
     
-    // Try to enter a negative value
+    // Try to set a negative value directly and trigger blur
     await user.clear(xpInput);
-    await user.type(xpInput, '-100');
+    
+    // Set the value directly to simulate pasting negative value
+    fireEvent.change(xpInput, { target: { value: '-100' } });
     fireEvent.blur(xpInput);
     
-    // Should be corrected to 0 (minimum value)
+    // Should be corrected to 0 (minimum value) by onBlur handler
     await waitFor(() => {
       expect(xpInput).toHaveValue(0);
     });

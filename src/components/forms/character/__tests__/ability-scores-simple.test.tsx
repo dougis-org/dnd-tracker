@@ -18,12 +18,12 @@ function TestWrapper({ children, defaultValues = {} }: {
     resolver: zodResolver(abilitiesSchema),
     defaultValues: {
       abilities: {
-        strength: 10,
-        dexterity: 10,
-        constitution: 10,
-        intelligence: 10,
-        wisdom: 10,
-        charisma: 10
+        strength: 8,
+        dexterity: 8,
+        constitution: 8,
+        intelligence: 8,
+        wisdom: 8,
+        charisma: 8
       },
       ...defaultValues
     }
@@ -73,8 +73,8 @@ describe('AbilityScoresStep', () => {
       </TestWrapper>
     );
 
-    // Should show modifiers (with default scores of 10, modifier is +0)
-    const modifiers = screen.getAllByText('+0');
+    // Should show modifiers (with default scores of 8, modifier is -1)
+    const modifiers = screen.getAllByText('-1');
     expect(modifiers.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -128,15 +128,28 @@ describe('AbilityScoresStep', () => {
       </TestWrapper>
     );
 
+    // First, switch to "roll" method to avoid point-buy constraints
+    const methodSelect = screen.getByRole('combobox');
+    await user.click(methodSelect);
+    
+    // Wait for dropdown and click the Manual/Rolling option
+    const rollOptions = await screen.findAllByText('Manual/Rolling');
+    // Click the one that's in the dropdown (the span element, not the hidden option)
+    await user.click(rollOptions[1]); // Second occurrence is the visible dropdown item
+
+    // Wait for the method to change before proceeding
+    await waitFor(() => {
+      expect(screen.queryByText('Point Buy System')).not.toBeInTheDocument();
+    });
+
     // Find the strength input and change its value
     const strengthInput = screen.getAllByRole('spinbutton')[0]; // First ability input
     
-    await user.clear(strengthInput);
-    await user.type(strengthInput, '14');
-    fireEvent.blur(strengthInput);
+    // Use fireEvent.change for more direct control
+    fireEvent.change(strengthInput, { target: { value: '12' } });
     
     await waitFor(() => {
-      expect(strengthInput).toHaveValue(14);
+      expect(strengthInput).toHaveValue(12);
     });
   });
 

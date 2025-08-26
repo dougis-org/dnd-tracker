@@ -27,72 +27,33 @@ import {
   type CharacterFormInput,
   type EquipmentFormData 
 } from '@/lib/validations/character';
+import {
+  EQUIPMENT_CATEGORIES,
+  CLASS_STARTING_EQUIPMENT,
+  BACKGROUND_STARTING_EQUIPMENT
+} from '@/lib/dnd-data';
 
-// Equipment categories
-const EQUIPMENT_CATEGORIES = [
-  'Weapon',
-  'Armor',
-  'Shield',
-  'Ammunition',
-  'Adventuring Gear',
-  'Tool',
-  'Mount',
-  'Vehicle',
-  'Treasure',
-  'Magic Item'
-] as const;
-
-// Starting equipment by class
-const CLASS_STARTING_EQUIPMENT: Record<string, string[]> = {
-  'Artificer': ['Light crossbow and 20 bolts', 'Scale mail or leather armor', 'Shield', 'Thieves\' tools', 'Dungeoneer\'s pack'],
-  'Barbarian': ['Greataxe or any martial melee weapon', 'Two handaxes or any simple weapon', 'Explorer\'s pack', 'Four javelins'],
-  'Bard': ['Rapier or longsword or any simple weapon', 'Diplomat\'s pack or entertainer\'s pack', 'Lute or any other musical instrument', 'Leather armor', 'Dagger'],
-  'Cleric': ['Mace or warhammer', 'Scale mail or leather armor or chain mail', 'Shield', 'Light crossbow and 20 bolts or any simple weapon', 'Priest\'s pack or explorer\'s pack'],
-  'Druid': ['Shield or any simple weapon', 'Scimitar or any simple melee weapon', 'Leather armor', 'Explorer\'s pack', 'Druidcraft focus'],
-  'Fighter': ['Chain mail or leather armor', 'Shield', 'Martial weapon and shield or two martial weapons', 'Light crossbow and 20 bolts or two handaxes', 'Dungeoneer\'s pack or explorer\'s pack'],
-  'Monk': ['Shortsword or any simple weapon', 'Dungeoneer\'s pack or explorer\'s pack', '10 darts'],
-  'Paladin': ['Chain mail', 'Shield', 'Martial weapon', 'Five javelins or any simple melee weapon', 'Priest\'s pack or explorer\'s pack'],
-  'Ranger': ['Scale mail or leather armor', 'Shield', 'Shortsword or any simple melee weapon', 'Longbow and quiver with 20 arrows', 'Dungeoneer\'s pack or explorer\'s pack'],
-  'Rogue': ['Rapier or shortsword', 'Shortbow and quiver with 20 arrows', 'Burglar\'s pack or dungeoneer\'s pack or explorer\'s pack', 'Leather armor', 'Two daggers', 'Thieves\' tools'],
-  'Sorcerer': ['Light crossbow and 20 bolts or any simple weapon', 'Component pouch or arcane focus', 'Dungeoneer\'s pack or explorer\'s pack', 'Two daggers'],
-  'Warlock': ['Light armor', 'Simple weapon', 'Two daggers', 'Simple weapon', 'Dungeoneer\'s pack or scholar\'s pack'],
-  'Wizard': ['Quarterstaff or dagger', 'Component pouch or arcane focus', 'Scholar\'s pack or explorer\'s pack', 'Spellbook', 'Two daggers']
+// Simple hash function for creating stable keys
+const hashString = (str: string): string => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString(36);
 };
 
-// Starting equipment by background
-const BACKGROUND_STARTING_EQUIPMENT: Record<string, string[]> = {
-  'Acolyte': ['Holy symbol', 'Prayer book', 'Incense (5 sticks)', 'Vestments', 'Common clothes', 'Pouch (15 gp)'],
-  'Criminal': ['Crowbar', 'Dark common clothes with hood', 'Pouch (15 gp)'],
-  'Folk Hero': ['Smith\'s tools', 'Brewer\'s supplies or Mason\'s tools', 'Shovel', 'Iron pot', 'Common clothes', 'Pouch (10 gp)'],
-  'Noble': ['Signet ring', 'Scroll of pedigree', 'Fine clothes', 'Pouch (25 gp)'],
-  'Sage': ['Bottle of black ink', 'Quill', 'Small knife', 'Scroll case with spiritual writings', 'Common clothes', 'Pouch (10 gp)'],
-  'Soldier': ['Insignia of rank', 'Trophy from fallen enemy', 'Deck of cards', 'Common clothes', 'Pouch (10 gp)'],
-  'Charlatan': ['Disguise kit', 'Forgery kit', 'Signet ring (fake)', 'Fine clothes', 'Pouch (15 gp)'],
-  'Entertainer': ['Musical instrument', 'Disguise kit', 'Costume clothes', 'Pouch (15 gp)'],
-  'Guild Artisan': ['Artisan\'s tools', 'Letter of introduction from guild', 'Traveler\'s clothes', 'Pouch (15 gp)'],
-  'Hermit': ['Herbalism kit', 'Scroll case with spiritual writings', 'Winter blanket', 'Common clothes', 'Pouch (5 gp)'],
-  'Outlander': ['Staff', 'Hunting trap', 'Traveler\'s clothes', 'Pouch (10 gp)'],
-  'Sailor': ['Navigator\'s tools', '50 feet of silk rope', 'Lucky charm', 'Common clothes', 'Pouch (10 gp)']
-};
-
-interface EquipmentFeaturesStepProps {
-  classesSelected?: Array<{
-    className: string;
-    level: number;
-  }>;
-  backgroundSelected?: string;
-}
-
-export function EquipmentFeaturesStep({ classesSelected = [], backgroundSelected }: EquipmentFeaturesStepProps) {
+export function EquipmentFeaturesStep() {
   const form = useFormContext<CharacterFormInput>();
   const [isAddingEquipment, setIsAddingEquipment] = useState(false);
   const [isAddingFeature, setIsAddingFeature] = useState(false);
   const [newEquipment, setNewEquipment] = useState({ name: '', quantity: 1, category: '' });
   const [newFeature, setNewFeature] = useState('');
   
-  // Use provided props or get from form
-  const classes = classesSelected || form.watch('classes') || [];
-  const background = backgroundSelected || form.watch('background') || '';
+  // Get data from form context
+  const classes = form.watch('classes') || [];
+  const background = form.watch('background') || '';
   const equipment = form.watch('equipment') || [];
   const features = form.watch('features') || [];
   const notes = form.watch('notes') || '';
@@ -394,7 +355,7 @@ export function EquipmentFeaturesStep({ classesSelected = [], backgroundSelected
         {features.length > 0 && (
           <div className="space-y-2">
             {features.map((feature, index) => (
-              <div key={`feature-${feature.slice(0, 20)}-${index}`} className="flex items-start justify-between p-3 border rounded-lg">
+              <div key={`feature-${hashString(feature)}`} className="flex items-start justify-between p-3 border rounded-lg">
                 <div className="flex-1">
                   <p className="text-sm whitespace-pre-wrap">{feature}</p>
                 </div>

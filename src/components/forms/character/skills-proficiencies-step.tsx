@@ -21,78 +21,12 @@ import {
   type CharacterFormInput,
   type SkillsFormData 
 } from '@/lib/validations/character';
-
-// Skill to ability mapping
-const SKILL_ABILITIES: Record<string, (typeof DND_ABILITIES)[number]> = {
-  'Acrobatics': 'dexterity',
-  'Animal Handling': 'wisdom',
-  'Arcana': 'intelligence',
-  'Athletics': 'strength',
-  'Deception': 'charisma',
-  'History': 'intelligence',
-  'Insight': 'wisdom',
-  'Intimidation': 'charisma',
-  'Investigation': 'intelligence',
-  'Medicine': 'wisdom',
-  'Nature': 'intelligence',
-  'Perception': 'wisdom',
-  'Performance': 'charisma',
-  'Persuasion': 'charisma',
-  'Religion': 'intelligence',
-  'Sleight of Hand': 'dexterity',
-  'Stealth': 'dexterity',
-  'Survival': 'wisdom'
-};
-
-// Class skill proficiencies and limits
-const CLASS_SKILLS: Record<string, { available: string[]; count: number }> = {
-  'Artificer': { available: ['Arcana', 'History', 'Investigation', 'Medicine', 'Nature', 'Perception', 'Sleight of Hand'], count: 2 },
-  'Barbarian': { available: ['Animal Handling', 'Athletics', 'Intimidation', 'Nature', 'Perception', 'Survival'], count: 2 },
-  'Bard': { available: DND_SKILLS.slice(), count: 3 }, // All skills
-  'Cleric': { available: ['History', 'Insight', 'Medicine', 'Persuasion', 'Religion'], count: 2 },
-  'Druid': { available: ['Arcana', 'Animal Handling', 'Insight', 'Medicine', 'Nature', 'Perception', 'Religion', 'Survival'], count: 2 },
-  'Fighter': { available: ['Acrobatics', 'Animal Handling', 'Athletics', 'History', 'Insight', 'Intimidation', 'Perception', 'Survival'], count: 2 },
-  'Monk': { available: ['Acrobatics', 'Athletics', 'History', 'Insight', 'Religion', 'Stealth'], count: 2 },
-  'Paladin': { available: ['Athletics', 'Insight', 'Intimidation', 'Medicine', 'Persuasion', 'Religion'], count: 2 },
-  'Ranger': { available: ['Animal Handling', 'Athletics', 'Insight', 'Investigation', 'Nature', 'Perception', 'Stealth', 'Survival'], count: 3 },
-  'Rogue': { available: ['Acrobatics', 'Athletics', 'Deception', 'Insight', 'Intimidation', 'Investigation', 'Perception', 'Performance', 'Persuasion', 'Sleight of Hand', 'Stealth'], count: 4 },
-  'Sorcerer': { available: ['Arcana', 'Deception', 'Insight', 'Intimidation', 'Persuasion', 'Religion'], count: 2 },
-  'Warlock': { available: ['Arcana', 'Deception', 'History', 'Intimidation', 'Investigation', 'Nature', 'Religion'], count: 2 },
-  'Wizard': { available: ['Arcana', 'History', 'Insight', 'Investigation', 'Medicine', 'Religion'], count: 2 }
-};
-
-// Background skill suggestions
-const BACKGROUND_SKILLS: Record<string, string[]> = {
-  'Acolyte': ['Insight', 'Religion'],
-  'Criminal': ['Deception', 'Stealth'],
-  'Folk Hero': ['Animal Handling', 'Survival'],
-  'Noble': ['History', 'Persuasion'],
-  'Sage': ['Arcana', 'History'],
-  'Soldier': ['Athletics', 'Intimidation'],
-  'Charlatan': ['Deception', 'Sleight of Hand'],
-  'Entertainer': ['Acrobatics', 'Performance'],
-  'Guild Artisan': ['Insight', 'Persuasion'],
-  'Hermit': ['Medicine', 'Religion'],
-  'Outlander': ['Athletics', 'Survival'],
-  'Sailor': ['Athletics', 'Perception']
-};
-
-// Class saving throw proficiencies
-const CLASS_SAVING_THROWS: Record<string, Array<(typeof DND_ABILITIES)[number]>> = {
-  'Artificer': ['constitution', 'intelligence'],
-  'Barbarian': ['strength', 'constitution'],
-  'Bard': ['dexterity', 'charisma'],
-  'Cleric': ['wisdom', 'charisma'],
-  'Druid': ['intelligence', 'wisdom'],
-  'Fighter': ['strength', 'constitution'],
-  'Monk': ['strength', 'dexterity'],
-  'Paladin': ['wisdom', 'charisma'],
-  'Ranger': ['strength', 'dexterity'],
-  'Rogue': ['dexterity', 'intelligence'],
-  'Sorcerer': ['constitution', 'charisma'],
-  'Warlock': ['wisdom', 'charisma'],
-  'Wizard': ['intelligence', 'wisdom']
-};
+import {
+  SKILL_ABILITIES,
+  CLASS_SKILLS,
+  BACKGROUND_SKILLS,
+  CLASS_SAVING_THROWS
+} from '@/lib/dnd-data';
 
 export function SkillsProficienciesStep() {
   const form = useFormContext<CharacterFormInput>();
@@ -119,12 +53,12 @@ export function SkillsProficienciesStep() {
   // Auto-update saving throw proficiencies when class changes
   useEffect(() => {
     const currentSavingThrows = form.getValues('savingThrowProficiencies');
-    
+
     // Avoid unnecessary re-renders if the value is already correct
     if (JSON.stringify(currentSavingThrows) !== JSON.stringify(classSavingThrows)) {
       form.setValue('savingThrowProficiencies', classSavingThrows, { shouldValidate: true });
     }
-  }, [primaryClass, form, classSavingThrows]);
+  }, [classSavingThrows, form]);
   
   // Calculate skill bonus for display
   const getSkillBonus = (skill: string): number => {

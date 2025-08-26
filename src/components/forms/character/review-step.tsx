@@ -2,6 +2,17 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { CharacterFormInput } from '@/lib/validations/character';
 
+// Simple hash function for creating stable keys
+const hashString = (str: string): string => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString(36);
+};
+
 interface ReviewStepProps {
   formData: CharacterFormInput;
 }
@@ -46,7 +57,7 @@ export function ReviewStep({ formData }: ReviewStepProps) {
           </CardHeader>
           <CardContent className="space-y-2">
             {formData.classes.map((cls, index) => (
-              <div key={`class-${cls.className}-${cls.level}-${index}`} className="flex justify-between">
+              <div key={`class-${hashString(`${cls.className}-${cls.level}`)}`} className="flex justify-between">
                 <span><strong>{cls.className}</strong></span>
                 <span>Level {cls.level}</span>
               </div>
@@ -102,7 +113,7 @@ export function ReviewStep({ formData }: ReviewStepProps) {
                   <strong>Known Spells:</strong>
                   <div className="mt-1 flex flex-wrap gap-1">
                     {formData.spellcasting.spellsKnown.map((spell, index) => (
-                      <span key={`known-spell-${spell}-${index}`} className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                      <span key={`known-spell-${hashString(spell)}`} className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
                         {spell}
                       </span>
                     ))}
@@ -114,7 +125,7 @@ export function ReviewStep({ formData }: ReviewStepProps) {
                   <strong>Prepared Spells:</strong>
                   <div className="mt-1 flex flex-wrap gap-1">
                     {formData.spellcasting.spellsPrepared.map((spell, index) => (
-                      <span key={`prepared-spell-${spell}-${index}`} className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                      <span key={`prepared-spell-${hashString(spell)}`} className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                         {spell}
                       </span>
                     ))}
@@ -138,7 +149,7 @@ export function ReviewStep({ formData }: ReviewStepProps) {
                 <strong>Skills:</strong>
                 <div className="mt-1 flex flex-wrap gap-1">
                   {formData.skillProficiencies.map((skill, index) => (
-                    <span key={`skill-${skill}-${index}`} className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                    <span key={`skill-${hashString(skill)}`} className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
                       {skill}
                     </span>
                   ))}
@@ -150,7 +161,7 @@ export function ReviewStep({ formData }: ReviewStepProps) {
                 <strong>Saving Throws:</strong>
                 <div className="mt-1 flex flex-wrap gap-1">
                   {formData.savingThrowProficiencies.map((save, index) => (
-                    <span key={`saving-throw-${save}-${index}`} className="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800">
+                    <span key={`saving-throw-${hashString(save)}`} className="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800">
                       {save}
                     </span>
                   ))}
@@ -174,7 +185,7 @@ export function ReviewStep({ formData }: ReviewStepProps) {
                 <strong>Equipment:</strong>
                 <ul className="mt-1 list-disc list-inside text-sm">
                   {formData.equipment.map((item, index) => (
-                    <li key={`equipment-${item.name}-${item.quantity}-${index}`}>
+                    <li key={`equipment-${hashString(`${item.name}-${item.quantity}-${item.category || ''}`)}`}>
                       {item.name} {item.quantity && item.quantity > 1 && `(${item.quantity})`}
                     </li>
                   ))}
@@ -186,7 +197,7 @@ export function ReviewStep({ formData }: ReviewStepProps) {
                 <strong>Features:</strong>
                 <ul className="mt-1 list-disc list-inside text-sm">
                   {formData.features.map((feature, index) => (
-                    <li key={`feature-${feature.slice(0, 20)}-${index}`}>{feature}</li>
+                    <li key={`feature-${hashString(feature)}`}>{feature}</li>
                   ))}
                 </ul>
               </div>

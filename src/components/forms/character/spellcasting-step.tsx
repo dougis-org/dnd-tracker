@@ -54,6 +54,8 @@ export function SpellcastingStep() {
   useEffect(() => {
     if (spellStats && spellStats.spellcastingAbility) {
       const currentValues = form.getValues('spellcasting');
+      if (!currentValues) return;
+      
       let hasChanges = false;
       
       if (currentValues.spellAttackBonus !== spellStats.spellAttackBonus) {
@@ -83,7 +85,7 @@ export function SpellcastingStep() {
         hasChanges = true;
       }
     }
-  }, [spellStats?.spellAttackBonus, spellStats?.spellSaveDC, spellStats?.spellcastingAbility, form]);
+  }, [spellStats, form]);
 
   if (!spellcastingInfo) {
     return (
