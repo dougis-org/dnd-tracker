@@ -8,16 +8,16 @@ interface ProgrammaticNavigatorProps {
   buttonText: string;
 }
 
-export default function ProgrammaticNavigator({ targetPath, buttonText }: ProgrammaticNavigatorProps) {
+export default function ProgrammaticNavigator({
+  targetPath,
+  buttonText,
+}: ProgrammaticNavigatorProps) {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(targetPath);
+    // Use Next.js Route type for type safety
+    router.push(targetPath as import('next').Route);
   };
 
-  return (
-    <Button onClick={handleClick}>
-      {buttonText}
-    </Button>
-  );
+  return <Button onClick={handleClick}>{buttonText}</Button>;
 }

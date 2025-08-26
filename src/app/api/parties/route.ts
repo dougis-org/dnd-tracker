@@ -1,23 +1,22 @@
-
-import { auth } from "@clerk/nextjs/server";
-import { Party } from "../../../models/Party";
+import { auth } from '@clerk/nextjs/server';
+import { Party } from '@/models/Party';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
-    return new NextResponse("Unauthorized", { status: 401 });
+    return new NextResponse('Unauthorized', { status: 401 });
   }
   const parties = await Party.find({
-    $or: [{ userId }, { "sharedWith.userId": userId }],
-  }).populate("characters.characterId");
+    $or: [{ userId }, { 'sharedWith.userId': userId }],
+  }).populate('characters.characterId');
   return NextResponse.json(parties);
 }
 
 export async function POST(req: NextRequest) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
-    return new NextResponse("Unauthorized", { status: 401 });
+    return new NextResponse('Unauthorized', { status: 401 });
   }
 
   try {
@@ -35,7 +34,7 @@ export async function POST(req: NextRequest) {
     const savedParty = await newParty.save();
     return NextResponse.json(savedParty, { status: 201 });
   } catch (error) {
-    console.error("Error creating party:", error);
-    return new NextResponse("Error creating party", { status: 500 });
+    console.error('Error creating party:', error);
+    return new NextResponse('Error creating party', { status: 500 });
   }
 }

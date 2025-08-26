@@ -4,8 +4,8 @@
 import { NextRequest } from 'next/server';
 import { GET, PUT, DELETE } from '../route';
 import { auth } from '@clerk/nextjs/server';
-import { connectToDatabase } from '../../../../lib/mongodb';
-import { CharacterModel } from '../../../../models/schemas';
+import { connectToDatabase } from '@/lib/mongodb';
+import { CharacterModel } from '@/models/schemas';
 import {
   mockUserId,
   mockCharacterId,
@@ -17,17 +17,17 @@ import {
   createValidationError,
   expectUnauthorizedResponse,
   expectNotFoundResponse,
-  expectInternalServerError
+  expectInternalServerError,
 } from '../../_utils/test-utils';
 
 // Mock dependencies
 jest.mock('@clerk/nextjs/server', () => ({
   auth: jest.fn(),
 }));
-jest.mock('../../../../lib/mongodb', () => ({
+jest.mock('@/lib/mongodb', () => ({
   connectToDatabase: jest.fn(),
 }));
-jest.mock('../../../../models/schemas', () => ({
+jest.mock('@/models/schemas', () => ({
   CharacterModel: {
     findOne: jest.fn(),
     findOneAndUpdate: jest.fn(),
@@ -47,7 +47,10 @@ describe('/api/characters/[id]', () => {
     it('should return 401 when user is not authenticated', async () => {
       setupUnauthenticatedUser();
 
-      const response = await GET(new NextRequest('http://localhost:3000'), params);
+      const response = await GET(
+        new NextRequest('http://localhost:3000'),
+        params
+      );
       const data = await response.json();
 
       expectUnauthorizedResponse(response, data);
@@ -57,14 +60,17 @@ describe('/api/characters/[id]', () => {
       setupAuthenticatedUser();
       mocks.findOne.mockResolvedValue(sampleCharacter);
 
-      const response = await GET(new NextRequest('http://localhost:3000'), params);
+      const response = await GET(
+        new NextRequest('http://localhost:3000'),
+        params
+      );
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data).toEqual(sampleCharacter);
-      expect(mocks.findOne).toHaveBeenCalledWith({ 
-        _id: mockCharacterId, 
-        userId: mockUserId 
+      expect(mocks.findOne).toHaveBeenCalledWith({
+        _id: mockCharacterId,
+        userId: mockUserId,
       });
     });
 
@@ -72,7 +78,10 @@ describe('/api/characters/[id]', () => {
       setupAuthenticatedUser();
       mocks.findOne.mockResolvedValue(null);
 
-      const response = await GET(new NextRequest('http://localhost:3000'), params);
+      const response = await GET(
+        new NextRequest('http://localhost:3000'),
+        params
+      );
       const data = await response.json();
 
       expectNotFoundResponse(response, data);
@@ -80,9 +89,12 @@ describe('/api/characters/[id]', () => {
 
     it('should return 400 for invalid character ID', async () => {
       setupAuthenticatedUser();
-      
+
       const invalidParams = createMockRouteParams('invalid-id');
-      const response = await GET(new NextRequest('http://localhost:3000'), invalidParams);
+      const response = await GET(
+        new NextRequest('http://localhost:3000'),
+        invalidParams
+      );
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -93,7 +105,10 @@ describe('/api/characters/[id]', () => {
       setupAuthenticatedUser();
       mocks.findOne.mockRejectedValue(new Error('Database error'));
 
-      const response = await GET(new NextRequest('http://localhost:3000'), params);
+      const response = await GET(
+        new NextRequest('http://localhost:3000'),
+        params
+      );
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -104,7 +119,7 @@ describe('/api/characters/[id]', () => {
   describe('PUT /api/characters/[id]', () => {
     const validUpdateData = {
       name: 'Aragorn Updated',
-      experiencePoints: 1000
+      experiencePoints: 1000,
     };
 
     it('should return 401 when user is not authenticated', async () => {
@@ -112,7 +127,7 @@ describe('/api/characters/[id]', () => {
 
       const request = new NextRequest('http://localhost:3000', {
         method: 'PUT',
-        body: JSON.stringify(validUpdateData)
+        body: JSON.stringify(validUpdateData),
       });
 
       const response = await PUT(request, params);
@@ -128,7 +143,7 @@ describe('/api/characters/[id]', () => {
 
       const request = new NextRequest('http://localhost:3000', {
         method: 'PUT',
-        body: JSON.stringify(validUpdateData)
+        body: JSON.stringify(validUpdateData),
       });
 
       const response = await PUT(request, params);
@@ -149,7 +164,7 @@ describe('/api/characters/[id]', () => {
 
       const request = new NextRequest('http://localhost:3000', {
         method: 'PUT',
-        body: JSON.stringify(validUpdateData)
+        body: JSON.stringify(validUpdateData),
       });
 
       const response = await PUT(request, params);
@@ -163,7 +178,7 @@ describe('/api/characters/[id]', () => {
 
       const request = new NextRequest('http://localhost:3000', {
         method: 'PUT',
-        body: 'invalid json'
+        body: 'invalid json',
       });
 
       const response = await PUT(request, params);
@@ -179,7 +194,7 @@ describe('/api/characters/[id]', () => {
 
       const request = new NextRequest('http://localhost:3000', {
         method: 'PUT',
-        body: JSON.stringify({ name: '' })
+        body: JSON.stringify({ name: '' }),
       });
 
       const response = await PUT(request, params);
@@ -194,7 +209,10 @@ describe('/api/characters/[id]', () => {
     it('should return 401 when user is not authenticated', async () => {
       setupUnauthenticatedUser();
 
-      const response = await DELETE(new NextRequest('http://localhost:3000'), params);
+      const response = await DELETE(
+        new NextRequest('http://localhost:3000'),
+        params
+      );
       const data = await response.json();
 
       expectUnauthorizedResponse(response, data);
@@ -204,14 +222,17 @@ describe('/api/characters/[id]', () => {
       setupAuthenticatedUser();
       mocks.findOneAndDelete.mockResolvedValue(sampleCharacter);
 
-      const response = await DELETE(new NextRequest('http://localhost:3000'), params);
+      const response = await DELETE(
+        new NextRequest('http://localhost:3000'),
+        params
+      );
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data).toEqual({ message: 'Character deleted successfully' });
-      expect(mocks.findOneAndDelete).toHaveBeenCalledWith({ 
-        _id: mockCharacterId, 
-        userId: mockUserId 
+      expect(mocks.findOneAndDelete).toHaveBeenCalledWith({
+        _id: mockCharacterId,
+        userId: mockUserId,
       });
     });
 
@@ -219,7 +240,10 @@ describe('/api/characters/[id]', () => {
       setupAuthenticatedUser();
       mocks.findOneAndDelete.mockResolvedValue(null);
 
-      const response = await DELETE(new NextRequest('http://localhost:3000'), params);
+      const response = await DELETE(
+        new NextRequest('http://localhost:3000'),
+        params
+      );
       const data = await response.json();
 
       expectNotFoundResponse(response, data);
@@ -229,7 +253,10 @@ describe('/api/characters/[id]', () => {
       setupAuthenticatedUser();
       mocks.findOneAndDelete.mockRejectedValue(new Error('Delete failed'));
 
-      const response = await DELETE(new NextRequest('http://localhost:3000'), params);
+      const response = await DELETE(
+        new NextRequest('http://localhost:3000'),
+        params
+      );
       const data = await response.json();
 
       expect(response.status).toBe(500);

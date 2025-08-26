@@ -7,7 +7,7 @@ import { connectToDatabase, disconnectFromDatabase } from '@/lib/mongodb';
 import { UserModel } from '@/models/schemas';
 
 jest.mock('svix');
-jest.mock('../../../lib/mongodb');
+jest.mock('@/lib/mongodb');
 jest.mock('@/models/schemas', () => ({
   UserModel: jest.fn().mockImplementation(() => ({
     save: jest.fn().mockResolvedValue({}),
@@ -108,8 +108,8 @@ describe('Clerk Webhook API', () => {
       data: mockUser,
     });
 
-    (UserModel as jest.Mock).mockImplementation(() => ({
-        save: jest.fn().mockRejectedValue(new Error('Database error')),
+    (UserModel as unknown as jest.Mock).mockImplementation(() => ({
+      save: jest.fn().mockRejectedValue(new Error('Database error')),
     }));
 
     const req = new Request('http://localhost', {

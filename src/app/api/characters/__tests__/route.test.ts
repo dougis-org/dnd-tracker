@@ -2,9 +2,9 @@
  * @jest-environment node
  */
 import { GET, POST } from '../route';
-import { CharacterModel } from '../../../models/schemas';
+import { CharacterModel } from '@/models/schemas';
 import { auth } from '@clerk/nextjs/server';
-import { connectToDatabase } from '../../../lib/mongodb';
+import { connectToDatabase } from '@/lib/mongodb';
 import {
   mockUserId,
   validCharacterData,
@@ -12,14 +12,14 @@ import {
   setupUnauthenticatedUser,
   createMockRequest,
   mockAuth,
-  mockConnectToDatabase
+  mockConnectToDatabase,
 } from '../_utils/test-utils';
 
 // Mock dependencies
 jest.mock('@clerk/nextjs/server', () => ({
   auth: jest.fn(),
 }));
-jest.mock('../../../lib/mongodb', () => ({
+jest.mock('@/lib/mongodb', () => ({
   connectToDatabase: jest.fn(),
 }));
 jest.mock('@/models/schemas', () => ({
@@ -93,7 +93,9 @@ describe('/api/characters', () => {
 
     it('should handle database connection errors', async () => {
       setupAuthenticatedUser();
-      mockConnectToDatabase.mockRejectedValue(new Error('Database connection failed'));
+      mockConnectToDatabase.mockRejectedValue(
+        new Error('Database connection failed')
+      );
 
       const response = await GET(
         createMockRequest('http://localhost:3000/api/characters')
@@ -159,7 +161,6 @@ describe('/api/characters', () => {
   });
 
   describe('POST /api/characters', () => {
-
     it('should return 401 when user is not authenticated', async () => {
       setupUnauthenticatedUser();
 
@@ -256,12 +257,17 @@ describe('/api/characters', () => {
 
     it('should handle database connection errors during creation', async () => {
       setupAuthenticatedUser();
-      mockConnectToDatabase.mockRejectedValue(new Error('Database connection failed'));
+      mockConnectToDatabase.mockRejectedValue(
+        new Error('Database connection failed')
+      );
 
-      const request = createMockRequest('http://localhost:3000/api/characters', {
-        method: 'POST',
-        body: JSON.stringify(validCharacterData)
-      });
+      const request = createMockRequest(
+        'http://localhost:3000/api/characters',
+        {
+          method: 'POST',
+          body: JSON.stringify(validCharacterData),
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
