@@ -224,7 +224,7 @@ describe('POST /api/parties', () => {
     expect(response.status).toBe(401);
   });
 
-  it('should return 500 for invalid JSON', async () => {
+  it('should return 400 for invalid JSON', async () => {
     (auth as unknown as jest.Mock).mockReturnValue({ userId: 'user123' });
     const req = new NextRequest(
       new Request('http://localhost', {
@@ -236,7 +236,7 @@ describe('POST /api/parties', () => {
 
     const response = await POST(req);
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(400);
   });
 
   it('should handle missing name gracefully', async () => {
@@ -255,7 +255,7 @@ describe('POST /api/parties', () => {
     const response = await POST(req);
 
     // This should fail validation in mongoose due to required name field
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(400);
   });
 
   it('should persist party in database', async () => {

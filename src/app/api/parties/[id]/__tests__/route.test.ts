@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 import { GET, PUT, DELETE } from '../route';
-import { Party } from '@/models/Party';
+import { Party, IParty } from '@/models/Party';
 import { setupTestDatabase, teardownTestDatabase } from '@/models/_utils/test-utils';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
@@ -21,7 +21,7 @@ afterAll(async () => {
 });
 
 describe('GET /api/parties/[id]', () => {
-  let testParty: any;
+  let testParty: IParty;
 
   beforeEach(async () => {
     await Party.deleteMany({});
@@ -72,7 +72,7 @@ describe('GET /api/parties/[id]', () => {
 });
 
 describe('PUT /api/parties/[id]', () => {
-  let testParty: any;
+  let testParty: IParty;
 
   beforeEach(async () => {
     await Party.deleteMany({});
@@ -188,7 +188,7 @@ describe('PUT /api/parties/[id]', () => {
 });
 
 describe('DELETE /api/parties/[id]', () => {
-  let testParty: any;
+  let testParty: IParty;
 
   beforeEach(async () => {
     await Party.deleteMany({});
