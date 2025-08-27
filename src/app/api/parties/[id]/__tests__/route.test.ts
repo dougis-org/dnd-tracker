@@ -15,6 +15,12 @@ import {
   createAsyncParams,
   cleanupParties,
   TEST_USERS,
+  expectUnauthorized,
+  expectPartyResponse,
+  expectNotFound,
+  expectForbidden,
+  expectBadRequest,
+  expectDeleted,
 } from '../../__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -45,18 +51,15 @@ describe('GET /api/parties/[id]', () => {
     const req = createGetRequest();
     const response = await GET(req, createAsyncParams(testParty._id.toString()));
 
-    expect(response.status).toBe(401);
+    expectUnauthorized(response);
   });
 
   it('should return party if user owns it', async () => {
     mockAuth(TEST_USERS.USER_123);
     const req = createGetRequest();
     const response = await GET(req, createAsyncParams(testParty._id.toString()));
-    const data = await response.json();
 
-    expect(response.status).toBe(200);
-    expect(data.name).toBe('Test Party');
-    expect(data.userId).toBe(TEST_USERS.USER_123);
+    await expectPartyResponse(response, { name: 'Test Party', userId: TEST_USERS.USER_123 });
   });
 
   it('should return 404 if party not found', async () => {
@@ -65,7 +68,7 @@ describe('GET /api/parties/[id]', () => {
     const nonExistentId = new mongoose.Types.ObjectId().toString();
     const response = await GET(req, createAsyncParams(nonExistentId));
 
-    expect(response.status).toBe(404);
+    expectNotFound(response);
   });
 
   it('should return 403 if user does not have access', async () => {
@@ -73,7 +76,7 @@ describe('GET /api/parties/[id]', () => {
     const req = createGetRequest();
     const response = await GET(req, createAsyncParams(testParty._id.toString()));
 
-    expect(response.status).toBe(403);
+    expectForbidden(response);
   });
 });
 
@@ -93,21 +96,16 @@ describe('PUT /api/parties/[id]', () => {
     const req = createPutRequest({ name: 'Updated Party' });
     const response = await PUT(req, createAsyncParams(testParty._id.toString()));
 
-    expect(response.status).toBe(401);
+    expectUnauthorized(response);
   });
 
   it('should update party if user owns it', async () => {
     mockAuth(TEST_USERS.USER_123);
-    const req = createPutRequest({
-      name: 'Updated Party',
-      description: 'Updated Description',
-    });
+    const updateData = { name: 'Updated Party', description: 'Updated Description' };
+    const req = createPutRequest(updateData);
     const response = await PUT(req, createAsyncParams(testParty._id.toString()));
-    const data = await response.json();
 
-    expect(response.status).toBe(200);
-    expect(data.name).toBe('Updated Party');
-    expect(data.description).toBe('Updated Description');
+    await expectPartyResponse(response, updateData);
   });
 
   it('should return 404 if party not found', async () => {
@@ -116,7 +114,7 @@ describe('PUT /api/parties/[id]', () => {
     const nonExistentId = new mongoose.Types.ObjectId().toString();
     const response = await PUT(req, createAsyncParams(nonExistentId));
 
-    expect(response.status).toBe(404);
+    expectNotFound(response);
   });
 
   it('should return 403 if user does not have edit permission', async () => {
@@ -124,7 +122,7 @@ describe('PUT /api/parties/[id]', () => {
     const req = createPutRequest({ name: 'Updated Party' });
     const response = await PUT(req, createAsyncParams(testParty._id.toString()));
 
-    expect(response.status).toBe(403);
+    expectForbidden(response);
   });
 
   it('should allow editor role to update party', async () => {
@@ -139,10 +137,8 @@ describe('PUT /api/parties/[id]', () => {
     mockAuth(TEST_USERS.EDITOR_USER);
     const req = createPutRequest({ name: 'Editor Updated Party' });
     const response = await PUT(req, createAsyncParams(testParty._id.toString()));
-    const data = await response.json();
 
-    expect(response.status).toBe(200);
-    expect(data.name).toBe('Editor Updated Party');
+    await expectPartyResponse(response, { name: 'Editor Updated Party' });
   });
 
   it('should return 400 for invalid data', async () => {
@@ -150,7 +146,7 @@ describe('PUT /api/parties/[id]', () => {
     const req = createPutRequest({ name: '' }); // Empty name should be invalid
     const response = await PUT(req, createAsyncParams(testParty._id.toString()));
 
-    expect(response.status).toBe(400);
+    expectBadRequest(response);
   });
 });
 
@@ -170,7 +166,7 @@ describe('DELETE /api/parties/[id]', () => {
     const req = createDeleteRequest();
     const response = await DELETE(req, createAsyncParams(testParty._id.toString()));
 
-    expect(response.status).toBe(401);
+    expectUnauthorized(response);
   });
 
   it('should delete party if user owns it', async () => {
@@ -178,7 +174,7 @@ describe('DELETE /api/parties/[id]', () => {
     const req = createDeleteRequest();
     const response = await DELETE(req, createAsyncParams(testParty._id.toString()));
 
-    expect(response.status).toBe(204);
+    expectDeleted(response);
     
     // Verify party was deleted
     const deletedParty = await Party.findById(testParty._id);
@@ -191,7 +187,7 @@ describe('DELETE /api/parties/[id]', () => {
     const nonExistentId = new mongoose.Types.ObjectId().toString();
     const response = await DELETE(req, createAsyncParams(nonExistentId));
 
-    expect(response.status).toBe(404);
+    expectNotFound(response);
   });
 
   it('should return 403 if user does not have permission', async () => {
@@ -199,7 +195,7 @@ describe('DELETE /api/parties/[id]', () => {
     const req = createDeleteRequest();
     const response = await DELETE(req, createAsyncParams(testParty._id.toString()));
 
-    expect(response.status).toBe(403);
+    expectForbidden(response);
   });
 
   it('should not allow editor role to delete party', async () => {
@@ -215,6 +211,6 @@ describe('DELETE /api/parties/[id]', () => {
     const req = createDeleteRequest();
     const response = await DELETE(req, createAsyncParams(testParty._id.toString()));
 
-    expect(response.status).toBe(403);
+    expectForbidden(response);
   });
 });

@@ -1,11 +1,9 @@
 import { Party, IParty } from '@/models/Party';
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  authenticateUser,
-  validateObjectId,
-  findPartyWithAccess,
-  findPartyWithEditAccess,
-  findPartyWithDeleteAccess,
+  handleGetParty,
+  handleUpdateParty,
+  handleDeleteParty,
   handleApiError,
 } from '../_utils/party-api-utils';
 
@@ -15,19 +13,12 @@ interface RouteParams {
 
 // GET /api/parties/[id] - Get specific party
 export async function GET(req: NextRequest, { params }: RouteParams) {
-  const { userId, error: authError } = await authenticateUser();
-  if (authError) return authError;
-
   try {
-    const { id } = await params;
-    
-    const { valid, error: validationError } = validateObjectId(id);
-    if (!valid) return validationError!;
-
-    const { party, error: accessError } = await findPartyWithAccess(id, userId!);
-    if (accessError) return accessError;
-
-    return NextResponse.json(party);
+    const result = await handleGetParty(params);
+    if ('party' in result) {
+      return NextResponse.json(result.party);
+    }
+    return result; // Return error response
   } catch (error) {
     return handleApiError(error, 'fetching party');
   }
@@ -35,17 +26,11 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 
 // PUT /api/parties/[id] - Update specific party
 export async function PUT(req: NextRequest, { params }: RouteParams) {
-  const { userId, error: authError } = await authenticateUser();
-  if (authError) return authError;
-
   try {
-    const { id } = await params;
-    
-    const { valid, error: validationError } = validateObjectId(id);
-    if (!valid) return validationError!;
-
-    const { party, error: accessError } = await findPartyWithEditAccess(id, userId!);
-    if (accessError) return accessError;
+    const result = await handleUpdateParty(params);
+    if (!('party' in result)) {
+      return result; // Return error response
+    }
 
     const body = await req.json();
     const { name, description, campaignName, maxSize } = body;
@@ -63,7 +48,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     if (maxSize !== undefined) updateData.maxSize = maxSize;
 
     const updatedParty = await Party.findByIdAndUpdate(
-      id,
+      result.id,
       updateData,
       { new: true, runValidators: true }
     );
@@ -76,19 +61,13 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
 // DELETE /api/parties/[id] - Delete specific party  
 export async function DELETE(req: NextRequest, { params }: RouteParams) {
-  const { userId, error: authError } = await authenticateUser();
-  if (authError) return authError;
-
   try {
-    const { id } = await params;
-    
-    const { valid, error: validationError } = validateObjectId(id);
-    if (!valid) return validationError!;
+    const result = await handleDeleteParty(params);
+    if (!('party' in result)) {
+      return result; // Return error response
+    }
 
-    const { party, error: accessError } = await findPartyWithDeleteAccess(id, userId!);
-    if (accessError) return accessError;
-
-    await Party.findByIdAndDelete(id);
+    await Party.findByIdAndDelete(result.id);
     
     return new NextResponse(null, { status: 204 });
   } catch (error) {

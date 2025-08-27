@@ -126,3 +126,77 @@ export const TEST_USERS = {
 export function createAsyncParams(id: string) {
   return { params: Promise.resolve({ id }) };
 }
+
+/**
+ * Standard test expectations for unauthorized access (401 status)
+ */
+export function expectUnauthorized(response: Response) {
+  expect(response.status).toBe(401);
+}
+
+/**
+ * Standard test expectations for successful responses with party data
+ */
+export async function expectPartyResponse(response: Response, expectedData?: Partial<IParty>) {
+  expect(response.status).toBe(200);
+  if (expectedData) {
+    const data = await response.json();
+    if (expectedData.name) expect(data.name).toBe(expectedData.name);
+    if (expectedData.userId) expect(data.userId).toBe(expectedData.userId);
+    if (expectedData.description) expect(data.description).toBe(expectedData.description);
+    return data;
+  }
+}
+
+/**
+ * Standard test expectations for not found responses (404 status)
+ */
+export function expectNotFound(response: Response) {
+  expect(response.status).toBe(404);
+}
+
+/**
+ * Standard test expectations for forbidden responses (403 status)
+ */
+export function expectForbidden(response: Response) {
+  expect(response.status).toBe(403);
+}
+
+/**
+ * Standard test expectations for bad request responses (400 status)
+ */
+export function expectBadRequest(response: Response) {
+  expect(response.status).toBe(400);
+}
+
+/**
+ * Standard test expectations for created responses (201 status)
+ */
+export async function expectCreated(response: Response, expectedData?: Partial<IParty>) {
+  expect(response.status).toBe(201);
+  if (expectedData) {
+    const data = await response.json();
+    if (expectedData.name) expect(data.name).toBe(expectedData.name);
+    if (expectedData.userId) expect(data.userId).toBe(expectedData.userId);
+    if (expectedData.description) expect(data.description).toBe(expectedData.description);
+    expect(data.createdAt).toBeDefined();
+    expect(data.updatedAt).toBeDefined();
+    return data;
+  }
+}
+
+/**
+ * Standard test expectations for successful deletion (204 status)
+ */
+export function expectDeleted(response: Response) {
+  expect(response.status).toBe(204);
+}
+
+/**
+ * Standard test expectations for empty array responses
+ */
+export async function expectEmptyArray(response: Response) {
+  expect(response.status).toBe(200);
+  const data = await response.json();
+  expect(data).toEqual([]);
+}
