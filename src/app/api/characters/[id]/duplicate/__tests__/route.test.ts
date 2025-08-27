@@ -1,26 +1,7 @@
 /**
  * @jest-environment node
  */
-// Clerk session mock type (expanded to match expected type)
-type ClerkSessionMock = {
-  userId: string | null;
-  sessionId: string | null;
-  sessionStatus: 'active' | 'signed_out' | null;
-  sessionClaims: any;
-  actor: any;
-  getToken: () => any;
-  isAuthenticated: boolean;
-  tokenType: string | null;
-  orgId: string | null;
-  orgRole: string | null;
-  orgSlug: string | null;
-  orgPermissions: any;
-  factorVerificationAge: any;
-  redirectToSignIn: () => never;
-  redirectToSignUp: () => never;
-  has: () => any;
-  debug: () => any;
-};
+import { ClerkSessionMock, getMockSignedOutSession, getMockSignedInSession } from '@/app/api/characters/_utils/clerk-session-mocks';
 import { NextRequest } from 'next/server';
 import { POST } from '../route';
 import { auth } from '@clerk/nextjs/server';
@@ -53,77 +34,6 @@ describe('POST /api/characters/[id]/duplicate', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-
-  // Clerk mock session helpers
-  function getMockSignedOutSession(): ClerkSessionMock {
-    return {
-      userId: null,
-      sessionId: null,
-      sessionStatus: 'signed_out',
-      sessionClaims: null,
-      actor: null,
-      getToken: jest.fn(),
-      isAuthenticated: false,
-      tokenType: 'session_token',
-      orgId: null,
-      orgRole: null,
-      orgSlug: null,
-      orgPermissions: null,
-      factorVerificationAge: null,
-      redirectToSignIn: (): never => {
-        throw new Error('redirect');
-      },
-      redirectToSignUp: (): never => {
-        throw new Error('redirect');
-      },
-      has: jest.fn(),
-      debug: jest.fn(),
-    };
-  }
-  function getMockSignedInSession({
-    userId = 'user_12345',
-    sessionId = 'session_12345',
-    sessionClaims = {
-      sub: 'user_12345',
-      iss: '',
-      sid: '',
-      nbf: 0,
-      exp: 0,
-      iat: 0,
-      aud: '',
-      __raw: '',
-    },
-    actor = undefined,
-    orgId = 'org_12345',
-    orgRole = 'admin',
-    orgSlug = 'test-org',
-    orgPermissions = [],
-    factorVerificationAge = [0, 0],
-  }: Partial<ClerkSessionMock> = {}): ClerkSessionMock {
-    return {
-      userId,
-      sessionId,
-      sessionStatus: 'active',
-      sessionClaims,
-      actor,
-      getToken: jest.fn(),
-      isAuthenticated: true,
-      tokenType: 'session_token',
-      orgId,
-      orgRole,
-      orgSlug,
-      orgPermissions,
-      factorVerificationAge,
-      redirectToSignIn: (): never => {
-        throw new Error('redirect');
-      },
-      redirectToSignUp: (): never => {
-        throw new Error('redirect');
-      },
-      has: jest.fn(),
-      debug: jest.fn(),
-    };
-  }
 
   it('should return 401 when user is not authenticated', async () => {
     mockAuth.mockResolvedValue(getMockSignedOutSession());

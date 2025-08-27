@@ -2,6 +2,7 @@ import { GET, POST } from '../route';
 import { Party } from '@/models/Party';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
+import { setupTestDatabase, teardownTestDatabase } from '@/models/_utils/test-utils';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
@@ -22,14 +23,11 @@ jest.mock('@clerk/nextjs/server', () => ({
 let mongoServer: MongoMemoryServer;
 
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
-  await mongoose.connect(uri);
+  await setupTestDatabase();
 });
 
 afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
+  await teardownTestDatabase();
 });
 
 describe('GET /api/parties', () => {

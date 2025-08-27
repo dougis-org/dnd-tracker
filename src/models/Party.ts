@@ -1,9 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export const SHARED_ROLES = ['viewer', 'editor'] as const;
 export type SharedRole = (typeof SHARED_ROLES)[number];
-
-import mongoose, { Document } from 'mongoose';
 
 export interface IParty extends Document {
   userId: string; // Owner's Clerk ID
