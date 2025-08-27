@@ -34,6 +34,7 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           if [[ -n "$(git status --porcelain)" ]]; then
+            git pull
             git add .
             git commit -m "Linting errors auto fixed by GitHub Action"
             git push origin HEAD:${{ github.head_ref }}
