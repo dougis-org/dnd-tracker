@@ -2,50 +2,39 @@
 
 Issue: #22 - Implement Party API Endpoints (CRUD, Sharing, Templates, Import/Export)
 
-## Progress Tracking
+## Sub-Issue Breakdown
 
-### Phase 1: Foundation (TDD)
-- [ ] Write failing tests for basic CRUD operations
-- [ ] Implement GET /api/parties endpoint
-- [ ] Implement POST /api/parties endpoint  
-- [ ] Implement PUT /api/parties/:id endpoint
-- [ ] Implement DELETE /api/parties/:id endpoint
+Parent Issue #22 has been decomposed into focused sub-issues:
 
-### Phase 2: Character Management
-- [ ] Write tests for character assignment endpoints
-- [ ] Implement character assignment logic
-- [ ] Implement character removal logic
-- [ ] Add validation for character-party relationships
+### Priority 1 (P1) Sub-Issues
+- **Issue #93**: Basic Party CRUD API Endpoints ✅ Created
+- **Issue #94**: Party Character Assignment API Endpoints ✅ Created  
+- **Issue #98**: Party Tier Enforcement and Security Validation ✅ Created
 
-### Phase 3: Sharing & Collaboration
-- [ ] Write tests for sharing functionality
-- [ ] Implement POST /api/parties/:id/share endpoint
-- [ ] Add role-based access control
-- [ ] Validate sharing permissions
+### Priority 2 (P2) Sub-Issues  
+- **Issue #95**: Party Sharing and Collaboration API Endpoints ✅ Created
+- **Issue #96**: Party Template System API Endpoints ✅ Created
+- **Issue #97**: Party Import/Export API Endpoints ✅ Created
 
-### Phase 4: Templates
-- [ ] Write tests for template functionality
-- [ ] Implement POST /api/parties/:id/template endpoint
-- [ ] Add template conversion logic
-- [ ] Validate template data integrity
+## Implementation Order
 
-### Phase 5: Import/Export
-- [ ] Write tests for import/export functionality
-- [ ] Implement POST /api/parties/import endpoint
-- [ ] Implement GET /api/parties/export/:id endpoint
-- [ ] Add data validation for import/export
-
-### Phase 6: Tier Enforcement & Security
-- [ ] Implement tier-based party limits
-- [ ] Add comprehensive input validation
-- [ ] Implement security measures
-- [ ] Add comprehensive error handling
+Following TDD principles, implement in this order:
+1. **Issue #93** - Basic CRUD (GET, POST, PUT, DELETE)
+2. **Issue #94** - Character assignment endpoints  
+3. **Issue #98** - Security validation and tier enforcement
+4. **Issue #95** - Sharing and collaboration
+5. **Issue #96** - Template system
+6. **Issue #97** - Import/export functionality
 
 ## Current Status
 
-**Phase:** Initial setup
-**Next:** Begin TDD implementation with failing tests
+**Phase:** Sub-issues created and linked to parent
+**Next:** Begin implementation of Issue #93 (Basic Party CRUD)
+**Branch:** feature/issue-22-party-api-endpoints
 
 ## Notes
 
-This document tracks the implementation progress for Issue #22. Each phase follows TDD principles with tests written before implementation.
+- All sub-issues linked to parent Issue #22
+- Each sub-issue has detailed requirements and acceptance criteria
+- Following TDD workflow for each implementation
+- P1 issues prioritized for core functionality
