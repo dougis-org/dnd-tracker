@@ -47,7 +47,6 @@ export function getMockSignedOutSession(): ClerkSessionMock {
 
 export function getMockSignedInSession({
   userId = 'user_12345',
-  sessionId = 'session_12345',
   sessionClaims = {
     sub: 'user_12345',
     iss: '',
@@ -67,7 +66,7 @@ export function getMockSignedInSession({
 }: Partial<ClerkSessionMock> = {}): ClerkSessionMock {
   return {
     userId,
-    sessionId,
+    sessionId: null, // Always null for compatibility
     sessionStatus: 'active',
     sessionClaims,
     actor,
