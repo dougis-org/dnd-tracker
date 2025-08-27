@@ -17,41 +17,82 @@ const mockForm = {
 
 jest.mock('react-hook-form', () => ({
   useFormContext: () => mockForm,
-  Controller: ({ render }: any) => render({
-    field: {
-      value: [],
-      onChange: jest.fn(),
-      onBlur: jest.fn(),
-      name: 'classes'
+  Controller: ({ render, name }: any) => {
+    // Mock field values based on the field name and current form data
+    const classes = mockForm.watch('classes') || [];
+    let fieldValue;
+    
+    if (name === 'classes') {
+      fieldValue = classes;
+    } else if (name?.includes('classes.')) {
+      const match = name.match(/classes\.(\d+)\.(\w+)/);
+      if (match) {
+        const [, index, property] = match;
+        const classIndex = parseInt(index);
+        fieldValue = classes[classIndex]?.[property] || '';
+      }
+    } else {
+      fieldValue = '';
     }
-  })
+    
+    return render({
+      field: {
+        value: fieldValue,
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        name
+      }
+    });
+  }
 }));
 
 // Mock form components
 jest.mock('@/components/ui/form', () => ({
-  FormField: ({ render }: any) => render({
-    field: { onChange: jest.fn(), value: [] }
-  }),
+  FormField: ({ render, name }: any) => {
+    // Mock field values based on the field name and current form data
+    const classes = mockForm.watch('classes') || [];
+    let fieldValue;
+    
+    if (name === 'classes') {
+      fieldValue = classes;
+    } else if (name?.includes('classes.')) {
+      const match = name.match(/classes\.(\d+)\.(\w+)/);
+      if (match) {
+        const [, index, property] = match;
+        const classIndex = parseInt(index);
+        fieldValue = classes[classIndex]?.[property] || '';
+      }
+    } else {
+      fieldValue = '';
+    }
+    
+    return render({
+      field: { 
+        onChange: jest.fn(), 
+        onBlur: jest.fn(),
+        value: fieldValue,
+        name 
+      }
+    });
+  },
   FormItem: ({ children }: any) => <div data-testid="form-item">{children}</div>,
   FormLabel: ({ children }: any) => <label>{children}</label>,
-  FormControl: ({ children }: any) => <div data-testid="form-control">{children}</div>,
+  FormControl: ({ children }: any) => <>{children}</>,
   FormDescription: ({ children }: any) => <div data-testid="form-description">{children}</div>,
   FormMessage: ({ children }: any) => <div data-testid="form-message">{children}</div>
 }));
 
 jest.mock('@/components/ui/select', () => ({
   Select: ({ children, onValueChange, value }: any) => (
-    <div data-testid="select" data-value={value}>
-      <select onChange={(e) => onValueChange?.(e.target.value)} value={value}>
-        {children}
-      </select>
-    </div>
+    <select data-testid="select" onChange={(e) => onValueChange?.(e.target.value)} value={value}>
+      {children}
+    </select>
   ),
   SelectContent: ({ children }: any) => <>{children}</>,
   SelectItem: ({ value, children }: any) => (
     <option value={value}>{children}</option>
   ),
-  SelectTrigger: ({ children }: any) => <div data-testid="select-trigger">{children}</div>,
+  SelectTrigger: ({ children }: any) => <span data-testid="select-trigger">{children}</span>,
   SelectValue: ({ placeholder }: any) => <span>{placeholder}</span>
 }));
 
@@ -101,8 +142,8 @@ describe('ClassesStep', () => {
     render(<ClassesStep />);
     
     // Check that classes are displayed in the form
-    expect(screen.getAllByDisplayValue('5')[0]).toBeInTheDocument();
-    expect(screen.getAllByDisplayValue('3')[0]).toBeInTheDocument();
+    expect(screen.getByDisplayValue('5')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('3')).toBeInTheDocument();
     expect(screen.getByText('Total Level: 8')).toBeInTheDocument();
   });
 
@@ -153,10 +194,8 @@ describe('ClassesStep', () => {
     
     render(<ClassesStep />);
     
-    const selectElement = screen.getByTestId('select').querySelector('select');
-    if (selectElement) {
-      await user.selectOptions(selectElement, 'Wizard');
-    }
+    const selectElement = screen.getByTestId('select');
+    await user.selectOptions(selectElement, 'Wizard');
     
     expect(mockForm.setValue).toHaveBeenCalledWith('classes', [{
       className: 'Wizard',
@@ -195,9 +234,11 @@ describe('ClassesStep', () => {
     // Test valid level
     await user.clear(levelInput);
     await user.type(levelInput, '10');
-    expect(mockForm.setValue).toHaveBeenCalledWith('classes.0.level', 10);
+    expect(mockForm.setValue).toHaveBeenCalledWith('classes', [{
+      className: 'Fighter', level: 10, hitDiceSize: 10, hitDiceUsed: 0
+    }]);
     
-    // Test invalid level (should not update)
+    // Test invalid level (should trigger validation)
     await user.clear(levelInput);
     await user.type(levelInput, '25');
     expect(mockForm.trigger).toHaveBeenCalledWith('classes');
@@ -212,7 +253,8 @@ describe('ClassesStep', () => {
     
     render(<ClassesStep />);
     
-    expect(screen.getByLabelText(/subclass/i)).toBeInTheDocument();
+    expect(screen.getByText('Subclass (Optional)')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('e.g., Champion, Battle Master')).toBeInTheDocument();
   });
 
   it('should calculate and display total level', () => {

@@ -27,9 +27,9 @@ export function useCharacterForm({ draftId, onComplete, onCancel }: UseCharacter
       alignment: '',
       experiencePoints: 0,
       classes: [{ 
-        className: '', 
+        className: 'Fighter', 
         level: 1, 
-        hitDiceSize: 8, 
+        hitDiceSize: 10, 
         hitDiceUsed: 0 
       }],
       abilities: {
