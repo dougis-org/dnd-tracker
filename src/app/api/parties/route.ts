@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   }
   const parties = await Party.find({
     $or: [{ userId }, { 'sharedWith.userId': userId }],
-  }).populate('characters.characterId');
+  });
   return NextResponse.json(parties);
 }
 
