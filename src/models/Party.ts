@@ -1,8 +1,7 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export const SHARED_ROLES = ['viewer', 'editor'] as const;
 export type SharedRole = (typeof SHARED_ROLES)[number];
-
 export interface IParty extends Document {
   userId: string; // Owner's Clerk ID
   name: string;
@@ -35,7 +34,7 @@ export interface IParty extends Document {
   updatedAt: Date;
 }
 
-const PartySchema = new mongoose.Schema<IParty>(
+const PartySchema = new Schema<IParty>(
   {
     userId: { type: String, required: true },
     name: { type: String, required: true },
@@ -45,7 +44,7 @@ const PartySchema = new mongoose.Schema<IParty>(
       type: [
         {
           characterId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Character',
           },
           playerName: { type: String },
