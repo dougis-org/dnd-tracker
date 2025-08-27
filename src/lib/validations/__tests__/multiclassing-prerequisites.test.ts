@@ -129,7 +129,7 @@ describe('Multiclassing Prerequisites Validation', () => {
 
       const result = validateMulticlassingPrerequisites(invalidCharacter);
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Fighter multiclassing requires Strength 13 or higher');
+      expect(result.errors).toContain('Fighter multiclassing requires Strength 13 or higher (prerequisite not met for multiclassing with this class)');
     });
 
     it('should fail validation when multiclassing into Paladin without Charisma', () => {
@@ -143,7 +143,7 @@ describe('Multiclassing Prerequisites Validation', () => {
 
       const result = validateMulticlassingPrerequisites(invalidCharacter);
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Paladin multiclassing requires Strength 13 and Charisma 13 or higher');
+      expect(result.errors).toContain('Paladin multiclassing requires Strength 13 and Charisma 13 or higher (prerequisite not met for multiclassing with this class)');
     });
 
     it('should validate single-class characters without checking prerequisites', () => {
@@ -167,7 +167,7 @@ describe('Multiclassing Prerequisites Validation', () => {
 
       const result = validateMulticlassingPrerequisites(character);
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Fighter multiclassing requires Strength 13 or higher to leave the class');
+      expect(result.errors).toContain('Fighter multiclassing requires Strength 13 or higher (prerequisite not met for multiclassing with this class)');
     });
 
     it('should accumulate all prerequisite errors for multiple invalid classes', () => {

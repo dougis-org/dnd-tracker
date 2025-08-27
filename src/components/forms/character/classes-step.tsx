@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useFieldArray } from 'react-hook-form';
 import {
   FormField,
   FormItem,
@@ -44,7 +44,10 @@ const CLASS_HIT_DICE: Record<string, 6 | 8 | 10 | 12> = {
 
 export function ClassesStep() {
   const form = useFormContext<CharacterFormInput>();
-  const classes = form.watch('classes') || [];
+  const { fields, append, remove, update } = useFieldArray({
+    control: form.control,
+    name: 'classes'
+  });
 
   const addClass = () => {
     const newClass: ClassData = {
@@ -54,30 +57,29 @@ export function ClassesStep() {
       hitDiceUsed: 0
     };
     
-    form.setValue('classes', [...classes, newClass]);
+    append(newClass);
     form.trigger('classes');
   };
 
   const removeClass = (index: number) => {
-    const updatedClasses = classes.filter((_, i) => i !== index);
-    form.setValue('classes', updatedClasses);
+    remove(index);
     form.trigger('classes');
   };
 
   const updateClass = (index: number, field: keyof ClassData, value: any) => {
-    const updatedClasses = [...classes];
-    updatedClasses[index] = { ...updatedClasses[index], [field]: value };
+    const currentClass = fields[index];
+    const updatedClass = { ...currentClass, [field]: value };
     
     // Auto-update hit dice size when class changes
     if (field === 'className' && CLASS_HIT_DICE[value]) {
-      updatedClasses[index].hitDiceSize = CLASS_HIT_DICE[value];
+      updatedClass.hitDiceSize = CLASS_HIT_DICE[value];
     }
     
-    form.setValue('classes', updatedClasses);
+    update(index, updatedClass);
     form.trigger('classes');
   };
 
-  const totalLevel = classes.reduce((sum, cls) => sum + (cls.level || 0), 0);
+  const totalLevel = fields.reduce((sum, cls) => sum + (cls.level || 0), 0);
 
   return (
     <div className="space-y-6">
@@ -94,15 +96,15 @@ export function ClassesStep() {
         </div>
       </div>
 
-      {classes.length === 0 && (
+      {fields.length === 0 && (
         <div className="text-center py-8 text-muted-foreground">
           <p>No classes added yet. Click &ldquo;Add Class&rdquo; to get started.</p>
         </div>
       )}
 
       <div className="space-y-4">
-        {classes.map((classData, index) => (
-          <div key={index} className="border rounded-lg p-4 space-y-4">
+        {fields.map((field, index) => (
+          <div key={field.id} className="border rounded-lg p-4 space-y-4">
             <div className="flex items-center justify-between">
               <h4 className="font-medium">Class {index + 1}</h4>
               <Button
@@ -110,7 +112,7 @@ export function ClassesStep() {
                 variant="destructive"
                 size="sm"
                 onClick={() => removeClass(index)}
-                disabled={classes.length <= 1}
+                disabled={fields.length <= 1}
                 aria-label={`Remove class ${index + 1}`}
               >
                 <Trash2 className="h-4 w-4" />
@@ -187,7 +189,7 @@ export function ClassesStep() {
                 <FormLabel>Hit Dice</FormLabel>
                 <FormControl>
                   <Input
-                    value={`d${classData.hitDiceSize}`}
+                    value={`d${field.hitDiceSize}`}
                     readOnly
                     disabled
                     aria-label="Hit dice size (auto-calculated)"
@@ -237,11 +239,11 @@ export function ClassesStep() {
                         {...field}
                         type="number"
                         min="0"
-                        max={classData.level}
+                        max={field.level}
                         step="1"
                         onChange={(e) => {
                           const value = parseInt(e.target.value);
-                          if (!isNaN(value) && value >= 0 && value <= classData.level) {
+                          if (!isNaN(value) && value >= 0 && value <= field.level) {
                             field.onChange(value);
                             updateClass(index, 'hitDiceUsed', value);
                           }
@@ -249,7 +251,7 @@ export function ClassesStep() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Hit dice spent (0-{classData.level})
+                      Hit dice spent (0-{field.level})
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

@@ -118,21 +118,16 @@ export function validateMulticlassingPrerequisites(character: {
     if (!hasAbilityScorePrerequisites(character.abilities, prerequisites)) {
       const reqText = formatPrerequisites(prerequisites);
       
-      // Different message depending on context
-      if (character.classes.length > 1) {
-        // For existing multiclass characters, this applies to both staying in and leaving the class
-        errors.push(`${classData.className} multiclassing requires ${reqText}`);
-        errors.push(`${classData.className} multiclassing requires ${reqText} to leave the class`);
-      }
+      // Consolidated error message for prerequisite violation
+      errors.push(
+        `${classData.className} multiclassing requires ${reqText} (prerequisite not met for multiclassing with this class)`
+      );
     }
   }
   
-  // Remove duplicate errors
-  const uniqueErrors = Array.from(new Set(errors));
-  
   return {
-    isValid: uniqueErrors.length === 0,
-    errors: uniqueErrors
+    isValid: errors.length === 0,
+    errors
   };
 }
 
