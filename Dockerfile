@@ -23,17 +23,14 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Accept build arguments for secrets
-ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-ARG CLERK_SECRET_KEY  
-ARG MONGODB_URI
-
-# Set environment variables for build (Next.js needs these at build time)
-ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-ENV CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
-ENV MONGODB_URI=${MONGODB_URI}
-
-RUN npm run build
+# Use build secrets to access environment variables during build
+RUN --mount=type=secret,id=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY \
+    --mount=type=secret,id=CLERK_SECRET_KEY \
+    --mount=type=secret,id=MONGODB_URI \
+    export NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$(cat /run/secrets/NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || echo "") && \
+    export CLERK_SECRET_KEY=$(cat /run/secrets/CLERK_SECRET_KEY || echo "") && \
+    export MONGODB_URI=$(cat /run/secrets/MONGODB_URI || echo "") && \
+    npm run build
 
 # Install production dependencies only for runtime
 FROM base AS prod-deps
