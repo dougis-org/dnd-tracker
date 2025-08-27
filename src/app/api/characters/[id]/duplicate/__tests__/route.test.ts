@@ -1,6 +1,7 @@
 /**
  * @jest-environment node
  */
+import { ClerkSessionMock, getMockSignedOutSession, getMockSignedInSession } from '@/app/api/characters/_utils/clerk-session-mocks';
 import { NextRequest } from 'next/server';
 import { POST } from '../route';
 import { auth } from '@clerk/nextjs/server';
@@ -9,20 +10,22 @@ import { CharacterModel } from '@/models/schemas';
 
 // Mock dependencies
 jest.mock('@clerk/nextjs/server', () => ({
-  auth: jest.fn()
+  auth: jest.fn(),
 }));
 jest.mock('@/lib/mongodb', () => ({
-  connectToDatabase: jest.fn()
+  connectToDatabase: jest.fn(),
 }));
 jest.mock('@/models/schemas', () => ({
   CharacterModel: {
     findOne: jest.fn(),
-    create: jest.fn()
-  }
+    create: jest.fn(),
+  },
 }));
 
 const mockAuth = auth as jest.MockedFunction<typeof auth>;
-const mockConnectToDatabase = connectToDatabase as jest.MockedFunction<typeof connectToDatabase>;
+const mockConnectToDatabase = connectToDatabase as jest.MockedFunction<
+  typeof connectToDatabase
+>;
 
 describe('POST /api/characters/[id]/duplicate', () => {
   const characterId = '507f1f77bcf86cd799439011'; // Valid ObjectId
@@ -33,9 +36,12 @@ describe('POST /api/characters/[id]/duplicate', () => {
   });
 
   it('should return 401 when user is not authenticated', async () => {
-    mockAuth.mockReturnValue({ userId: null });
+    mockAuth.mockResolvedValue(getMockSignedOutSession());
 
-    const response = await POST(new NextRequest('http://localhost:3000'), params);
+    const response = await POST(
+      new NextRequest('http://localhost:3000'),
+      params
+    );
     const data = await response.json();
 
     expect(response.status).toBe(401);
@@ -43,10 +49,29 @@ describe('POST /api/characters/[id]/duplicate', () => {
   });
 
   it('should return 400 for invalid character ID', async () => {
-    mockAuth.mockReturnValue({ userId: 'user_12345' });
-    
+    mockAuth.mockResolvedValue(
+      getMockSignedInSession({
+        userId: 'user_12345',
+        sessionId: 'session_12345',
+        sessionClaims: {
+          sub: 'user_12345',
+          iss: '',
+          sid: '',
+          nbf: 0,
+          exp: 0,
+          iat: 0,
+          aud: '',
+          __raw: '',
+        },
+        actor: undefined,
+      })
+    );
+
     const invalidParams = { params: Promise.resolve({ id: 'invalid-id' }) };
-    const response = await POST(new NextRequest('http://localhost:3000'), invalidParams);
+    const response = await POST(
+      new NextRequest('http://localhost:3000'),
+      invalidParams
+    );
     const data = await response.json();
 
     expect(response.status).toBe(400);
@@ -54,11 +79,31 @@ describe('POST /api/characters/[id]/duplicate', () => {
   });
 
   it('should return 404 when character not found', async () => {
-    mockAuth.mockReturnValue({ userId: 'user_12345' });
+    mockAuth.mockResolvedValue(
+      getMockSignedInSession({
+        userId: 'user_12345',
+        sessionId: 'session_12345',
+        sessionClaims: {
+          sub: 'user_12345',
+          iss: '',
+          sid: '',
+          nbf: 0,
+          exp: 0,
+          iat: 0,
+          aud: '',
+          __raw: '',
+        },
+        actor: undefined,
+        isAuthenticated: true,
+      })
+    );
     mockConnectToDatabase.mockResolvedValue(undefined);
     (CharacterModel.findOne as jest.Mock).mockResolvedValue(null);
 
-    const response = await POST(new NextRequest('http://localhost:3000'), params);
+    const response = await POST(
+      new NextRequest('http://localhost:3000'),
+      params
+    );
     const data = await response.json();
 
     expect(response.status).toBe(404);
@@ -75,19 +120,21 @@ describe('POST /api/characters/[id]/duplicate', () => {
       background: 'Ranger',
       alignment: 'Chaotic Good',
       experiencePoints: 1000,
-      classes: [{
-        className: 'Ranger',
-        level: 5,
-        hitDiceSize: 10,
-        hitDiceUsed: 2
-      }],
+      classes: [
+        {
+          className: 'Ranger',
+          level: 5,
+          hitDiceSize: 10,
+          hitDiceUsed: 2,
+        },
+      ],
       abilities: {
         strength: 16,
         dexterity: 18,
         constitution: 14,
         intelligence: 12,
         wisdom: 15,
-        charisma: 10
+        charisma: 10,
       },
       totalLevel: 5,
       proficiencyBonus: 3,
@@ -104,62 +151,87 @@ describe('POST /api/characters/[id]/duplicate', () => {
       background: 'Ranger',
       alignment: 'Chaotic Good',
       experiencePoints: 1000,
-      classes: [{
-        className: 'Ranger',
-        level: 5,
-        hitDiceSize: 10,
-        hitDiceUsed: 2
-      }],
+      classes: [
+        {
+          className: 'Ranger',
+          level: 5,
+          hitDiceSize: 10,
+          hitDiceUsed: 2,
+        },
+      ],
       abilities: {
         strength: 16,
         dexterity: 18,
         constitution: 14,
         intelligence: 12,
         wisdom: 15,
-        charisma: 10
+        charisma: 10,
       },
       totalLevel: 5,
       proficiencyBonus: 3,
       createdAt: '2025-08-24T04:10:00.000Z',
-      updatedAt: '2025-08-24T04:10:00.000Z'
+      updatedAt: '2025-08-24T04:10:00.000Z',
     };
 
-    mockAuth.mockReturnValue({ userId: mockUserId });
+    mockAuth.mockResolvedValue(
+      getMockSignedInSession({
+        userId: mockUserId,
+        sessionId: 'session_12345',
+        sessionClaims: {
+          sub: mockUserId,
+          iss: '',
+          sid: '',
+          nbf: 0,
+          exp: 0,
+          iat: 0,
+          aud: '',
+          __raw: '',
+        },
+        actor: undefined,
+      })
+    );
     mockConnectToDatabase.mockResolvedValue(undefined);
     (CharacterModel.findOne as jest.Mock).mockResolvedValue(originalCharacter);
     (CharacterModel.create as jest.Mock).mockResolvedValue(duplicatedCharacter);
 
-    const response = await POST(new NextRequest('http://localhost:3000'), params);
+    const response = await POST(
+      new NextRequest('http://localhost:3000'),
+      params
+    );
     const data = await response.json();
 
     expect(response.status).toBe(201);
     expect(data).toEqual(duplicatedCharacter);
-    expect(CharacterModel.findOne).toHaveBeenCalledWith({ 
-      _id: characterId, 
-      userId: mockUserId 
-    });
-    expect(CharacterModel.create).toHaveBeenCalledWith(expect.objectContaining({
+    expect(CharacterModel.findOne).toHaveBeenCalledWith({
+      _id: characterId,
       userId: mockUserId,
-      name: 'Aragorn (Copy)',
-      race: 'Human',
-      background: 'Ranger',
-      alignment: 'Chaotic Good',
-      experiencePoints: 1000,
-      classes: [{
-        className: 'Ranger',
-        level: 5,
-        hitDiceSize: 10,
-        hitDiceUsed: 2
-      }],
-      abilities: {
-        strength: 16,
-        dexterity: 18,
-        constitution: 14,
-        intelligence: 12,
-        wisdom: 15,
-        charisma: 10
-      }
-    }));
+    });
+    expect(CharacterModel.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: mockUserId,
+        name: 'Aragorn (Copy)',
+        race: 'Human',
+        background: 'Ranger',
+        alignment: 'Chaotic Good',
+        experiencePoints: 1000,
+        classes: [
+          {
+            className: 'Ranger',
+            level: 5,
+            hitDiceSize: 10,
+            hitDiceUsed: 2,
+          },
+        ],
+        abilities: {
+          strength: 16,
+          dexterity: 18,
+          constitution: 14,
+          intelligence: 12,
+          wisdom: 15,
+          charisma: 10,
+        },
+      })
+    );
   });
 
   it('should handle duplicate name by adding (Copy) suffix', async () => {
@@ -180,31 +252,73 @@ describe('POST /api/characters/[id]/duplicate', () => {
       name: 'Gandalf (Copy) (Copy)',
       race: 'Human',
       background: 'Hermit',
-      alignment: 'Neutral Good'
+      alignment: 'Neutral Good',
     };
 
-    mockAuth.mockReturnValue({ userId: mockUserId });
+    mockAuth.mockResolvedValue(
+      getMockSignedInSession({
+        userId: mockUserId,
+        sessionId: 'session_12345',
+        sessionClaims: {
+          sub: mockUserId,
+          iss: '',
+          sid: '',
+          nbf: 0,
+          exp: 0,
+          iat: 0,
+          aud: '',
+          __raw: '',
+        },
+        actor: undefined,
+        isAuthenticated: true,
+      })
+    );
     mockConnectToDatabase.mockResolvedValue(undefined);
     (CharacterModel.findOne as jest.Mock).mockResolvedValue(originalCharacter);
     (CharacterModel.create as jest.Mock).mockResolvedValue(duplicatedCharacter);
 
-    const response = await POST(new NextRequest('http://localhost:3000'), params);
+    const response = await POST(
+      new NextRequest('http://localhost:3000'),
+      params
+    );
     const data = await response.json();
 
     expect(response.status).toBe(201);
     expect(data).toEqual(duplicatedCharacter);
     expect(CharacterModel.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        name: 'Gandalf (Copy) (Copy)'
+        name: 'Gandalf (Copy) (Copy)',
       })
     );
   });
 
   it('should handle database connection errors', async () => {
-    mockAuth.mockReturnValue({ userId: 'user_12345' });
-    mockConnectToDatabase.mockRejectedValue(new Error('Database connection failed'));
+    mockAuth.mockResolvedValue(
+      getMockSignedInSession({
+        userId: 'user_12345',
+        sessionId: 'session_12345',
+        sessionClaims: {
+          sub: 'user_12345',
+          iss: '',
+          sid: '',
+          nbf: 0,
+          exp: 0,
+          iat: 0,
+          aud: '',
+          __raw: '',
+        },
+        actor: undefined,
+        isAuthenticated: true,
+      })
+    );
+    mockConnectToDatabase.mockRejectedValue(
+      new Error('Database connection failed')
+    );
 
-    const response = await POST(new NextRequest('http://localhost:3000'), params);
+    const response = await POST(
+      new NextRequest('http://localhost:3000'),
+      params
+    );
     const data = await response.json();
 
     expect(response.status).toBe(500);
@@ -220,12 +334,34 @@ describe('POST /api/characters/[id]/duplicate', () => {
       toObject: () => originalCharacter,
     };
 
-    mockAuth.mockReturnValue({ userId: mockUserId });
+    mockAuth.mockResolvedValue(
+      getMockSignedInSession({
+        userId: mockUserId,
+        sessionId: 'session_12345',
+        sessionClaims: {
+          sub: mockUserId,
+          iss: '',
+          sid: '',
+          nbf: 0,
+          exp: 0,
+          iat: 0,
+          aud: '',
+          __raw: '',
+        },
+        actor: undefined,
+        isAuthenticated: true,
+      })
+    );
     mockConnectToDatabase.mockResolvedValue(undefined);
     (CharacterModel.findOne as jest.Mock).mockResolvedValue(originalCharacter);
-    (CharacterModel.create as jest.Mock).mockRejectedValue(new Error('Creation failed'));
+    (CharacterModel.create as jest.Mock).mockRejectedValue(
+      new Error('Creation failed')
+    );
 
-    const response = await POST(new NextRequest('http://localhost:3000'), params);
+    const response = await POST(
+      new NextRequest('http://localhost:3000'),
+      params
+    );
     const data = await response.json();
 
     expect(response.status).toBe(500);
@@ -244,12 +380,32 @@ describe('POST /api/characters/[id]/duplicate', () => {
     const validationError = new Error('Validation failed');
     validationError.name = 'ValidationError';
 
-    mockAuth.mockReturnValue({ userId: mockUserId });
+    mockAuth.mockResolvedValue(
+      getMockSignedInSession({
+        userId: mockUserId,
+        sessionId: 'session_12345',
+        sessionClaims: {
+          sub: mockUserId,
+          iss: '',
+          sid: '',
+          nbf: 0,
+          exp: 0,
+          iat: 0,
+          aud: '',
+          __raw: '',
+        },
+        actor: undefined,
+        isAuthenticated: true,
+      })
+    );
     mockConnectToDatabase.mockResolvedValue(undefined);
     (CharacterModel.findOne as jest.Mock).mockResolvedValue(originalCharacter);
     (CharacterModel.create as jest.Mock).mockRejectedValue(validationError);
 
-    const response = await POST(new NextRequest('http://localhost:3000'), params);
+    const response = await POST(
+      new NextRequest('http://localhost:3000'),
+      params
+    );
     const data = await response.json();
 
     expect(response.status).toBe(400);

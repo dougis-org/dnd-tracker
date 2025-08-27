@@ -108,8 +108,8 @@ describe('Clerk Webhook API', () => {
       data: mockUser,
     });
 
-    (UserModel as jest.Mock).mockImplementation(() => ({
-        save: jest.fn().mockRejectedValue(new Error('Database error')),
+    (UserModel as unknown as jest.Mock).mockImplementation(() => ({
+      save: jest.fn().mockRejectedValue(new Error('Database error')),
     }));
 
     const req = new Request('http://localhost', {
