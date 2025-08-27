@@ -24,7 +24,7 @@ Welcome! This project follows strict engineering, workflow, and coding standards
   - Examine the docs/execution-plan.md to find the next open issue, if none found, review all open issues in GitHub
 - Do not start work on issues labeled `in-progress` or `effort:human`.
 - Add the `in-progress` label when starting.
-- Create a feature branch from `main` using descriptive, kebab-case naming:  
+- Create a feature branch from `main` using descriptive, kebab-case naming and including the issue number:  
   `feature/task-description` or `feature/component-name`.
 - Push the branch immediately.
 
