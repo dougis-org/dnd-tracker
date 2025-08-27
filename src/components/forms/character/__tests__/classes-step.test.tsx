@@ -15,8 +15,17 @@ const mockForm = {
   formState: { errors: {} }
 };
 
+// Mock useFieldArray hook
+const mockFieldArray = {
+  fields: [],
+  append: jest.fn(),
+  remove: jest.fn(),
+  update: jest.fn()
+};
+
 jest.mock('react-hook-form', () => ({
   useFormContext: () => mockForm,
+  useFieldArray: () => mockFieldArray,
   Controller: ({ render, name }: any) => {
     // Mock field values based on the field name and current form data
     const classes = mockForm.watch('classes') || [];
@@ -112,6 +121,7 @@ describe('ClassesStep', () => {
   beforeEach(() => {
     mockForm.watch.mockReturnValue([]);
     mockForm.getValues.mockReturnValue([]);
+    mockFieldArray.fields = [];
     jest.clearAllMocks();
   });
 
@@ -132,10 +142,11 @@ describe('ClassesStep', () => {
 
   it('should display existing classes', () => {
     const existingClasses = [
-      { className: 'Fighter', level: 5, hitDiceSize: 10, hitDiceUsed: 0 },
-      { className: 'Rogue', level: 3, hitDiceSize: 8, hitDiceUsed: 1 }
+      { id: '1', className: 'Fighter', level: 5, hitDiceSize: 10, hitDiceUsed: 0 },
+      { id: '2', className: 'Rogue', level: 3, hitDiceSize: 8, hitDiceUsed: 1 }
     ];
     
+    mockFieldArray.fields = existingClasses;
     mockForm.watch.mockReturnValue(existingClasses);
     mockForm.getValues.mockReturnValue(existingClasses);
     
@@ -156,21 +167,22 @@ describe('ClassesStep', () => {
     const addButton = screen.getByRole('button', { name: /add class/i });
     await user.click(addButton);
     
-    expect(mockForm.setValue).toHaveBeenCalledWith('classes', [{
+    expect(mockFieldArray.append).toHaveBeenCalledWith({
       className: '',
       level: 1,
       hitDiceSize: 8,
       hitDiceUsed: 0
-    }]);
+    });
   });
 
   it('should remove a class when remove button is clicked', async () => {
     const user = userEvent.setup();
     const existingClasses = [
-      { className: 'Fighter', level: 5, hitDiceSize: 10, hitDiceUsed: 0 },
-      { className: 'Rogue', level: 3, hitDiceSize: 8, hitDiceUsed: 1 }
+      { id: '1', className: 'Fighter', level: 5, hitDiceSize: 10, hitDiceUsed: 0 },
+      { id: '2', className: 'Rogue', level: 3, hitDiceSize: 8, hitDiceUsed: 1 }
     ];
     
+    mockFieldArray.fields = existingClasses;
     mockForm.watch.mockReturnValue(existingClasses);
     mockForm.getValues.mockReturnValue(existingClasses);
     
@@ -179,17 +191,16 @@ describe('ClassesStep', () => {
     const removeButtons = screen.getAllByRole('button', { name: /remove class/i });
     await user.click(removeButtons[0]);
     
-    expect(mockForm.setValue).toHaveBeenCalledWith('classes', [
-      { className: 'Rogue', level: 3, hitDiceSize: 8, hitDiceUsed: 1 }
-    ]);
+    expect(mockFieldArray.remove).toHaveBeenCalledWith(0);
   });
 
   it('should update class name when selection changes', async () => {
     const user = userEvent.setup();
     const existingClasses = [
-      { className: '', level: 1, hitDiceSize: 8, hitDiceUsed: 0 }
+      { id: '1', className: '', level: 1, hitDiceSize: 8, hitDiceUsed: 0 }
     ];
     
+    mockFieldArray.fields = existingClasses;
     mockForm.watch.mockReturnValue(existingClasses);
     
     render(<ClassesStep />);
@@ -197,19 +208,21 @@ describe('ClassesStep', () => {
     const selectElement = screen.getByTestId('select');
     await user.selectOptions(selectElement, 'Wizard');
     
-    expect(mockForm.setValue).toHaveBeenCalledWith('classes', [{
+    expect(mockFieldArray.update).toHaveBeenCalledWith(0, {
+      id: '1',
       className: 'Wizard',
       level: 1,
       hitDiceSize: 6, // Wizard uses d6 hit dice
       hitDiceUsed: 0
-    }]);
+    });
   });
 
   it('should show all D&D classes in select dropdown', () => {
     const existingClasses = [
-      { className: '', level: 1, hitDiceSize: 8, hitDiceUsed: 0 }
+      { id: '1', className: '', level: 1, hitDiceSize: 8, hitDiceUsed: 0 }
     ];
     
+    mockFieldArray.fields = existingClasses;
     mockForm.watch.mockReturnValue(existingClasses);
     
     render(<ClassesStep />);
@@ -222,9 +235,10 @@ describe('ClassesStep', () => {
   it('should validate level input between 1-20', async () => {
     const user = userEvent.setup();
     const existingClasses = [
-      { className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }
+      { id: '1', className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }
     ];
     
+    mockFieldArray.fields = existingClasses;
     mockForm.watch.mockReturnValue(existingClasses);
     
     render(<ClassesStep />);
@@ -234,9 +248,9 @@ describe('ClassesStep', () => {
     // Test valid level
     await user.clear(levelInput);
     await user.type(levelInput, '10');
-    expect(mockForm.setValue).toHaveBeenCalledWith('classes', [{
-      className: 'Fighter', level: 10, hitDiceSize: 10, hitDiceUsed: 0
-    }]);
+    expect(mockFieldArray.update).toHaveBeenCalledWith(0, {
+      id: '1', className: 'Fighter', level: 10, hitDiceSize: 10, hitDiceUsed: 0
+    });
     
     // Test invalid level (should trigger validation)
     await user.clear(levelInput);
@@ -246,9 +260,10 @@ describe('ClassesStep', () => {
 
   it('should show subclass field when class is selected', () => {
     const existingClasses = [
-      { className: 'Fighter', level: 5, hitDiceSize: 10, hitDiceUsed: 0 }
+      { id: '1', className: 'Fighter', level: 5, hitDiceSize: 10, hitDiceUsed: 0 }
     ];
     
+    mockFieldArray.fields = existingClasses;
     mockForm.watch.mockReturnValue(existingClasses);
     
     render(<ClassesStep />);
@@ -259,10 +274,11 @@ describe('ClassesStep', () => {
 
   it('should calculate and display total level', () => {
     const existingClasses = [
-      { className: 'Fighter', level: 5, hitDiceSize: 10, hitDiceUsed: 0 },
-      { className: 'Rogue', level: 3, hitDiceSize: 8, hitDiceUsed: 1 }
+      { id: '1', className: 'Fighter', level: 5, hitDiceSize: 10, hitDiceUsed: 0 },
+      { id: '2', className: 'Rogue', level: 3, hitDiceSize: 8, hitDiceUsed: 1 }
     ];
     
+    mockFieldArray.fields = existingClasses;
     mockForm.watch.mockReturnValue(existingClasses);
     
     render(<ClassesStep />);
@@ -272,9 +288,10 @@ describe('ClassesStep', () => {
 
   it('should have accessible labels and ARIA attributes', () => {
     const existingClasses = [
-      { className: 'Fighter', level: 5, hitDiceSize: 10, hitDiceUsed: 0 }
+      { id: '1', className: 'Fighter', level: 5, hitDiceSize: 10, hitDiceUsed: 0 }
     ];
     
+    mockFieldArray.fields = existingClasses;
     mockForm.watch.mockReturnValue(existingClasses);
     
     render(<ClassesStep />);
@@ -297,14 +314,15 @@ describe('ClassesStep', () => {
     
     // Press Enter to add class
     await user.keyboard('{Enter}');
-    expect(mockForm.setValue).toHaveBeenCalled();
+    expect(mockFieldArray.append).toHaveBeenCalled();
   });
 
   it('should prevent removing the last class', () => {
     const existingClasses = [
-      { className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }
+      { id: '1', className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }
     ];
     
+    mockFieldArray.fields = existingClasses;
     mockForm.watch.mockReturnValue(existingClasses);
     
     render(<ClassesStep />);

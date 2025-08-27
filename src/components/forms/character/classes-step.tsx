@@ -189,7 +189,7 @@ export function ClassesStep() {
                 <FormLabel>Hit Dice</FormLabel>
                 <FormControl>
                   <Input
-                    value={`d${field.hitDiceSize}`}
+                    value={`d${fields[index].hitDiceSize}`}
                     readOnly
                     disabled
                     aria-label="Hit dice size (auto-calculated)"
@@ -239,11 +239,11 @@ export function ClassesStep() {
                         {...field}
                         type="number"
                         min="0"
-                        max={field.level}
+                        max={fields[index].level}
                         step="1"
                         onChange={(e) => {
                           const value = parseInt(e.target.value);
-                          if (!isNaN(value) && value >= 0 && value <= field.level) {
+                          if (!isNaN(value) && value >= 0 && value <= fields[index].level) {
                             field.onChange(value);
                             updateClass(index, 'hitDiceUsed', value);
                           }
@@ -251,7 +251,7 @@ export function ClassesStep() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Hit dice spent (0-{field.level})
+                      Hit dice spent (0-{fields[index].level})
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
