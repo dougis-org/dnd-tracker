@@ -25,7 +25,7 @@ Welcome! This project follows strict engineering, workflow, and coding standards
 - Do not start work on issues labeled `in-progress` or `effort:human`.
 - Add the `in-progress` label when starting.
 - Create a feature branch from `main` using descriptive, kebab-case naming and including the issue number:  
-  `feature/task-description` or `feature/component-name`.
+  `feature/123-task-description` or `feature/123-component-name`.
 - Push the branch immediately.
 
 ### 2. Development Process (TDD Required)
