@@ -15,9 +15,9 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
   
-  // During build time, if the env var is missing, use a placeholder
+  // During build time, if the env var is missing, use a valid test key
   // At runtime, this will be properly validated by Clerk
-  const clerkKey = publishableKey || 'pk_build_placeholder';
+  const clerkKey = publishableKey || 'pk_test_Y2xlcmsuZGV2LmVzc2VudGlhbC1zdGFnLTQ1LmxjbC5kZXYk';
 
   return (
     <ClerkProvider publishableKey={clerkKey}>
