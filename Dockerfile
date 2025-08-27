@@ -23,9 +23,14 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Build secrets are automatically available as environment variables
-
-RUN npm run build
+# Build with secrets from Fly.io
+RUN --mount=type=secret,id=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY \
+    --mount=type=secret,id=CLERK_SECRET_KEY \
+    --mount=type=secret,id=MONGODB_URI \
+    export NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$(cat /run/secrets/NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) && \
+    export CLERK_SECRET_KEY=$(cat /run/secrets/CLERK_SECRET_KEY) && \
+    export MONGODB_URI=$(cat /run/secrets/MONGODB_URI) && \
+    npm run build
 
 # Install production dependencies only for runtime
 FROM base AS prod-deps
