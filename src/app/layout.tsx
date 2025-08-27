@@ -30,7 +30,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     
     // For development, show warning about missing key
     if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
+       
       console.warn(
         'Warning: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set. Using fallback test key. Do not use this in production!'
       );
