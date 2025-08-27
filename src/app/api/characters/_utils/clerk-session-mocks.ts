@@ -2,7 +2,7 @@
 export type ClerkSessionMock = {
   userId: string | null;
   sessionId: null;
-  sessionStatus: 'active' | 'signed_out' | null;
+  sessionStatus: 'active' | null;
   sessionClaims: any;
   actor?: any;
   getToken: jest.Mock;
@@ -23,7 +23,7 @@ export function getMockSignedOutSession(): ClerkSessionMock {
   return {
     userId: null,
     sessionId: null,
-    sessionStatus: 'signed_out',
+    sessionStatus: null,
     sessionClaims: null,
     actor: null,
     getToken: jest.fn(),
