@@ -19,6 +19,10 @@ import {
   expectCreated,
   expectBadRequest,
   expectEmptyArray,
+  testUnauthorizedAccess,
+  testSuccessfulGet,
+  createTestPartiesForUser,
+  standardTestSetup,
 } from './_test-utils';
 jest.mock('@clerk/nextjs/server', () => ({
   auth: jest.fn(),
@@ -33,35 +37,21 @@ afterAll(async () => {
 });
 
 describe('GET /api/parties', () => {
-  beforeEach(async () => {
-    await cleanupParties();
-  });
+  beforeEach(standardTestSetup.beforeEach);
 
   it('should return 401 if user is not authenticated', async () => {
-    mockAuth(null);
-    const req = createGetRequest();
-    const response = await GET(req);
-
-    expectUnauthorized(response);
+    await testUnauthorizedAccess(GET, createGetRequest);
   });
 
   it('should return an empty array if no parties are found', async () => {
-    mockAuth(TEST_USERS.USER_123);
-    const req = createGetRequest();
-    const response = await GET(req);
-
+    const response = await testSuccessfulGet(TEST_USERS.USER_123, GET, createGetRequest);
     await expectEmptyArray(response);
   });
 
   it('should return parties owned by the user', async () => {
-    // Create test parties
-    await createTestParty({ name: 'User Party 1', userId: TEST_USERS.USER_123 });
-    await createTestParty({ name: 'User Party 2', userId: TEST_USERS.USER_123 });
-    await createTestParty({ name: 'Other User Party', userId: TEST_USERS.OTHER_USER });
+    await createTestPartiesForUser(TEST_USERS.USER_123, 2);
 
-    mockAuth(TEST_USERS.USER_123);
-    const req = createGetRequest();
-    const response = await GET(req);
+    const response = await testSuccessfulGet(TEST_USERS.USER_123, GET, createGetRequest);
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -107,9 +97,7 @@ describe('GET /api/parties', () => {
 });
 
 describe('POST /api/parties', () => {
-  beforeEach(async () => {
-    await cleanupParties();
-  });
+  beforeEach(standardTestSetup.beforeEach);
 
   it('should create a new party with all fields', async () => {
     mockAuth(TEST_USERS.USER_123);
@@ -139,20 +127,12 @@ describe('POST /api/parties', () => {
   });
 
   it('should return 401 if user is not authenticated', async () => {
-    mockAuth(null);
-    const req = createPostRequest({ name: 'New Party' });
-
-    const response = await POST(req);
-
-    expectUnauthorized(response);
+    await testUnauthorizedAccess(POST, () => createPostRequest({ name: 'New Party' }));
   });
 
   it('should return 400 for invalid JSON', async () => {
     mockAuth(TEST_USERS.USER_123);
-    const req = createInvalidJsonRequest();
-
-    const response = await POST(req);
-
+    const response = await POST(createInvalidJsonRequest());
     expectBadRequest(response);
   });
 

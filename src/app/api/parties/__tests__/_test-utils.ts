@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { Party, IParty } from '@/models/Party';
+import mongoose from 'mongoose';
 
 /**
  * Mock authentication for tests
@@ -135,15 +136,22 @@ export function expectUnauthorized(response: Response) {
 }
 
 /**
+ * Helper to validate party data fields in responses
+ */
+function validatePartyData(data: any, expectedData: Partial<IParty>) {
+  if (expectedData.name) expect(data.name).toBe(expectedData.name);
+  if (expectedData.userId) expect(data.userId).toBe(expectedData.userId);
+  if (expectedData.description) expect(data.description).toBe(expectedData.description);
+}
+
+/**
  * Standard test expectations for successful responses with party data
  */
 export async function expectPartyResponse(response: Response, expectedData?: Partial<IParty>) {
   expect(response.status).toBe(200);
   if (expectedData) {
     const data = await response.json();
-    if (expectedData.name) expect(data.name).toBe(expectedData.name);
-    if (expectedData.userId) expect(data.userId).toBe(expectedData.userId);
-    if (expectedData.description) expect(data.description).toBe(expectedData.description);
+    validatePartyData(data, expectedData);
     return data;
   }
 }
@@ -176,9 +184,7 @@ export async function expectCreated(response: Response, expectedData?: Partial<I
   expect(response.status).toBe(201);
   if (expectedData) {
     const data = await response.json();
-    if (expectedData.name) expect(data.name).toBe(expectedData.name);
-    if (expectedData.userId) expect(data.userId).toBe(expectedData.userId);
-    if (expectedData.description) expect(data.description).toBe(expectedData.description);
+    validatePartyData(data, expectedData);
     expect(data.createdAt).toBeDefined();
     expect(data.updatedAt).toBeDefined();
     return data;
@@ -199,4 +205,76 @@ export async function expectEmptyArray(response: Response) {
   expect(response.status).toBe(200);
   const data = await response.json();
   expect(data).toEqual([]);
+}
+
+/**
+ * Common test pattern: mock auth, create request, call API, expect unauthorized
+ */
+export async function testUnauthorizedAccess(apiCall: (req: any, params?: any) => Promise<Response>, requestFactory: () => any, params?: any) {
+  mockAuth(null);
+  const req = requestFactory();
+  const response = await apiCall(req, params);
+  expectUnauthorized(response);
+}
+
+/**
+ * Common test pattern: create test data, test API call, verify response
+ */
+export async function testSuccessfulGet(userId: string, apiCall: (req: any, params?: any) => Promise<Response>, requestFactory: () => any, params?: any) {
+  mockAuth(userId);
+  const req = requestFactory();
+  const response = await apiCall(req, params);
+  return response;
+}
+
+/**
+ * Create multiple test parties with different users for testing access control
+ */
+export async function createTestPartiesForUser(userId: string, count: number = 2, otherUserId: string = TEST_USERS.OTHER_USER) {
+  const ownedParties = [];
+  for (let i = 1; i <= count; i++) {
+    ownedParties.push(await createTestParty({ 
+      name: `User Party ${i}`, 
+      userId 
+    }));
+  }
+  
+  // Create one party for other user to test access control
+  await createTestParty({ 
+    name: 'Other User Party', 
+    userId: otherUserId 
+  });
+  
+  return ownedParties;
+}
+
+/**
+ * Standard test setup for beforeEach blocks in describe blocks
+ */
+export const standardTestSetup = {
+  beforeEach: async () => {
+    await cleanupParties();
+  }
+};
+
+/**
+ * Common pattern: test not found with non-existent ID
+ */
+export async function testNotFoundWithInvalidId(userId: string, apiCall: (req: any, params: any) => Promise<Response>, requestFactory: () => any) {
+  mockAuth(userId);
+  const req = requestFactory();
+  const nonExistentId = new mongoose.Types.ObjectId().toString();
+  const response = await apiCall(req, createAsyncParams(nonExistentId));
+  expectNotFound(response);
+}
+
+/**
+ * Setup describe block with standard test party creation
+ */
+export async function setupTestPartyScenario(userId: string = TEST_USERS.USER_123, partyName: string = 'Test Party') {
+  await standardTestSetup.beforeEach();
+  return await createTestParty({
+    userId,
+    name: partyName,
+  });
 }

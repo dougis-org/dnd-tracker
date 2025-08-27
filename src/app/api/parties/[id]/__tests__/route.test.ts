@@ -21,6 +21,11 @@ import {
   expectForbidden,
   expectBadRequest,
   expectDeleted,
+  testUnauthorizedAccess,
+  testSuccessfulGet,
+  testNotFoundWithInvalidId,
+  standardTestSetup,
+  setupTestPartyScenario,
 } from '../../__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -39,19 +44,15 @@ describe('GET /api/parties/[id]', () => {
   let testParty: IParty;
 
   beforeEach(async () => {
-    await cleanupParties();
-    testParty = await createTestParty({
-      userId: TEST_USERS.USER_123,
-      name: 'Test Party',
-    });
+    testParty = await setupTestPartyScenario();
   });
 
   it('should return 401 if user is not authenticated', async () => {
-    mockAuth(null);
-    const req = createGetRequest();
-    const response = await GET(req, createAsyncParams(testParty._id.toString()));
-
-    expectUnauthorized(response);
+    await testUnauthorizedAccess(
+      (req, params) => GET(req, params), 
+      createGetRequest,
+      createAsyncParams(testParty._id.toString())
+    );
   });
 
   it('should return party if user owns it', async () => {
@@ -63,12 +64,7 @@ describe('GET /api/parties/[id]', () => {
   });
 
   it('should return 404 if party not found', async () => {
-    mockAuth(TEST_USERS.USER_123);
-    const req = createGetRequest();
-    const nonExistentId = new mongoose.Types.ObjectId().toString();
-    const response = await GET(req, createAsyncParams(nonExistentId));
-
-    expectNotFound(response);
+    await testNotFoundWithInvalidId(TEST_USERS.USER_123, GET, createGetRequest);
   });
 
   it('should return 403 if user does not have access', async () => {
@@ -84,11 +80,7 @@ describe('PUT /api/parties/[id]', () => {
   let testParty: IParty;
 
   beforeEach(async () => {
-    await cleanupParties();
-    testParty = await createTestParty({
-      userId: TEST_USERS.USER_123,
-      name: 'Test Party',
-    });
+    testParty = await setupTestPartyScenario();
   });
 
   it('should return 401 if user is not authenticated', async () => {
@@ -154,11 +146,7 @@ describe('DELETE /api/parties/[id]', () => {
   let testParty: IParty;
 
   beforeEach(async () => {
-    await cleanupParties();
-    testParty = await createTestParty({
-      userId: TEST_USERS.USER_123,
-      name: 'Test Party',
-    });
+    testParty = await setupTestPartyScenario();
   });
 
   it('should return 401 if user is not authenticated', async () => {

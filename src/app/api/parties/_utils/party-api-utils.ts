@@ -126,43 +126,39 @@ export async function setupPartyRoute(params: Promise<{ id: string }>) {
 }
 
 /**
- * Route handler wrapper for GET operations
+ * Generic route handler wrapper 
  */
-export async function handleGetParty(params: Promise<{ id: string }>) {
+async function handlePartyOperation(
+  params: Promise<{ id: string }>, 
+  permissionHandler: (id: string, userId: string) => Promise<{ party: IParty | null; error: NextResponse | null }>
+) {
   const setup = await setupPartyRoute(params);
   if (setup.authError) return setup.authError;
   if (setup.validationError) return setup.validationError;
   
-  const { party, error } = await findPartyWithAccess(setup.id, setup.userId);
+  const { party, error } = await permissionHandler(setup.id, setup.userId);
   if (error) return error;
   
-  return { party, error: null };
+  return { party, id: setup.id, error: null };
+}
+
+/**
+ * Route handler wrapper for GET operations
+ */
+export async function handleGetParty(params: Promise<{ id: string }>) {
+  return handlePartyOperation(params, findPartyWithAccess);
 }
 
 /**
  * Route handler wrapper for PUT operations  
  */
 export async function handleUpdateParty(params: Promise<{ id: string }>) {
-  const setup = await setupPartyRoute(params);
-  if (setup.authError) return setup.authError;
-  if (setup.validationError) return setup.validationError;
-  
-  const { party, error } = await findPartyWithEditAccess(setup.id, setup.userId);
-  if (error) return error;
-  
-  return { party, id: setup.id, error: null };
+  return handlePartyOperation(params, findPartyWithEditAccess);
 }
 
 /**
  * Route handler wrapper for DELETE operations
  */
 export async function handleDeleteParty(params: Promise<{ id: string }>) {
-  const setup = await setupPartyRoute(params);
-  if (setup.authError) return setup.authError;
-  if (setup.validationError) return setup.validationError;
-  
-  const { party, error } = await findPartyWithDeleteAccess(setup.id, setup.userId);
-  if (error) return error;
-  
-  return { party, id: setup.id, error: null };
+  return handlePartyOperation(params, findPartyWithDeleteAccess);
 }
