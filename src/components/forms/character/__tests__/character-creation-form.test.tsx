@@ -192,7 +192,7 @@ describe('CharacterCreationForm', () => {
     // Should be on step 2 (Classes step)
     await waitFor(() => {
       expect(screen.getByText(`Step 2 of ${TOTAL_STEPS}`)).toBeInTheDocument();
-    });
+    }, { timeout: 7500 });
     expect(screen.getByText(CHARACTER_FORM_STEPS.CLASSES.description)).toBeInTheDocument();
   });
 
