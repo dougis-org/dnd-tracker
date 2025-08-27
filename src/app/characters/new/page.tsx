@@ -3,6 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { CharacterCreationForm } from '@/components/forms/character';
 
+// Disable static generation for this page since it requires auth
+export const dynamic = 'force-dynamic';
+
 export default function NewCharacterPage() {
   const router = useRouter();
 

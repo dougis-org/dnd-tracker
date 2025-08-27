@@ -248,6 +248,89 @@ Closes **Issue**
 
 ---
 
+## Deployment Requirements
+
+### Environment Variables
+
+The application requires specific environment variables for both development and production deployment. These must be configured in:
+
+- **Development**: `.env.local` file (not committed to repository)
+- **Production**: Fly.io secrets (for deployment) and environment variables (for runtime)
+
+#### Required Secrets
+
+The following environment variables are required and must be kept secure:
+
+```bash
+# Clerk Authentication (required at both build and runtime)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...   # Public key for Clerk authentication
+CLERK_SECRET_KEY=sk_live_...                    # Private key for Clerk server-side operations
+
+# Database
+MONGODB_URI=mongodb://...                       # MongoDB connection string
+
+# Optional Clerk URLs (have sensible defaults)
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+```
+
+#### Setting Up Fly.io Secrets
+
+For production deployment on Fly.io, configure secrets using the Fly CLI:
+
+```bash
+# Set required secrets for production deployment
+flyctl secrets set NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_live_..."
+flyctl secrets set CLERK_SECRET_KEY="sk_live_..."
+flyctl secrets set MONGODB_URI="mongodb://..."
+
+# Verify secrets are configured
+flyctl secrets list
+```
+
+### Docker Build Considerations
+
+The Docker build process has been configured to handle missing environment variables gracefully:
+
+- **Build Time**: Uses placeholder values for Clerk keys to prevent build failures
+- **Runtime**: Actual secret values are injected by Fly.io automatically
+
+#### Important Notes for Contributors
+
+1. **Local Development**: Ensure your `.env.local` file contains all required environment variables
+2. **Docker Builds**: The build process will use placeholder values during the build phase
+3. **Production Deployment**: Fly.io automatically injects secrets as environment variables at runtime
+4. **Testing**: Use test values in `.env.test` or test configuration files
+
+### Deployment Commands
+
+```bash
+# Deploy to Fly.io (requires secrets to be configured first)
+flyctl deploy
+
+# Check deployment status
+flyctl status
+
+# View application logs
+flyctl logs
+
+# Scale application (if needed)
+flyctl scale count 1
+```
+
+### Troubleshooting Deployment Issues
+
+If you encounter deployment issues:
+
+1. **Build Failures**: Check that the Dockerfile builds locally with `docker build .`
+2. **Runtime Errors**: Verify all required secrets are set with `flyctl secrets list`
+3. **Authentication Issues**: Ensure Clerk keys are valid and properly configured
+4. **Database Connection**: Verify MongoDB URI is accessible from Fly.io infrastructure
+
+---
+
 ## Tools
 
 - Codacy CLI: `/usr/local/bin/codacy-cli`
@@ -256,4 +339,4 @@ Closes **Issue**
 
 ---
 
-By following these unified instructions, all contributors—including GitHub Copilot—will ensure consistent, high-quality, and secure code that meets the project’s standards and workflow requirements.
+By following these unified instructions, all contributors—including GitHub Copilot—will ensure consistent, high-quality, and secure code that meets the project's standards and workflow requirements.

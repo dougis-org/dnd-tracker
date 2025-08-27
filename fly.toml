@@ -5,7 +5,6 @@ app = 'dnd-tracker'
 primary_region = 'sea'
 
 [build]
-  # Build secrets must be passed via --build-secret flags in deploy command
 
 [env]
   NODE_ENV = 'production'
