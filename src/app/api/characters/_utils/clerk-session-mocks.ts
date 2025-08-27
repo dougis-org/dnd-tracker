@@ -1,7 +1,7 @@
 // Clerk session mock helpers (restored from main)
 export type ClerkSessionMock = {
   userId: string | null;
-  sessionId: string | null;
+  sessionId: null;
   sessionStatus: 'active' | 'signed_out' | null;
   sessionClaims: any;
   actor?: any;
@@ -63,10 +63,10 @@ export function getMockSignedInSession({
   orgSlug = 'test-org',
   orgPermissions = [],
   factorVerificationAge = [0, 0],
-}: Partial<ClerkSessionMock> = {}): ClerkSessionMock {
+}: Partial<Omit<ClerkSessionMock, 'sessionId'>> = {}): ClerkSessionMock {
   return {
     userId,
-    sessionId: null, // Always null for compatibility
+    sessionId: null,
     sessionStatus: 'active',
     sessionClaims,
     actor,

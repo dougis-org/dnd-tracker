@@ -1,7 +1,11 @@
 /**
  * @jest-environment node
  */
-import { ClerkSessionMock, getMockSignedOutSession, getMockSignedInSession } from '@/app/api/characters/_utils/clerk-session-mocks';
+import {
+  ClerkSessionMock,
+  getMockSignedOutSession,
+  getMockSignedInSession,
+} from '@/app/api/characters/_utils/clerk-session-mocks';
 import { NextRequest } from 'next/server';
 import { POST } from '../route';
 import { auth } from '@clerk/nextjs/server';
@@ -52,7 +56,6 @@ describe('POST /api/characters/[id]/duplicate', () => {
     mockAuth.mockResolvedValue(
       getMockSignedInSession({
         userId: 'user_12345',
-        sessionId: 'session_12345',
         sessionClaims: {
           sub: 'user_12345',
           iss: '',
@@ -82,7 +85,6 @@ describe('POST /api/characters/[id]/duplicate', () => {
     mockAuth.mockResolvedValue(
       getMockSignedInSession({
         userId: 'user_12345',
-        sessionId: 'session_12345',
         sessionClaims: {
           sub: 'user_12345',
           iss: '',
@@ -97,7 +99,10 @@ describe('POST /api/characters/[id]/duplicate', () => {
         isAuthenticated: true,
       })
     );
-    mockConnectToDatabase.mockResolvedValue(undefined);
+    mockConnectToDatabase.mockResolvedValue({
+      connection: {} as any,
+      db: {} as any,
+    });
     (CharacterModel.findOne as jest.Mock).mockResolvedValue(null);
 
     const response = await POST(
@@ -176,7 +181,6 @@ describe('POST /api/characters/[id]/duplicate', () => {
     mockAuth.mockResolvedValue(
       getMockSignedInSession({
         userId: mockUserId,
-        sessionId: 'session_12345',
         sessionClaims: {
           sub: mockUserId,
           iss: '',
@@ -190,7 +194,10 @@ describe('POST /api/characters/[id]/duplicate', () => {
         actor: undefined,
       })
     );
-    mockConnectToDatabase.mockResolvedValue(undefined);
+    mockConnectToDatabase.mockResolvedValue({
+      connection: {} as any,
+      db: {} as any,
+    });
     (CharacterModel.findOne as jest.Mock).mockResolvedValue(originalCharacter);
     (CharacterModel.create as jest.Mock).mockResolvedValue(duplicatedCharacter);
 
@@ -258,7 +265,6 @@ describe('POST /api/characters/[id]/duplicate', () => {
     mockAuth.mockResolvedValue(
       getMockSignedInSession({
         userId: mockUserId,
-        sessionId: 'session_12345',
         sessionClaims: {
           sub: mockUserId,
           iss: '',
@@ -273,7 +279,10 @@ describe('POST /api/characters/[id]/duplicate', () => {
         isAuthenticated: true,
       })
     );
-    mockConnectToDatabase.mockResolvedValue(undefined);
+    mockConnectToDatabase.mockResolvedValue({
+      connection: {} as any,
+      db: {} as any,
+    });
     (CharacterModel.findOne as jest.Mock).mockResolvedValue(originalCharacter);
     (CharacterModel.create as jest.Mock).mockResolvedValue(duplicatedCharacter);
 
@@ -296,7 +305,6 @@ describe('POST /api/characters/[id]/duplicate', () => {
     mockAuth.mockResolvedValue(
       getMockSignedInSession({
         userId: 'user_12345',
-        sessionId: 'session_12345',
         sessionClaims: {
           sub: 'user_12345',
           iss: '',
@@ -337,7 +345,6 @@ describe('POST /api/characters/[id]/duplicate', () => {
     mockAuth.mockResolvedValue(
       getMockSignedInSession({
         userId: mockUserId,
-        sessionId: 'session_12345',
         sessionClaims: {
           sub: mockUserId,
           iss: '',
@@ -352,7 +359,10 @@ describe('POST /api/characters/[id]/duplicate', () => {
         isAuthenticated: true,
       })
     );
-    mockConnectToDatabase.mockResolvedValue(undefined);
+    mockConnectToDatabase.mockResolvedValue({
+      connection: {} as any,
+      db: {} as any,
+    });
     (CharacterModel.findOne as jest.Mock).mockResolvedValue(originalCharacter);
     (CharacterModel.create as jest.Mock).mockRejectedValue(
       new Error('Creation failed')
@@ -383,7 +393,6 @@ describe('POST /api/characters/[id]/duplicate', () => {
     mockAuth.mockResolvedValue(
       getMockSignedInSession({
         userId: mockUserId,
-        sessionId: 'session_12345',
         sessionClaims: {
           sub: mockUserId,
           iss: '',
@@ -398,7 +407,10 @@ describe('POST /api/characters/[id]/duplicate', () => {
         isAuthenticated: true,
       })
     );
-    mockConnectToDatabase.mockResolvedValue(undefined);
+    mockConnectToDatabase.mockResolvedValue({
+      connection: {} as any,
+      db: {} as any,
+    });
     (CharacterModel.findOne as jest.Mock).mockResolvedValue(originalCharacter);
     (CharacterModel.create as jest.Mock).mockRejectedValue(validationError);
 
