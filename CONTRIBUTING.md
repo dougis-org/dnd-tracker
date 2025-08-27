@@ -2,6 +2,9 @@
 
 Welcome! This project follows strict engineering, workflow, and coding standards to ensure high quality, maintainability, and security. All contributors—including GitHub Copilot—must follow these unified instructions.
 
+- Github organization is dougis-org
+- repository name is dnd-tracker
+
 ---
 
 ## Core Principles
@@ -18,6 +21,7 @@ Welcome! This project follows strict engineering, workflow, and coding standards
 ### 1. Issue Selection & Branching
 
 - Select issues by priority (P1 > P2, Phase1 > Phase2, lower# first).
+  - Examine the docs/execution-plan.md to find the next open issue, if none found, review all open issues in GitHub
 - Do not start work on issues labeled `in-progress` or `effort:human`.
 - Add the `in-progress` label when starting.
 - Create a feature branch from `main` using descriptive, kebab-case naming:  
@@ -64,6 +68,7 @@ Before creating a PR, ensure:
 ### 5. Post-PR Process
 
 - Monitor for CI/CD failures and address promptly.
+- Monitor for any PR comments and address those promptly.
 - PR will auto-merge once all requirements are satisfied.
 - Update task status and remove `in-progress` label after merge.
 - Prune local branches after merge.
