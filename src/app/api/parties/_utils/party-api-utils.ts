@@ -116,11 +116,11 @@ export function handleApiError(error: any, operation: string): NextResponse {
  */
 export async function setupPartyRoute(params: Promise<{ id: string }>) {
   const { userId, error: authError } = await authenticateUser();
-  if (authError) return { authError };
+  if (authError) return { authError, userId: null, id: null, validationError: null };
 
   const { id } = await params;
   const { valid, error: validationError } = validateObjectId(id);
-  if (!valid) return { validationError };
+  if (!valid) return { validationError, userId: null, id: null, authError: null };
 
   return { userId: userId!, id, authError: null, validationError: null };
 }
@@ -135,6 +135,11 @@ async function handlePartyOperation(
   const setup = await setupPartyRoute(params);
   if (setup.authError) return setup.authError;
   if (setup.validationError) return setup.validationError;
+  
+  // At this point, we know userId and id are not null due to early returns above
+  if (!setup.userId || !setup.id) {
+    throw new Error('Setup should have returned valid userId and id');
+  }
   
   const { party, error } = await permissionHandler(setup.id, setup.userId);
   if (error) return error;
