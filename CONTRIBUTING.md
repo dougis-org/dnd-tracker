@@ -255,14 +255,14 @@ Closes **Issue**
 The application requires specific environment variables for both development and production deployment. These must be configured in:
 
 - **Development**: `.env.local` file (not committed to repository)
-- **Production**: Fly.io secrets (for deployment) and environment variables (for runtime)
+- **Production (Fly.io)**: Secrets are managed via `flyctl secrets set`, and non-sensitive environment variables are configured in `fly.toml`
 
 #### Required Secrets
 
 The following environment variables are required and must be kept secure:
 
 ```bash
-# Clerk Authentication (required at both build and runtime)
+# Clerk Authentication (secrets required at runtime; a fallback is used during build)
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...   # Public key for Clerk authentication
 CLERK_SECRET_KEY=sk_live_...                    # Private key for Clerk server-side operations
 
