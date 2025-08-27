@@ -77,7 +77,7 @@ Z:\dev\Code\dnd-tracker\docs\
    **05-character-list.md** - Build character list view
 6. [#17](https://github.com/dougis-org/dnd-tracker/issues/17) ✅
    **06-character-details.md** - Implement character detail page
-7. [#18](https://github.com/dougis-org/dnd-tracker/issues/18)
+7. [#18](https://github.com/dougis-org/dnd-tracker/issues/18) ✅
    **07-multiclassing-support.md** - Add multiclassing functionality
 8. [#19](https://github.com/dougis-org/dnd-tracker/issues/19) ✅
    **08-character-validation.md** - Implement field validation and business rules
