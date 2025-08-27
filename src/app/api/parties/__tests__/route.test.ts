@@ -10,7 +10,6 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
 // Node.js v24 has built-in fetch support - no polyfill needed
-
 jest.mock('@clerk/nextjs/server', () => ({
   auth: jest.fn(),
 }));

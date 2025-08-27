@@ -118,6 +118,27 @@ To roll back the most recent migration, run the following command:
 npm run migrate:down
 ```
 
+## Party Model
+
+The Party model allows grouping characters for campaigns, sharing with other users, and creating reusable templates. Key features:
+
+- **Fields:**
+  - `userId`: Owner's Clerk ID
+  - `name`, `description`, `campaignName`: Party details
+  - `characters`: Array of character objects (with player info, active status, join date)
+  - `sharedWith`: Array of users with roles (`viewer` or `editor`)
+  - `isTemplate`, `templateCategory`: Template support
+  - `maxSize`: Character limit (enforced by subscription tier)
+  - `createdAt`, `updatedAt`: Timestamps
+
+- **Validation:**
+  - Character count is validated against `maxSize` (tier limit)
+  - All input is sanitized by Mongoose schema
+
+- **Usage:**
+  - Use the Party model for campaign management, sharing, and template creation
+  - See `src/models/Party.ts` and `src/models/__tests__/Party.test.ts` for implementation and tests
+
 ## Contributing
 
 Contributions are welcome! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information on how to contribute to this project.
