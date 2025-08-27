@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { GET, POST } from '../route';
 import { Party } from '@/models/Party';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -6,15 +9,7 @@ import { setupTestDatabase, teardownTestDatabase } from '@/models/_utils/test-ut
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
 
-// Polyfill Request for Node.js test environment
-if (typeof global.Request === 'undefined') {
-  global.Request = require('node-fetch').Request;
-}
-
-// Polyfill Request for Node.js test environment
-if (typeof global.Request === 'undefined') {
-  global.Request = require('node-fetch').Request;
-}
+// Node.js v24 has built-in fetch support - no polyfill needed
 
 jest.mock('@clerk/nextjs/server', () => ({
   auth: jest.fn(),
