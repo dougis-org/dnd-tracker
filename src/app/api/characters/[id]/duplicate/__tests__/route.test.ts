@@ -2,7 +2,6 @@
  * @jest-environment node
  */
 import {
-  ClerkSessionMock,
   getMockSignedOutSession,
   getMockSignedInSession,
 } from '@/app/api/characters/_utils/clerk-session-mocks';
@@ -67,6 +66,7 @@ describe('POST /api/characters/[id]/duplicate', () => {
           __raw: '',
         },
         actor: undefined,
+        isAuthenticated: true,
       })
     );
 

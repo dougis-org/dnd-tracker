@@ -107,7 +107,10 @@ describe('/api/characters', () => {
 
     it('should handle character query errors', async () => {
       setupAuthenticatedUser();
-      mockConnectToDatabase.mockResolvedValue(undefined);
+      mockConnectToDatabase.mockResolvedValue({
+        connection: {} as any,
+        db: {} as any,
+      });
 
       const mockSort = jest.fn().mockRejectedValue(new Error('Query failed'));
       (CharacterModel.find as jest.Mock).mockReturnValue({ sort: mockSort });

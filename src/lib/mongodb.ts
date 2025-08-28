@@ -3,11 +3,19 @@ import { getDatabaseConfig } from './env';
 
 let isConnected = false;
 
-export async function connectToDatabase(): Promise<void> {
+export interface DatabaseConnection {
+  connection: typeof mongoose.connection;
+  db: mongoose.mongo.Db;
+}
+
+export async function connectToDatabase(): Promise<DatabaseConnection> {
   const { uri: MONGODB_URI } = getDatabaseConfig();
 
   if (isConnected && mongoose.connection.readyState === 1) {
-    return;
+    return {
+      connection: mongoose.connection,
+      db: mongoose.connection.db!,
+    };
   }
 
   try {
@@ -15,6 +23,11 @@ export async function connectToDatabase(): Promise<void> {
       bufferCommands: false,
     });
     isConnected = true;
+
+    return {
+      connection: mongoose.connection,
+      db: mongoose.connection.db!,
+    };
   } catch (error) {
     isConnected = false;
     throw error;

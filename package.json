@@ -19,9 +19,9 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "format": "prettier --write .",
-    "migrate:create": "migrate-mongoose create",
-    "migrate:up": "migrate-mongoose up",
-    "migrate:down": "migrate-mongoose down"
+    "migrate:up": "mongoose-migrate up",
+    "migrate:down": "mongoose-migrate down",
+    "migrate:create": "mongoose-migrate create"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.31.4",
@@ -35,7 +35,6 @@
     "clsx": "^2.1.1",
     "dotenv": "^17.2.1",
     "lucide-react": "^0.541.0",
-    "migrate-mongoose": "^4.0.0",
     "mongodb": "^6.18.0",
     "mongoose": "^8.18.0",
     "next": "15.5.0",
@@ -51,6 +50,7 @@
   "devDependencies": {
     "@babel/preset-typescript": "^7.27.1",
     "@eslint/eslintrc": "^3.3.1",
+    "@mongoosejs/migrations": "^0.3.1",
     "@playwright/test": "^1.55.0",
     "@tailwindcss/postcss": "^4.1.12",
     "@testing-library/jest-dom": "^6.8.0",

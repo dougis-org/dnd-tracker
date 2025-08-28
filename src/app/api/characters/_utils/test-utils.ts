@@ -15,20 +15,22 @@ export const validCharacterData = {
   background: 'Hermit',
   alignment: 'Neutral Good',
   experiencePoints: 0,
-  classes: [{
-    className: 'Wizard',
-    level: 1,
-    hitDiceSize: 6,
-    hitDiceUsed: 0
-  }],
+  classes: [
+    {
+      className: 'Wizard',
+      level: 1,
+      hitDiceSize: 6,
+      hitDiceUsed: 0,
+    },
+  ],
   abilities: {
     strength: 10,
     dexterity: 14,
     constitution: 12,
     intelligence: 18,
     wisdom: 16,
-    charisma: 13
-  }
+    charisma: 13,
+  },
 };
 
 export const sampleCharacter = {
@@ -38,15 +40,20 @@ export const sampleCharacter = {
   totalLevel: 1,
   proficiencyBonus: 2,
   createdAt: '2025-08-24T04:08:58.131Z',
-  updatedAt: '2025-08-24T04:08:58.131Z'
+  updatedAt: '2025-08-24T04:08:58.131Z',
 };
 
 export const mockAuth = auth as jest.MockedFunction<typeof auth>;
-export const mockConnectToDatabase = connectToDatabase as jest.MockedFunction<typeof connectToDatabase>;
+export const mockConnectToDatabase = connectToDatabase as jest.MockedFunction<
+  typeof connectToDatabase
+>;
 
 export function setupAuthenticatedUser() {
   mockAuth.mockReturnValue({ userId: mockUserId } as any);
-  mockConnectToDatabase.mockResolvedValue(undefined);
+  mockConnectToDatabase.mockResolvedValue({
+    connection: {} as any,
+    db: {} as any,
+  });
 }
 
 export function setupUnauthenticatedUser() {
@@ -54,7 +61,9 @@ export function setupUnauthenticatedUser() {
 }
 
 export function setupDatabaseError() {
-  mockConnectToDatabase.mockRejectedValue(new Error('Database connection failed'));
+  mockConnectToDatabase.mockRejectedValue(
+    new Error('Database connection failed')
+  );
 }
 
 export function createMockRequest(url: string, options?: any): NextRequest {
@@ -72,7 +81,7 @@ export function setupCharacterModelMocks() {
     findOneAndDelete: CharacterModel.findOneAndDelete as jest.Mock,
     find: CharacterModel.find as jest.Mock,
     create: CharacterModel.create as jest.Mock,
-    countDocuments: CharacterModel.countDocuments as jest.Mock
+    countDocuments: CharacterModel.countDocuments as jest.Mock,
   };
 }
 
