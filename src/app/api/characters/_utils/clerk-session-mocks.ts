@@ -1,5 +1,8 @@
 // Codacy CLI analysis required after file edit (see .github/instructions/codacy.instructions.md)
-import type { Mock } from 'jest-mock';
+// Use Clerk-compatible function signatures for mocks, not Jest Mock
+
+// Codacy CLI analysis required after file edit (see .github/instructions/codacy.instructions.md)
+// Use Clerk-compatible function signatures for mocks, not Jest Mock
 
 export type JwtPayload = {
   sub: string;
@@ -17,19 +20,19 @@ export type SignedInAuthObject = {
   sessionId: string;
   sessionStatus: 'active';
   sessionClaims: JwtPayload;
-  actor?: undefined;
-  getToken: Mock;
+  actor: undefined;
+  getToken: () => Promise<string>;
   isAuthenticated: true;
   tokenType: 'session_token';
-  orgId?: string;
-  orgRole?: string;
-  orgSlug?: string;
+  orgId: string;
+  orgRole: string;
+  orgSlug: string;
   orgPermissions: unknown;
   factorVerificationAge: unknown;
   redirectToSignIn: () => never;
   redirectToSignUp: () => never;
-  has: Mock;
-  debug: Mock;
+  has: () => boolean;
+  debug: () => Record<string, unknown>;
 };
 
 export type SignedOutAuthObject = {
@@ -38,7 +41,7 @@ export type SignedOutAuthObject = {
   sessionStatus: null;
   sessionClaims: null;
   actor: null;
-  getToken: Mock;
+  getToken: () => Promise<null>;
   isAuthenticated: false;
   tokenType: 'session_token';
   orgId: null;
@@ -48,8 +51,8 @@ export type SignedOutAuthObject = {
   factorVerificationAge: null;
   redirectToSignIn: () => never;
   redirectToSignUp: () => never;
-  has: Mock;
-  debug: Mock;
+  has: () => boolean;
+  debug: () => Record<string, unknown>;
 };
 
 export function getMockSignedOutSession(): SignedOutAuthObject {
@@ -59,7 +62,7 @@ export function getMockSignedOutSession(): SignedOutAuthObject {
     sessionStatus: null,
     sessionClaims: null,
     actor: null,
-    getToken: jest.fn() as unknown as Mock,
+    getToken: async () => null,
     isAuthenticated: false,
     tokenType: 'session_token',
     orgId: null,
@@ -73,8 +76,8 @@ export function getMockSignedOutSession(): SignedOutAuthObject {
     redirectToSignUp: () => {
       throw new Error('redirect');
     },
-    has: jest.fn() as unknown as Mock,
-    debug: jest.fn() as unknown as Mock,
+    has: () => false,
+    debug: () => ({}),
   };
 }
 
@@ -95,13 +98,13 @@ export function getMockSignedInSession(
       aud: '',
       __raw: '',
     },
-    actor: undefined,
-    getToken: jest.fn() as unknown as Mock,
+    actor: params?.actor ?? undefined,
+    getToken: async () => 'mock-token',
     isAuthenticated: true,
     tokenType: 'session_token',
-    orgId: params?.orgId,
-    orgRole: params?.orgRole,
-    orgSlug: params?.orgSlug,
+    orgId: params?.orgId ?? '',
+    orgRole: params?.orgRole ?? '',
+    orgSlug: params?.orgSlug ?? '',
     orgPermissions: params?.orgPermissions ?? [],
     factorVerificationAge: params?.factorVerificationAge ?? [0, 0],
     redirectToSignIn: () => {
@@ -110,7 +113,7 @@ export function getMockSignedInSession(
     redirectToSignUp: () => {
       throw new Error('redirect');
     },
-    has: jest.fn() as unknown as Mock,
-    debug: jest.fn() as unknown as Mock,
+    has: () => true,
+    debug: () => ({}),
   };
 }

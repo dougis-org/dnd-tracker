@@ -3,7 +3,10 @@
  */
 import { GET, PUT, DELETE } from '../route';
 import { Party, IParty } from '@/models/Party';
-import { setupTestDatabase, teardownTestDatabase } from '@/models/_utils/test-utils';
+import {
+  setupTestDatabase,
+  teardownTestDatabase,
+} from '@/models/_utils/test-utils';
 import { auth } from '@clerk/nextjs/server';
 import mongoose from 'mongoose';
 import {
@@ -47,20 +50,34 @@ describe('GET /api/parties/[id]', () => {
     testParty = await setupTestPartyScenario();
   });
 
+  function getPartyIdString(party: IParty): string {
+    // Handles both ObjectId and string
+    if (typeof party._id === 'string') return party._id;
+    if (party._id && typeof party._id.toString === 'function')
+      return party._id.toString();
+    throw new Error('Invalid party._id');
+  }
+
   it('should return 401 if user is not authenticated', async () => {
     await testUnauthorizedAccess(
-      (req, params) => GET(req, params), 
+      (req, params) => GET(req, params),
       createGetRequest,
-      createAsyncParams(testParty._id.toString())
+      createAsyncParams(getPartyIdString(testParty))
     );
   });
 
   it('should return party if user owns it', async () => {
     mockAuth(TEST_USERS.USER_123);
     const req = createGetRequest();
-    const response = await GET(req, createAsyncParams(testParty._id.toString()));
+    const response = await GET(
+      req,
+      createAsyncParams(getPartyIdString(testParty))
+    );
 
-    await expectPartyResponse(response, { name: 'Test Party', userId: TEST_USERS.USER_123 });
+    await expectPartyResponse(response, {
+      name: 'Test Party',
+      userId: TEST_USERS.USER_123,
+    });
   });
 
   it('should return 404 if party not found', async () => {
@@ -70,7 +87,10 @@ describe('GET /api/parties/[id]', () => {
   it('should return 403 if user does not have access', async () => {
     mockAuth(TEST_USERS.OTHER_USER);
     const req = createGetRequest();
-    const response = await GET(req, createAsyncParams(testParty._id.toString()));
+    const response = await GET(
+      req,
+      createAsyncParams(testParty._id.toString())
+    );
 
     expectForbidden(response);
   });
@@ -83,19 +103,35 @@ describe('PUT /api/parties/[id]', () => {
     testParty = await setupTestPartyScenario();
   });
 
+  function getPartyIdString(party: IParty): string {
+    if (typeof party._id === 'string') return party._id;
+    if (party._id && typeof party._id.toString === 'function')
+      return party._id.toString();
+    throw new Error('Invalid party._id');
+  }
+
   it('should return 401 if user is not authenticated', async () => {
     mockAuth(null);
     const req = createPutRequest({ name: 'Updated Party' });
-    const response = await PUT(req, createAsyncParams(testParty._id.toString()));
+    const response = await PUT(
+      req,
+      createAsyncParams(getPartyIdString(testParty))
+    );
 
     expectUnauthorized(response);
   });
 
   it('should update party if user owns it', async () => {
     mockAuth(TEST_USERS.USER_123);
-    const updateData = { name: 'Updated Party', description: 'Updated Description' };
+    const updateData = {
+      name: 'Updated Party',
+      description: 'Updated Description',
+    };
     const req = createPutRequest(updateData);
-    const response = await PUT(req, createAsyncParams(testParty._id.toString()));
+    const response = await PUT(
+      req,
+      createAsyncParams(getPartyIdString(testParty))
+    );
 
     await expectPartyResponse(response, updateData);
   });
@@ -112,7 +148,10 @@ describe('PUT /api/parties/[id]', () => {
   it('should return 403 if user does not have edit permission', async () => {
     mockAuth(TEST_USERS.OTHER_USER);
     const req = createPutRequest({ name: 'Updated Party' });
-    const response = await PUT(req, createAsyncParams(testParty._id.toString()));
+    const response = await PUT(
+      req,
+      createAsyncParams(testParty._id.toString())
+    );
 
     expectForbidden(response);
   });
@@ -128,7 +167,10 @@ describe('PUT /api/parties/[id]', () => {
 
     mockAuth(TEST_USERS.EDITOR_USER);
     const req = createPutRequest({ name: 'Editor Updated Party' });
-    const response = await PUT(req, createAsyncParams(testParty._id.toString()));
+    const response = await PUT(
+      req,
+      createAsyncParams(testParty._id.toString())
+    );
 
     await expectPartyResponse(response, { name: 'Editor Updated Party' });
   });
@@ -136,7 +178,10 @@ describe('PUT /api/parties/[id]', () => {
   it('should return 400 for invalid data', async () => {
     mockAuth(TEST_USERS.USER_123);
     const req = createPutRequest({ name: '' }); // Empty name should be invalid
-    const response = await PUT(req, createAsyncParams(testParty._id.toString()));
+    const response = await PUT(
+      req,
+      createAsyncParams(testParty._id.toString())
+    );
 
     expectBadRequest(response);
   });
@@ -149,10 +194,20 @@ describe('DELETE /api/parties/[id]', () => {
     testParty = await setupTestPartyScenario();
   });
 
+  function getPartyIdString(party: IParty): string {
+    if (typeof party._id === 'string') return party._id;
+    if (party._id && typeof party._id.toString === 'function')
+      return party._id.toString();
+    throw new Error('Invalid party._id');
+  }
+
   it('should return 401 if user is not authenticated', async () => {
     mockAuth(null);
     const req = createDeleteRequest();
-    const response = await DELETE(req, createAsyncParams(testParty._id.toString()));
+    const response = await DELETE(
+      req,
+      createAsyncParams(getPartyIdString(testParty))
+    );
 
     expectUnauthorized(response);
   });
@@ -160,12 +215,15 @@ describe('DELETE /api/parties/[id]', () => {
   it('should delete party if user owns it', async () => {
     mockAuth(TEST_USERS.USER_123);
     const req = createDeleteRequest();
-    const response = await DELETE(req, createAsyncParams(testParty._id.toString()));
+    const response = await DELETE(
+      req,
+      createAsyncParams(getPartyIdString(testParty))
+    );
 
     expectDeleted(response);
-    
+
     // Verify party was deleted
-    const deletedParty = await Party.findById(testParty._id);
+    const deletedParty = await Party.findById(getPartyIdString(testParty));
     expect(deletedParty).toBeNull();
   });
 
@@ -181,7 +239,10 @@ describe('DELETE /api/parties/[id]', () => {
   it('should return 403 if user does not have permission', async () => {
     mockAuth(TEST_USERS.OTHER_USER);
     const req = createDeleteRequest();
-    const response = await DELETE(req, createAsyncParams(testParty._id.toString()));
+    const response = await DELETE(
+      req,
+      createAsyncParams(testParty._id.toString())
+    );
 
     expectForbidden(response);
   });
@@ -197,7 +258,10 @@ describe('DELETE /api/parties/[id]', () => {
 
     mockAuth(TEST_USERS.EDITOR_USER);
     const req = createDeleteRequest();
-    const response = await DELETE(req, createAsyncParams(testParty._id.toString()));
+    const response = await DELETE(
+      req,
+      createAsyncParams(testParty._id.toString())
+    );
 
     expectForbidden(response);
   });

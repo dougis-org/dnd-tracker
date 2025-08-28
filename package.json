@@ -19,9 +19,9 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "format": "prettier --write .",
-    "migrate:up": "mongoose-migrate up",
-    "migrate:down": "mongoose-migrate down",
-    "migrate:create": "mongoose-migrate create"
+    "migrate:up": "mongoose-migrations up",
+    "migrate:down": "mongoose-migrations down",
+    "migrate:create": "mongoose-migrations create"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.31.4",
