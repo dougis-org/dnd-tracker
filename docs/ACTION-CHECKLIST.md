@@ -1,3 +1,4 @@
+# Codacy analysis required after markdownlint fixes
 # 🚨 IMMEDIATE ACTION CHECKLIST
 
 ## Quick Status
@@ -7,15 +8,15 @@
 - **Problem**: ~71 TypeScript errors after `connectToDatabase` refactor (as of Aug 27, 2025)
 - **Tests**: Migration security test PASSING ✅, others failing due to TS errors
 
-## ⚡ Priority 1: Fix Test Mocks (Required for progress)
+## ⚡ Priority 1 Fix Test Mocks (Required for progress)
 
 ### Files with `mockConnectToDatabase.mockResolvedValue(undefined)` (verify all fixed!)
 
-```
+```bash
 src/app/api/characters/[id]/duplicate/__tests__/route.test.ts (lines 286, 365, 411)
 ```
 
-### Fix Pattern:
+### Fix Pattern
 
 ```typescript
 // Replace this:
@@ -28,29 +29,29 @@ mockConnectToDatabase.mockResolvedValue({
 });
 ```
 
-### Verification:
+### Verification
 
 ```bash
 npx tsc --noEmit  # Should reduce error count
 ```
 
-## ⚡ Priority 2: Fix Remaining TypeScript Errors
+## ⚡ Priority 2 Fix Remaining TypeScript Errors
 
-### Major categories (after mock fixes):
+### Major categories (after mock fixes)
 
 1. **Auth mocking issues** - Clerk session types (actor property, session mocks)
 2. **Schema type mismatches** - Form validation types (Zod, resolver, etc)
 3. **MongoDB model types** - `_id` field typing in tests
 4. **Environment variable types** - NODE_ENV requirements in env tests
 
-### Verification:
+### Verification (Step 4)
 
 ```bash
 npx tsc --noEmit  # Target: 0 errors
 npm test          # Target: All passing
 ```
 
-## ⚡ Priority 3: Remove Vulnerable Dependencies
+## ⚡ Priority 3 Remove Vulnerable Dependencies
 
 ```bash
 npm uninstall migrate-mongoose
@@ -58,7 +59,7 @@ rm migrate-mongoose-config.js
 npm audit  # Verify clean
 ```
 
-## 📍 Current connectToDatabase Interface:
+## 📍 Current connectToDatabase Interface
 
 ```typescript
 export interface DatabaseConnection {
@@ -68,7 +69,7 @@ export interface DatabaseConnection {
 export async function connectToDatabase(): Promise<DatabaseConnection>;
 ```
 
-## 🎯 Success Criteria:
+## 🎯 Success Criteria
 
 - [ ] 0 TypeScript errors
 - [ ] All tests passing
