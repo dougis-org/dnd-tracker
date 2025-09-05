@@ -46,6 +46,8 @@
     "react-hook-form": "^7.62.0",
     "svix": "^1.74.1",
     "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7",
+    "tsconfig-paths-jest": "^0.0.1",
     "zod": "^4.1.1"
   },
   "devDependencies": {
@@ -72,7 +74,6 @@
     "msw": "^2.10.5",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
-    "tailwindcss": "^4.1.12",
     "typescript": "^5.9.2"
   }
 }

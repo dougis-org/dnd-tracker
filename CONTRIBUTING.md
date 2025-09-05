@@ -2,6 +2,9 @@
 
 Welcome! This project follows strict engineering, workflow, and coding standards to ensure high quality, maintainability, and security. All contributors—including GitHub Copilot—must follow these unified instructions.
 
+- Github organization is dougis-org
+- repository name is dnd-tracker
+
 ---
 
 ## Core Principles
@@ -18,10 +21,11 @@ Welcome! This project follows strict engineering, workflow, and coding standards
 ### 1. Issue Selection & Branching
 
 - Select issues by priority (P1 > P2, Phase1 > Phase2, lower# first).
+  - Examine the docs/execution-plan.md to find the next open issue, if none found, review all open issues in GitHub
 - Do not start work on issues labeled `in-progress` or `effort:human`.
 - Add the `in-progress` label when starting.
-- Create a feature branch from `main` using descriptive, kebab-case naming:  
-  `feature/task-description` or `feature/component-name`.
+- Create a feature branch from `main` using descriptive, kebab-case naming and including the issue number:  
+  `feature/123-task-description` or `feature/123-component-name`.
 - Push the branch immediately.
 
 ### 2. Development Process (TDD Required)
@@ -64,6 +68,7 @@ Before creating a PR, ensure:
 ### 5. Post-PR Process
 
 - Monitor for CI/CD failures and address promptly.
+- Monitor for any PR comments and address those promptly.
 - PR will auto-merge once all requirements are satisfied.
 - Update task status and remove `in-progress` label after merge.
 - Prune local branches after merge.
@@ -248,6 +253,89 @@ Closes **Issue**
 
 ---
 
+## Deployment Requirements
+
+### Environment Variables
+
+The application requires specific environment variables for both development and production deployment. These must be configured in:
+
+- **Development**: `.env.local` file (not committed to repository)
+- **Production (Fly.io)**: Secrets are managed via `flyctl secrets set`, and non-sensitive environment variables are configured in `fly.toml`
+
+#### Required Secrets
+
+The following environment variables are required and must be kept secure:
+
+```bash
+# Clerk Authentication (secrets required at runtime; a fallback is used during build)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...   # Public key for Clerk authentication
+CLERK_SECRET_KEY=sk_live_...                    # Private key for Clerk server-side operations
+
+# Database
+MONGODB_URI=mongodb://...                       # MongoDB connection string
+
+# Optional Clerk URLs (have sensible defaults)
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+```
+
+#### Setting Up Fly.io Secrets
+
+For production deployment on Fly.io, configure secrets using the Fly CLI:
+
+```bash
+# Set required secrets for production deployment
+flyctl secrets set NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_live_..."
+flyctl secrets set CLERK_SECRET_KEY="sk_live_..."
+flyctl secrets set MONGODB_URI="mongodb://..."
+
+# Verify secrets are configured
+flyctl secrets list
+```
+
+### Docker Build Considerations
+
+The Docker build process has been configured to handle missing environment variables gracefully:
+
+- **Build Time**: Uses placeholder values for Clerk keys to prevent build failures
+- **Runtime**: Actual secret values are injected by Fly.io automatically
+
+#### Important Notes for Contributors
+
+1. **Local Development**: Ensure your `.env.local` file contains all required environment variables
+2. **Docker Builds**: The build process will use placeholder values during the build phase
+3. **Production Deployment**: Fly.io automatically injects secrets as environment variables at runtime
+4. **Testing**: Use test values in `.env.test` or test configuration files
+
+### Deployment Commands
+
+```bash
+# Deploy to Fly.io (requires secrets to be configured first)
+flyctl deploy
+
+# Check deployment status
+flyctl status
+
+# View application logs
+flyctl logs
+
+# Scale application (if needed)
+flyctl scale count 1
+```
+
+### Troubleshooting Deployment Issues
+
+If you encounter deployment issues:
+
+1. **Build Failures**: Check that the Dockerfile builds locally with `docker build .`
+2. **Runtime Errors**: Verify all required secrets are set with `flyctl secrets list`
+3. **Authentication Issues**: Ensure Clerk keys are valid and properly configured
+4. **Database Connection**: Verify MongoDB URI is accessible from Fly.io infrastructure
+
+---
+
 ## Tools
 
 - Codacy CLI: `/usr/local/bin/codacy-cli`
@@ -256,4 +344,4 @@ Closes **Issue**
 
 ---
 
-By following these unified instructions, all contributors—including GitHub Copilot—will ensure consistent, high-quality, and secure code that meets the project’s standards and workflow requirements.
+By following these unified instructions, all contributors—including GitHub Copilot—will ensure consistent, high-quality, and secure code that meets the project's standards and workflow requirements.
