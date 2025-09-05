@@ -14,7 +14,7 @@ export interface IEnhancedParty extends Document {
   description: string;
   tags: string[];
   isPublic: boolean;
-  sharedWith: string[]; // Array of Clerk user IDs
+  sharedWith: Array<{ userId: string; role: 'viewer' | 'editor'; sharedAt: Date }>;
   settings: {
     allowJoining: boolean;
     requireApproval: boolean;
@@ -26,10 +26,10 @@ export interface IEnhancedParty extends Document {
 
   // Virtual properties
   readonly memberCount: number;
-  readonly playerCharacterCount: number;
-  readonly averageLevel: number;
 
   // Instance methods
+  getPlayerCharacterCount(): Promise<number>;
+  getAverageLevel(): Promise<number>;
   addMember(_characterId: Types.ObjectId): Promise<void>;
   removeMember(_characterId: Types.ObjectId): Promise<void>;
   getMembers(): Promise<any[]>;
@@ -75,11 +75,17 @@ const enhancedPartySchema = new Schema<IEnhancedParty, EnhancedPartyModel>(
     },
     isPublic: commonFields.isPublic,
     sharedWith: {
-      type: [String], // Array of Clerk user IDs
+      type: [
+        {
+          userId: { type: String, required: true },
+          role: { type: String, enum: ['viewer', 'editor'], required: true },
+          sharedAt: { type: Date, default: Date.now },
+        },
+      ],
       default: [],
       validate: {
-        validator: function (userIds: string[]) {
-          return userIds.length <= 50;
+        validator: function (sharedAccess: Array<{ userId: string, role: string }>) {
+          return sharedAccess.length <= 50;
         },
         message: 'Party cannot be shared with more than 50 users',
       },
@@ -117,8 +123,8 @@ enhancedPartySchema.virtual('memberCount', {
   count: true,
 });
 
-// Virtual for player character count
-enhancedPartySchema.virtual('playerCharacterCount').get(async function () {
+// Instance method: Get player character count
+enhancedPartySchema.methods.getPlayerCharacterCount = async function (): Promise<number> {
   const EnhancedCharacter = mongoose.models.EnhancedCharacter as EnhancedCharacterModel;
   const count = await EnhancedCharacter.countDocuments({
     partyId: this._id,
@@ -126,10 +132,10 @@ enhancedPartySchema.virtual('playerCharacterCount').get(async function () {
     isDeleted: { $ne: true },
   });
   return count;
-});
+};
 
-// Virtual for average level
-enhancedPartySchema.virtual('averageLevel').get(async function () {
+// Instance method: Get average level
+enhancedPartySchema.methods.getAverageLevel = async function (): Promise<number> {
   const EnhancedCharacter = mongoose.models.EnhancedCharacter as EnhancedCharacterModel;
   const members = await EnhancedCharacter.find({
     partyId: this._id,
@@ -141,7 +147,7 @@ enhancedPartySchema.virtual('averageLevel').get(async function () {
     return sum + character.classes.reduce((classSum: number, charClass: any) => classSum + charClass.level, 0);
   }, 0);
   return Math.round(totalLevel / members.length);
-});
+};
 
 // Helper function to get current member count
 async function getCurrentMemberCount(partyId: Types.ObjectId): Promise<number> {

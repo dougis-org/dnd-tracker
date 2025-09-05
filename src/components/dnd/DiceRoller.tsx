@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dice6, Plus, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatDiceNotation } from '@/lib/utils/enhanced-dnd-utils';
 
 interface DiceResult {
   dice: number[];
@@ -52,12 +53,7 @@ export function DiceRoller({ className, onRoll }: DiceRollerProps) {
     }, 600);
   };
 
-  const formatDiceNotation = () => {
-    let notation = `${diceCount}d${diceType}`;
-    if (modifier > 0) notation += `+${modifier}`;
-    else if (modifier < 0) notation += modifier;
-    return notation;
-  };
+  // formatDiceNotation utility imported from enhanced-dnd-utils
 
   return (
     <Card className={cn('w-full max-w-md', className)}>
@@ -134,7 +130,7 @@ export function DiceRoller({ className, onRoll }: DiceRollerProps) {
         {/* Roll Button */}
         <div className="text-center space-y-2">
           <div className="text-lg font-mono font-bold">
-            {formatDiceNotation()}
+            {formatDiceNotation(diceCount, diceType, modifier)}
           </div>
           <Button
             onClick={rollDice}
@@ -157,7 +153,7 @@ export function DiceRoller({ className, onRoll }: DiceRollerProps) {
                 {result.total}
               </div>
               <div className="text-sm text-muted-foreground">
-                {formatDiceNotation()}
+                {formatDiceNotation(diceCount, diceType, modifier)}
               </div>
             </div>
             
