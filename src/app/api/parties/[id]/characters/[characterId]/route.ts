@@ -1,6 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { Party } from '@/models/Party';
+import { Party, type IParty } from '@/models/Party';
 import { canEditParty } from '@/lib/utils/user-context';
 import { Types } from 'mongoose';
 
@@ -9,6 +9,8 @@ interface UpdateCharacterRequest {
   playerEmail?: string;
   isActive?: boolean;
 }
+
+type CharacterAssignment = IParty['characters'][number];
 
 /**
  * DELETE /api/parties/[id]/characters/[characterId]
@@ -24,7 +26,6 @@ export async function DELETE(
     if (!userId) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
-
     // Validate ID formats
     if (!Types.ObjectId.isValid(partyId)) {
       return new NextResponse('Invalid party ID format', { status: 400 });
@@ -49,7 +50,7 @@ export async function DELETE(
 
     // Find the character assignment
     const characterIndex = party.characters.findIndex(
-      (char: any) => char.characterId.toString() === characterId
+      (char: CharacterAssignment) => char.characterId.toString() === characterId
     );
 
     if (characterIndex === -1) {
@@ -83,7 +84,6 @@ export async function PUT(
     if (!userId) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
-
     // Validate ID formats
     if (!Types.ObjectId.isValid(partyId)) {
       return new NextResponse('Invalid party ID format', { status: 400 });
@@ -111,7 +111,7 @@ export async function PUT(
 
     // Find the character assignment
     const characterAssignment = party.characters.find(
-      (char: any) => char.characterId.toString() === characterId
+      (char: CharacterAssignment) => char.characterId.toString() === characterId
     );
 
     if (!characterAssignment) {

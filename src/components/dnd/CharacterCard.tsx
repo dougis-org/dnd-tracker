@@ -13,7 +13,9 @@ interface CharacterCardProps {
 }
 
 export function CharacterCard({ character, onClick, className }: CharacterCardProps) {
-  const hpPercentage = (character.hitPoints.current / character.hitPoints.maximum) * 100;
+  const hpPercentage = character.hitPoints.maximum > 0
+    ? (character.hitPoints.current / character.hitPoints.maximum) * 100
+    : 0;
   
   const getHPStatus = (percentage: number) => {
     if (percentage === 0) return 'hp-unconscious';
@@ -92,7 +94,7 @@ export function CharacterCard({ character, onClick, className }: CharacterCardPr
               <div 
                 className="absolute top-0 left-0 h-2 bg-blue-400 rounded-full opacity-60"
                 style={{
-                  width: `${Math.min(100, (character.hitPoints.temporary / character.hitPoints.maximum) * 100)}%`
+                  width: `${character.hitPoints.maximum > 0 ? Math.min(100, (character.hitPoints.temporary / character.hitPoints.maximum) * 100) : 0}%`
                 }}
               />
             )}

@@ -102,12 +102,12 @@ export function rollDice(diceCount: number, diceType: number, modifier: number =
  * Parse dice notation string (e.g., "2d6+3") and roll
  */
 export function rollFromNotation(notation: string): DiceRoll | null {
-  const match = notation.match(/^(\d+)d(\d+)([+-]\d+)?$/i);
+  const match = notation.match(/^(?:(\d+))?d(\d+)([+-]\d+)?$/i);
   if (!match) return null;
   
-  const diceCount = parseInt(match[1]);
-  const diceType = parseInt(match[2]);
-  const modifier = match[3] ? parseInt(match[3]) : 0;
+  const diceCount = match[1] ? parseInt(match[1], 10) : 1;
+  const diceType = parseInt(match[2], 10);
+  const modifier = match[3] ? parseInt(match[3], 10) : 0;
   
   return rollDice(diceCount, diceType, modifier);
 }
@@ -140,65 +140,16 @@ export function calculateDamage(
 /**
  * Apply damage to hit points with proper order (temp HP first)
  */
-export function applyDamage(hitPoints: IHitPoints, damage: number): IHitPoints {
-  let remainingDamage = damage;
-  const newHitPoints = { ...hitPoints };
-  
-  // Apply to temporary HP first
-  if (newHitPoints.temporary > 0 && remainingDamage > 0) {
-    const tempDamage = Math.min(remainingDamage, newHitPoints.temporary);
-    newHitPoints.temporary -= tempDamage;
-    remainingDamage -= tempDamage;
-  }
-  
-  // Apply remaining damage to current HP
-  if (remainingDamage > 0) {
-    newHitPoints.current = Math.max(0, newHitPoints.current - remainingDamage);
-  }
-  
-  return newHitPoints;
-}
+// Note: applyDamage functionality available as hitPointsUtils.takeDamage() in @/models/shared/schema-utils
 
-/**
- * Apply healing to hit points
- */
-export function applyHealing(hitPoints: IHitPoints, healing: number): IHitPoints {
-  return {
-    ...hitPoints,
-    current: Math.min(hitPoints.maximum, hitPoints.current + healing)
-  };
-}
+// Note: applyHealing functionality available as hitPointsUtils.heal() in @/models/shared/schema-utils
 
-/**
- * Add temporary hit points (doesn't stack, takes higher value)
- */
-export function addTemporaryHP(hitPoints: IHitPoints, tempHP: number): IHitPoints {
-  return {
-    ...hitPoints,
-    temporary: Math.max(hitPoints.temporary, tempHP)
-  };
-}
+// Note: addTemporaryHP functionality available as hitPointsUtils.addTemporaryHP() in @/models/shared/schema-utils
 
-/**
- * Check if character is alive
- */
-export function isAlive(hitPoints: IHitPoints): boolean {
-  return hitPoints.current > 0;
-}
-
-/**
- * Check if character is unconscious
- */
-export function isUnconscious(hitPoints: IHitPoints): boolean {
-  return hitPoints.current <= 0;
-}
-
-/**
- * Get effective HP (current + temporary)
- */
-export function getEffectiveHP(hitPoints: IHitPoints): number {
-  return hitPoints.current + hitPoints.temporary;
-}
+// Note: HP status functions available in @/models/shared/schema-utils:
+// - hitPointsUtils.isAlive()
+// - hitPointsUtils.isUnconscious() 
+// - hitPointsUtils.getEffectiveHP()
 
 /**
  * Generate ability scores using standard array

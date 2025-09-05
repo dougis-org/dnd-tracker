@@ -1,8 +1,8 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { Party } from '@/models/Party';
+import { Party, type IParty } from '@/models/Party';
 import { CharacterModel as Character } from '@/models/schemas';
-import { canAddCharacterToParty } from '@/lib/utils/tier-limits';
+import { canAddCharacterToParty, getTierLimits } from '@/lib/utils/tier-limits';
 import { getUserTier, canEditParty } from '@/lib/utils/user-context';
 import { Types } from 'mongoose';
 
@@ -11,6 +11,8 @@ interface AddCharacterRequest {
   playerName?: string;
   playerEmail?: string;
 }
+
+type CharacterAssignment = IParty['characters'][number];
 
 /**
  * POST /api/parties/[id]/characters
@@ -73,7 +75,7 @@ export async function POST(
 
     // Check if character is already in the party
     const existingAssignment = party.characters.find(
-      (char: any) => char.characterId.toString() === characterId
+      (char: CharacterAssignment) => char.characterId.toString() === characterId
     );
     if (existingAssignment) {
       return new NextResponse('Character is already in this party', { 
@@ -86,9 +88,10 @@ export async function POST(
     const currentCharacterCount = party.characters.length;
 
     if (!canAddCharacterToParty(userTier, currentCharacterCount)) {
+      const limits = getTierLimits(userTier);
       return new NextResponse(
         `Party size limit exceeded for ${userTier} tier. Maximum ${
-          currentCharacterCount
+          limits.maxCharactersPerParty
         } characters allowed.`,
         { status: 403 }
       );
@@ -106,7 +109,7 @@ export async function POST(
     const newAssignment = {
       characterId: new Types.ObjectId(characterId),
       playerName: playerName?.trim() || character.name,
-      playerEmail: playerEmail?.trim().toLowerCase(),
+      playerEmail: playerEmail ? playerEmail.trim().toLowerCase() : undefined,
       isActive: true,
       joinedAt: new Date(),
     };
