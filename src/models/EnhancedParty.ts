@@ -33,7 +33,7 @@ export interface IEnhancedParty extends Document {
   addMember(_characterId: Types.ObjectId): Promise<void>;
   removeMember(_characterId: Types.ObjectId): Promise<void>;
   getMembers(): Promise<any[]>;
-  updateActivity(): void;
+  updateActivity(): Promise<void>;
 }
 
 // Party model interface with static methods
@@ -176,7 +176,7 @@ enhancedPartySchema.methods.addMember = async function (characterId: Types.Objec
   const currentMemberCount = await getCurrentMemberCount(this._id);
   validatePartyCapacity(currentMemberCount, this.settings.maxMembers);
   await updateCharacterParty(characterId, this._id);
-  this.updateActivity();
+  await this.updateActivity();
 };
 
 // Helper function to remove character from party
@@ -190,7 +190,7 @@ async function removeCharacterFromParty(characterId: Types.ObjectId): Promise<vo
 // Instance method: Remove member from party
 enhancedPartySchema.methods.removeMember = async function (characterId: Types.ObjectId): Promise<void> {
   await removeCharacterFromParty(characterId);
-  this.updateActivity();
+  await this.updateActivity();
 };
 
 // Helper function to find party members
@@ -208,9 +208,9 @@ enhancedPartySchema.methods.getMembers = async function (): Promise<any[]> {
 };
 
 // Instance method: Update last activity
-enhancedPartySchema.methods.updateActivity = function (): void {
+enhancedPartySchema.methods.updateActivity = async function (): Promise<void> {
   this.lastActivity = new Date();
-  this.save();
+  await this.save();
 };
 
 // Static method: Find parties by user ID
@@ -233,7 +233,7 @@ enhancedPartySchema.statics.searchByName = function (searchTerm: string) {
 // Static method: Find parties shared with user
 enhancedPartySchema.statics.findSharedWith = function (userId: string) {
   return this.find({
-    sharedWith: userId,
+    'sharedWith.userId': userId,
   }).sort({ name: 1 });
 };
 

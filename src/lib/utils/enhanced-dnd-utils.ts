@@ -102,12 +102,12 @@ export function rollDice(diceCount: number, diceType: number, modifier: number =
  * Parse dice notation string (e.g., "2d6+3") and roll
  */
 export function rollFromNotation(notation: string): DiceRoll | null {
-  const match = notation.match(/^(\d+)d(\d+)([+-]\d+)?$/i);
+  const match = notation.match(/^(?:(\d+))?d(\d+)([+-]\d+)?$/i);
   if (!match) return null;
   
-  const diceCount = parseInt(match[1]);
-  const diceType = parseInt(match[2]);
-  const modifier = match[3] ? parseInt(match[3]) : 0;
+  const diceCount = match[1] ? parseInt(match[1], 10) : 1;
+  const diceType = parseInt(match[2], 10);
+  const modifier = match[3] ? parseInt(match[3], 10) : 0;
   
   return rollDice(diceCount, diceType, modifier);
 }
