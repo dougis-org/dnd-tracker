@@ -15,11 +15,7 @@ jest.mock('@clerk/nextjs/server', () => ({
   auth: jest.fn(),
 }));
 
-// Mock the tier limits utility
-jest.mock('@/lib/utils/tier-limits', () => ({
-  canAddCharacterToParty: jest.fn(),
-  getTierLimits: jest.fn(),
-}));
+// Import actual tier limits utility (no mocking)
 
 // Mock the user context utility
 jest.mock('@/lib/utils/user-context', () => ({
@@ -28,8 +24,6 @@ jest.mock('@/lib/utils/user-context', () => ({
 }));
 
 const mockAuth = auth as unknown as jest.Mock;
-const mockCanAddCharacterToParty = jest.requireMock('@/lib/utils/tier-limits').canAddCharacterToParty;
-const mockGetTierLimits = jest.requireMock('@/lib/utils/tier-limits').getTierLimits;
 const mockGetUserTier = jest.requireMock('@/lib/utils/user-context').getUserTier;
 const mockCanEditParty = jest.requireMock('@/lib/utils/user-context').canEditParty;
 
@@ -265,38 +259,68 @@ describe('POST /api/parties/[id]/characters', () => {
     mockAuth.mockReturnValue({ userId: testUserId });
     mockCanEditParty.mockReturnValue(true);
     mockGetUserTier.mockReturnValue('free');
-    mockCanAddCharacterToParty.mockReturnValue(false);
-    mockGetTierLimits.mockReturnValue({ maxCharactersPerParty: 4 });
 
-    // Create a character
-    const character = new Character({
+    // Create 4 existing characters in the party (free tier limit)
+    const existingCharacters = [];
+    for (let i = 0; i < 4; i++) {
+      const charId = new Types.ObjectId();
+      const character = new Character({
+        _id: charId,
+        userId: testUserId,
+        name: `Existing Character ${i + 1}`,
+        race: 'Human',
+        background: 'Soldier',
+        alignment: 'Lawful Good',
+        experiencePoints: 0,
+        classes: [{ className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }],
+        totalLevel: 1,
+        abilities: {
+          strength: 16,
+          dexterity: 14,
+          constitution: 15,
+          intelligence: 12,
+          wisdom: 13,
+          charisma: 10,
+        },
+      });
+      await character.save();
+      existingCharacters.push({
+        characterId: charId,
+        playerName: `Player ${i + 1}`,
+        isActive: true,
+        joinedAt: new Date(),
+      });
+    }
+
+    // Create a new character to try to add (5th character, should fail)
+    const newCharacter = new Character({
       _id: testCharacterId,
       userId: testUserId,
-      name: 'Test Character',
-      race: 'Human',
-      background: 'Soldier',
-      alignment: 'Lawful Good',
+      name: 'New Character',
+      race: 'Elf',
+      background: 'Ranger',
+      alignment: 'Chaotic Good',
       experiencePoints: 0,
-      classes: [{ className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }],
+      classes: [{ className: 'Ranger', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }],
       totalLevel: 1,
       abilities: {
-        strength: 16,
-        dexterity: 14,
-        constitution: 15,
+        strength: 14,
+        dexterity: 16,
+        constitution: 13,
         intelligence: 12,
-        wisdom: 13,
+        wisdom: 15,
         charisma: 10,
       },
     });
-    await character.save();
+    await newCharacter.save();
 
-    // Create a party at capacity
+    // Create a party already at capacity (4 characters for free tier)
     const party = new Party({
       _id: testPartyId,
       userId: testUserId,
       name: 'Test Party',
-      maxSize: 4,
-      characters: [],
+      maxSize: 4, // Free tier limit
+      characters: existingCharacters,
     });
     await party.save();
 
@@ -310,11 +334,170 @@ describe('POST /api/parties/[id]/characters', () => {
     expect(await response.text()).toContain('Party size limit exceeded for free tier');
   });
 
+  it('should successfully add character when under free tier limit', async () => {
+    mockAuth.mockReturnValue({ userId: testUserId });
+    mockCanEditParty.mockReturnValue(true);
+    mockGetUserTier.mockReturnValue('free');
+
+    // Create 3 existing characters in the party (under free tier limit of 4)
+    const existingCharacters = [];
+    for (let i = 0; i < 3; i++) {
+      const charId = new Types.ObjectId();
+      const character = new Character({
+        _id: charId,
+        userId: testUserId,
+        name: `Existing Character ${i + 1}`,
+        race: 'Human',
+        background: 'Soldier',
+        alignment: 'Lawful Good',
+        experiencePoints: 0,
+        classes: [{ className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }],
+        totalLevel: 1,
+        abilities: {
+          strength: 16,
+          dexterity: 14,
+          constitution: 15,
+          intelligence: 12,
+          wisdom: 13,
+          charisma: 10,
+        },
+      });
+      await character.save();
+      existingCharacters.push({
+        characterId: charId,
+        playerName: `Player ${i + 1}`,
+        isActive: true,
+        joinedAt: new Date(),
+      });
+    }
+
+    // Create a new character to add (4th character, should succeed)
+    const newCharacter = new Character({
+      _id: testCharacterId,
+      userId: testUserId,
+      name: 'New Character',
+      race: 'Elf',
+      background: 'Ranger',
+      alignment: 'Chaotic Good',
+      experiencePoints: 0,
+      classes: [{ className: 'Ranger', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }],
+      totalLevel: 1,
+      abilities: {
+        strength: 14,
+        dexterity: 16,
+        constitution: 13,
+        intelligence: 12,
+        wisdom: 15,
+        charisma: 10,
+      },
+    });
+    await newCharacter.save();
+
+    // Create a party with 3 characters (under capacity)
+    const party = new Party({
+      _id: testPartyId,
+      userId: testUserId,
+      name: 'Test Party',
+      maxSize: 4, // Free tier limit
+      characters: existingCharacters,
+    });
+    await party.save();
+
+    const req = new NextRequest(`http://localhost:3000/api/parties/${testPartyId}/characters`, {
+      method: 'POST',
+      body: JSON.stringify({ characterId: testCharacterId }),
+    });
+
+    const response = await POST(req, { params: { id: testPartyId } });
+    expect(response.status).toBe(200);
+    
+    const updatedParty = await response.json();
+    expect(updatedParty.characters).toHaveLength(4);
+  });
+
+  it('should return 403 if seasoned tier limit is exceeded', async () => {
+    mockAuth.mockReturnValue({ userId: testUserId });
+    mockCanEditParty.mockReturnValue(true);
+    mockGetUserTier.mockReturnValue('seasoned');
+
+    // Create 6 existing characters in the party (seasoned tier limit)
+    const existingCharacters = [];
+    for (let i = 0; i < 6; i++) {
+      const charId = new Types.ObjectId();
+      const character = new Character({
+        _id: charId,
+        userId: testUserId,
+        name: `Existing Character ${i + 1}`,
+        race: 'Human',
+        background: 'Soldier',
+        alignment: 'Lawful Good',
+        experiencePoints: 0,
+        classes: [{ className: 'Fighter', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }],
+        totalLevel: 1,
+        abilities: {
+          strength: 16,
+          dexterity: 14,
+          constitution: 15,
+          intelligence: 12,
+          wisdom: 13,
+          charisma: 10,
+        },
+      });
+      await character.save();
+      existingCharacters.push({
+        characterId: charId,
+        playerName: `Player ${i + 1}`,
+        isActive: true,
+        joinedAt: new Date(),
+      });
+    }
+
+    // Create a new character to try to add (7th character, should fail)
+    const newCharacter = new Character({
+      _id: testCharacterId,
+      userId: testUserId,
+      name: 'New Character',
+      race: 'Elf',
+      background: 'Ranger',
+      alignment: 'Chaotic Good',
+      experiencePoints: 0,
+      classes: [{ className: 'Ranger', level: 1, hitDiceSize: 10, hitDiceUsed: 0 }],
+      totalLevel: 1,
+      abilities: {
+        strength: 14,
+        dexterity: 16,
+        constitution: 13,
+        intelligence: 12,
+        wisdom: 15,
+        charisma: 10,
+      },
+    });
+    await newCharacter.save();
+
+    // Create a party already at capacity (6 characters for seasoned tier)
+    const party = new Party({
+      _id: testPartyId,
+      userId: testUserId,
+      name: 'Test Party',
+      maxSize: 6, // Seasoned tier limit
+      characters: existingCharacters,
+    });
+    await party.save();
+
+    const req = new NextRequest(`http://localhost:3000/api/parties/${testPartyId}/characters`, {
+      method: 'POST',
+      body: JSON.stringify({ characterId: testCharacterId }),
+    });
+
+    const response = await POST(req, { params: { id: testPartyId } });
+    expect(response.status).toBe(403);
+    expect(await response.text()).toContain('Party size limit exceeded for seasoned tier');
+  });
+
   it('should return 400 for invalid email format', async () => {
     mockAuth.mockReturnValue({ userId: testUserId });
     mockCanEditParty.mockReturnValue(true);
     mockGetUserTier.mockReturnValue('free');
-    mockCanAddCharacterToParty.mockReturnValue(true);
 
     // Create a character
     const character = new Character({
@@ -364,7 +547,6 @@ describe('POST /api/parties/[id]/characters', () => {
     mockAuth.mockReturnValue({ userId: testUserId });
     mockCanEditParty.mockReturnValue(true);
     mockGetUserTier.mockReturnValue('free');
-    mockCanAddCharacterToParty.mockReturnValue(true);
 
     // Create a character
     const character = new Character({
