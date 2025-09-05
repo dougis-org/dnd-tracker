@@ -2,7 +2,7 @@
  * User context utilities for getting user tier and permissions
  */
 
-import { User } from '@/models/User';
+import { UserModel as User } from '@/models/User';
 import { SubscriptionTier } from './tier-limits';
 
 /**

@@ -5,7 +5,7 @@ import { POST } from '../route';
 import { DELETE, PUT } from '../[characterId]/route';
 import { Party } from '@/models/Party';
 import { CharacterModel as Character } from '@/models/schemas';
-import { User } from '@/models/User';
+import { UserModel as User } from '@/models/User';
 import { setupTestDatabase, teardownTestDatabase } from '@/models/_utils/test-utils';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
@@ -408,7 +408,7 @@ describe('POST /api/parties/[id]/characters', () => {
 
     const responseData = await response.json();
     expect(responseData.characters).toHaveLength(1);
-    expect(responseData.characters[0].characterId).toBe(testCharacterId);
+    expect(responseData.characters[0].characterId._id).toBe(testCharacterId);
     expect(responseData.characters[0].playerName).toBe('John Doe');
     expect(responseData.characters[0].playerEmail).toBe('john@example.com');
     expect(responseData.characters[0].isActive).toBe(true);
