@@ -18,7 +18,7 @@ interface AddCharacterRequest {
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -26,7 +26,7 @@ export async function POST(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const partyId = params.id;
+    const { id: partyId } = await params;
     
     // Validate party ID format
     if (!Types.ObjectId.isValid(partyId)) {

@@ -16,7 +16,7 @@ interface UpdateCharacterRequest {
  */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string; characterId: string } }
+  { params }: { params: Promise<{ id: string; characterId: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -24,7 +24,7 @@ export async function DELETE(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { id: partyId, characterId } = params;
+    const { id: partyId, characterId } = await params;
 
     // Validate ID formats
     if (!Types.ObjectId.isValid(partyId)) {
@@ -76,7 +76,7 @@ export async function DELETE(
  */
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string; characterId: string } }
+  { params }: { params: Promise<{ id: string; characterId: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -84,7 +84,7 @@ export async function PUT(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { id: partyId, characterId } = params;
+    const { id: partyId, characterId } = await params;
 
     // Validate ID formats
     if (!Types.ObjectId.isValid(partyId)) {
