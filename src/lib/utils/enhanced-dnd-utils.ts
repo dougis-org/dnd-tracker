@@ -86,7 +86,7 @@ export function rollDice(diceCount: number, diceType: number, modifier: number =
   
   const total = dice.reduce((sum, roll) => sum + roll, 0) + modifier;
   
-  const notation = `${diceCount}d${diceType}${modifier >= 0 ? '+' : ''}${modifier === 0 ? '' : modifier}`;
+  const notation = formatDiceNotation(diceCount, diceType, modifier);
   
   return {
     dice,

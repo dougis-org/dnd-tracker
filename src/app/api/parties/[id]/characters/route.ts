@@ -21,12 +21,11 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: partyId } = await params;
     const { userId } = await auth();
     if (!userId) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
-
-    const { id: partyId } = await params;
     
     // Validate party ID format
     if (!Types.ObjectId.isValid(partyId)) {

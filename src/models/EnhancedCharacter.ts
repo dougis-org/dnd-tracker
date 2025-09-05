@@ -437,7 +437,7 @@ enhancedCharacterSchema.pre('save', function (next) {
 
 // Post-save middleware for logging
 enhancedCharacterSchema.post('save', function (doc, next) {
-  console.log(`Enhanced character saved: ${doc.name} (ID: ${doc._id})`);
+  // Production logging would go here if needed
   next();
 });
 

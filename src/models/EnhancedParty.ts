@@ -258,7 +258,7 @@ enhancedPartySchema.pre('save', function (next) {
 
 // Post-save middleware for logging
 enhancedPartySchema.post('save', function (doc, next) {
-  console.log(`Enhanced party saved: ${doc.name} (ID: ${doc._id})`);
+  // Production logging would go here if needed
   next();
 });
 

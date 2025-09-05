@@ -19,12 +19,11 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string; characterId: string }> }
 ) {
   try {
+    const { id: partyId, characterId } = await params;
     const { userId } = await auth();
     if (!userId) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
-
-    const { id: partyId, characterId } = await params;
 
     // Validate ID formats
     if (!Types.ObjectId.isValid(partyId)) {
@@ -79,12 +78,11 @@ export async function PUT(
   { params }: { params: Promise<{ id: string; characterId: string }> }
 ) {
   try {
+    const { id: partyId, characterId } = await params;
     const { userId } = await auth();
     if (!userId) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
-
-    const { id: partyId, characterId } = await params;
 
     // Validate ID formats
     if (!Types.ObjectId.isValid(partyId)) {
