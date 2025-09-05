@@ -18,6 +18,7 @@ jest.mock('@clerk/nextjs/server', () => ({
 // Mock the tier limits utility
 jest.mock('@/lib/utils/tier-limits', () => ({
   canAddCharacterToParty: jest.fn(),
+  getTierLimits: jest.fn(),
 }));
 
 // Mock the user context utility
@@ -28,6 +29,7 @@ jest.mock('@/lib/utils/user-context', () => ({
 
 const mockAuth = auth as unknown as jest.Mock;
 const mockCanAddCharacterToParty = jest.requireMock('@/lib/utils/tier-limits').canAddCharacterToParty;
+const mockGetTierLimits = jest.requireMock('@/lib/utils/tier-limits').getTierLimits;
 const mockGetUserTier = jest.requireMock('@/lib/utils/user-context').getUserTier;
 const mockCanEditParty = jest.requireMock('@/lib/utils/user-context').canEditParty;
 
@@ -264,6 +266,7 @@ describe('POST /api/parties/[id]/characters', () => {
     mockCanEditParty.mockReturnValue(true);
     mockGetUserTier.mockReturnValue('free');
     mockCanAddCharacterToParty.mockReturnValue(false);
+    mockGetTierLimits.mockReturnValue({ maxCharactersPerParty: 4 });
 
     // Create a character
     const character = new Character({
