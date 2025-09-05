@@ -1,0 +1,64 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "D&D Combat Tracker" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7] [cursor=pointer]: D&D Combat Tracker
+        - generic [ref=e8]:
+          - button "Sign in" [ref=e9]
+          - button "Sign up" [ref=e10]
+    - generic [ref=e11]:
+      - complementary [ref=e12]:
+        - navigation [ref=e14]:
+          - link "Dashboard" [ref=e15] [cursor=pointer]:
+            - /url: /
+          - link "Characters" [ref=e16] [cursor=pointer]:
+            - /url: /characters
+          - link "Parties" [ref=e17] [cursor=pointer]:
+            - /url: /parties
+          - link "Encounters" [ref=e18] [cursor=pointer]:
+            - /url: /encounters
+          - link "Combat" [ref=e19] [cursor=pointer]:
+            - /url: /combat
+      - main [ref=e20]:
+        - main [ref=e21]:
+          - generic [ref=e22]:
+            - heading "Dashboard" [level=1] [ref=e23]
+            - link "Create New Character" [ref=e25] [cursor=pointer]:
+              - /url: /characters/new
+              - button "Create New Character" [ref=e26]:
+                - img [ref=e27]
+                - text: Create New Character
+          - generic [ref=e32]:
+            - heading "Welcome, Dungeon Master!" [level=2] [ref=e33]
+            - paragraph [ref=e34]: Your central hub for managing characters, parties, and epic encounters. Let the adventure begin!
+          - generic [ref=e35]:
+            - generic [ref=e36]:
+              - generic [ref=e37]:
+                - heading "Recent Characters" [level=3] [ref=e38]
+                - img [ref=e39]
+              - generic [ref=e44]:
+                - generic [ref=e45]: "+5"
+                - paragraph [ref=e46]: New adventurers joined this week
+            - generic [ref=e47]:
+              - generic [ref=e48]:
+                - heading "Active Parties" [level=3] [ref=e49]
+                - img [ref=e50]
+              - generic [ref=e59]:
+                - generic [ref=e60]: "3"
+                - paragraph [ref=e61]: Groups currently on quests
+            - generic [ref=e62]:
+              - generic [ref=e63]:
+                - heading "Upcoming Encounters" [level=3] [ref=e64]
+                - img [ref=e65]
+              - generic [ref=e68]:
+                - generic [ref=e69]: "12"
+                - paragraph [ref=e70]: Battles and challenges prepared
+  - button "Open Next.js Dev Tools" [ref=e78] [cursor=pointer]:
+    - img [ref=e79] [cursor=pointer]
+  - alert [ref=e84]
+```
