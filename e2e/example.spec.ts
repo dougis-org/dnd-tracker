@@ -13,7 +13,7 @@ test('homepage loads correctly', async ({ page }) => {
 test('navigation menu is visible', async ({ page }) => {
   await page.goto('/');
 
-  // This is a placeholder test - update selector based on actual UI
-  // For example, look for a <nav> element or an element with a specific role or test ID.
-  await expect(page.getByRole('navigation')).toBeVisible();
+  // Target the sidebar navigation specifically to avoid strict mode violation
+  // The sidebar has data-testid="sidebar" and contains the main navigation
+  await expect(page.getByTestId('sidebar')).toBeVisible();
 });
