@@ -19,7 +19,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "format": "prettier --write .",
-    "migrate:up": "npx mongoose-migrations migrations/",
+    "migrate:run": "npx mongoose-migrations migrations/",
     "migrate:ui": "npx migration-ui"
   },
   "dependencies": {
