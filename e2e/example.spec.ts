@@ -14,6 +14,6 @@ test('navigation menu is visible', async ({ page }) => {
   await page.goto('/');
 
   // Target the sidebar navigation specifically to avoid strict mode violation
-  // The sidebar has data-testid="sidebar" and contains the main navigation
-  await expect(page.getByTestId('sidebar')).toBeVisible();
+  // Check for a specific navigation link to ensure navigation content has rendered correctly
+  await expect(page.getByTestId('sidebar').getByRole('link', { name: 'Dashboard' })).toBeVisible();
 });
