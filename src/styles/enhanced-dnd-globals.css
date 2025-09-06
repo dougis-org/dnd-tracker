@@ -140,7 +140,7 @@
 
 @layer base {
   * {
-    @apply border;
+    border-color: hsl(var(--border));
   }
   
   body {
