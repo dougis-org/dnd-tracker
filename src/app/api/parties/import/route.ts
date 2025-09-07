@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     // Import characters (sanitized)
     if (Array.isArray(importedParty.characters)) {
       sanitizedParty.characters = importedParty.characters.map((char: any) => {
-        const sanitizedChar: any = {
+        const sanitizedChar: Partial<IParty['characters'][0]> = {
           isActive: typeof char.isActive === 'boolean' ? char.isActive : true,
         };
 

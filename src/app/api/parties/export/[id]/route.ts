@@ -33,7 +33,7 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
         maxSize: party!.maxSize,
         isTemplate: party!.isTemplate,
         templateCategory: party!.templateCategory,
-        characters: party!.characters.map((char: any) => ({
+        characters: party!.characters.map((char: { playerName?: string; playerEmail?: string; isActive?: boolean }) => ({
           playerName: char.playerName,
           playerEmail: char.playerEmail,
           isActive: char.isActive,

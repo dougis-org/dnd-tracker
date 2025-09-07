@@ -1,4 +1,5 @@
-import { Party } from '@/models/Party';
+import { Party, IParty } from '@/models/Party';
+import { UpdateQuery } from 'mongoose';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   handleApiError,
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     }
 
     // Update template status
-    const updateData: any = { isTemplate };
+    const updateData: UpdateQuery<IParty> = { isTemplate };
     
     if (isTemplate) {
       // Converting to template - set category if provided

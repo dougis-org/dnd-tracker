@@ -40,7 +40,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
 
     // Check if user is already shared with the party
     const existingShareIndex = party!.sharedWith.findIndex(
-      (share: any) => share.userId === userId
+      (share: { userId: string }) => share.userId === userId
     );
 
     if (existingShareIndex !== -1) {
