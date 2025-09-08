@@ -278,3 +278,19 @@ export async function setupTestPartyScenario(userId: string = TEST_USERS.USER_12
     name: partyName,
   });
 }
+
+/**
+ * Common test file setup - reduces duplication in describe blocks
+ */
+export function createCommonTestSetup() {
+  return {
+    testUnauthorizedAccess: (apiCall: any, requestFactory: any, params?: any) => 
+      testUnauthorizedAccess(apiCall, requestFactory, params),
+    
+    testNotFoundWithInvalidId: (userId: string, apiCall: any, requestFactory: any) =>
+      testNotFoundWithInvalidId(userId, apiCall, requestFactory),
+    
+    setupPartyScenario: (userId?: string, partyName?: string) =>
+      setupTestPartyScenario(userId, partyName)
+  };
+}

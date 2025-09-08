@@ -1,5 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { Party, IParty } from '@/models/Party';
 
@@ -166,4 +166,32 @@ export async function handleUpdateParty(params: Promise<{ id: string }>) {
  */
 export async function handleDeleteParty(params: Promise<{ id: string }>) {
   return handlePartyOperation(params, findPartyWithDeleteAccess);
+}
+
+/**
+ * Generic handler for POST requests with JSON body and error handling
+ */
+export async function handlePostWithJsonBody<T = any>(
+  req: NextRequest,
+  params: Promise<{ id: string }>,
+  permissionHandler: (id: string, userId: string) => Promise<{ party: IParty | null; error: NextResponse | null }>,
+  bodyHandler: (body: T, party: IParty) => Promise<NextResponse>
+): Promise<NextResponse> {
+  try {
+    const setup = await setupPartyRoute(params);
+    if (setup.authError) return setup.authError;
+    if (setup.validationError) return setup.validationError;
+
+    const { party, error } = await permissionHandler(setup.id!, setup.userId!);
+    if (error) return error;
+
+    const body = await req.json();
+    return await bodyHandler(body, party!);
+  } catch (error: any) {
+    // Handle JSON parsing errors from req.json()
+    if (error.name === 'SyntaxError' || error.message?.includes('JSON')) {
+      return new NextResponse('Invalid JSON in request body', { status: 400 });
+    }
+    return handleApiError(error, 'processing request');
+  }
 }
