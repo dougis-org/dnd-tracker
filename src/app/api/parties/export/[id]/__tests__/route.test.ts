@@ -18,6 +18,8 @@ import {
   testUnauthorizedAccess,
   testNotFoundWithInvalidId,
   standardTestSetup,
+  createGetEndpointTestSuite,
+  createSharedTestParty,
 } from '@/app/api/parties/__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -35,33 +37,18 @@ afterAll(async () => {
 describe('GET /api/parties/export/[id]', () => {
   beforeEach(standardTestSetup.beforeEach);
 
+  const testSuite = createGetEndpointTestSuite(GET, 'export');
+
   it('should return 401 if user is not authenticated', async () => {
-    await testUnauthorizedAccess(
-      GET,
-      () => createGetRequest(),
-      createAsyncParams('607d2f0b0a1b2c3d4e5f6789')
-    );
+    await testSuite.testUnauthorized();
   });
 
   it('should return 404 if party does not exist', async () => {
-    await testNotFoundWithInvalidId(
-      TEST_USERS.USER_123,
-      GET,
-      () => createGetRequest()
-    );
+    await testSuite.testNotFound();
   });
 
   it('should return 403 if user does not have access to party', async () => {
-    const privateParty = await createTestParty({
-      userId: TEST_USERS.OWNER_USER,
-      name: 'Private Party'
-    });
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createGetRequest();
-    
-    const response = await GET(req, createAsyncParams(privateParty._id.toString()));
-    expectForbidden(response);
+    await testSuite.testForbidden();
   });
 
   it('should export minimal party successfully as owner', async () => {
@@ -147,18 +134,12 @@ describe('GET /api/parties/export/[id]', () => {
   });
 
   it('should export party as viewer with shared access', async () => {
-    const sharedParty = await createTestParty({
-      userId: TEST_USERS.OWNER_USER,
-      name: 'Shared Export Party'
-    });
-
-    // Add USER_123 as viewer
-    sharedParty.sharedWith.push({
-      userId: TEST_USERS.USER_123,
-      role: 'viewer',
-      sharedAt: new Date()
-    });
-    await sharedParty.save();
+    const sharedParty = await createSharedTestParty(
+      TEST_USERS.OWNER_USER,
+      TEST_USERS.USER_123,
+      'viewer',
+      'Shared Export Party'
+    );
 
     mockAuth(TEST_USERS.USER_123);
     const req = createGetRequest();
@@ -171,18 +152,12 @@ describe('GET /api/parties/export/[id]', () => {
   });
 
   it('should export party as editor with shared access', async () => {
-    const sharedParty = await createTestParty({
-      userId: TEST_USERS.OWNER_USER,
-      name: 'Editor Export Party'
-    });
-
-    // Add USER_123 as editor
-    sharedParty.sharedWith.push({
-      userId: TEST_USERS.USER_123,
-      role: 'editor',
-      sharedAt: new Date()
-    });
-    await sharedParty.save();
+    const sharedParty = await createSharedTestParty(
+      TEST_USERS.OWNER_USER,
+      TEST_USERS.USER_123,
+      'editor',
+      'Editor Export Party'
+    );
 
     mockAuth(TEST_USERS.USER_123);
     const req = createGetRequest();

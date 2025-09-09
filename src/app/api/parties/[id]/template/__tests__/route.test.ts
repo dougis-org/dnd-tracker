@@ -20,6 +20,8 @@ import {
   testNotFoundWithInvalidId,
   standardTestSetup,
   createPostEndpointTestSuite,
+  testEditorCanEdit,
+  testDatabasePersistence,
 } from '@/app/api/parties/__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -111,29 +113,11 @@ describe('POST /api/parties/[id]/template', () => {
   });
 
   it('should convert party to template as editor', async () => {
-    const party = await createTestParty({
-      userId: TEST_USERS.OWNER_USER,
-      name: 'Shared Party',
-      isTemplate: false
-    });
-
-    // Add USER_123 as editor
-    party.sharedWith.push({
-      userId: TEST_USERS.USER_123,
-      role: 'editor',
-      sharedAt: new Date()
-    });
-    await party.save();
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({
+    const response = await testEditorCanEdit(POST, {
       isTemplate: true,
       templateCategory: 'Campaign'
-    });
+    }, 200, 'template');
     
-    const response = await POST(req, createAsyncParams(party._id.toString()));
-    
-    expect(response.status).toBe(200);
     const data = await response.json();
     expect(data.isTemplate).toBe(true);
     expect(data.templateCategory).toBe('Campaign');
@@ -193,10 +177,10 @@ describe('POST /api/parties/[id]/template', () => {
     
     await POST(req, createAsyncParams(party._id.toString()));
     
-    // Verify changes were saved to database
-    const savedParty = await Party.findById(party._id);
-    expect(savedParty!.isTemplate).toBe(true);
-    expect(savedParty!.templateCategory).toBe('Test Category');
+    await testDatabasePersistence(party._id.toString(), (savedParty) => {
+      expect(savedParty.isTemplate).toBe(true);
+      expect(savedParty.templateCategory).toBe('Test Category');
+    });
   });
 
   it('should handle template conversion without category', async () => {

@@ -376,3 +376,100 @@ export function createPostEndpointTestSuite(apiCall: any, validRequestBody: any,
     }
   };
 }
+
+/**
+ * Standard test suite for GET endpoints that require party access
+ */
+export function createGetEndpointTestSuite(apiCall: any, testName: string) {
+  return {
+    testUnauthorized: () => testUnauthorizedAccess(
+      apiCall,
+      () => createGetRequest(),
+      createAsyncParams('607d2f0b0a1b2c3d4e5f6789')
+    ),
+    
+    testNotFound: () => testNotFoundWithInvalidId(
+      TEST_USERS.USER_123,
+      apiCall,
+      () => createGetRequest()
+    ),
+    
+    testForbidden: async () => {
+      const privateParty = await createTestParty({
+        userId: TEST_USERS.OWNER_USER,
+        name: 'Private Party'
+      });
+
+      mockAuth(TEST_USERS.USER_123);
+      const req = createGetRequest();
+      
+      const response = await apiCall(req, createAsyncParams(privateParty._id.toString()));
+      expectForbidden(response);
+    }
+  };
+}
+
+/**
+ * Create a party with shared access for testing different access levels
+ */
+export async function createSharedTestParty(ownerId: string, sharedUserId: string, role: 'viewer' | 'editor', name: string = 'Shared Party') {
+  const party = await createTestParty({
+    userId: ownerId,
+    name
+  });
+
+  party.sharedWith.push({
+    userId: sharedUserId,
+    role,
+    sharedAt: new Date()
+  });
+  await party.save();
+
+  return party;
+}
+
+/**
+ * Test pattern: create party as viewer and expect 403 for edit operations
+ */
+export async function testViewerCannotEdit(apiCall: any, requestBody: any, testName: string = 'viewer test') {
+  const sharedParty = await createSharedTestParty(
+    TEST_USERS.OWNER_USER,
+    TEST_USERS.USER_123,
+    'viewer',
+    `${testName} party`
+  );
+
+  mockAuth(TEST_USERS.USER_123);
+  const req = createPostRequest(requestBody);
+  
+  const response = await apiCall(req, createAsyncParams(sharedParty._id.toString()));
+  expectForbidden(response);
+}
+
+/**
+ * Test pattern: create party as editor and expect success for edit operations
+ */
+export async function testEditorCanEdit(apiCall: any, requestBody: any, expectedStatus: number = 200, testName: string = 'editor test') {
+  const sharedParty = await createSharedTestParty(
+    TEST_USERS.OWNER_USER,
+    TEST_USERS.USER_123,
+    'editor',
+    `${testName} party`
+  );
+
+  mockAuth(TEST_USERS.USER_123);
+  const req = createPostRequest(requestBody);
+  
+  const response = await apiCall(req, createAsyncParams(sharedParty._id.toString()));
+  expect(response.status).toBe(expectedStatus);
+  return response;
+}
+
+/**
+ * Test pattern: database persistence verification
+ */
+export async function testDatabasePersistence(partyId: string, verifyCallback: (savedParty: any) => void) {
+  const savedParty = await Party.findById(partyId);
+  expect(savedParty).toBeTruthy();
+  verifyCallback(savedParty);
+}

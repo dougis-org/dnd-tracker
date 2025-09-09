@@ -19,6 +19,9 @@ import {
   testUnauthorizedAccess,
   testNotFoundWithInvalidId,
   standardTestSetup,
+  createPostEndpointTestSuite,
+  testEditorCanEdit,
+  testDatabasePersistence,
 } from '@/app/api/parties/__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -114,28 +117,11 @@ describe('POST /api/parties/[id]/share', () => {
   });
 
   it('should share party as editor', async () => {
-    const party = await createTestParty({
-      userId: TEST_USERS.OWNER_USER,
-      name: 'Shared Party'
-    });
-
-    // Add USER_123 as editor
-    party.sharedWith.push({
-      userId: TEST_USERS.USER_123,
-      role: 'editor',
-      sharedAt: new Date()
-    });
-    await party.save();
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({
+    const response = await testEditorCanEdit(POST, {
       userId: TEST_USERS.OTHER_USER,
       role: 'viewer'
-    });
+    }, 200, 'share');
     
-    const response = await POST(req, createAsyncParams(party._id.toString()));
-    
-    expect(response.status).toBe(200);
     const data = await response.json();
     expect(data.sharedWith).toHaveLength(2); // Original editor + new viewer
     expect(data.sharedWith.some((share: any) => share.userId === TEST_USERS.OTHER_USER)).toBe(true);
@@ -191,10 +177,10 @@ describe('POST /api/parties/[id]/share', () => {
     
     await POST(req, createAsyncParams(party._id.toString()));
     
-    // Verify share was saved to database
-    const savedParty = await Party.findById(party._id);
-    expect(savedParty!.sharedWith).toHaveLength(1);
-    expect(savedParty!.sharedWith[0].userId).toBe(TEST_USERS.OTHER_USER);
-    expect(savedParty!.sharedWith[0].role).toBe('viewer');
+    await testDatabasePersistence(party._id.toString(), (savedParty) => {
+      expect(savedParty.sharedWith).toHaveLength(1);
+      expect(savedParty.sharedWith[0].userId).toBe(TEST_USERS.OTHER_USER);
+      expect(savedParty.sharedWith[0].role).toBe('viewer');
+    });
   });
 });
