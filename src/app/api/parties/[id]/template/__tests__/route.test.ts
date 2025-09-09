@@ -19,9 +19,11 @@ import {
   testUnauthorizedAccess,
   testNotFoundWithInvalidId,
   standardTestSetup,
-  createPostEndpointTestSuite,
+  createEndpointTestSuite,
   testEditorCanEdit,
   testDatabasePersistence,
+  testOwnerCanPerformAction,
+  testFieldValidation,
 } from '@/app/api/parties/__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -40,7 +42,7 @@ describe('POST /api/parties/[id]/template', () => {
   beforeEach(standardTestSetup.beforeEach);
 
   const validTemplateBody = { isTemplate: true };
-  const testSuite = createPostEndpointTestSuite(POST, validTemplateBody, 'template');
+  const testSuite = createEndpointTestSuite('POST', POST, validTemplateBody, 'template');
 
   it('should return 401 if user is not authenticated', async () => {
     await testSuite.testUnauthorized();
@@ -63,53 +65,26 @@ describe('POST /api/parties/[id]/template', () => {
   });
 
   it('should return 400 if isTemplate is not boolean', async () => {
-    const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({ isTemplate: 'not-boolean' });
-    
-    const response = await POST(req, createAsyncParams(party._id.toString()));
-    expectBadRequest(response);
+    await testFieldValidation(POST, validTemplateBody, 'isTemplate', 'not-boolean');
   });
 
   it('should convert party to template as owner', async () => {
-    const party = await createTestParty({
-      userId: TEST_USERS.USER_123,
-      isTemplate: false
-    });
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({
+    await testOwnerCanPerformAction(POST, {
       isTemplate: true,
       templateCategory: 'Adventure'
+    }, 200, (response, data) => {
+      expect(data.isTemplate).toBe(true);
+      expect(data.templateCategory).toBe('Adventure');
     });
-    
-    const response = await POST(req, createAsyncParams(party._id.toString()));
-    
-    expect(response.status).toBe(200);
-    const data = await response.json();
-    expect(data.isTemplate).toBe(true);
-    expect(data.templateCategory).toBe('Adventure');
   });
 
   it('should convert template back to regular party as owner', async () => {
-    const party = await createTestParty({
-      userId: TEST_USERS.USER_123,
-      isTemplate: true,
-      templateCategory: 'Adventure'
-    });
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({
+    await testOwnerCanPerformAction(POST, {
       isTemplate: false
+    }, 200, (response, data) => {
+      expect(data.isTemplate).toBe(false);
+      expect(data.templateCategory).toBeUndefined();
     });
-    
-    const response = await POST(req, createAsyncParams(party._id.toString()));
-    
-    expect(response.status).toBe(200);
-    const data = await response.json();
-    expect(data.isTemplate).toBe(false);
-    expect(data.templateCategory).toBeUndefined();
   });
 
   it('should convert party to template as editor', async () => {

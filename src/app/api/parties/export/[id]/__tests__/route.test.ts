@@ -18,7 +18,7 @@ import {
   testUnauthorizedAccess,
   testNotFoundWithInvalidId,
   standardTestSetup,
-  createGetEndpointTestSuite,
+  createEndpointTestSuite,
   createSharedTestParty,
 } from '@/app/api/parties/__tests__/_test-utils';
 
@@ -37,7 +37,7 @@ afterAll(async () => {
 describe('GET /api/parties/export/[id]', () => {
   beforeEach(standardTestSetup.beforeEach);
 
-  const testSuite = createGetEndpointTestSuite(GET, 'export');
+  const testSuite = createEndpointTestSuite('GET', GET, undefined, 'export');
 
   it('should return 401 if user is not authenticated', async () => {
     await testSuite.testUnauthorized();

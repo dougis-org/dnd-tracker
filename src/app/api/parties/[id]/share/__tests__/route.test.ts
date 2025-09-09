@@ -19,9 +19,11 @@ import {
   testUnauthorizedAccess,
   testNotFoundWithInvalidId,
   standardTestSetup,
-  createPostEndpointTestSuite,
+  createEndpointTestSuite,
   testEditorCanEdit,
   testDatabasePersistence,
+  testOwnerCanPerformAction,
+  testFieldValidation,
 } from '@/app/api/parties/__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -40,7 +42,7 @@ describe('POST /api/parties/[id]/share', () => {
   beforeEach(standardTestSetup.beforeEach);
 
   const validShareBody = { userId: TEST_USERS.OTHER_USER, role: 'viewer' };
-  const testSuite = createPostEndpointTestSuite(POST, validShareBody, 'share');
+  const testSuite = createEndpointTestSuite('POST', POST, validShareBody, 'share');
 
   it('should return 401 if user is not authenticated', async () => {
     await testSuite.testUnauthorized();
@@ -67,53 +69,30 @@ describe('POST /api/parties/[id]/share', () => {
   });
 
   it('should return 400 if role is invalid', async () => {
-    const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({
-      userId: TEST_USERS.OTHER_USER,
-      role: 'invalid-role'
-    });
-    
-    const response = await POST(req, createAsyncParams(party._id.toString()));
-    expectBadRequest(response);
+    await testFieldValidation(POST, validShareBody, 'role', 'invalid-role');
   });
 
   it('should share party with viewer role as owner', async () => {
-    const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({
+    await testOwnerCanPerformAction(POST, {
       userId: TEST_USERS.OTHER_USER,
       role: 'viewer'
+    }, 200, (response, data) => {
+      expect(data.sharedWith).toHaveLength(1);
+      expect(data.sharedWith[0].userId).toBe(TEST_USERS.OTHER_USER);
+      expect(data.sharedWith[0].role).toBe('viewer');
+      expect(data.sharedWith[0].sharedAt).toBeDefined();
     });
-    
-    const response = await POST(req, createAsyncParams(party._id.toString()));
-    
-    expect(response.status).toBe(200);
-    const data = await response.json();
-    expect(data.sharedWith).toHaveLength(1);
-    expect(data.sharedWith[0].userId).toBe(TEST_USERS.OTHER_USER);
-    expect(data.sharedWith[0].role).toBe('viewer');
-    expect(data.sharedWith[0].sharedAt).toBeDefined();
   });
 
   it('should share party with editor role as owner', async () => {
-    const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({
+    await testOwnerCanPerformAction(POST, {
       userId: TEST_USERS.OTHER_USER,
       role: 'editor'
+    }, 200, (response, data) => {
+      expect(data.sharedWith).toHaveLength(1);
+      expect(data.sharedWith[0].userId).toBe(TEST_USERS.OTHER_USER);
+      expect(data.sharedWith[0].role).toBe('editor');
     });
-    
-    const response = await POST(req, createAsyncParams(party._id.toString()));
-    
-    expect(response.status).toBe(200);
-    const data = await response.json();
-    expect(data.sharedWith).toHaveLength(1);
-    expect(data.sharedWith[0].userId).toBe(TEST_USERS.OTHER_USER);
-    expect(data.sharedWith[0].role).toBe('editor');
   });
 
   it('should share party as editor', async () => {

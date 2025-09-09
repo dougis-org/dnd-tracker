@@ -473,3 +473,135 @@ export async function testDatabasePersistence(partyId: string, verifyCallback: (
   expect(savedParty).toBeTruthy();
   verifyCallback(savedParty);
 }
+
+/**
+ * Standard test file setup utilities
+ */
+export const standardTestFileSetup = {
+  imports: [
+    'setupTestDatabase',
+    'teardownTestDatabase',
+    'auth',
+    'mockAuth',
+    'createPostRequest',
+    'createGetRequest',
+    'createTestParty',
+    'cleanupParties',
+    'TEST_USERS',
+    'expectUnauthorized',
+    'expectBadRequest',
+    'expectNotFound',
+    'expectForbidden',
+    'createAsyncParams',
+    'standardTestSetup'
+  ],
+  
+  setupHooks: {
+    beforeAll: async () => {
+      await require('@/models/_utils/test-utils').setupTestDatabase();
+    },
+    afterAll: async () => {
+      await require('@/models/_utils/test-utils').teardownTestDatabase();
+    },
+    beforeEach: standardTestSetup.beforeEach
+  }
+};
+
+/**
+ * Create comprehensive test suite for endpoints that require authentication and party access
+ */
+export function createEndpointTestSuite(method: 'GET' | 'POST', apiCall: any, validBody?: any, suiteName: string = 'endpoint') {
+  const requestFactory = method === 'GET' 
+    ? () => createGetRequest()
+    : () => createPostRequest(validBody || {});
+
+  const baseTests = {
+    testUnauthorized: () => testUnauthorizedAccess(
+      apiCall,
+      requestFactory,
+      createAsyncParams('607d2f0b0a1b2c3d4e5f6789')
+    ),
+    
+    testNotFound: () => testNotFoundWithInvalidId(
+      TEST_USERS.USER_123,
+      apiCall,
+      requestFactory
+    ),
+    
+    testForbidden: method === 'GET' 
+      ? async () => {
+          const privateParty = await createTestParty({
+            userId: TEST_USERS.OWNER_USER,
+            name: `Private ${suiteName} Party`
+          });
+          mockAuth(TEST_USERS.USER_123);
+          const req = requestFactory();
+          const response = await apiCall(req, createAsyncParams(privateParty._id.toString()));
+          expectForbidden(response);
+        }
+      : () => testForbiddenEditAccess(apiCall, validBody || {})
+  };
+
+  // Add POST-specific tests
+  if (method === 'POST' && validBody) {
+    return {
+      ...baseTests,
+      testInvalidJson: async () => {
+        const party = await createTestParty({ userId: TEST_USERS.USER_123 });
+        return testInvalidJsonBody(apiCall, party._id.toString());
+      },
+      
+      testMissingFields: async (incompleteBody: any) => {
+        const party = await createTestParty({ userId: TEST_USERS.USER_123 });
+        return testMissingRequiredFields(apiCall, party._id.toString(), incompleteBody);
+      }
+    };
+  }
+
+  return baseTests;
+}
+
+/**
+ * Test pattern: owner can perform action successfully
+ */
+export async function testOwnerCanPerformAction(
+  apiCall: any, 
+  requestBody: any, 
+  expectedStatus: number = 200, 
+  verifyCallback?: (response: Response, data: any) => void
+) {
+  const party = await createTestParty({ userId: TEST_USERS.USER_123 });
+  
+  mockAuth(TEST_USERS.USER_123);
+  const req = createPostRequest(requestBody);
+  
+  const response = await apiCall(req, createAsyncParams(party._id.toString()));
+  expect(response.status).toBe(expectedStatus);
+  
+  if (verifyCallback) {
+    const data = expectedStatus !== 204 ? await response.json() : null;
+    verifyCallback(response, data);
+  }
+  
+  return response;
+}
+
+/**
+ * Test pattern: validate specific field requirements
+ */
+export async function testFieldValidation(
+  apiCall: any,
+  validBody: any,
+  fieldName: string,
+  invalidValue: any,
+  userId: string = TEST_USERS.USER_123
+) {
+  const party = await createTestParty({ userId });
+  const invalidBody = { ...validBody, [fieldName]: invalidValue };
+  
+  mockAuth(userId);
+  const req = createPostRequest(invalidBody);
+  
+  const response = await apiCall(req, createAsyncParams(party._id.toString()));
+  expectBadRequest(response);
+}

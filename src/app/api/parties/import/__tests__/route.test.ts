@@ -16,6 +16,7 @@ import {
   expectCreated,
   testUnauthorizedAccess,
   standardTestSetup,
+  createInvalidJsonRequest,
 } from '@/app/api/parties/__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -42,13 +43,7 @@ describe('POST /api/parties/import', () => {
 
   it('should return 400 for invalid JSON', async () => {
     mockAuth(TEST_USERS.USER_123);
-    const req = new (require('next/server')).NextRequest(
-      new Request('http://localhost', {
-        method: 'POST',
-        body: 'invalid json',
-        headers: { 'Content-Type': 'application/json' },
-      })
-    );
+    const req = createInvalidJsonRequest();
     
     const response = await POST(req);
     expectBadRequest(response);
