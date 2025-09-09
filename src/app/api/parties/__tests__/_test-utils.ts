@@ -294,3 +294,85 @@ export function createCommonTestSetup() {
       setupTestPartyScenario(userId, partyName)
   };
 }
+
+/**
+ * Standard test for invalid JSON body
+ */
+export async function testInvalidJsonBody(apiCall: any, partyId: string, userId: string = TEST_USERS.USER_123) {
+  mockAuth(userId);
+  const req = new (require('next/server')).NextRequest(
+    new Request('http://localhost', {
+      method: 'POST',
+      body: 'invalid json',
+      headers: { 'Content-Type': 'application/json' },
+    })
+  );
+  
+  const response = await apiCall(req, createAsyncParams(partyId));
+  expectBadRequest(response);
+}
+
+/**
+ * Standard test for missing required fields
+ */
+export async function testMissingRequiredFields(apiCall: any, partyId: string, body: any, userId: string = TEST_USERS.USER_123) {
+  mockAuth(userId);
+  const req = createPostRequest(body);
+  const response = await apiCall(req, createAsyncParams(partyId));
+  expectBadRequest(response);
+}
+
+/**
+ * Standard test for forbidden access (user has no edit permission)
+ */
+export async function testForbiddenEditAccess(apiCall: any, requestBody: any) {
+  const sharedParty = await createTestParty({
+    userId: TEST_USERS.OWNER_USER,
+    name: 'Shared Party'
+  });
+
+  // Add USER_123 as viewer (no edit permission)
+  sharedParty.sharedWith.push({
+    userId: TEST_USERS.USER_123,
+    role: 'viewer',
+    sharedAt: new Date()
+  });
+  await sharedParty.save();
+
+  mockAuth(TEST_USERS.USER_123);
+  const req = createPostRequest(requestBody);
+  
+  const response = await apiCall(req, createAsyncParams(sharedParty._id.toString()));
+  expectForbidden(response);
+}
+
+/**
+ * Standard test suite for POST endpoints with edit access requirements
+ */
+export function createPostEndpointTestSuite(apiCall: any, validRequestBody: any, testName: string) {
+  return {
+    testUnauthorized: () => testUnauthorizedAccess(
+      apiCall,
+      () => createPostRequest(validRequestBody),
+      createAsyncParams('607d2f0b0a1b2c3d4e5f6789')
+    ),
+    
+    testNotFound: () => testNotFoundWithInvalidId(
+      TEST_USERS.USER_123,
+      apiCall,
+      () => createPostRequest(validRequestBody)
+    ),
+    
+    testForbidden: () => testForbiddenEditAccess(apiCall, validRequestBody),
+    
+    testInvalidJson: async () => {
+      const party = await createTestParty({ userId: TEST_USERS.USER_123 });
+      return testInvalidJsonBody(apiCall, party._id.toString());
+    },
+    
+    testMissingFields: async (incompleteBody: any) => {
+      const party = await createTestParty({ userId: TEST_USERS.USER_123 });
+      return testMissingRequiredFields(apiCall, party._id.toString(), incompleteBody);
+    }
+  };
+}

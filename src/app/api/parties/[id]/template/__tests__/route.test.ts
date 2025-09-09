@@ -19,6 +19,7 @@ import {
   testUnauthorizedAccess,
   testNotFoundWithInvalidId,
   standardTestSetup,
+  createPostEndpointTestSuite,
 } from '@/app/api/parties/__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -36,67 +37,27 @@ afterAll(async () => {
 describe('POST /api/parties/[id]/template', () => {
   beforeEach(standardTestSetup.beforeEach);
 
+  const validTemplateBody = { isTemplate: true };
+  const testSuite = createPostEndpointTestSuite(POST, validTemplateBody, 'template');
+
   it('should return 401 if user is not authenticated', async () => {
-    await testUnauthorizedAccess(
-      POST,
-      () => createPostRequest({ isTemplate: true }),
-      createAsyncParams('607d2f0b0a1b2c3d4e5f6789')
-    );
+    await testSuite.testUnauthorized();
   });
 
   it('should return 404 if party does not exist', async () => {
-    await testNotFoundWithInvalidId(
-      TEST_USERS.USER_123,
-      POST,
-      () => createPostRequest({ isTemplate: true })
-    );
+    await testSuite.testNotFound();
   });
 
   it('should return 403 if user does not have edit permission', async () => {
-    const sharedParty = await createTestParty({
-      userId: TEST_USERS.OWNER_USER,
-      name: 'Shared Party'
-    });
-
-    // Add USER_123 as viewer (no edit permission)
-    sharedParty.sharedWith.push({
-      userId: TEST_USERS.USER_123,
-      role: 'viewer',
-      sharedAt: new Date()
-    });
-    await sharedParty.save();
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({ isTemplate: true });
-    
-    const response = await POST(req, createAsyncParams(sharedParty._id.toString()));
-    expectForbidden(response);
+    await testSuite.testForbidden();
   });
 
   it('should return 400 for invalid JSON', async () => {
-    const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = new (require('next/server')).NextRequest(
-      new Request('http://localhost', {
-        method: 'POST',
-        body: 'invalid json',
-        headers: { 'Content-Type': 'application/json' },
-      })
-    );
-    
-    const response = await POST(req, createAsyncParams(party._id.toString()));
-    expectBadRequest(response);
+    await testSuite.testInvalidJson();
   });
 
   it('should return 400 if isTemplate is missing', async () => {
-    const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({}); // Missing isTemplate
-    
-    const response = await POST(req, createAsyncParams(party._id.toString()));
-    expectBadRequest(response);
+    await testSuite.testMissingFields({});
   });
 
   it('should return 400 if isTemplate is not boolean', async () => {
