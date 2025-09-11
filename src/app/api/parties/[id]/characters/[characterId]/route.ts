@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { Party, type IParty } from '@/models/Party';
 import { canEditParty } from '@/lib/utils/user-context';
+import { EMAIL_REGEX } from '../../_utils/party-api-utils';
 import { Types } from 'mongoose';
 
 interface UpdateCharacterRequest {
@@ -122,7 +123,7 @@ export async function PUT(
 
     // Validate email if provided
     if (playerEmail !== undefined) {
-      if (playerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(playerEmail)) {
+      if (playerEmail && !EMAIL_REGEX.test(playerEmail)) {
         return new NextResponse('Invalid email format', { status: 400 });
       }
     }

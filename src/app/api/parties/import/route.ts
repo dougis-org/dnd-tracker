@@ -1,6 +1,6 @@
 import { Party, IParty } from '@/models/Party';
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticateUser, handleJsonParsingError } from '@/app/api/parties/_utils/party-api-utils';
+import { authenticateUser, handleJsonParsingError, EMAIL_REGEX } from '@/app/api/parties/_utils/party-api-utils';
 
 // POST /api/parties/import - Import party from JSON
 export async function POST(req: NextRequest) {
@@ -88,7 +88,7 @@ function sanitizeImportData(importedParty: any, userId: string): Partial<IParty>
       if (char.playerEmail && typeof char.playerEmail === 'string') {
         const email = char.playerEmail.trim().toLowerCase();
         // Validate email format
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (!EMAIL_REGEX.test(email)) {
           throw new Error(`Invalid email format: ${char.playerEmail}`);
         }
         sanitizedChar.playerEmail = email;

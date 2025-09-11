@@ -4,6 +4,7 @@ import { Party, type IParty } from '@/models/Party';
 import { CharacterModel as Character } from '@/models/schemas';
 import { canAddCharacterToParty, getTierLimits } from '@/lib/utils/tier-limits';
 import { getUserTier, canEditParty } from '@/lib/utils/user-context';
+import { EMAIL_REGEX } from '../_utils/party-api-utils';
 import { Types } from 'mongoose';
 
 interface AddCharacterRequest {
@@ -99,8 +100,7 @@ export async function POST(
 
     // Validate email if provided
     if (playerEmail) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(playerEmail)) {
+      if (!EMAIL_REGEX.test(playerEmail)) {
         return new NextResponse('Invalid email format', { status: 400 });
       }
     }

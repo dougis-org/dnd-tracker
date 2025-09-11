@@ -4,6 +4,11 @@ import mongoose from 'mongoose';
 import { Party, IParty } from '@/models/Party';
 
 /**
+ * Email validation pattern - defined as constant for security
+ */
+export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
  * Authentication utility for party API endpoints
  */
 export async function authenticateUser() {
