@@ -7,7 +7,8 @@ import { Party, IParty } from '@/models/Party';
  * Authentication utility for party API endpoints
  */
 export async function authenticateUser() {
-  const { userId } = await auth();
+  const authResult = await auth();
+  const userId = authResult?.userId;
   if (!userId) {
     return { userId: null, error: new NextResponse('Unauthorized', { status: 401 }) };
   }

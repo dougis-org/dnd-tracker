@@ -1,10 +1,14 @@
 import { Party, IParty } from '@/models/Party';
 import { NextRequest, NextResponse } from 'next/server';
-import { handleAuthenticatedRequest } from '@/app/api/parties/_utils/party-api-utils';
+import { authenticateUser, handleJsonParsingError } from '@/app/api/parties/_utils/party-api-utils';
 
 // POST /api/parties/import - Import party from JSON
 export async function POST(req: NextRequest) {
-  return handleAuthenticatedRequest(req, async (userId: string, body: any) => {
+  try {
+    const { userId, error } = await authenticateUser();
+    if (error) return error;
+
+    const body = await req.json();
     const { party: importedParty } = body;
 
     // Validate required data
@@ -17,13 +21,25 @@ export async function POST(req: NextRequest) {
     }
 
     // Sanitize and prepare party data for import using standardized logic
-    const sanitizedParty = sanitizeImportData(importedParty, userId);
+    const sanitizedParty = sanitizeImportData(importedParty, userId!);
     
     const newParty = new Party(sanitizedParty);
     const savedParty = await newParty.save();
     
     return NextResponse.json(savedParty, { status: 201 });
-  });
+  } catch (error: any) {
+    // Handle JSON parsing errors from req.json()
+    if (error.name === 'SyntaxError' || error.message?.includes('JSON')) {
+      return new NextResponse('Invalid JSON in request body', { status: 400 });
+    }
+    
+    // Handle validation errors (including email validation)
+    if (error.message?.includes('Invalid email format') || error.name === 'ValidationError') {
+      return new NextResponse('Validation failed: ' + error.message, { status: 400 });
+    }
+    
+    return handleJsonParsingError(error, 'importing party');
+  }
 }
 
 /**
