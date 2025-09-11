@@ -3,6 +3,8 @@ import {
   handleApiError,
   findPartyWithAccess,
   setupPartyRoute,
+  sanitizeExportData,
+  generateExportFilename,
 } from '@/app/api/parties/_utils/party-api-utils';
 
 interface RouteParams {
@@ -19,40 +21,14 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
     const { party, error } = await findPartyWithAccess(setup.id!, setup.userId!);
     if (error) return error;
 
-    // Create sanitized export data (remove sensitive/internal fields)
-    const exportData = {
-      metadata: {
-        exportedAt: new Date().toISOString(),
-        exportedBy: setup.userId,
-        version: '1.0'
-      },
-      party: {
-        name: party!.name,
-        description: party!.description,
-        campaignName: party!.campaignName,
-        maxSize: party!.maxSize,
-        isTemplate: party!.isTemplate,
-        templateCategory: party!.templateCategory,
-        characters: party!.characters.map((char: { playerName?: string; playerEmail?: string; isActive?: boolean }) => ({
-          playerName: char.playerName,
-          playerEmail: char.playerEmail,
-          isActive: char.isActive,
-          // Note: characterId and joinedAt are not exported for security
-        }))
-      }
-    };
-
+    // Create sanitized export data using utility function
+    const exportData = sanitizeExportData(party!, setup.userId!);
+    
     // Remove undefined fields for cleaner export
     const cleanExportData = JSON.parse(JSON.stringify(exportData));
 
-    // Generate filename from party name (sanitized)
-    const filename = party!.name
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single
-      .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
-      || 'party-export';
+    // Generate filename using utility function
+    const filename = generateExportFilename(party!.name);
 
     return new NextResponse(JSON.stringify(cleanExportData, null, 2), {
       status: 200,

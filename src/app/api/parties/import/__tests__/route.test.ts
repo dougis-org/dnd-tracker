@@ -9,14 +9,12 @@ import {
   mockAuth,
   createPostRequest,
   createTestParty,
-  cleanupParties,
   TEST_USERS,
-  expectUnauthorized,
   expectBadRequest,
   expectCreated,
-  testUnauthorizedAccess,
   standardTestSetup,
   createInvalidJsonRequest,
+  createComprehensiveTestSuite,
 } from '@/app/api/parties/__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -34,19 +32,26 @@ afterAll(async () => {
 describe('POST /api/parties/import', () => {
   beforeEach(standardTestSetup.beforeEach);
 
-  it('should return 401 if user is not authenticated', async () => {
-    await testUnauthorizedAccess(
-      POST,
-      () => createPostRequest({ party: { name: 'Imported Party' } })
-    );
-  });
+  const validImportBody = { party: { name: 'Imported Party' } };
+  
+  // Standard comprehensive test suite (modified for import endpoint which doesn't have dynamic params)
+  const standardTests = {
+    'should return 401 if user is not authenticated': async () => {
+      const req = createPostRequest(validImportBody);
+      const response = await POST(req);
+      expect(response.status).toBe(401);
+    },
+    'should return 400 for invalid JSON': async () => {
+      mockAuth(TEST_USERS.USER_123);
+      const req = createInvalidJsonRequest();
+      const response = await POST(req);
+      expectBadRequest(response);
+    }
+  };
 
-  it('should return 400 for invalid JSON', async () => {
-    mockAuth(TEST_USERS.USER_123);
-    const req = createInvalidJsonRequest();
-    
-    const response = await POST(req);
-    expectBadRequest(response);
+  // Execute standard tests
+  Object.entries(standardTests).forEach(([testName, testFn]) => {
+    it(testName, testFn);
   });
 
   it('should return 400 if party data is missing', async () => {

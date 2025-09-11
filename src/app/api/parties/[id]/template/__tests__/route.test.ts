@@ -9,21 +9,15 @@ import {
   mockAuth,
   createPostRequest,
   createTestParty,
-  cleanupParties,
   TEST_USERS,
-  expectUnauthorized,
-  expectBadRequest,
-  expectNotFound,
-  expectForbidden,
   createAsyncParams,
-  testUnauthorizedAccess,
-  testNotFoundWithInvalidId,
   standardTestSetup,
   createEndpointTestSuite,
-  testEditorCanEdit,
-  testDatabasePersistence,
-  testOwnerCanPerformAction,
+  createComprehensiveTestSuite,
+  createOwnerTestPatterns,
+  createSharedAccessTestPatterns,
   testFieldValidation,
+  testDatabasePersistence,
 } from '@/app/api/parties/__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -43,56 +37,42 @@ describe('POST /api/parties/[id]/template', () => {
 
   const validTemplateBody = { isTemplate: true };
   const testSuite = createEndpointTestSuite('POST', POST, validTemplateBody, 'template');
-
-  it('should return 401 if user is not authenticated', async () => {
-    await testSuite.testUnauthorized();
+  const ownerPatterns = createOwnerTestPatterns(POST, validTemplateBody);
+  const sharedAccessPatterns = createSharedAccessTestPatterns(POST, validTemplateBody);
+  
+  // Standard comprehensive test suite
+  const standardTests = createComprehensiveTestSuite('POST', POST, validTemplateBody, 'template', {
+    'should return 400 if isTemplate is missing': () => testSuite.testMissingFields({}),
+    'should return 400 if isTemplate is not boolean': () => testFieldValidation(POST, validTemplateBody, 'isTemplate', 'not-boolean')
   });
 
-  it('should return 404 if party does not exist', async () => {
-    await testSuite.testNotFound();
-  });
-
-  it('should return 403 if user does not have edit permission', async () => {
-    await testSuite.testForbidden();
-  });
-
-  it('should return 400 for invalid JSON', async () => {
-    await testSuite.testInvalidJson();
-  });
-
-  it('should return 400 if isTemplate is missing', async () => {
-    await testSuite.testMissingFields({});
-  });
-
-  it('should return 400 if isTemplate is not boolean', async () => {
-    await testFieldValidation(POST, validTemplateBody, 'isTemplate', 'not-boolean');
+  // Execute standard tests
+  Object.entries(standardTests).forEach(([testName, testFn]) => {
+    it(testName, testFn);
   });
 
   it('should convert party to template as owner', async () => {
-    await testOwnerCanPerformAction(POST, {
-      isTemplate: true,
-      templateCategory: 'Adventure'
-    }, 200, (response, data) => {
+    const templateBody = { isTemplate: true, templateCategory: 'Adventure' };
+    const templatePatterns = createOwnerTestPatterns(POST, templateBody);
+    await templatePatterns.testOwnerSuccess(200, (response, data) => {
       expect(data.isTemplate).toBe(true);
       expect(data.templateCategory).toBe('Adventure');
     });
   });
 
   it('should convert template back to regular party as owner', async () => {
-    await testOwnerCanPerformAction(POST, {
-      isTemplate: false
-    }, 200, (response, data) => {
+    const regularBody = { isTemplate: false };
+    const regularPatterns = createOwnerTestPatterns(POST, regularBody);
+    await regularPatterns.testOwnerSuccess(200, (response, data) => {
       expect(data.isTemplate).toBe(false);
       expect(data.templateCategory).toBeUndefined();
     });
   });
 
   it('should convert party to template as editor', async () => {
-    const response = await testEditorCanEdit(POST, {
-      isTemplate: true,
-      templateCategory: 'Campaign'
-    }, 200, 'template');
-    
+    const editorBody = { isTemplate: true, templateCategory: 'Campaign' };
+    const editorPatterns = createSharedAccessTestPatterns(POST, editorBody);
+    const response = await editorPatterns.testEditorCanEdit(200);
     const data = await response.json();
     expect(data.isTemplate).toBe(true);
     expect(data.templateCategory).toBe('Campaign');
@@ -139,20 +119,9 @@ describe('POST /api/parties/[id]/template', () => {
   });
 
   it('should persist template changes in database', async () => {
-    const party = await createTestParty({
-      userId: TEST_USERS.USER_123,
-      isTemplate: false
-    });
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({
-      isTemplate: true,
-      templateCategory: 'Test Category'
-    });
-    
-    await POST(req, createAsyncParams(party._id.toString()));
-    
-    await testDatabasePersistence(party._id.toString(), (savedParty) => {
+    const persistenceBody = { isTemplate: true, templateCategory: 'Test Category' };
+    const persistencePatterns = createOwnerTestPatterns(POST, persistenceBody);
+    await persistencePatterns.testDatabasePersistence((savedParty) => {
       expect(savedParty.isTemplate).toBe(true);
       expect(savedParty.templateCategory).toBe('Test Category');
     });

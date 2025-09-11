@@ -9,16 +9,11 @@ import {
   mockAuth,
   createGetRequest,
   createTestParty,
-  cleanupParties,
   TEST_USERS,
-  expectUnauthorized,
-  expectNotFound,
-  expectForbidden,
   createAsyncParams,
-  testUnauthorizedAccess,
-  testNotFoundWithInvalidId,
   standardTestSetup,
   createEndpointTestSuite,
+  createComprehensiveTestSuite,
   createSharedTestParty,
 } from '@/app/api/parties/__tests__/_test-utils';
 
@@ -37,18 +32,12 @@ afterAll(async () => {
 describe('GET /api/parties/export/[id]', () => {
   beforeEach(standardTestSetup.beforeEach);
 
-  const testSuite = createEndpointTestSuite('GET', GET, undefined, 'export');
+  // Standard comprehensive test suite for GET endpoint
+  const standardTests = createComprehensiveTestSuite('GET', GET, undefined, 'export');
 
-  it('should return 401 if user is not authenticated', async () => {
-    await testSuite.testUnauthorized();
-  });
-
-  it('should return 404 if party does not exist', async () => {
-    await testSuite.testNotFound();
-  });
-
-  it('should return 403 if user does not have access to party', async () => {
-    await testSuite.testForbidden();
+  // Execute standard tests
+  Object.entries(standardTests).forEach(([testName, testFn]) => {
+    it(testName, testFn);
   });
 
   it('should export minimal party successfully as owner', async () => {

@@ -188,10 +188,75 @@ export async function handlePostWithJsonBody<T = any>(
     const body = await req.json();
     return await bodyHandler(body, party!);
   } catch (error: any) {
-    // Handle JSON parsing errors from req.json()
-    if (error.name === 'SyntaxError' || error.message?.includes('JSON')) {
-      return new NextResponse('Invalid JSON in request body', { status: 400 });
-    }
-    return handleApiError(error, 'processing request');
+    return handleJsonParsingError(error, 'processing request');
   }
+}
+
+/**
+ * Consolidated JSON parsing error handler
+ */
+export function handleJsonParsingError(error: any, operation: string): NextResponse {
+  // Handle JSON parsing errors from req.json()
+  if (error.name === 'SyntaxError' || error.message?.includes('JSON')) {
+    return new NextResponse('Invalid JSON in request body', { status: 400 });
+  }
+  return handleApiError(error, operation);
+}
+
+/**
+ * Standard handler for endpoints that require authentication but no params
+ */
+export async function handleAuthenticatedRequest(
+  req: NextRequest,
+  handler: (userId: string, body: any) => Promise<NextResponse>
+): Promise<NextResponse> {
+  try {
+    const { userId, error } = await authenticateUser();
+    if (error) return error;
+
+    const body = await req.json();
+    return await handler(userId!, body);
+  } catch (error: any) {
+    return handleJsonParsingError(error, 'processing authenticated request');
+  }
+}
+
+/**
+ * Enhanced export data sanitization utility
+ */
+export function sanitizeExportData(party: IParty, userId: string) {
+  return {
+    metadata: {
+      exportedAt: new Date().toISOString(),
+      exportedBy: userId,
+      version: '1.0'
+    },
+    party: {
+      name: party.name,
+      description: party.description,
+      campaignName: party.campaignName,
+      maxSize: party.maxSize,
+      isTemplate: party.isTemplate,
+      templateCategory: party.templateCategory,
+      characters: party.characters.map((char: any) => ({
+        playerName: char.playerName,
+        playerEmail: char.playerEmail,
+        isActive: char.isActive,
+        // Note: characterId and joinedAt are not exported for security
+      }))
+    }
+  };
+}
+
+/**
+ * Generate sanitized filename from party name
+ */
+export function generateExportFilename(partyName: string): string {
+  return partyName
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
+    || 'party-export';
 }

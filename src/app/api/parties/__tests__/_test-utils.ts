@@ -508,6 +508,82 @@ export const standardTestFileSetup = {
 };
 
 /**
+ * Comprehensive test suite builder that eliminates duplicate test patterns
+ */
+export function createComprehensiveTestSuite(
+  method: 'GET' | 'POST',
+  apiCall: any,
+  validBody?: any,
+  suiteName: string = 'endpoint',
+  customTests?: {
+    [key: string]: () => Promise<void>;
+  }
+) {
+  const testSuite = createEndpointTestSuite(method, apiCall, validBody, suiteName);
+  
+  const comprehensiveTests = {
+    // Standard auth/permission tests
+    'should return 401 if user is not authenticated': testSuite.testUnauthorized,
+    'should return 404 if party does not exist': testSuite.testNotFound,
+    'should return 403 if user does not have required permission': testSuite.testForbidden,
+    
+    // Add POST-specific tests
+    ...(method === 'POST' && validBody && {
+      'should return 400 for invalid JSON': testSuite.testInvalidJson,
+      'should return 400 if required fields are missing': () => testSuite.testMissingFields({}),
+    }),
+    
+    // Add custom tests
+    ...customTests
+  };
+  
+  return comprehensiveTests;
+}
+
+/**
+ * Standard test patterns for owner operations
+ */
+export function createOwnerTestPatterns(apiCall: any, requestBody: any) {
+  return {
+    testOwnerSuccess: async (expectedStatus: number = 200, verifyCallback?: (response: Response, data: any) => void) => {
+      return await testOwnerCanPerformAction(apiCall, requestBody, expectedStatus, verifyCallback);
+    },
+    
+    testDatabasePersistence: async (verifyCallback: (savedParty: any) => void) => {
+      const party = await createTestParty({ userId: TEST_USERS.USER_123 });
+      mockAuth(TEST_USERS.USER_123);
+      const req = createPostRequest(requestBody);
+      await apiCall(req, createAsyncParams(party._id.toString()));
+      await testDatabasePersistence(party._id.toString(), verifyCallback);
+    }
+  };
+}
+
+/**
+ * Standard test patterns for shared access operations
+ */
+export function createSharedAccessTestPatterns(apiCall: any, requestBody: any) {
+  return {
+    testViewerCannotEdit: async () => {
+      return await testViewerCannotEdit(apiCall, requestBody);
+    },
+    
+    testEditorCanEdit: async (expectedStatus: number = 200) => {
+      return await testEditorCanEdit(apiCall, requestBody, expectedStatus);
+    },
+    
+    testOwnerAccess: async (expectedStatus: number = 200, verifyCallback?: (data: any) => void) => {
+      const response = await testOwnerCanPerformAction(apiCall, requestBody, expectedStatus);
+      if (verifyCallback && expectedStatus !== 204) {
+        const data = await response.json();
+        verifyCallback(data);
+      }
+      return response;
+    }
+  };
+}
+
+/**
  * Create comprehensive test suite for endpoints that require authentication and party access
  */
 export function createEndpointTestSuite(method: 'GET' | 'POST', apiCall: any, validBody?: any, suiteName: string = 'endpoint') {

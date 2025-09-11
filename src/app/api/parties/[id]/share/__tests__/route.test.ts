@@ -11,19 +11,15 @@ import {
   createTestParty,
   cleanupParties,
   TEST_USERS,
-  expectUnauthorized,
   expectBadRequest,
-  expectNotFound,
-  expectForbidden,
   createAsyncParams,
-  testUnauthorizedAccess,
-  testNotFoundWithInvalidId,
   standardTestSetup,
   createEndpointTestSuite,
-  testEditorCanEdit,
-  testDatabasePersistence,
-  testOwnerCanPerformAction,
+  createComprehensiveTestSuite,
+  createOwnerTestPatterns,
+  createSharedAccessTestPatterns,
   testFieldValidation,
+  testDatabasePersistence,
 } from '@/app/api/parties/__tests__/_test-utils';
 
 jest.mock('@clerk/nextjs/server', () => ({
@@ -42,41 +38,25 @@ describe('POST /api/parties/[id]/share', () => {
   beforeEach(standardTestSetup.beforeEach);
 
   const validShareBody = { userId: TEST_USERS.OTHER_USER, role: 'viewer' };
+  const ownerPatterns = createOwnerTestPatterns(POST, validShareBody);
+  const sharedAccessPatterns = createSharedAccessTestPatterns(POST, validShareBody);
+  
+  // Standard comprehensive test suite
   const testSuite = createEndpointTestSuite('POST', POST, validShareBody, 'share');
-
-  it('should return 401 if user is not authenticated', async () => {
-    await testSuite.testUnauthorized();
+  const standardTests = createComprehensiveTestSuite('POST', POST, validShareBody, 'share', {
+    'should return 400 if userId is missing': () => testSuite.testMissingFields({ role: 'viewer' }),
+    'should return 400 if role is missing': () => testSuite.testMissingFields({ userId: TEST_USERS.OTHER_USER }),
+    'should return 400 if role is invalid': () => testFieldValidation(POST, validShareBody, 'role', 'invalid-role')
   });
 
-  it('should return 404 if party does not exist', async () => {
-    await testSuite.testNotFound();
+  // Execute standard tests
+  Object.entries(standardTests).forEach(([testName, testFn]) => {
+    it(testName, testFn);
   });
 
-  it('should return 403 if user does not have edit permission', async () => {
-    await testSuite.testForbidden();
-  });
-
-  it('should return 400 for invalid JSON', async () => {
-    await testSuite.testInvalidJson();
-  });
-
-  it('should return 400 if userId is missing', async () => {
-    await testSuite.testMissingFields({ role: 'viewer' });
-  });
-
-  it('should return 400 if role is missing', async () => {
-    await testSuite.testMissingFields({ userId: TEST_USERS.OTHER_USER });
-  });
-
-  it('should return 400 if role is invalid', async () => {
-    await testFieldValidation(POST, validShareBody, 'role', 'invalid-role');
-  });
-
+  // Share-specific tests using patterns
   it('should share party with viewer role as owner', async () => {
-    await testOwnerCanPerformAction(POST, {
-      userId: TEST_USERS.OTHER_USER,
-      role: 'viewer'
-    }, 200, (response, data) => {
+    await ownerPatterns.testOwnerSuccess(200, (response, data) => {
       expect(data.sharedWith).toHaveLength(1);
       expect(data.sharedWith[0].userId).toBe(TEST_USERS.OTHER_USER);
       expect(data.sharedWith[0].role).toBe('viewer');
@@ -85,10 +65,9 @@ describe('POST /api/parties/[id]/share', () => {
   });
 
   it('should share party with editor role as owner', async () => {
-    await testOwnerCanPerformAction(POST, {
-      userId: TEST_USERS.OTHER_USER,
-      role: 'editor'
-    }, 200, (response, data) => {
+    const editorBody = { userId: TEST_USERS.OTHER_USER, role: 'editor' };
+    const editorPatterns = createOwnerTestPatterns(POST, editorBody);
+    await editorPatterns.testOwnerSuccess(200, (response, data) => {
       expect(data.sharedWith).toHaveLength(1);
       expect(data.sharedWith[0].userId).toBe(TEST_USERS.OTHER_USER);
       expect(data.sharedWith[0].role).toBe('editor');
@@ -96,11 +75,7 @@ describe('POST /api/parties/[id]/share', () => {
   });
 
   it('should share party as editor', async () => {
-    const response = await testEditorCanEdit(POST, {
-      userId: TEST_USERS.OTHER_USER,
-      role: 'viewer'
-    }, 200, 'share');
-    
+    const response = await sharedAccessPatterns.testEditorCanEdit(200);
     const data = await response.json();
     expect(data.sharedWith).toHaveLength(2); // Original editor + new viewer
     expect(data.sharedWith.some((share: any) => share.userId === TEST_USERS.OTHER_USER)).toBe(true);
@@ -146,17 +121,7 @@ describe('POST /api/parties/[id]/share', () => {
   });
 
   it('should persist share in database', async () => {
-    const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-
-    mockAuth(TEST_USERS.USER_123);
-    const req = createPostRequest({
-      userId: TEST_USERS.OTHER_USER,
-      role: 'viewer'
-    });
-    
-    await POST(req, createAsyncParams(party._id.toString()));
-    
-    await testDatabasePersistence(party._id.toString(), (savedParty) => {
+    await ownerPatterns.testDatabasePersistence((savedParty) => {
       expect(savedParty.sharedWith).toHaveLength(1);
       expect(savedParty.sharedWith[0].userId).toBe(TEST_USERS.OTHER_USER);
       expect(savedParty.sharedWith[0].role).toBe('viewer');
