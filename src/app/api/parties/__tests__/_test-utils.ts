@@ -320,6 +320,17 @@ export async function expectEmptyArray(response: Response) {
 }
 
 /**
+ * Test not found with non-existent ID - simple version
+ */
+export async function testNotFoundWithInvalidId(userId: string, apiCall: any, requestFactory: () => any) {
+  mockAuth(userId);
+  const req = requestFactory();
+  const nonExistentId = new mongoose.Types.ObjectId().toString();
+  const response = await apiCall(req, createAsyncParams(nonExistentId));
+  expectNotFound(response);
+}
+
+/**
  * Standard test setup for beforeEach blocks
  */
 export const standardTestSetup = {
