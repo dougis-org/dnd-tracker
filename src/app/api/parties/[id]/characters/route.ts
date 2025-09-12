@@ -4,7 +4,7 @@ import { Party, type IParty } from '@/models/Party';
 import { CharacterModel as Character } from '@/models/schemas';
 import { canAddCharacterToParty, getTierLimits } from '@/lib/utils/tier-limits';
 import { getUserTier, canEditParty } from '@/lib/utils/user-context';
-import { EMAIL_REGEX } from '../_utils/party-api-utils';
+import { EMAIL_REGEX } from '../../_utils/party-api-utils';
 import { Types } from 'mongoose';
 
 interface AddCharacterRequest {

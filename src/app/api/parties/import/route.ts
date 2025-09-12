@@ -43,15 +43,14 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * Sanitize imported party data with validation
+ * Sanitize basic party fields
  */
-function sanitizeImportData(importedParty: any, userId: string): Partial<IParty> {
+function sanitizeBasicFields(importedParty: any, userId: string): Partial<IParty> {
   const sanitizedParty: Partial<IParty> = {
-    userId, // Always set to authenticated user
+    userId,
     name: importedParty.name.trim(),
   };
 
-  // Optional fields with validation
   if (importedParty.description && typeof importedParty.description === 'string') {
     sanitizedParty.description = importedParty.description.trim();
   }
@@ -64,43 +63,71 @@ function sanitizeImportData(importedParty: any, userId: string): Partial<IParty>
     sanitizedParty.maxSize = importedParty.maxSize;
   }
 
+  return sanitizedParty;
+}
+
+/**
+ * Sanitize template fields
+ */
+function sanitizeTemplateFields(importedParty: any): Partial<IParty> {
+  const templateFields: Partial<IParty> = {};
+
   if (typeof importedParty.isTemplate === 'boolean') {
-    sanitizedParty.isTemplate = importedParty.isTemplate;
+    templateFields.isTemplate = importedParty.isTemplate;
     
     if (importedParty.isTemplate && 
         importedParty.templateCategory && 
         typeof importedParty.templateCategory === 'string') {
-      sanitizedParty.templateCategory = importedParty.templateCategory;
+      templateFields.templateCategory = importedParty.templateCategory;
     }
   }
 
-  // Import characters (sanitized)
-  if (Array.isArray(importedParty.characters)) {
-    sanitizedParty.characters = importedParty.characters.map((char: any) => {
-      const sanitizedChar: Partial<IParty['characters'][0]> = {
-        isActive: typeof char.isActive === 'boolean' ? char.isActive : true,
-      };
+  return templateFields;
+}
 
-      if (char.playerName && typeof char.playerName === 'string') {
-        sanitizedChar.playerName = char.playerName.trim();
-      }
+/**
+ * Sanitize a single character
+ */
+function sanitizeCharacter(char: any): Partial<IParty['characters'][0]> {
+  const sanitizedChar: Partial<IParty['characters'][0]> = {
+    isActive: typeof char.isActive === 'boolean' ? char.isActive : true,
+  };
 
-      if (char.playerEmail && typeof char.playerEmail === 'string') {
-        const email = char.playerEmail.trim().toLowerCase();
-        // Validate email format
-        if (!EMAIL_REGEX.test(email)) {
-          throw new Error(`Invalid email format: ${char.playerEmail}`);
-        }
-        sanitizedChar.playerEmail = email;
-      }
-
-      // Note: characterId and joinedAt are not imported for security
-      return sanitizedChar;
-    });
+  if (char.playerName && typeof char.playerName === 'string') {
+    sanitizedChar.playerName = char.playerName.trim();
   }
 
-  // Note: sharedWith is not imported for security reasons
-  // Note: _id, createdAt, updatedAt are not imported (will be generated)
+  if (char.playerEmail && typeof char.playerEmail === 'string') {
+    const email = char.playerEmail.trim().toLowerCase();
+    if (!EMAIL_REGEX.test(email)) {
+      throw new Error(`Invalid email format: ${char.playerEmail}`);
+    }
+    sanitizedChar.playerEmail = email;
+  }
 
-  return sanitizedParty;
+  return sanitizedChar;
+}
+
+/**
+ * Sanitize characters array
+ */
+function sanitizeCharacters(importedParty: any): Partial<IParty> {
+  if (!Array.isArray(importedParty.characters)) {
+    return {};
+  }
+
+  return {
+    characters: importedParty.characters.map(sanitizeCharacter)
+  };
+}
+
+/**
+ * Sanitize imported party data with validation
+ */
+function sanitizeImportData(importedParty: any, userId: string): Partial<IParty> {
+  return {
+    ...sanitizeBasicFields(importedParty, userId),
+    ...sanitizeTemplateFields(importedParty),
+    ...sanitizeCharacters(importedParty)
+  };
 }

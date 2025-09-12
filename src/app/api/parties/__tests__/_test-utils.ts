@@ -136,22 +136,15 @@ export function expectUnauthorized(response: Response) {
 }
 
 /**
- * Helper to validate party data fields in responses
- */
-function validatePartyData(data: any, expectedData: Partial<IParty>) {
-  if (expectedData.name) expect(data.name).toBe(expectedData.name);
-  if (expectedData.userId) expect(data.userId).toBe(expectedData.userId);
-  if (expectedData.description) expect(data.description).toBe(expectedData.description);
-}
-
-/**
  * Standard test expectations for successful responses with party data
  */
 export async function expectPartyResponse(response: Response, expectedData?: Partial<IParty>) {
   expect(response.status).toBe(200);
   if (expectedData) {
     const data = await response.json();
-    validatePartyData(data, expectedData);
+    if (expectedData.name) expect(data.name).toBe(expectedData.name);
+    if (expectedData.userId) expect(data.userId).toBe(expectedData.userId);
+    if (expectedData.description) expect(data.description).toBe(expectedData.description);
     return data;
   }
 }
@@ -184,7 +177,9 @@ export async function expectCreated(response: Response, expectedData?: Partial<I
   expect(response.status).toBe(201);
   if (expectedData) {
     const data = await response.json();
-    validatePartyData(data, expectedData);
+    if (expectedData.name) expect(data.name).toBe(expectedData.name);
+    if (expectedData.userId) expect(data.userId).toBe(expectedData.userId);
+    if (expectedData.description) expect(data.description).toBe(expectedData.description);
     expect(data.createdAt).toBeDefined();
     expect(data.updatedAt).toBeDefined();
     return data;
@@ -199,18 +194,9 @@ export function expectDeleted(response: Response) {
 }
 
 /**
- * Standard test expectations for empty array responses
+ * Test unauthorized access pattern
  */
-export async function expectEmptyArray(response: Response) {
-  expect(response.status).toBe(200);
-  const data = await response.json();
-  expect(data).toEqual([]);
-}
-
-/**
- * Common test pattern: mock auth, create request, call API, expect unauthorized
- */
-export async function testUnauthorizedAccess(apiCall: (req: any, params?: any) => Promise<Response>, requestFactory: () => any, params?: any) {
+export async function testUnauthorized(apiCall: any, requestFactory: () => any, params?: any) {
   mockAuth(null);
   const req = requestFactory();
   const response = await apiCall(req, params);
@@ -218,13 +204,58 @@ export async function testUnauthorizedAccess(apiCall: (req: any, params?: any) =
 }
 
 /**
- * Common test pattern: create test data, test API call, verify response
+ * Test not found with non-existent ID
  */
-export async function testSuccessfulGet(userId: string, apiCall: (req: any, params?: any) => Promise<Response>, requestFactory: () => any, params?: any) {
+export async function testNotFound(userId: string, apiCall: any, requestFactory: () => any) {
   mockAuth(userId);
   const req = requestFactory();
-  const response = await apiCall(req, params);
-  return response;
+  const nonExistentId = new mongoose.Types.ObjectId().toString();
+  const response = await apiCall(req, createAsyncParams(nonExistentId));
+  expectNotFound(response);
+}
+
+/**
+ * Test forbidden access (no edit permission)
+ */
+export async function testForbiddenAccess(apiCall: any, requestBody: any) {
+  const sharedParty = await createTestParty({
+    userId: TEST_USERS.OWNER_USER,
+    name: 'Shared Party'
+  });
+
+  // Add USER_123 as viewer (no edit permission)
+  sharedParty.sharedWith.push({
+    userId: TEST_USERS.USER_123,
+    role: 'viewer',
+    sharedAt: new Date()
+  });
+  await sharedParty.save();
+
+  mockAuth(TEST_USERS.USER_123);
+  const req = createPostRequest(requestBody);
+  
+  const response = await apiCall(req, createAsyncParams(sharedParty._id.toString()));
+  expectForbidden(response);
+}
+
+/**
+ * Test invalid JSON body
+ */
+export async function testInvalidJson(apiCall: any, partyId: string, userId: string = TEST_USERS.USER_123) {
+  mockAuth(userId);
+  const req = createInvalidJsonRequest();
+  const response = await apiCall(req, createAsyncParams(partyId));
+  expectBadRequest(response);
+}
+
+/**
+ * Test missing required fields
+ */
+export async function testMissingFields(apiCall: any, partyId: string, body: any, userId: string = TEST_USERS.USER_123) {
+  mockAuth(userId);
+  const req = createPostRequest(body);
+  const response = await apiCall(req, createAsyncParams(partyId));
+  expectBadRequest(response);
 }
 
 /**
@@ -249,26 +280,6 @@ export async function createTestPartiesForUser(userId: string, count: number = 2
 }
 
 /**
- * Standard test setup for beforeEach blocks in describe blocks
- */
-export const standardTestSetup = {
-  beforeEach: async () => {
-    await cleanupParties();
-  }
-};
-
-/**
- * Common pattern: test not found with non-existent ID
- */
-export async function testNotFoundWithInvalidId(userId: string, apiCall: (req: any, params: any) => Promise<Response>, requestFactory: () => any) {
-  mockAuth(userId);
-  const req = requestFactory();
-  const nonExistentId = new mongoose.Types.ObjectId().toString();
-  const response = await apiCall(req, createAsyncParams(nonExistentId));
-  expectNotFound(response);
-}
-
-/**
  * Setup describe block with standard test party creation
  */
 export async function setupTestPartyScenario(userId: string = TEST_USERS.USER_123, partyName: string = 'Test Party') {
@@ -280,404 +291,39 @@ export async function setupTestPartyScenario(userId: string = TEST_USERS.USER_12
 }
 
 /**
- * Common test file setup - reduces duplication in describe blocks
+ * Common test pattern: mock auth, create request, call API, expect unauthorized
  */
-export function createCommonTestSetup() {
-  return {
-    testUnauthorizedAccess: (apiCall: any, requestFactory: any, params?: any) => 
-      testUnauthorizedAccess(apiCall, requestFactory, params),
-    
-    testNotFoundWithInvalidId: (userId: string, apiCall: any, requestFactory: any) =>
-      testNotFoundWithInvalidId(userId, apiCall, requestFactory),
-    
-    setupPartyScenario: (userId?: string, partyName?: string) =>
-      setupTestPartyScenario(userId, partyName)
-  };
+export async function testUnauthorizedAccess(apiCall: (req: any, params?: any) => Promise<Response>, requestFactory: () => any, params?: any) {
+  mockAuth(null);
+  const req = requestFactory();
+  const response = await apiCall(req, params);
+  expectUnauthorized(response);
 }
 
 /**
- * Standard test for invalid JSON body
+ * Common test pattern: create test data, test API call, verify response
  */
-export async function testInvalidJsonBody(apiCall: any, partyId: string, userId: string = TEST_USERS.USER_123) {
+export async function testSuccessfulGet(userId: string, apiCall: (req: any, params?: any) => Promise<Response>, requestFactory: () => any, params?: any) {
   mockAuth(userId);
-  const req = new (require('next/server')).NextRequest(
-    new Request('http://localhost', {
-      method: 'POST',
-      body: 'invalid json',
-      headers: { 'Content-Type': 'application/json' },
-    })
-  );
-  
-  const response = await apiCall(req, createAsyncParams(partyId));
-  expectBadRequest(response);
-}
-
-/**
- * Standard test for missing required fields
- */
-export async function testMissingRequiredFields(apiCall: any, partyId: string, body: any, userId: string = TEST_USERS.USER_123) {
-  mockAuth(userId);
-  const req = createPostRequest(body);
-  const response = await apiCall(req, createAsyncParams(partyId));
-  expectBadRequest(response);
-}
-
-/**
- * Standard test for forbidden access (user has no edit permission)
- */
-export async function testForbiddenEditAccess(apiCall: any, requestBody: any) {
-  const sharedParty = await createTestParty({
-    userId: TEST_USERS.OWNER_USER,
-    name: 'Shared Party'
-  });
-
-  // Add USER_123 as viewer (no edit permission)
-  sharedParty.sharedWith.push({
-    userId: TEST_USERS.USER_123,
-    role: 'viewer',
-    sharedAt: new Date()
-  });
-  await sharedParty.save();
-
-  mockAuth(TEST_USERS.USER_123);
-  const req = createPostRequest(requestBody);
-  
-  const response = await apiCall(req, createAsyncParams(sharedParty._id.toString()));
-  expectForbidden(response);
-}
-
-/**
- * Standard test suite for POST endpoints with edit access requirements
- */
-export function createPostEndpointTestSuite(apiCall: any, validRequestBody: any, testName: string) {
-  return {
-    testUnauthorized: () => testUnauthorizedAccess(
-      apiCall,
-      () => createPostRequest(validRequestBody),
-      createAsyncParams('607d2f0b0a1b2c3d4e5f6789')
-    ),
-    
-    testNotFound: () => testNotFoundWithInvalidId(
-      TEST_USERS.USER_123,
-      apiCall,
-      () => createPostRequest(validRequestBody)
-    ),
-    
-    testForbidden: () => testForbiddenEditAccess(apiCall, validRequestBody),
-    
-    testInvalidJson: async () => {
-      const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-      return testInvalidJsonBody(apiCall, party._id.toString());
-    },
-    
-    testMissingFields: async (incompleteBody: any) => {
-      const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-      return testMissingRequiredFields(apiCall, party._id.toString(), incompleteBody);
-    }
-  };
-}
-
-/**
- * Standard test suite for GET endpoints that require party access
- */
-export function createGetEndpointTestSuite(apiCall: any, testName: string) {
-  return {
-    testUnauthorized: () => testUnauthorizedAccess(
-      apiCall,
-      () => createGetRequest(),
-      createAsyncParams('607d2f0b0a1b2c3d4e5f6789')
-    ),
-    
-    testNotFound: () => testNotFoundWithInvalidId(
-      TEST_USERS.USER_123,
-      apiCall,
-      () => createGetRequest()
-    ),
-    
-    testForbidden: async () => {
-      const privateParty = await createTestParty({
-        userId: TEST_USERS.OWNER_USER,
-        name: 'Private Party'
-      });
-
-      mockAuth(TEST_USERS.USER_123);
-      const req = createGetRequest();
-      
-      const response = await apiCall(req, createAsyncParams(privateParty._id.toString()));
-      expectForbidden(response);
-    }
-  };
-}
-
-/**
- * Create a party with shared access for testing different access levels
- */
-export async function createSharedTestParty(ownerId: string, sharedUserId: string, role: 'viewer' | 'editor', name: string = 'Shared Party') {
-  const party = await createTestParty({
-    userId: ownerId,
-    name
-  });
-
-  party.sharedWith.push({
-    userId: sharedUserId,
-    role,
-    sharedAt: new Date()
-  });
-  await party.save();
-
-  return party;
-}
-
-/**
- * Test pattern: create party as viewer and expect 403 for edit operations
- */
-export async function testViewerCannotEdit(apiCall: any, requestBody: any, testName: string = 'viewer test') {
-  const sharedParty = await createSharedTestParty(
-    TEST_USERS.OWNER_USER,
-    TEST_USERS.USER_123,
-    'viewer',
-    `${testName} party`
-  );
-
-  mockAuth(TEST_USERS.USER_123);
-  const req = createPostRequest(requestBody);
-  
-  const response = await apiCall(req, createAsyncParams(sharedParty._id.toString()));
-  expectForbidden(response);
-}
-
-/**
- * Test pattern: create party as editor and expect success for edit operations
- */
-export async function testEditorCanEdit(apiCall: any, requestBody: any, expectedStatus: number = 200, testName: string = 'editor test') {
-  const sharedParty = await createSharedTestParty(
-    TEST_USERS.OWNER_USER,
-    TEST_USERS.USER_123,
-    'editor',
-    `${testName} party`
-  );
-
-  mockAuth(TEST_USERS.USER_123);
-  const req = createPostRequest(requestBody);
-  
-  const response = await apiCall(req, createAsyncParams(sharedParty._id.toString()));
-  expect(response.status).toBe(expectedStatus);
+  const req = requestFactory();
+  const response = await apiCall(req, params);
   return response;
 }
 
 /**
- * Test pattern: database persistence verification
+ * Standard test expectations for empty array responses
  */
-export async function testDatabasePersistence(partyId: string, verifyCallback: (savedParty: any) => void) {
-  const savedParty = await Party.findById(partyId);
-  expect(savedParty).toBeTruthy();
-  verifyCallback(savedParty);
+export async function expectEmptyArray(response: Response) {
+  expect(response.status).toBe(200);
+  const data = await response.json();
+  expect(data).toEqual([]);
 }
 
 /**
- * Standard test file setup utilities
+ * Standard test setup for beforeEach blocks
  */
-export const standardTestFileSetup = {
-  imports: [
-    'setupTestDatabase',
-    'teardownTestDatabase',
-    'auth',
-    'mockAuth',
-    'createPostRequest',
-    'createGetRequest',
-    'createTestParty',
-    'cleanupParties',
-    'TEST_USERS',
-    'expectUnauthorized',
-    'expectBadRequest',
-    'expectNotFound',
-    'expectForbidden',
-    'createAsyncParams',
-    'standardTestSetup'
-  ],
-  
-  setupHooks: {
-    beforeAll: async () => {
-      await require('@/models/_utils/test-utils').setupTestDatabase();
-    },
-    afterAll: async () => {
-      await require('@/models/_utils/test-utils').teardownTestDatabase();
-    },
-    beforeEach: standardTestSetup.beforeEach
+export const standardTestSetup = {
+  beforeEach: async () => {
+    await cleanupParties();
   }
 };
-
-/**
- * Comprehensive test suite builder that eliminates duplicate test patterns
- */
-export function createComprehensiveTestSuite(
-  method: 'GET' | 'POST',
-  apiCall: any,
-  validBody?: any,
-  suiteName: string = 'endpoint',
-  customTests?: {
-    [key: string]: () => Promise<void>;
-  }
-) {
-  const testSuite = createEndpointTestSuite(method, apiCall, validBody, suiteName);
-  
-  const comprehensiveTests = {
-    // Standard auth/permission tests
-    'should return 401 if user is not authenticated': testSuite.testUnauthorized,
-    'should return 404 if party does not exist': testSuite.testNotFound,
-    'should return 403 if user does not have required permission': testSuite.testForbidden,
-    
-    // Add POST-specific tests
-    ...(method === 'POST' && validBody && {
-      'should return 400 for invalid JSON': testSuite.testInvalidJson,
-      'should return 400 if required fields are missing': () => testSuite.testMissingFields({}),
-    }),
-    
-    // Add custom tests
-    ...customTests
-  };
-  
-  return comprehensiveTests;
-}
-
-/**
- * Standard test patterns for owner operations
- */
-export function createOwnerTestPatterns(apiCall: any, requestBody: any) {
-  return {
-    testOwnerSuccess: async (expectedStatus: number = 200, verifyCallback?: (response: Response, data: any) => void) => {
-      return await testOwnerCanPerformAction(apiCall, requestBody, expectedStatus, verifyCallback);
-    },
-    
-    testDatabasePersistence: async (verifyCallback: (savedParty: any) => void) => {
-      const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-      mockAuth(TEST_USERS.USER_123);
-      const req = createPostRequest(requestBody);
-      await apiCall(req, createAsyncParams(party._id.toString()));
-      await testDatabasePersistence(party._id.toString(), verifyCallback);
-    }
-  };
-}
-
-/**
- * Standard test patterns for shared access operations
- */
-export function createSharedAccessTestPatterns(apiCall: any, requestBody: any) {
-  return {
-    testViewerCannotEdit: async () => {
-      return await testViewerCannotEdit(apiCall, requestBody);
-    },
-    
-    testEditorCanEdit: async (expectedStatus: number = 200) => {
-      return await testEditorCanEdit(apiCall, requestBody, expectedStatus);
-    },
-    
-    testOwnerAccess: async (expectedStatus: number = 200, verifyCallback?: (data: any) => void) => {
-      const response = await testOwnerCanPerformAction(apiCall, requestBody, expectedStatus);
-      if (verifyCallback && expectedStatus !== 204) {
-        const data = await response.json();
-        verifyCallback(data);
-      }
-      return response;
-    }
-  };
-}
-
-/**
- * Create comprehensive test suite for endpoints that require authentication and party access
- */
-export function createEndpointTestSuite(method: 'GET' | 'POST', apiCall: any, validBody?: any, suiteName: string = 'endpoint') {
-  const requestFactory = method === 'GET' 
-    ? () => createGetRequest()
-    : () => createPostRequest(validBody || {});
-
-  const baseTests = {
-    testUnauthorized: () => testUnauthorizedAccess(
-      apiCall,
-      requestFactory,
-      createAsyncParams('607d2f0b0a1b2c3d4e5f6789')
-    ),
-    
-    testNotFound: () => testNotFoundWithInvalidId(
-      TEST_USERS.USER_123,
-      apiCall,
-      requestFactory
-    ),
-    
-    testForbidden: method === 'GET' 
-      ? async () => {
-          const privateParty = await createTestParty({
-            userId: TEST_USERS.OWNER_USER,
-            name: `Private ${suiteName} Party`
-          });
-          mockAuth(TEST_USERS.USER_123);
-          const req = requestFactory();
-          const response = await apiCall(req, createAsyncParams(privateParty._id.toString()));
-          expectForbidden(response);
-        }
-      : () => testForbiddenEditAccess(apiCall, validBody || {})
-  };
-
-  // Add POST-specific tests
-  if (method === 'POST' && validBody) {
-    return {
-      ...baseTests,
-      testInvalidJson: async () => {
-        const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-        return testInvalidJsonBody(apiCall, party._id.toString());
-      },
-      
-      testMissingFields: async (incompleteBody: any) => {
-        const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-        return testMissingRequiredFields(apiCall, party._id.toString(), incompleteBody);
-      }
-    };
-  }
-
-  return baseTests;
-}
-
-/**
- * Test pattern: owner can perform action successfully
- */
-export async function testOwnerCanPerformAction(
-  apiCall: any, 
-  requestBody: any, 
-  expectedStatus: number = 200, 
-  verifyCallback?: (response: Response, data: any) => void
-) {
-  const party = await createTestParty({ userId: TEST_USERS.USER_123 });
-  
-  mockAuth(TEST_USERS.USER_123);
-  const req = createPostRequest(requestBody);
-  
-  const response = await apiCall(req, createAsyncParams(party._id.toString()));
-  expect(response.status).toBe(expectedStatus);
-  
-  if (verifyCallback) {
-    const data = expectedStatus !== 204 ? await response.json() : null;
-    verifyCallback(response, data);
-  }
-  
-  return response;
-}
-
-/**
- * Test pattern: validate specific field requirements
- */
-export async function testFieldValidation(
-  apiCall: any,
-  validBody: any,
-  fieldName: string,
-  invalidValue: any,
-  userId: string = TEST_USERS.USER_123
-) {
-  const party = await createTestParty({ userId });
-  const invalidBody = { ...validBody, [fieldName]: invalidValue };
-  
-  mockAuth(userId);
-  const req = createPostRequest(invalidBody);
-  
-  const response = await apiCall(req, createAsyncParams(party._id.toString()));
-  expectBadRequest(response);
-}

@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { Party, type IParty } from '@/models/Party';
 import { canEditParty } from '@/lib/utils/user-context';
-import { EMAIL_REGEX } from '../../_utils/party-api-utils';
+import { EMAIL_REGEX } from '../../../_utils/party-api-utils';
 import { Types } from 'mongoose';
 
 interface UpdateCharacterRequest {
