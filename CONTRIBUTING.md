@@ -30,7 +30,7 @@ and security. All contributors—including any AI agents **must** follow these u
 - Determine if the scope of the issue is appropriate, if the issue can be broken into smaller deliverables
   create sub issues for those deliverables and iterate over their delivery (following the standards below)
 - Write failing tests before implementing code (Test-Driven Development).
-  - Follow the guidelines in [TESTING.md]
+  - Follow the guidelines in [TESTING.md](TESTING.md)
 - Implement code to pass tests; extract duplicated test code to utilities.
 - Follow all coding, security, and documentation standards below.
 - After every file edit, run:
