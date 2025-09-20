@@ -1,3 +1,3 @@
 # Claude Code instructions
 
-Follow all directions in the CONTRIBUTING.md file when contributing to this repository.
+Refer to the AGENTS.md file for instructions

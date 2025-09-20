@@ -34,7 +34,7 @@ and security. All contributors—including any AI agents **must** follow these u
 - Determine if the scope of the issue is appropriate, if the issue can be broken into smaller deliverables
   create sub issues for those deliverables and iterate over their delivery (following the standards below)
 - Write failing tests before implementing code (Test-Driven Development).
-  - Follow the guidelines in [TESTING.md]
+  - Follow the guidelines in [TESTING.md](TESTING.md)
 - Implement code to pass tests; extract duplicated test code to utilities.
 - Follow all coding, security, and documentation standards below.
 - After every file edit, run:
@@ -71,8 +71,7 @@ Before creating a PR, ensure:
 
 ### 5. Post-PR Process
 
-- Monitor for CI/CD failures and address promptly.
-- Monitor for any PR comments and address those promptly.
+- Monitor for CI/CD failures and PR comments and address promptly.
 - PR will auto-merge once all requirements are satisfied.
 - Update task status and remove `in-progress` label after merge.
 - Prune local branches after merge.
