@@ -104,7 +104,9 @@ monetize advanced features while providing a robust free tier for new users.
 
 ### 4.1 User Management & Authentication
 
-- **Account Creation**: Email/password registration with email verification
+- **Account Creation**: Registration via Clerk with locally stored user profile information
+- **User Profile**: User should be able to set which set of DnD rules they are following,
+  their experience level, and the role they play (Player, DM, both)
 - **Subscription Management**: Self-service upgrade/downgrade, billing history
 - **Usage Tracking**: Real-time monitoring of limits and feature usage
 - **Trial System**: 14-day free trial of premium features for new users
@@ -114,6 +116,7 @@ monetize advanced features while providing a robust free tier for new users.
 - **Character Creation**: Name, race, class(es) with multiclassing support,
   Dexterity, AC, max/current HP
 - **Player Assignment**: Link characters to player names and contact info
+- **Character Sharing**: Players should be able to allow others to view or play their characters
 - **Party Templates**: Save and reuse common party compositions
 - **Import/Export**: Character data import from D&D Beyond, Roll20, etc.
 
@@ -141,6 +144,7 @@ monetize advanced features while providing a robust free tier for new users.
 ### 4.5 Combat Management
 
 - **HP Tracking**: Damage/healing with undo functionality
+  - **Temp HP imact** HP tracking should include temporary changes to HP where needed
 - **Status Effects**: Comprehensive condition tracking with duration timers
 - **Legendary Actions**: Counter management with action descriptions and usage
   tracking
@@ -221,16 +225,16 @@ monetize advanced features while providing a robust free tier for new users.
 
 ### 7.1 Core Framework & Runtime
 
-- **Framework**: Next.js 15.0+ with TypeScript and App Router
+- **Framework**: Next.js 15.5+ with TypeScript and App Router
 - **Runtime**: Node.js 22 LTS with Edge Runtime support
-- **Language**: TypeScript 5.6+ for type safety across frontend and backend
-- **Package Manager**: pnpm 9.0+ for efficient dependency management
+- **Language**: TypeScript 5.9+ for type safety across frontend and backend
+- **Package Manager**: npm 11.0+ for efficient dependency management
 
 ### 7.2 Frontend & UI
 
-- **UI Library**: React 18.3+ with Server Components and Client Components
-- **Styling**: Tailwind CSS 3.4+ with custom design system
-- **Component Library**: shadcn/ui v2.0+ for consistent, accessible components and layout system
+- **UI Library**: React 19.0+ with Server Components and Client Components
+- **Styling**: Tailwind CSS 4.0+ with custom design system
+- **Component Library**: shadcn/ui v3.2+ for consistent, accessible components and layout system
 - **UI Primitives**: Radix UI primitives via shadcn/ui for accessibility and customization
 - **Icons**: Lucide React 0.400+ for consistent iconography
 - **Fonts**: Inter via next/font for optimized web fonts
@@ -240,9 +244,9 @@ monetize advanced features while providing a robust free tier for new users.
 
 - **Database**: MongoDB 8.0+ with Atlas cloud hosting
 - **ODM**: Mongoose 8.5+ for schema modeling and validation
-- **API Layer**: Next.js 15 App Router API routes with edge optimization
-- **Validation**: Zod 3.23+ for runtime type validation and schema definition
-- **Data Fetching**: Native fetch with Next.js 15 caching strategies
+- **API Layer**: Next.js 15.5+ App Router API routes with edge optimization
+- **Validation**: Zod 4+ for runtime type validation and schema definition
+- **Data Fetching**: Native fetch with Next.js 15.5+ caching strategies
 
 ### 7.4 State Management & Data
 
@@ -281,7 +285,7 @@ monetize advanced features while providing a robust free tier for new users.
 - **E2E Testing**: Playwright 1.46+ for cross-browser testing
 - **Component Testing**: Storybook 8.2+ for UI component development
 - **Code Quality**: ESLint 9.0+ + Prettier 3.3+ with Next.js recommended configs
-- **Type Checking**: TypeScript 5.6+ strict mode with Next.js integration
+- **Type Checking**: TypeScript 5.9+ strict mode with Next.js integration
 
 ### 7.9 Monitoring & Analytics
 
@@ -303,7 +307,7 @@ monetize advanced features while providing a robust free tier for new users.
 
 ### 7.11 Developer Experience
 
-- **Development Server**: Next.js 15 dev server with Fast Refresh and Turbopack
+- **Development Server**: Next.js 15.5+ dev server with Fast Refresh and Turbopack
 - **Code Editor**: VS Code with Next.js, TypeScript, and Tailwind CSS extensions
 - **API Documentation**: Swagger/OpenAPI with next-swagger-doc
 - **Database GUI**: MongoDB Compass for development database management
@@ -321,32 +325,35 @@ monetize advanced features while providing a robust free tier for new users.
 - **Sub-headline**: "The comprehensive tool that makes combat tracking effortless for Dungeon Masters"
 - **Call-to-Action**: Prominent "Start Free Trial" button leading to sign-up
 - **Visual Element**: Animated D&D dice or combat scene illustration
-- **Trust Indicators**: "Trusted by 10,000+ Dungeon Masters" with user avatars
 
 #### 8.1.2 Value Proposition Section
 
 **Core Benefits Showcase** (3-column layout):
 
 1. **"Streamline Combat Flow"**
-   - Icon: ⚔️ Crossed swords
-   - Description: "Track initiative, HP, and status effects in real-time"
-   - Example: Screenshot of active combat tracker with sample characters
 
-2. **"Never Lose Progress"**
-   - Icon: ☁️ Cloud sync
-   - Description: "Cloud sync keeps your campaigns safe across all devices"
-   - Example: Multi-device illustration showing sync
+- Icon: ⚔️ Crossed swords
+- Description: "Track initiative, HP, and status effects in real-time"
+- Example: Screenshot of active combat tracker with sample characters
 
-3. **"Scale Your Adventures"**
-   - Icon: 🏰 Castle
-   - Description: "From single encounters to epic campaigns with unlimited possibilities"
-   - Example: Tier comparison visual
+1. **"Never Lose Progress"**
+
+- Icon: ☁️ Cloud sync
+- Description: "Cloud sync keeps your campaigns safe across all devices"
+- Example: Multi-device illustration showing sync
+
+1. **"Scale Your Adventures"**
+
+- Icon: 🏰 Castle
+- Description: "From single encounters to epic campaigns with unlimited possibilities"
+- Example: Tier comparison visual
 
 #### 8.1.3 Feature Preview Section
 
 **Interactive Demo** (tabbed interface):
 
 - **Tab 1: "Initiative Tracker"**
+
   - Live example showing:
     - 4 sample characters: "Thorin (Fighter)", "Lyra (Wizard)", "Goblin Archer", "Orc Warrior"
     - Initiative order: 18, 15, 12, 8
@@ -354,6 +361,7 @@ monetize advanced features while providing a robust free tier for new users.
     - HP bars: Thorin (45/45), Lyra (28/32), Goblin (7/7), Orc (15/15)
 
 - **Tab 2: "Lair Actions"**
+
   - Example lair action on initiative 20:
     - "The ancient dragon's lair trembles. Choose one:"
     - "• Stalactites fall (DC 15 Dex save)"
@@ -370,27 +378,31 @@ monetize advanced features while providing a robust free tier for new users.
 
 **Freemium Focus Table**:
 
-| Feature | Free Adventurer | Seasoned Adventurer | Expert DM |
-|---------|----------------|-------------------|-----------|
-| **Parties** | 1 | 3 | 10 |
-| **Encounters** | 3 | 15 | 50 |
-| **Max Participants** | 6 | 10 | 20 |
-| **Cloud Sync** | ❌ | ✅ | ✅ |
-| **Advanced Logging** | ❌ | ✅ | ✅ |
-| **Custom Themes** | ❌ | ❌ | ✅ |
+| Feature              | Free Adventurer | Seasoned Adventurer | Expert DM |
+| -------------------- | --------------- | ------------------- | --------- |
+| **Parties**          | 1               | 3                   | 10        |
+| **Encounters**       | 3               | 15                  | 50        |
+| **Max Participants** | 6               | 10                  | 20        |
+| **Cloud Sync**       | ❌              | ✅                  | ✅        |
+| **Advanced Logging** | ❌              | ✅                  | ✅        |
+| **Custom Themes**    | ❌              | ❌                  | ✅        |
 
 **Call-to-Action**: "Start with Free Forever Plan" with secondary "View All Plans" link
 
 #### 8.1.5 Social Proof Section
 
+This must be a data driven (from a testimonials collection) display
+
 **Testimonials** (3-card carousel):
 
 1. **"Game Changer for My Campaign"**
+
    - "Finally, combat flows smoothly without losing track of anything. My players love how organized our sessions are now."
    - Sarah K., DM for 5 years
    - ⭐⭐⭐⭐⭐
 
 2. **"Perfect for New DMs"**
+
    - "The automated initiative and lair actions helped me run my first dragon encounter confidently."
    - Mike R., New DM
    - ⭐⭐⭐⭐⭐
@@ -405,12 +417,14 @@ monetize advanced features while providing a robust free tier for new users.
 **Sample Data Display**:
 
 - **Pre-loaded Demo Party**: "The Crimson Blades"
+
   - Kael Brightblade (Human Paladin, Level 5)
   - Whisper Shadowstep (Halfling Rogue, Level 4)
   - Eldara Moonweaver (Elf Wizard, Level 5)
   - Thorek Ironbeard (Dwarf Cleric, Level 4)
 
 - **Sample Encounter**: "Goblin Ambush"
+
   - 2x Goblin Warriors (CR 1/4)
   - 1x Goblin Boss (CR 1)
   - Tactical map reference
@@ -428,21 +442,24 @@ monetize advanced features while providing a robust free tier for new users.
 **Dashboard Cards** (responsive grid):
 
 1. **Active Campaigns**
-   - Count: "3 Active Parties"
-   - Quick access to recent sessions
-   - "Continue Last Session" button
 
-2. **Usage Metrics** (tier-based)
-   - Progress bars showing limits:
-     - Parties: 2/3 used (Seasoned tier)
-     - Encounters: 8/15 used
-     - Creatures: 23/50 used
-   - Upgrade prompt when approaching limits
+- Count: "3 Active Parties"
+- Quick access to recent sessions
+- "Continue Last Session" button
 
-3. **Recent Activity**
-   - Last 3 combat sessions
-   - Quick resume functionality
-   - Session duration and participants
+1. **Usage Metrics** (tier-based)
+
+- Progress bars showing limits:
+  - Parties: 2/3 used (Seasoned tier)
+  - Encounters: 8/15 used
+  - Creatures: 23/50 used
+- Upgrade prompt when approaching limits
+
+1. **Recent Activity**
+
+- Last 3 combat sessions
+- Quick resume functionality
+- Session duration and participants
 
 #### 8.2.2 Quick Actions Panel
 
@@ -643,13 +660,3 @@ monetize advanced features while providing a robust free tier for new users.
 - **Lair Evolution**: Dynamic lair actions that change throughout combat
 
 ---
-
-## Appendix: Source Documents
-
-This consolidated Product Requirements document was created from the
-following legacy documents:
-
-- `legacy/Product Requirements Document.md` - Complete business and technical requirements
-
-**Last Updated:** June 30, 2025
-**Document Status:** Current and comprehensive
