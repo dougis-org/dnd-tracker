@@ -98,6 +98,7 @@ Task: "Integration test auth in tests/integration/test_auth.py"
 - Avoid: vague tasks, same file conflicts
 
 ## Task Generation Rules
+
 *Applied during main() execution*
 
 1. **From Contracts**:
