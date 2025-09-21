@@ -261,7 +261,7 @@ interface CombatSession {
     timestamp: Date;
     action: string;              // "damage", "heal", "status_add", "turn_advance"
     participantId: string;
-    details: Record<string, any>; // Action-specific data
+    details: Record<string, unknown>; // Action-specific data
     canUndo: boolean;
   }>;
 
