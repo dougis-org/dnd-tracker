@@ -144,7 +144,7 @@ extract_plan_field() {
     
     grep "^**${field_pattern}**: " "$plan_file" 2>/dev/null | \
         head -1 | \
-        sed "s/^**${field_pattern}**: //" | \
+        sed "s/^\*\*${field_pattern}\*\*: //" | \
         grep -v "NEEDS CLARIFICATION" | \
         grep -v "^N/A$" || echo ""
 }
