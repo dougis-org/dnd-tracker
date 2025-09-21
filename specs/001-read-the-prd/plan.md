@@ -126,6 +126,7 @@ tests/
 ### Weekly Milestone Planning Research
 
 **Week 1-2: Foundation & Authentication**
+
 - Research Clerk integration patterns for Next.js 15+
 - Investigate MongoDB schema design for D&D entities
 - Study shadcn/ui component architecture and theming
