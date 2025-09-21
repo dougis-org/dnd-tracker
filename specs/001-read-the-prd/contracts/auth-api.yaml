@@ -1,0 +1,178 @@
+openapi: 3.0.3
+info:
+  title: DND Tracker Authentication API
+  version: 1.0.0
+  description: Authentication and user management endpoints
+
+paths:
+  /api/auth/session:
+    post:
+      summary: Create or validate user session
+      description: Validates Clerk session token and creates/updates user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sessionToken:
+                  type: string
+                  description: Clerk session token
+              required:
+                - sessionToken
+      responses:
+        '200':
+          description: Session validated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  session:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      expiresAt:
+                        type: string
+                        format: date-time
+        '401':
+          description: Invalid session token
+        '500':
+          description: Server error
+
+  /api/users/profile:
+    get:
+      summary: Get current user profile
+      description: Returns user profile with subscription tier and usage metrics
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+
+    put:
+      summary: Update user profile
+      description: Updates user preferences and profile information
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profile:
+                  type: object
+                  properties:
+                    displayName:
+                      type: string
+                    dndRuleset:
+                      type: string
+                      enum: ['5e', '3.5e', 'pf1', 'pf2']
+                    experienceLevel:
+                      type: string
+                      enum: ['beginner', 'intermediate', 'expert']
+                    role:
+                      type: string
+                      enum: ['player', 'dm', 'both']
+                preferences:
+                  type: object
+                  properties:
+                    theme:
+                      type: string
+                      enum: ['light', 'dark', 'auto']
+                    defaultInitiativeType:
+                      type: string
+                      enum: ['manual', 'auto']
+                    autoAdvanceRounds:
+                      type: boolean
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid profile data
+        '401':
+          description: Unauthorized
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        profile:
+          type: object
+          properties:
+            displayName:
+              type: string
+            dndRuleset:
+              type: string
+              enum: ['5e', '3.5e', 'pf1', 'pf2']
+            experienceLevel:
+              type: string
+              enum: ['beginner', 'intermediate', 'expert']
+            role:
+              type: string
+              enum: ['player', 'dm', 'both']
+        subscription:
+          type: object
+          properties:
+            tier:
+              type: string
+              enum: ['free', 'seasoned', 'expert', 'master', 'guild']
+            status:
+              type: string
+              enum: ['active', 'cancelled', 'trial']
+            currentPeriodEnd:
+              type: string
+              format: date-time
+        usage:
+          type: object
+          properties:
+            partiesCount:
+              type: integer
+            encountersCount:
+              type: integer
+            creaturesCount:
+              type: integer
+        preferences:
+          type: object
+          properties:
+            theme:
+              type: string
+              enum: ['light', 'dark', 'auto']
+            defaultInitiativeType:
+              type: string
+              enum: ['manual', 'auto']
+            autoAdvanceRounds:
+              type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
