@@ -43,6 +43,7 @@ As a Dungeon Master, I want to track combat encounters efficiently during D&D se
 - **FR-015**: System MUST provide clear upgrade prompts when users approach tier limits
 
 ### Key Entities
+
 - **Character**: Represents player characters with core D&D attributes including combat stats and player assignment information
 - **Monster/NPC**: Represents non-player combatants with stat blocks, special abilities, and initiative modifiers
 - **Party**: Collection of characters that represent a gaming group, with reusable templates
