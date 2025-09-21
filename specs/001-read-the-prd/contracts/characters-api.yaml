@@ -1,0 +1,363 @@
+openapi: 3.0.3
+info:
+  title: DND Tracker Characters API
+  version: 1.0.0
+  description: Character creation and management endpoints
+
+paths:
+  /api/characters:
+    get:
+      summary: List user's characters
+      description: Returns paginated list of characters owned by the user
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: isTemplate
+          in: query
+          schema:
+            type: boolean
+          description: Filter by template status
+      responses:
+        '200':
+          description: Characters retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  characters:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Character'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      summary: Create new character
+      description: Creates a new character for the authenticated user
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCharacter'
+      responses:
+        '201':
+          description: Character created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+        '400':
+          description: Invalid character data
+        '403':
+          description: Character limit exceeded for subscription tier
+        '401':
+          description: Unauthorized
+
+  /api/characters/{id}:
+    get:
+      summary: Get character by ID
+      description: Returns specific character if user has access
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Character retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+        '404':
+          description: Character not found
+        '403':
+          description: Access denied
+
+    put:
+      summary: Update character
+      description: Updates character information
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCharacter'
+      responses:
+        '200':
+          description: Character updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+        '400':
+          description: Invalid character data
+        '404':
+          description: Character not found
+        '403':
+          description: Access denied
+
+    delete:
+      summary: Delete character
+      description: Deletes character and removes from all parties/encounters
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Character deleted successfully
+        '404':
+          description: Character not found
+        '403':
+          description: Access denied
+
+components:
+  schemas:
+    Character:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        name:
+          type: string
+        race:
+          type: string
+        classes:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              level:
+                type: integer
+                minimum: 1
+                maximum: 20
+        stats:
+          type: object
+          properties:
+            armorClass:
+              type: integer
+              minimum: 1
+            hitPointsMax:
+              type: integer
+              minimum: 1
+            hitPointsCurrent:
+              type: integer
+              minimum: 0
+            dexterity:
+              type: integer
+              minimum: 1
+              maximum: 30
+            initiativeModifier:
+              type: integer
+        player:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+              format: email
+        sharing:
+          type: object
+          properties:
+            isPublic:
+              type: boolean
+            allowedUsers:
+              type: array
+              items:
+                type: string
+        isTemplate:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateCharacter:
+      type: object
+      required:
+        - name
+        - race
+        - classes
+        - stats
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        race:
+          type: string
+          minLength: 1
+          maxLength: 50
+        classes:
+          type: array
+          items:
+            type: object
+            required:
+              - name
+              - level
+            properties:
+              name:
+                type: string
+              level:
+                type: integer
+                minimum: 1
+                maximum: 20
+        stats:
+          type: object
+          required:
+            - armorClass
+            - hitPointsMax
+            - dexterity
+            - initiativeModifier
+          properties:
+            armorClass:
+              type: integer
+              minimum: 1
+            hitPointsMax:
+              type: integer
+              minimum: 1
+            dexterity:
+              type: integer
+              minimum: 1
+              maximum: 30
+            initiativeModifier:
+              type: integer
+        player:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+              format: email
+        sharing:
+          type: object
+          properties:
+            isPublic:
+              type: boolean
+              default: false
+            allowedUsers:
+              type: array
+              items:
+                type: string
+        isTemplate:
+          type: boolean
+          default: false
+
+    UpdateCharacter:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        race:
+          type: string
+          minLength: 1
+          maxLength: 50
+        classes:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              level:
+                type: integer
+                minimum: 1
+                maximum: 20
+        stats:
+          type: object
+          properties:
+            armorClass:
+              type: integer
+              minimum: 1
+            hitPointsMax:
+              type: integer
+              minimum: 1
+            hitPointsCurrent:
+              type: integer
+              minimum: 0
+            dexterity:
+              type: integer
+              minimum: 1
+              maximum: 30
+            initiativeModifier:
+              type: integer
+        player:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+              format: email
+        sharing:
+          type: object
+          properties:
+            isPublic:
+              type: boolean
+            allowedUsers:
+              type: array
+              items:
+                type: string
+        isTemplate:
+          type: boolean
+
+    Pagination:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+        totalItems:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrevious:
+          type: boolean
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
