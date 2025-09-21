@@ -55,6 +55,7 @@ When creating this spec from a user prompt:
 ## User Scenarios & Testing *(mandatory)*
 
 ### Primary User Story
+
 [Describe the main user journey in plain language]
 
 ### Acceptance Scenarios
