@@ -6,6 +6,7 @@
 
 **Decision**: Clerk 5.0+ with Next.js App Router integration
 **Rationale**:
+
 - Native Next.js 15+ App Router support with Server Components
 - Built-in subscription management integration for tier enforcement
 - Comprehensive user profile management with custom fields
