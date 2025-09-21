@@ -106,6 +106,7 @@
 - Some effects stack, others don't (same source vs different source)
 
 **Implementation approach**:
+
 - Enum-based duration types with turn-based decrements
 - Concentration tracking with automatic save prompts
 - Effect stacking rules implemented in status effect engine
