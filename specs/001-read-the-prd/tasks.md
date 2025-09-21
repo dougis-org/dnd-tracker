@@ -234,6 +234,7 @@ tests/
 
 ## Phase 3.12: Combat Core Implementation
 **DEPENDENCIES: All Phase 3.11 tests must pass before implementation**
+
 - [ ] T059 [P] Create CombatSession Mongoose schema with state management in src/lib/db/models/CombatSession.ts
   ↳ Data Model: data-model.md:CombatSession Entity (lines 208-277)
   ↳ State Fields: status, initiative[], currentTurn, participants[], lairActions, history[]
