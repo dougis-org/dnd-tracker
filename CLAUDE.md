@@ -29,10 +29,10 @@ src/
 │   ├── encounters/    # Encounter-specific components
 │   └── parties/       # Party-specific components
 ├── lib/               # Utilities and configurations
-│   ├── db/           # MongoDB connection and Mongoose schemas
-│   ├── auth/         # Clerk configuration
-│   ├── validations/  # Zod schemas for type safety
-│   └── utils/        # Helper functions
+│   ├── db/            # MongoDB connection and Mongoose schemas
+│   ├── auth/          # Clerk configuration
+│   ├── validations/   # Zod schemas for type safety
+│   └── utils/         # Helper functions
 ├── hooks/             # Custom React hooks
 ├── types/             # TypeScript type definitions
 └── constants/         # Application constants
@@ -40,7 +40,7 @@ src/
 tests/
 ├── e2e/               # Playwright E2E tests
 ├── integration/       # API integration tests
-└── unit/             # Jest unit tests
+└── unit/              # Jest unit tests
 ```
 
 ## Commands
