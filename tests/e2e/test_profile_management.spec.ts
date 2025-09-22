@@ -96,7 +96,7 @@ test.describe('Profile Management', () => {
 
     // Clear display name (should be required)
     await page.fill('input[name="displayName"]', '')
-    await page.blur('input[name="displayName"]')
+    await page.locator('input[name="displayName"]').blur()
 
     // Should show validation error
     await expect(page.locator('text=/name.*required/i')).toBeVisible()
@@ -158,7 +158,7 @@ test.describe('Profile Management', () => {
 
     // Try to set invalid enum values (if client-side validation is bypassed)
     await page.evaluate(() => {
-      const rulesetSelect = document.querySelector('select[name="dndRuleset"]')
+      const rulesetSelect = document.querySelector('select[name="dndRuleset"]') as HTMLSelectElement | null
       if (rulesetSelect) {
         const option = document.createElement('option')
         option.value = 'invalid_ruleset'

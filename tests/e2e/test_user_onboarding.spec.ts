@@ -120,7 +120,7 @@ test.describe('User Onboarding Flow', () => {
 
     // Test display name validation
     await page.fill('input[name="displayName"]', '')
-    await page.blur('input[name="displayName"]')
+    await page.locator('input[name="displayName"]').blur()
     await expect(page.locator('text=/name.*required/i')).toBeVisible()
 
     // Test valid form submission

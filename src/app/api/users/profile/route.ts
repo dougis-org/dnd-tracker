@@ -53,7 +53,7 @@ export async function GET() {
     console.error('Profile GET endpoint error:', error)
 
     // Handle database connection errors
-    if ((error as any).name === 'MongoError' || (error as any).name === 'MongooseError') {
+    if (error instanceof Error && (error.name === 'MongoError' || error.name === 'MongooseError')) {
       return NextResponse.json(
         { error: 'Database connection failed' },
         { status: 500 }
@@ -61,7 +61,7 @@ export async function GET() {
     }
 
     // Handle authentication errors
-    if ((error as any).message?.includes('clerk') || (error as any).message?.includes('auth')) {
+    if (error instanceof Error && (error.message.includes('clerk') || error.message.includes('auth'))) {
       return NextResponse.json(
         { error: 'Authentication failed' },
         { status: 401 }
@@ -115,7 +115,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Prepare update object (only update provided fields)
-    const updateObject: any = {}
+    const updateObject: Record<string, unknown> = {}
 
     if (profile) {
       Object.keys(profile).forEach((key) => {
@@ -174,7 +174,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Handle database connection errors
-    if ((error as any).name === 'MongoError' || (error as any).name === 'MongooseError') {
+    if (error instanceof Error && (error.name === 'MongoError' || error.name === 'MongooseError')) {
       return NextResponse.json(
         { error: 'Database connection failed' },
         { status: 500 }
@@ -182,15 +182,15 @@ export async function PUT(request: NextRequest) {
     }
 
     // Handle validation errors from mongoose
-    if ((error as any).name === 'ValidationError') {
+    if (error instanceof Error && error.name === 'ValidationError') {
       return NextResponse.json(
-        { error: `Validation error: ${(error as any).message}` },
+        { error: `Validation error: ${error.message}` },
         { status: 400 }
       )
     }
 
     // Handle authentication errors
-    if ((error as any).message?.includes('clerk') || (error as any).message?.includes('auth')) {
+    if (error instanceof Error && (error.message.includes('clerk') || error.message.includes('auth'))) {
       return NextResponse.json(
         { error: 'Authentication failed' },
         { status: 401 }

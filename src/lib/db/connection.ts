@@ -137,7 +137,7 @@ export async function initializeDatabase(): Promise<void> {
           await collection.createIndex({ updatedAt: 1 })
         } catch (error) {
           // Index might already exist, ignore duplicate key errors
-          if ((error as any).code !== 11000) {
+          if (error instanceof Error && 'code' in error && typeof (error as { code: number }).code === 'number' && (error as { code: number }).code !== 11000) {
             console.warn(`Warning: Could not create index for ${collection.collectionName}:`, error)
           }
         }

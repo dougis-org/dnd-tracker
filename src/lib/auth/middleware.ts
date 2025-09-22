@@ -139,7 +139,11 @@ export function createAuthMiddleware(options: AuthMiddlewareOptions = {}) {
       console.error('Auth middleware error:', error)
 
       // Handle Clerk authentication errors
-      if ((error as any).message?.includes('clerk') || (error as any).status === 401) {
+      const hasStatus = typeof error === 'object' && error !== null && 'status' in error && typeof (error as { status: unknown }).status === 'number'
+      const isClerkError = error instanceof Error && error.message.includes('clerk')
+      const isUnauthorized = hasStatus && (error as { status: number }).status === 401
+
+      if (isClerkError || isUnauthorized) {
         return NextResponse.json(
           { error: 'Invalid authentication token' },
           { status: 401 }
@@ -147,7 +151,7 @@ export function createAuthMiddleware(options: AuthMiddlewareOptions = {}) {
       }
 
       // Handle database errors
-      if ((error as any).name === 'MongoError' || (error as any).name === 'MongooseError') {
+      if (error instanceof Error && (error.name === 'MongoError' || error.name === 'MongooseError')) {
         console.error('Database error in auth middleware:', error)
         return NextResponse.json(
           { error: 'Authentication service unavailable' },

@@ -1,4 +1,19 @@
+import React from 'react'
 import '@testing-library/jest-dom'
+import { TextEncoder, TextDecoder } from 'util'
+
+// Mock fetch for Node.js test environment
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    json: () => Promise.resolve({}),
+    ok: true,
+    status: 200,
+  })
+) as jest.Mock
+
+// Polyfill TextEncoder/TextDecoder
+global.TextEncoder = TextEncoder
+global.TextDecoder = TextDecoder as any
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -27,7 +42,7 @@ jest.mock('@clerk/nextjs', () => ({
   ClerkProvider: ({ children }: { children: React.ReactNode }) => children,
   SignInButton: ({ children }: { children: React.ReactNode }) => children,
   SignUpButton: ({ children }: { children: React.ReactNode }) => children,
-  UserButton: () => <div>UserButton</div>,
+  UserButton: () => React.createElement('div', null, 'UserButton'),
 }))
 
 // Setup global test utilities

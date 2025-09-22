@@ -6,6 +6,22 @@
  */
 import mongoose, { Schema, model, models } from 'mongoose'
 
+// Clerk user type interface
+interface ClerkUser {
+  id: string
+  emailAddresses: Array<{ emailAddress: string }>
+  firstName?: string | null
+  lastName?: string | null
+}
+
+// Profile data interface
+interface ProfileData {
+  displayName?: string
+  dndRuleset?: string
+  experienceLevel?: string
+  role?: string
+}
+
 // Enum definitions matching data-model.md and contracts
 const DND_RULESETS = ['5e', '3.5e', 'pf1', 'pf2'] as const
 const EXPERIENCE_LEVELS = ['beginner', 'intermediate', 'expert'] as const
@@ -115,7 +131,6 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-    index: true,
   },
   email: {
     type: String,
@@ -212,7 +227,7 @@ UserSchema.statics.findByClerkId = function(clerkId: string) {
   return this.findOne({ id: clerkId })
 }
 
-UserSchema.statics.createFromClerkUser = function(clerkUser: any, profileData?: any) {
+UserSchema.statics.createFromClerkUser = function(clerkUser: ClerkUser, profileData?: ProfileData) {
   const userData = {
     id: clerkUser.id,
     email: clerkUser.emailAddresses[0]?.emailAddress,
@@ -277,17 +292,17 @@ export interface IUser extends mongoose.Document {
   updatedAt: Date
 
   // Methods
-  getTierLimits(): any
+  getTierLimits(): { parties: number; encounters: number; creatures: number; maxParticipants: number }
   canCreateParty(): boolean
   canCreateEncounter(): boolean
   canCreateCreature(): boolean
-  incrementUsage(type: 'partiesCount' | 'encountersCount' | 'creaturesCount'): Promise<any>
-  decrementUsage(type: 'partiesCount' | 'encountersCount' | 'creaturesCount'): Promise<any>
+  incrementUsage(type: 'partiesCount' | 'encountersCount' | 'creaturesCount'): Promise<mongoose.UpdateWriteOpResult>
+  decrementUsage(type: 'partiesCount' | 'encountersCount' | 'creaturesCount'): Promise<mongoose.UpdateWriteOpResult>
 }
 
 export interface IUserModel extends mongoose.Model<IUser> {
   findByClerkId(clerkId: string): Promise<IUser | null>
-  createFromClerkUser(clerkUser: any, profileData?: any): Promise<IUser>
+  createFromClerkUser(clerkUser: ClerkUser, profileData?: ProfileData): Promise<IUser>
 }
 
 // Create and export model

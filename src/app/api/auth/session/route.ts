@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle database connection errors
-    if ((error as any).name === 'MongoError' || (error as any).name === 'MongooseError') {
+    if (error instanceof Error && (error.name === 'MongoError' || error.name === 'MongooseError')) {
       console.error('Database error in session endpoint:', error)
       return NextResponse.json(
         { error: 'Database connection failed' },
