@@ -15,7 +15,7 @@ if (typeof jest !== 'undefined') {
 
 // Polyfill TextEncoder/TextDecoder
 global.TextEncoder = TextEncoder
-global.TextDecoder = TextDecoder as any
+global.TextDecoder = TextDecoder as unknown as typeof globalThis.TextDecoder
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({

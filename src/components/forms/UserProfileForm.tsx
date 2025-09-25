@@ -14,6 +14,8 @@ import { Label } from '@/components/ui/label'
 import { ProfileUpdateSchema, type ProfileUpdate } from '@/lib/validations/auth'
 import { User, Settings, Palette, Gamepad2 } from 'lucide-react'
 
+const selectStyles = "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+
 interface UserProfileFormProps {
   initialData?: Partial<ProfileUpdate>
   onSubmit: (data: ProfileUpdate) => Promise<void>
@@ -98,7 +100,7 @@ export default function UserProfileForm({
               <select
                 id="dndRuleset"
                 {...register('profile.dndRuleset')}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className={selectStyles}
               >
                 <option value="">Select ruleset</option>
                 <option value="5e">D&D 5th Edition</option>
@@ -119,7 +121,7 @@ export default function UserProfileForm({
               <select
                 id="experienceLevel"
                 {...register('profile.experienceLevel')}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className={selectStyles}
               >
                 <option value="">Select experience level</option>
                 <option value="beginner">Beginner (New to D&D)</option>
@@ -139,7 +141,7 @@ export default function UserProfileForm({
               <select
                 id="role"
                 {...register('profile.role')}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className={selectStyles}
               >
                 <option value="">Select role</option>
                 <option value="player">Player</option>

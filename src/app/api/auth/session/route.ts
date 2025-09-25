@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth, clerkClient } from '@clerk/nextjs/server'
 import { connectToDatabase } from '@/lib/db/connection'
 import User from '@/lib/db/models/User'
+import { createHash } from 'crypto'
 
 export async function POST(request: NextRequest) {
   try {
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
         updatedAt: user.updatedAt,
       },
       session: {
-        id: sessionToken,
+        id: createHash('sha256').update(sessionToken).digest('hex'),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
       },
     }

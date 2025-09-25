@@ -4,6 +4,7 @@
  * Enums: dndRuleset, experienceLevel, role, theme, tier, status
  */
 import { z } from 'zod'
+import { TIER_LIMITS } from '@/lib/constants/tierLimits'
 
 // Enum schemas matching data model and API contracts
 const DndRulesetSchema = z.enum(['5e', '3.5e', 'pf1', 'pf2'])
@@ -105,13 +106,6 @@ export const UserResponseSchema = UserCreationSchema.extend({
 })
 
 // Usage limit validation
-const TIER_LIMITS = {
-  free: { parties: 1, encounters: 3, creatures: 10, maxParticipants: 6 },
-  seasoned: { parties: 5, encounters: 15, creatures: 50, maxParticipants: 12 },
-  expert: { parties: 25, encounters: 100, creatures: 250, maxParticipants: 20 },
-  master: { parties: -1, encounters: -1, creatures: -1, maxParticipants: -1 },
-  guild: { parties: -1, encounters: -1, creatures: -1, maxParticipants: -1 },
-} as const
 
 export const UsageLimitSchema = z.object({
   tier: SubscriptionTierSchema,

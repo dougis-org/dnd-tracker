@@ -4,6 +4,12 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint'],
+  env: {
+    node: true,
+    browser: true,
+    es2022: true,
+    jest: true,
+  },
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -26,6 +32,18 @@ module.exports = {
       },
     },
   },
+  overrides: [
+    {
+      files: ['**/*.config.js', '**/*.config.ts', 'jest.setup.ts'],
+      env: {
+        node: true,
+        jest: true,
+      },
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+  ],
   ignorePatterns: [
     'node_modules/',
     '.next/',

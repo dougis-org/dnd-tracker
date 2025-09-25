@@ -5,6 +5,7 @@
  * Required Fields: id, email, profile, subscription, usage, preferences
  */
 import mongoose, { Schema, model, models } from 'mongoose'
+import { TIER_LIMITS } from '@/lib/constants/tierLimits'
 
 // Clerk user type interface
 interface ClerkUser {
@@ -166,17 +167,15 @@ UserSchema.pre('save', function(next) {
   // Email must be unique and valid format (handled by schema)
 
   // Subscription tier determines usage limits enforcement
-  if (this.subscription.tier === 'free') {
-    // Free Adventurer limits: 1 party, 3 encounters, 10 creatures
-    if (this.usage.partiesCount > 1) {
-      return next(new Error('Free tier allows maximum 1 party'))
-    }
-    if (this.usage.encountersCount > 3) {
-      return next(new Error('Free tier allows maximum 3 encounters'))
-    }
-    if (this.usage.creaturesCount > 10) {
-      return next(new Error('Free tier allows maximum 10 creatures'))
-    }
+  const limits = TIER_LIMITS[this.subscription.tier]
+  if (limits.parties !== -1 && this.usage.partiesCount > limits.parties) {
+    return next(new Error(`${this.subscription.tier} tier allows maximum ${limits.parties} ${limits.parties === 1 ? 'party' : 'parties'}`))
+  }
+  if (limits.encounters !== -1 && this.usage.encountersCount > limits.encounters) {
+    return next(new Error(`${this.subscription.tier} tier allows maximum ${limits.encounters} encounters`))
+  }
+  if (limits.creatures !== -1 && this.usage.creaturesCount > limits.creatures) {
+    return next(new Error(`${this.subscription.tier} tier allows maximum ${limits.creatures} creatures`))
   }
 
   next()
@@ -184,15 +183,7 @@ UserSchema.pre('save', function(next) {
 
 // Instance methods
 UserSchema.methods.getTierLimits = function() {
-  const tierLimits = {
-    free: { parties: 1, encounters: 3, creatures: 10, maxParticipants: 6 },
-    seasoned: { parties: 5, encounters: 15, creatures: 50, maxParticipants: 12 },
-    expert: { parties: 25, encounters: 100, creatures: 250, maxParticipants: 20 },
-    master: { parties: -1, encounters: -1, creatures: -1, maxParticipants: -1 }, // Unlimited
-    guild: { parties: -1, encounters: -1, creatures: -1, maxParticipants: -1 }, // Unlimited
-  }
-
-  return tierLimits[this.subscription.tier as keyof typeof tierLimits] || tierLimits.free
+  return TIER_LIMITS[this.subscription.tier as keyof typeof TIER_LIMITS] || TIER_LIMITS.free
 }
 
 UserSchema.methods.canCreateParty = function() {
@@ -216,10 +207,10 @@ UserSchema.methods.incrementUsage = function(type: 'partiesCount' | 'encountersC
 }
 
 UserSchema.methods.decrementUsage = function(type: 'partiesCount' | 'encountersCount' | 'creaturesCount') {
-  return this.updateOne({
-    $inc: { [`usage.${type}`]: -1 },
-    $max: { [`usage.${type}`]: 0 } // Prevent negative values
-  })
+  return this.updateOne(
+    { [`usage.${type}`]: { $gt: 0 } }, // Only update if value is greater than 0
+    { $inc: { [`usage.${type}`]: -1 } }
+  )
 }
 
 // Static methods
