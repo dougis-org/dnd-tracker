@@ -3,12 +3,22 @@
  * API Contract: contracts/auth-api.yaml:/api/auth/session (lines 8-45)
  * Schema: contracts/auth-api.yaml:components.schemas.User (lines 114-172)
  */
-import { describe, it, expect } from '@jest/globals'
+import { describe, it, expect, beforeEach } from '@jest/globals'
+import {
+  setupSuccessfulAuth,
+  setupFailedAuth,
+  resetAllMocks
+} from '../test-helpers/auth-helpers'
 
 const API_BASE_URL = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
 describe('POST /api/auth/session', () => {
+  beforeEach(() => {
+    resetAllMocks()
+  })
+
   it('should validate session token and return user data', async () => {
+    setupSuccessfulAuth()
     const mockSessionToken = 'valid_clerk_session_token'
 
     const response = await fetch(`${API_BASE_URL}/api/auth/session`, {
@@ -85,6 +95,7 @@ describe('POST /api/auth/session', () => {
   })
 
   it('should return 401 for invalid session token', async () => {
+    setupFailedAuth()
     const response = await fetch(`${API_BASE_URL}/api/auth/session`, {
       method: 'POST',
       headers: {
@@ -99,6 +110,7 @@ describe('POST /api/auth/session', () => {
   })
 
   it('should return 400 for missing session token', async () => {
+    setupFailedAuth()
     const response = await fetch(`${API_BASE_URL}/api/auth/session`, {
       method: 'POST',
       headers: {
