@@ -4,6 +4,7 @@
 **Input**: Feature specification from `/home/doug/dev/dnd-tracker/specs/001-read-the-prd/spec.md`
 
 ## Execution Flow (/plan command scope)
+
 ```
 1. Load feature spec from Input path
    → ✅ COMPLETE: Feature spec loaded and analyzed
@@ -25,6 +26,7 @@
 ```
 
 **IMPORTANT**: The /plan command STOPS at step 9. Phases 2-4 are executed by other commands:
+
 - Phase 2: /tasks command creates tasks.md
 - Phase 3-4: Implementation execution (manual or via tools)
 
@@ -47,29 +49,35 @@ Technical approach: Next.js 15.5+ full-stack web application with TypeScript, Mo
 **Scale/Scope**: MVP supporting 100+ concurrent users, 8 core entities, 15 functional requirements
 
 ## Constitution Check
+
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 **I. Quality Over Speed**: ✅ PASS
+
 - Comprehensive testing strategy with Jest, RTL, and Playwright
 - TDD approach with failing tests before implementation
 - Code review process with constitutional compliance checks
 
 **II. Test-First Development**: ✅ PASS
+
 - Contract tests for all API endpoints before implementation
 - Integration tests for user scenarios before UI development
 - Unit tests for all data models and business logic
 
 **III. Remote Authority**: ✅ PASS
+
 - GitHub Actions CI/CD with automated quality checks
 - Codacy integration for security and code quality analysis
 - PR-based workflow with auto-merge after all checks pass
 
 **IV. Complexity Reduction**: ✅ PASS
+
 - Component-based architecture with single responsibility
 - Maximum 450 lines per file, 50 lines per function
 - Shared utilities for common functionality (validation, formatting)
 
 **V. Security & Standards**: ✅ PASS
+
 - Clerk integration for secure authentication
 - Zod validation for all inputs
 - Environment variables for sensitive configuration
@@ -78,6 +86,7 @@ Technical approach: Next.js 15.5+ full-stack web application with TypeScript, Mo
 ## Project Structure
 
 ### Documentation (this feature)
+
 ```
 specs/001-read-the-prd/
 ├── plan.md              # This file (/plan command output)
@@ -89,6 +98,7 @@ specs/001-read-the-prd/
 ```
 
 ### Source Code (repository root)
+
 ```
 # Option 2: Web application (Next.js full-stack)
 src/
@@ -133,18 +143,21 @@ tests/
 - Research offline-first patterns with IndexedDB
 
 **Week 3-4: Core Combat Features**
+
 - Research initiative calculation algorithms and tie-breaking
 - Study HP tracking patterns with undo functionality
 - Investigate status effect duration management
 - Research lair action automation patterns
 
 **Week 5-6: Data Management & Persistence**
+
 - Research MongoDB aggregation for encounter queries
 - Study real-time data synchronization patterns
 - Investigate backup and restore strategies
 - Research tier limit enforcement patterns
 
 **Week 7-8: Testing & Polish**
+
 - Research comprehensive testing strategies for D&D rules
 - Study performance optimization for combat calculations
 - Investigate accessibility patterns for gaming interfaces
@@ -153,21 +166,25 @@ tests/
 ### Technical Research Decisions
 
 **Authentication Strategy**: Clerk 5.0+ with Next.js App Router integration
+
 - **Decision**: Use Clerk for authentication, session management, and user profiles
 - **Rationale**: Provides comprehensive auth solution with subscription tier support
 - **Alternatives considered**: NextAuth.js (more complex for subscription management), Auth0 (higher cost)
 
 **Database Design**: MongoDB with Mongoose ODM
+
 - **Decision**: Document-based storage for flexible D&D entity schemas
 - **Rationale**: Natural fit for character stat blocks and encounter configurations
 - **Alternatives considered**: PostgreSQL (less flexible for varying schemas), Prisma (less mature MongoDB support)
 
 **State Management**: Zustand + TanStack Query
+
 - **Decision**: Lightweight client state with server state caching
 - **Rationale**: Minimal boilerplate, excellent TypeScript support, optimistic updates
 - **Alternatives considered**: Redux Toolkit (overengineered for scope), Context API (performance concerns)
 
 **Component Architecture**: shadcn/ui + Radix UI primitives
+
 - **Decision**: Accessible, customizable component library with design system
 - **Rationale**: Built-in accessibility, TypeScript support, Tailwind integration
 - **Alternatives considered**: Material-UI (not gaming-focused), Chakra UI (larger bundle)
@@ -177,6 +194,7 @@ tests/
 ### Data Model Design
 
 **Core Entities** (detailed in data-model.md):
+
 - User: Authentication and subscription management
 - Character: Player character stats and information
 - Monster: NPC/monster stat blocks with special abilities
@@ -189,6 +207,7 @@ tests/
 ### API Contract Design
 
 **REST API Endpoints** (detailed in contracts/):
+
 - `POST /api/auth/session` - Session management
 - `GET /api/users/profile` - User profile and tier information
 - `POST /api/characters` - Character creation and management
@@ -203,6 +222,7 @@ tests/
 ### Integration Test Scenarios
 
 **User Story Validation** (detailed in quickstart.md):
+
 1. **New User Onboarding**: Account creation → tier explanation → first party setup
 2. **Party Creation**: Character entry → stat validation → template saving
 3. **Encounter Setup**: Monster selection → participant arrangement → initiative rolling
@@ -214,35 +234,41 @@ tests/
 Updated CLAUDE.md with current technology stack and project patterns for efficient AI assistance during implementation.
 
 ## Phase 2: Task Planning Approach
+
 *This section describes what the /tasks command will do - DO NOT execute during /plan*
 
 **Weekly Milestone Task Generation Strategy**:
 
 **Week 1-2 Tasks (Foundation)**:
+
 - Setup: Next.js project initialization, dependencies, linting configuration
 - Authentication: Clerk integration, user profile models, session management
 - Database: MongoDB connection, Mongoose schemas, basic CRUD operations
 - UI Foundation: shadcn/ui setup, base layout components, theming
 
 **Week 3-4 Tasks (Core Features)**:
+
 - Character Management: CRUD operations, validation, templates
 - Party Management: Group creation, member assignment, template system
 - Encounter Setup: Monster management, participant selection, configuration
 - Initiative System: Calculation logic, tie-breaking, manual overrides
 
 **Week 5-6 Tasks (Combat Engine)**:
+
 - Combat Sessions: State management, turn progression, round tracking
 - HP Management: Damage/healing with undo, visual indicators
 - Status Effects: Application, duration tracking, automatic removal
 - Lair Actions: Automation, initiative 20 triggers, customization
 
 **Week 7-8 Tasks (Polish & Testing)**:
+
 - Tier Enforcement: Usage limits, upgrade prompts, validation
 - Offline Support: IndexedDB integration, sync strategies
 - Testing: Comprehensive test suite, E2E scenarios
 - Performance: Optimization, monitoring, deployment
 
 **Ordering Strategy**:
+
 - TDD order: Contract tests → Integration tests → Implementation
 - Dependency order: Models → Services → API → UI → Features
 - Mark [P] for parallel execution within each week milestone
@@ -253,6 +279,7 @@ Updated CLAUDE.md with current technology stack and project patterns for efficie
 **IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
 
 ## Phase 3+: Future Implementation
+
 *These phases are beyond the scope of the /plan command*
 
 **Phase 3**: Task execution (/tasks command creates tasks.md with weekly milestones)
@@ -260,12 +287,15 @@ Updated CLAUDE.md with current technology stack and project patterns for efficie
 **Phase 5**: Validation (run tests, execute quickstart.md, performance validation)
 
 ## Complexity Tracking
+
 *No constitution violations requiring justification*
 
 ## Progress Tracking
+
 *This checklist is updated during execution flow*
 
 **Phase Status**:
+
 - [x] Phase 0: Research complete (/plan command)
 - [x] Phase 1: Design complete (/plan command)
 - [x] Phase 2: Task planning complete (/plan command - describe approach only)
@@ -274,6 +304,7 @@ Updated CLAUDE.md with current technology stack and project patterns for efficie
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
+
 - [x] Initial Constitution Check: PASS
 - [x] Post-Design Constitution Check: PASS
 - [x] All NEEDS CLARIFICATION resolved

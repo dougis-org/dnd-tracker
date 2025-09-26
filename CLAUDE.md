@@ -62,6 +62,7 @@ tests/
 ## Recent Changes
 
 **2025-09-20**: MVP planning phase completed
+
 - Feature specification for D&D encounter tracker
 - Technical architecture with Next.js full-stack approach
 - API contracts for authentication, characters, and combat management

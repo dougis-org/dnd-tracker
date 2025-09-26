@@ -4,6 +4,7 @@
 **Prerequisites**: plan.md, research.md, data-model.md, contracts/, quickstart.md
 
 ## Execution Flow (main)
+
 ```
 1. Load plan.md from feature directory
    → ✅ COMPLETE: Tech stack and structure extracted
@@ -19,11 +20,14 @@
 ```
 
 ## Format: `[ID] [P?] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
 - Include exact file paths in descriptions
 
 ## Path Conventions
+
 **Web application structure** (Next.js full-stack):
+
 ```
 src/
 ├── app/                 # Next.js App Router
@@ -44,6 +48,7 @@ tests/
 # WEEK 1-2: FOUNDATION & AUTHENTICATION
 
 ## Phase 3.1: Project Setup
+
 - [ ] T001 Create Next.js 15+ project structure in src/ with TypeScript strict mode configuration
 - [ ] T002 Initialize package.json with dependencies: Next.js 15.5+, React 19.0+, TypeScript 5.9+, Tailwind CSS 4.0+
 - [ ] T003 [P] Configure ESLint 9.0+ and Prettier 3.3+ with Next.js recommended configs in .eslintrc.js
@@ -51,7 +56,9 @@ tests/
 - [ ] T005 [P] Configure Jest 29.7+ and React Testing Library 16.0+ in jest.config.js
 
 ## Phase 3.2: Authentication Foundation (TDD)
+
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
+
 - [ ] T006 [P] Contract test POST /api/auth/session in tests/integration/test_auth_session.test.ts
   ↳ API Contract: contracts/auth-api.yaml:/api/auth/session (lines 8-45)
   ↳ Schema: contracts/auth-api.yaml:components.schemas.User (lines 114-172)
@@ -69,7 +76,9 @@ tests/
   ↳ Data Model: data-model.md:User Entity.profile (lines 13-17)
 
 ## Phase 3.3: Core Authentication Implementation
+
 **DEPENDENCIES: Complete all Phase 3.2 tests before starting implementation**
+
 - [ ] T011 [P] Install and configure Clerk 5.0+ in src/lib/auth/clerk-config.ts
   ↳ Reference: plan.md:Technical Research - Clerk integration (lines 154-157)
 - [ ] T012 [P] Create User Mongoose schema with validation in src/lib/db/models/User.ts
@@ -94,6 +103,7 @@ tests/
   ↳ Enums: dndRuleset, experienceLevel, role, theme, tier, status
 
 ## Phase 3.4: UI Foundation
+
 - [ ] T019 [P] Install and configure shadcn/ui v3.2+ components in src/components/ui/
 - [ ] T020 [P] Create authentication layout component in src/app/(auth)/layout.tsx
 - [ ] T021 [P] Create dashboard layout with navigation in src/app/dashboard/layout.tsx
@@ -101,6 +111,7 @@ tests/
 - [ ] T023 [P] Create user profile form component in src/components/forms/UserProfileForm.tsx
 
 ## MILESTONE 1 CONFIRMATION
+
 - [ ] T024 **MILESTONE 1: Foundation Complete** - Run comprehensive validation in tests/milestones/test_milestone_1_foundation.spec.ts
   ↳ Validate Against: plan.md:Technical Context stack (lines 39-47)
   ↳ User Story: quickstart.md:Scenario 1 registration flow (lines 5-33)
@@ -120,8 +131,10 @@ tests/
 # WEEK 3-4: CORE FEATURES
 
 ## Phase 3.5: Character Management (TDD)
+
 **CRITICAL: Tests before implementation**
 **DEPENDENCIES: User authentication system (T006-T018) must be complete**
+
 - [ ] T025 [P] Contract test POST /api/characters in tests/integration/test_characters_create.test.ts
   ↳ API Contract: contracts/characters-api.yaml:/api/characters POST (lines 46-69)
   ↳ Schema: contracts/characters-api.yaml:components.schemas.CreateCharacter (lines 213-283)
@@ -141,7 +154,9 @@ tests/
   ↳ Validation Testing: AC=0 error, HP current > max auto-adjust
 
 ## Phase 3.6: Character Implementation
+
 **DEPENDENCIES: All Phase 3.5 tests must pass before implementation**
+
 - [ ] T030 [P] Create Character Mongoose schema with D&D stats validation in src/lib/db/models/Character.ts
   ↳ Data Model: data-model.md:Character Entity (lines 44-83)
   ↳ Validation Rules: data-model.md:Character validation (lines 79-82)
@@ -169,12 +184,15 @@ tests/
   ↳ UI: shadcn/ui components, real-time validation, class level management
 
 ## Phase 3.7: Party Management (TDD)
+
 **CRITICAL: Tests before implementation**
+
 - [ ] T038 [P] Contract test POST /api/parties in tests/integration/test_parties_create.test.ts
 - [ ] T039 [P] Contract test GET /api/parties in tests/integration/test_parties_list.test.ts
 - [ ] T040 [P] Integration test party creation with character assignment in tests/e2e/test_party_management.spec.ts
 
 ## Phase 3.8: Party Implementation
+
 - [ ] T041 [P] Create Party Mongoose schema with member relationships in src/lib/db/models/Party.ts
 - [ ] T042 [P] Create Monster Mongoose schema with stat blocks in src/lib/db/models/Monster.ts
 - [ ] T043 Implement POST /api/parties endpoint in src/app/api/parties/route.ts
@@ -183,16 +201,19 @@ tests/
 - [ ] T046 [P] Create party form component in src/components/forms/PartyForm.tsx
 
 ## Phase 3.9: Encounter Setup (TDD)
+
 - [ ] T047 [P] Contract test POST /api/encounters in tests/integration/test_encounters_create.test.ts
 - [ ] T048 [P] Integration test encounter builder with participants in tests/e2e/test_encounter_builder.spec.ts
 
 ## Phase 3.10: Encounter Implementation
+
 - [ ] T049 [P] Create Encounter Mongoose schema in src/lib/db/models/Encounter.ts
 - [ ] T050 Implement POST /api/encounters endpoint in src/app/api/encounters/route.ts
 - [ ] T051 [P] Create encounter service with participant management in src/lib/services/encounterService.ts
 - [ ] T052 [P] Create encounter builder component in src/components/encounters/EncounterBuilder.tsx
 
 ## MILESTONE 2 CONFIRMATION
+
 - [ ] T053 **MILESTONE 2: Core Features Complete** - Run comprehensive validation in tests/milestones/test_milestone_2_core.spec.ts
   ↳ Validate Against: quickstart.md:Scenario 2 + 3 (lines 34-103)
   ↳ Data Models: data-model.md Character, Party, Monster, Encounter entities
@@ -214,8 +235,10 @@ tests/
 # WEEK 5-6: COMBAT ENGINE
 
 ## Phase 3.11: Combat Session Management (TDD)
+
 **CRITICAL: Tests before implementation**
 **DEPENDENCIES: Encounter and Character systems (T025-T052) must be complete**
+
 - [ ] T054 [P] Contract test POST /api/combat/start in tests/integration/test_combat_start.test.ts
   ↳ API Contract: contracts/combat-api.yaml:/api/combat/start POST (lines 8-47)
   ↳ Required: encounterId, optional initiativeRolls array
@@ -233,6 +256,7 @@ tests/
   ↳ Initiative Order: Goblin 2(20), Thorin(16), Character 2(15), etc.
 
 ## Phase 3.12: Combat Core Implementation
+
 **DEPENDENCIES: All Phase 3.11 tests must pass before implementation**
 
 - [ ] T059 [P] Create CombatSession Mongoose schema with state management in src/lib/db/models/CombatSession.ts
@@ -260,11 +284,13 @@ tests/
   ↳ State: Current session, optimistic updates, real-time sync
 
 ## Phase 3.13: HP and Status Effects (TDD)
+
 - [ ] T066 [P] Contract test PUT /api/combat/{sessionId}/hp in tests/integration/test_combat_hp.test.ts
 - [ ] T067 [P] Contract test POST /api/combat/{sessionId}/status-effects in tests/integration/test_status_effects.test.ts
 - [ ] T068 [P] Integration test HP modification with undo in tests/e2e/test_hp_management.spec.ts
 
 ## Phase 3.14: HP and Status Implementation
+
 - [ ] T069 Implement PUT /api/combat/[sessionId]/hp endpoint in src/app/api/combat/[sessionId]/hp/route.ts
 - [ ] T070 Implement POST /api/combat/[sessionId]/status-effects in src/app/api/combat/[sessionId]/status-effects/route.ts
 - [ ] T071 [P] Create HP management service with undo functionality in src/lib/services/hpService.ts
@@ -272,16 +298,19 @@ tests/
 - [ ] T073 [P] Create combat interface components in src/components/encounters/CombatTracker.tsx
 
 ## Phase 3.15: Lair Actions (TDD)
+
 - [ ] T074 [P] Contract test POST /api/combat/{sessionId}/lair-actions in tests/integration/test_lair_actions.test.ts
 - [ ] T075 [P] Integration test lair action automation in tests/e2e/test_lair_actions.spec.ts
 
 ## Phase 3.16: Lair Actions Implementation
+
 - [ ] T076 [P] Create LairAction Mongoose schema in src/lib/db/models/LairAction.ts
 - [ ] T077 Implement POST /api/combat/[sessionId]/lair-actions in src/app/api/combat/[sessionId]/lair-actions/route.ts
 - [ ] T078 [P] Create lair action service with automation in src/lib/services/lairActionService.ts
 - [ ] T079 [P] Create lair action components in src/components/encounters/LairActions.tsx
 
 ## MILESTONE 3 CONFIRMATION
+
 - [ ] T080 **MILESTONE 3: Combat Engine Complete** - Run comprehensive validation in tests/milestones/test_milestone_3_combat.spec.ts
   - ✅ Combat session state management working
   - ✅ Turn progression with visual indicators functional
@@ -294,11 +323,13 @@ tests/
 # WEEK 7-8: POLISH & TESTING
 
 ## Phase 3.17: Tier Enforcement & Offline Support (TDD)
+
 - [ ] T081 [P] Integration test tier limit enforcement in tests/e2e/test_tier_limits.spec.ts
 - [ ] T082 [P] Integration test offline functionality in tests/e2e/test_offline_support.spec.ts
 - [ ] T083 [P] Integration test data persistence across sessions in tests/e2e/test_data_persistence.spec.ts
 
 ## Phase 3.18: Final Implementation
+
 - [ ] T084 [P] Implement IndexedDB storage for offline combat in src/lib/storage/offlineStorage.ts
 - [ ] T085 [P] Create usage tracking service with real-time updates in src/lib/services/usageService.ts
 - [ ] T086 [P] Implement tier enforcement middleware in src/lib/middleware/tierEnforcement.ts
@@ -306,18 +337,21 @@ tests/
 - [ ] T088 [P] Setup error boundary components in src/components/ui/ErrorBoundary.tsx
 
 ## Phase 3.19: Performance & Monitoring
+
 - [ ] T089 [P] Configure Playwright 1.46+ for E2E testing in playwright.config.ts
 - [ ] T090 [P] Implement performance monitoring in src/lib/monitoring/performance.ts
 - [ ] T091 [P] Create comprehensive unit tests for services in tests/unit/services/
 - [ ] T092 [P] Setup production build optimization in next.config.js
 
 ## Phase 3.20: Final Integration Tests
+
 - [ ] T093 [P] Run complete user journey test (Scenario 1-6) in tests/e2e/test_complete_user_journey.spec.ts
 - [ ] T094 [P] Performance validation tests (<3s load, <100ms interactions) in tests/performance/
 - [ ] T095 [P] Cross-browser compatibility tests in tests/e2e/test_browser_compatibility.spec.ts
 - [ ] T096 [P] Security validation tests (XSS, CSRF, auth) in tests/security/
 
 ## MILESTONE 4 CONFIRMATION
+
 - [ ] T097 **MILESTONE 4: MVP Complete** - Run final validation in tests/milestones/test_milestone_4_mvp.spec.ts
   ↳ Validate Against: Complete quickstart.md Scenarios 1-6 (lines 5-205)
   ↳ Performance: quickstart.md Performance Requirements (lines 207-226)
@@ -342,26 +376,32 @@ tests/
 ### Critical Path Dependencies
 
 **FOUNDATION LAYER** (Must complete first):
+
 - T001-T005 (Project setup) → Blocks ALL other tasks
 - T011-T013 (Clerk + DB + User schema) → Required for ALL entity creation
 
 **ENTITY LAYER** (Sequential dependencies):
+
 - T012 (User schema) → T030 (Character schema) → T041 (Party schema)
 - T042 (Monster schema) → T049 (Encounter schema) → T059 (CombatSession schema)
 - T060 (StatusEffect) + T076 (LairAction) → Depend on T059 (CombatSession)
 
 **TEST-DRIVEN DEVELOPMENT** (TDD Requirements):
+
 - T006-T010 (Auth tests) → T014-T016 (Auth API implementation)
 - T025-T029 (Character tests) → T032-T035 (Character API implementation)
 - T054-T058 (Combat tests) → T061-T070 (Combat API implementation)
 
 **CROSS-CUTTING DEPENDENCIES**:
+
 - T017 (Auth middleware) → Required for ALL authenticated endpoints
 - T018 (Validation schemas) → Required for ALL POST/PUT endpoints
 - All entity schemas → Required before their respective API implementations
 
 ### Parallel Execution Opportunities
+
 **Week 1-2 Parallel Groups**:
+
 ```bash
 # Group A: Configuration
 Task: "Configure ESLint and Prettier with Next.js configs"
@@ -375,6 +415,7 @@ Task: "Integration test user registration flow"
 ```
 
 **Week 3-4 Parallel Groups**:
+
 ```bash
 # Group A: Character Tests
 Task: "Contract test POST /api/characters"
@@ -388,6 +429,7 @@ Task: "Create Monster Mongoose schema"
 ```
 
 **Week 5-6 Parallel Groups**:
+
 ```bash
 # Group A: Combat Tests
 Task: "Contract test POST /api/combat/start"
@@ -401,9 +443,11 @@ Task: "Create LairAction Mongoose schema"
 ```
 
 ## Validation Checklist
+
 *GATE: Checked before marking tasks complete*
 
 ### Weekly Milestone Validations
+
 - [ ] **Week 1-2**: All foundation tests pass, authentication flow complete
 - [ ] **Week 3-4**: Character/party CRUD operational, encounter builder functional
 - [ ] **Week 5-6**: Combat engine working, all D&D mechanics implemented
@@ -412,11 +456,13 @@ Task: "Create LairAction Mongoose schema"
 ### Technical Completeness - Documentation Cross-Reference Validation
 
 **API Contract Coverage:**
+
 - [ ] contracts/auth-api.yaml: 3 endpoints → T006-T008, T014-T016 ✓
 - [ ] contracts/characters-api.yaml: 5 endpoints → T025-T028, T032-T035 ✓
 - [ ] contracts/combat-api.yaml: 8+ endpoints → T054-T057, T061-T070 ✓
 
 **Data Model Implementation:**
+
 - [ ] data-model.md:User Entity → T012 (User schema) ✓
 - [ ] data-model.md:Character Entity → T030 (Character schema) ✓
 - [ ] data-model.md:Monster Entity → T042 (Monster schema) ✓
@@ -427,6 +473,7 @@ Task: "Create LairAction Mongoose schema"
 - [ ] data-model.md:LairAction Entity → T076 (LairAction schema) ✓
 
 **User Story Test Coverage:**
+
 - [ ] quickstart.md:Scenario 1 (Onboarding) → T009 (registration test) ✓
 - [ ] quickstart.md:Scenario 2 (Party Creation) → T029 (character CRUD) ✓
 - [ ] quickstart.md:Scenario 3 (Encounter Setup) → T048 (encounter builder) ✓
@@ -435,12 +482,14 @@ Task: "Create LairAction Mongoose schema"
 - [ ] quickstart.md:Scenario 6 (Tier Limits) → T081 (tier enforcement) ✓
 
 **Constitutional Compliance:**
+
 - [ ] TDD approach: All tests come before implementation ✓
 - [ ] Parallel tasks are truly independent (different files) ✓
 - [ ] Each task specifies exact file path ✓
 - [ ] plan.md:Constitution Check requirements addressed ✓
 
 ### Quality Gates
+
 - [ ] Constitution compliance maintained throughout (TDD, complexity limits)
 - [ ] Tier enforcement tested at every feature level
 - [ ] Offline capability verified for core combat features
