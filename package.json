@@ -13,6 +13,7 @@
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:parallel:ci": "jest --ci --coverage --watchAll=false --maxWorkers=50%",
     "test:e2e": "playwright test",
     "test:watch": "jest --watch"
   },
