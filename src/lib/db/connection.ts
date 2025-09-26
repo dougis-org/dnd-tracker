@@ -26,6 +26,10 @@ if (!cached) {
 
 export async function connectToDatabase(): Promise<typeof mongoose> {
   if (!MONGODB_URI) {
+    // During build time, provide a more helpful error message
+    if (process.env.NODE_ENV === 'production' && process.env.CI) {
+      throw new Error('MONGODB_URI environment variable is required for build. Please set it in your CI environment.')
+    }
     throw new Error('Please define the MONGODB_URI environment variable inside .env.local')
   }
 
