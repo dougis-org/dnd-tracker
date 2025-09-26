@@ -17,10 +17,6 @@ declare global {
 
 const MONGODB_URI = process.env.MONGODB_URI
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local')
-}
-
 // Global mongoose instance to prevent multiple connections in development
 let cached = global.mongoose
 
@@ -29,6 +25,10 @@ if (!cached) {
 }
 
 export async function connectToDatabase(): Promise<typeof mongoose> {
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGODB_URI environment variable inside .env.local')
+  }
+
   if (cached?.conn) {
     return cached.conn
   }
