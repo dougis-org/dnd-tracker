@@ -11,10 +11,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectOption } from '@/components/ui/select'
+import { FormField, ErrorDisplay, SuccessDisplay } from '@/components/ui/form-field'
 import { ProfileUpdateSchema, type ProfileUpdate } from '@/lib/validations/auth'
 import { User, Settings, Palette, Gamepad2 } from 'lucide-react'
-
-const selectStyles = "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 
 interface UserProfileFormProps {
   initialData?: Partial<ProfileUpdate>
@@ -79,81 +79,73 @@ export default function UserProfileForm({
         <CardContent>
           <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
             {/* Display Name */}
-            <div className="space-y-2">
-              <Label htmlFor="displayName">Display Name</Label>
+            <FormField
+              id="displayName"
+              label="Display Name"
+              error={errors.profile?.displayName?.message}
+            >
               <Input
                 id="displayName"
                 placeholder="Enter your display name"
                 {...register('profile.displayName')}
                 className={errors.profile?.displayName ? 'border-destructive' : ''}
               />
-              {errors.profile?.displayName && (
-                <p className="text-sm text-destructive">
-                  {errors.profile.displayName.message}
-                </p>
-              )}
-            </div>
+            </FormField>
 
             {/* D&D Ruleset */}
-            <div className="space-y-2">
-              <Label htmlFor="dndRuleset">D&D Ruleset</Label>
-              <select
+            <FormField
+              id="dndRuleset"
+              label="D&D Ruleset"
+              error={errors.profile?.dndRuleset?.message}
+            >
+              <Select
                 id="dndRuleset"
                 {...register('profile.dndRuleset')}
-                className={selectStyles}
+                className={errors.profile?.dndRuleset ? 'border-destructive' : ''}
               >
-                <option value="">Select ruleset</option>
-                <option value="5e">D&D 5th Edition</option>
-                <option value="3.5e">D&D 3.5 Edition</option>
-                <option value="pf1">Pathfinder 1st Edition</option>
-                <option value="pf2">Pathfinder 2nd Edition</option>
-              </select>
-              {errors.profile?.dndRuleset && (
-                <p className="text-sm text-destructive">
-                  {errors.profile.dndRuleset.message}
-                </p>
-              )}
-            </div>
+                <SelectOption value="">Select ruleset</SelectOption>
+                <SelectOption value="5e">D&D 5th Edition</SelectOption>
+                <SelectOption value="3.5e">D&D 3.5 Edition</SelectOption>
+                <SelectOption value="pf1">Pathfinder 1st Edition</SelectOption>
+                <SelectOption value="pf2">Pathfinder 2nd Edition</SelectOption>
+              </Select>
+            </FormField>
 
             {/* Experience Level */}
-            <div className="space-y-2">
-              <Label htmlFor="experienceLevel">Experience Level</Label>
-              <select
+            <FormField
+              id="experienceLevel"
+              label="Experience Level"
+              error={errors.profile?.experienceLevel?.message}
+            >
+              <Select
                 id="experienceLevel"
                 {...register('profile.experienceLevel')}
-                className={selectStyles}
+                className={errors.profile?.experienceLevel ? 'border-destructive' : ''}
               >
-                <option value="">Select experience level</option>
-                <option value="beginner">Beginner (New to D&D)</option>
-                <option value="intermediate">Intermediate (Some experience)</option>
-                <option value="expert">Expert (Veteran player/DM)</option>
-              </select>
-              {errors.profile?.experienceLevel && (
-                <p className="text-sm text-destructive">
-                  {errors.profile.experienceLevel.message}
-                </p>
-              )}
-            </div>
+                <SelectOption value="">Select experience level</SelectOption>
+                <SelectOption value="beginner">Beginner (New to D&D)</SelectOption>
+                <SelectOption value="intermediate">Intermediate (Some experience)</SelectOption>
+                <SelectOption value="expert">Expert (Veteran player/DM)</SelectOption>
+              </Select>
+            </FormField>
 
             {/* Role */}
-            <div className="space-y-2">
-              <Label htmlFor="role">Primary Role</Label>
-              <select
+            <FormField
+              id="role"
+              label="Primary Role"
+              error={errors.profile?.role?.message}
+            >
+              <Select
                 id="role"
                 {...register('profile.role')}
-                className={selectStyles}
+                className={errors.profile?.role ? 'border-destructive' : ''}
               >
-                <option value="">Select role</option>
-                <option value="player">Player</option>
-                <option value="dm">Dungeon Master</option>
-                <option value="both">Both Player & DM</option>
-              </select>
-              {errors.profile?.role && (
-                <p className="text-sm text-destructive">
-                  {errors.profile.role.message}
-                </p>
-              )}
-            </div>
+                <SelectOption value="">Select role</SelectOption>
+                <SelectOption value="player">Player</SelectOption>
+                <SelectOption value="dm">Dungeon Master</SelectOption>
+                <SelectOption value="both">Both Player & DM</SelectOption>
+              </Select>
+            </FormField>
           </form>
         </CardContent>
       </Card>
@@ -171,26 +163,22 @@ export default function UserProfileForm({
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Theme */}
-          <div className="space-y-2">
-            <Label htmlFor="theme" className="flex items-center space-x-2">
-              <Palette className="h-4 w-4" />
-              <span>Theme</span>
-            </Label>
-            <select
+          <FormField
+            id="theme"
+            label="Theme"
+            icon={Palette}
+            error={errors.preferences?.theme?.message}
+          >
+            <Select
               id="theme"
               {...register('preferences.theme')}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className={errors.preferences?.theme ? 'border-destructive' : ''}
             >
-              <option value="">Select theme</option>
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-              <option value="auto">Auto (System)</option>
-            </select>
-            {errors.preferences?.theme && (
-              <p className="text-sm text-destructive">
-                {errors.preferences.theme.message}
-              </p>
-            )}
+              <SelectOption value="">Select theme</SelectOption>
+              <SelectOption value="light">Light</SelectOption>
+              <SelectOption value="dark">Dark</SelectOption>
+              <SelectOption value="auto">Auto (System)</SelectOption>
+            </Select>
             {watchedTheme && (
               <p className="text-xs text-muted-foreground">
                 {watchedTheme === 'auto'
@@ -199,29 +187,25 @@ export default function UserProfileForm({
                 }
               </p>
             )}
-          </div>
+          </FormField>
 
           {/* Default Initiative Type */}
-          <div className="space-y-2">
-            <Label htmlFor="defaultInitiativeType" className="flex items-center space-x-2">
-              <Gamepad2 className="h-4 w-4" />
-              <span>Default Initiative Type</span>
-            </Label>
-            <select
+          <FormField
+            id="defaultInitiativeType"
+            label="Default Initiative Type"
+            icon={Gamepad2}
+            error={errors.preferences?.defaultInitiativeType?.message}
+          >
+            <Select
               id="defaultInitiativeType"
               {...register('preferences.defaultInitiativeType')}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className={errors.preferences?.defaultInitiativeType ? 'border-destructive' : ''}
             >
-              <option value="">Select initiative type</option>
-              <option value="manual">Manual (Roll yourself)</option>
-              <option value="auto">Auto (System rolls)</option>
-            </select>
-            {errors.preferences?.defaultInitiativeType && (
-              <p className="text-sm text-destructive">
-                {errors.preferences.defaultInitiativeType.message}
-              </p>
-            )}
-          </div>
+              <SelectOption value="">Select initiative type</SelectOption>
+              <SelectOption value="manual">Manual (Roll yourself)</SelectOption>
+              <SelectOption value="auto">Auto (System rolls)</SelectOption>
+            </Select>
+          </FormField>
 
           {/* Auto Advance Rounds */}
           <div className="flex items-center space-x-2">
@@ -246,21 +230,11 @@ export default function UserProfileForm({
       {/* Form Actions */}
       <Card>
         <CardContent className="pt-6">
-          {/* Error Display */}
-          {submitError && (
-            <div className="mb-4 p-3 rounded-md bg-destructive/10 border border-destructive/20">
-              <p className="text-sm text-destructive">{submitError}</p>
-            </div>
-          )}
-
-          {/* Success Display */}
-          {submitSuccess && (
-            <div className="mb-4 p-3 rounded-md bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800">
-              <p className="text-sm text-green-700 dark:text-green-300">
-                Profile updated successfully!
-              </p>
-            </div>
-          )}
+          <ErrorDisplay error={submitError} />
+          <SuccessDisplay
+            message="Profile updated successfully!"
+            show={submitSuccess}
+          />
 
           {/* Submit Button */}
           <div className="flex justify-end space-x-4">

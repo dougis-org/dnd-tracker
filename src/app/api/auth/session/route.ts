@@ -8,6 +8,7 @@ import { auth, clerkClient } from '@clerk/nextjs/server'
 import { connectToDatabase } from '@/lib/db/connection'
 import User from '@/lib/db/models/User'
 import { createHash } from 'crypto'
+import { ApiErrors, formatUserProfile } from '@/lib/api/common'
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,10 +17,7 @@ export async function POST(request: NextRequest) {
 
     // Validate request body
     if (!sessionToken || typeof sessionToken !== 'string') {
-      return NextResponse.json(
-        { error: 'sessionToken is required and must be a string' },
-        { status: 400 }
-      )
+      return ApiErrors.badRequest('sessionToken is required and must be a string')
     }
 
     // Connect to database
@@ -32,27 +30,18 @@ export async function POST(request: NextRequest) {
       const { userId } = await auth()
 
       if (!userId) {
-        return NextResponse.json(
-          { error: 'Invalid session token' },
-          { status: 401 }
-        )
+        return ApiErrors.unauthorized()
       }
 
       // Get full user data from Clerk
       clerkUser = await clerkClient.users.getUser(userId)
 
       if (!clerkUser) {
-        return NextResponse.json(
-          { error: 'User not found in Clerk' },
-          { status: 401 }
-        )
+        return ApiErrors.unauthorized()
       }
     } catch (clerkError) {
       console.error('Clerk session validation error:', clerkError)
-      return NextResponse.json(
-        { error: 'Invalid session token' },
-        { status: 401 }
-      )
+      return ApiErrors.unauthorized()
     }
 
     // Find or create user in MongoDB
@@ -64,10 +53,7 @@ export async function POST(request: NextRequest) {
         user = await User.createFromClerkUser(clerkUser)
       } catch (createError) {
         console.error('Error creating user:', createError)
-        return NextResponse.json(
-          { error: 'Failed to create user profile' },
-          { status: 500 }
-        )
+        return ApiErrors.internalError('Failed to create user profile')
       }
     }
 
@@ -76,16 +62,7 @@ export async function POST(request: NextRequest) {
 
     // Prepare session response
     const sessionResponse = {
-      user: {
-        id: user.id,
-        email: user.email,
-        profile: user.profile,
-        subscription: user.subscription,
-        usage: user.usage,
-        preferences: user.preferences,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      },
+      user: formatUserProfile(user),
       session: {
         id: createHash('sha256').update(sessionToken).digest('hex'),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
@@ -99,47 +76,29 @@ export async function POST(request: NextRequest) {
 
     // Handle specific error types
     if (error instanceof SyntaxError) {
-      return NextResponse.json(
-        { error: 'Invalid JSON in request body' },
-        { status: 400 }
-      )
+      return ApiErrors.badRequest('Invalid JSON in request body')
     }
 
     // Handle database connection errors
     if (error instanceof Error && (error.name === 'MongoError' || error.name === 'MongooseError')) {
       console.error('Database error in session endpoint:', error)
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      )
+      return ApiErrors.internalError('Database connection failed')
     }
 
     // Generic server error
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return ApiErrors.internalError()
   }
 }
 
 // Handle unsupported methods
 export async function GET() {
-  return NextResponse.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
-  )
+  return ApiErrors.methodNotAllowed()
 }
 
 export async function PUT() {
-  return NextResponse.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
-  )
+  return ApiErrors.methodNotAllowed()
 }
 
 export async function DELETE() {
-  return NextResponse.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
-  )
+  return ApiErrors.methodNotAllowed()
 }

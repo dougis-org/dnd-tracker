@@ -82,7 +82,7 @@ describe('/api/auth/session POST', () => {
     const data = await response.json()
 
     expect(response.status).toBe(401)
-    expect(data.error).toBe('Invalid session token')
+    expect(data.error).toBe('Unauthorized')
   })
 
   it('should return 400 for missing session token', async () => {
