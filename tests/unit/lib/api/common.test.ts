@@ -84,51 +84,52 @@ describe('common API utilities', () => {
       expect(result).toEqual({ success: true })
     })
 
-    it('should return unauthorized when no userId', async () => {
-      mockAuth.mockResolvedValue({ userId: null })
-      const mockHandler = jest.fn()
+    const errorScenarios = [
+      {
+        name: 'return unauthorized when no userId',
+        setup: () => mockAuth.mockResolvedValue({ userId: null }),
+        expectedStatus: 401,
+        expectedMessage: 'Unauthorized',
+        shouldCallDb: false
+      },
+      {
+        name: 'return internal error when auth throws',
+        setup: () => mockAuth.mockRejectedValue(new Error('Auth failed')),
+        expectedStatus: 500,
+        expectedMessage: 'Internal server error',
+        shouldCallDb: false
+      },
+      {
+        name: 'return internal error when database connection fails',
+        setup: () => {
+          mockAuth.mockResolvedValue({ userId: 'user123' })
+          mockConnectToDatabase.mockRejectedValue(new Error('DB connection failed'))
+        },
+        expectedStatus: 500,
+        expectedMessage: 'Internal server error',
+        shouldCallDb: true
+      }
+    ]
 
-      const result = await withAuthAndDb(mockHandler)
+    errorScenarios.forEach(({ name, setup, expectedStatus, expectedMessage, shouldCallDb }) => {
+      it(`should ${name}`, async () => {
+        setup()
+        const mockHandler = jest.fn()
 
-      expect(mockAuth).toHaveBeenCalled()
-      expect(mockConnectToDatabase).not.toHaveBeenCalled()
-      expect(mockHandler).not.toHaveBeenCalled()
-      expect(result).toHaveProperty('json')
-      expect(result).toHaveProperty('status', 401)
+        const result = await withAuthAndDb(mockHandler)
 
-      const response = result as any
-      const data = await response.json()
-      expect(data).toEqual({ error: 'Unauthorized' })
-    })
+        expect(mockAuth).toHaveBeenCalled()
+        if (shouldCallDb) {
+          expect(mockConnectToDatabase).toHaveBeenCalled()
+        } else {
+          expect(mockConnectToDatabase).not.toHaveBeenCalled()
+        }
+        expect(mockHandler).not.toHaveBeenCalled()
+        expect(result).toHaveProperty('status', expectedStatus)
 
-    it('should return internal error when auth throws', async () => {
-      mockAuth.mockRejectedValue(new Error('Auth failed'))
-      const mockHandler = jest.fn()
-
-      const result = await withAuthAndDb(mockHandler)
-
-      expect(result).toHaveProperty('json')
-      expect(result).toHaveProperty('status', 500)
-
-      const response = result as any
-      const data = await response.json()
-      expect(data).toEqual({ error: 'Internal server error' })
-    })
-
-    it('should return internal error when database connection fails', async () => {
-      const userId = 'user123'
-      mockAuth.mockResolvedValue({ userId })
-      mockConnectToDatabase.mockRejectedValue(new Error('DB connection failed'))
-      const mockHandler = jest.fn()
-
-      const result = await withAuthAndDb(mockHandler)
-
-      expect(result).toHaveProperty('json')
-      expect(result).toHaveProperty('status', 500)
-
-      const response = result as any
-      const data = await response.json()
-      expect(data).toEqual({ error: 'Internal server error' })
+        const data = await (result as any).json()
+        expect(data).toEqual({ error: expectedMessage })
+      })
     })
   })
 
@@ -163,78 +164,41 @@ describe('common API utilities', () => {
   })
 
   describe('buildProfileUpdateObject', () => {
-    it('should build update object for profile fields', () => {
-      const validatedData = {
-        profile: {
-          displayName: 'New Name',
-          dndRuleset: '5e'
-        }
+    const updateTestCases = [
+      {
+        name: 'profile fields',
+        input: { profile: { displayName: 'New Name', dndRuleset: '5e' } },
+        expected: { 'profile.displayName': 'New Name', 'profile.dndRuleset': '5e' }
+      },
+      {
+        name: 'preferences fields',
+        input: { preferences: { theme: 'dark', initiativeType: 'auto' } },
+        expected: { 'preferences.theme': 'dark', 'preferences.initiativeType': 'auto' }
+      },
+      {
+        name: 'both profile and preferences',
+        input: { profile: { displayName: 'New Name' }, preferences: { theme: 'dark' } },
+        expected: { 'profile.displayName': 'New Name', 'preferences.theme': 'dark' }
+      },
+      {
+        name: 'empty object when no profile or preferences',
+        input: {},
+        expected: {}
       }
+    ]
 
-      const result = buildProfileUpdateObject(validatedData)
-
-      expect(result).toEqual({
-        'profile.displayName': 'New Name',
-        'profile.dndRuleset': '5e'
-      })
-    })
-
-    it('should build update object for preferences fields', () => {
-      const validatedData = {
-        preferences: {
-          theme: 'dark',
-          initiativeType: 'auto'
-        }
-      }
-
-      const result = buildProfileUpdateObject(validatedData)
-
-      expect(result).toEqual({
-        'preferences.theme': 'dark',
-        'preferences.initiativeType': 'auto'
-      })
-    })
-
-    it('should build update object for both profile and preferences', () => {
-      const validatedData = {
-        profile: {
-          displayName: 'New Name'
-        },
-        preferences: {
-          theme: 'dark'
-        }
-      }
-
-      const result = buildProfileUpdateObject(validatedData)
-
-      expect(result).toEqual({
-        'profile.displayName': 'New Name',
-        'preferences.theme': 'dark'
+    updateTestCases.forEach(({ name, input, expected }) => {
+      it(`should build update object for ${name}`, () => {
+        const result = buildProfileUpdateObject(input)
+        expect(result).toEqual(expected)
       })
     })
 
     it('should skip undefined values', () => {
-      const validatedData = {
-        profile: {
-          displayName: 'New Name',
-          dndRuleset: undefined
-        }
-      }
-
+      const validatedData = { profile: { displayName: 'New Name', dndRuleset: undefined } }
       const result = buildProfileUpdateObject(validatedData)
-
-      expect(result).toEqual({
-        'profile.displayName': 'New Name'
-      })
+      expect(result).toEqual({ 'profile.displayName': 'New Name' })
       expect(result).not.toHaveProperty('profile.dndRuleset')
-    })
-
-    it('should return empty object when no profile or preferences', () => {
-      const validatedData = {}
-
-      const result = buildProfileUpdateObject(validatedData)
-
-      expect(result).toEqual({})
     })
   })
 })

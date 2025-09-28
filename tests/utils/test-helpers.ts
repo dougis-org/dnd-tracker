@@ -75,25 +75,47 @@ export const setupAuthMocks = (
   mockConnectToDatabase.mockResolvedValue(undefined)
 }
 
+const authFailureConfigs = {
+  'no-user': (mockAuth: jest.MockedFunction<any>) =>
+    mockAuth.mockResolvedValue({ userId: null }),
+  'clerk-error': (mockAuth: jest.MockedFunction<any>) =>
+    mockAuth.mockRejectedValue(new Error('Clerk error')),
+  'db-error': (_: jest.MockedFunction<any>, mockConnectToDatabase?: jest.MockedFunction<any>) => {
+    if (mockConnectToDatabase) {
+      const dbError = new Error('Connection failed')
+      dbError.name = 'MongoError'
+      mockConnectToDatabase.mockRejectedValue(dbError)
+    }
+  }
+}
+
 export const setupAuthFailure = (
   mockAuth: jest.MockedFunction<any>,
   errorType: 'no-user' | 'clerk-error' | 'db-error',
   mockConnectToDatabase?: jest.MockedFunction<any>
 ) => {
-  switch (errorType) {
-    case 'no-user':
-      mockAuth.mockResolvedValue({ userId: null })
-      break
-    case 'clerk-error':
-      mockAuth.mockRejectedValue(new Error('Clerk error'))
-      break
-    case 'db-error':
-      if (mockConnectToDatabase) {
-        const dbError = new Error('Connection failed')
-        dbError.name = 'MongoError'
-        mockConnectToDatabase.mockRejectedValue(dbError)
-      }
-      break
+  authFailureConfigs[errorType](mockAuth, mockConnectToDatabase)
+}
+
+const userMockConfigs = {
+  found: (mockUser: any) => {
+    mockUser.findByClerkId = jest.fn().mockResolvedValue(createMockUser())
+  },
+  'not-found': (mockUser: any) => {
+    mockUser.findByClerkId = jest.fn().mockResolvedValue(null)
+  },
+  'create-success': (mockUser: any) => {
+    mockUser.findByClerkId = jest.fn().mockResolvedValue(null)
+    mockUser.createFromClerkUser = jest.fn().mockResolvedValue(createMockUser())
+  },
+  'create-failure': (mockUser: any) => {
+    mockUser.findByClerkId = jest.fn().mockResolvedValue(null)
+    mockUser.createFromClerkUser = jest.fn().mockRejectedValue(new Error('Creation failed'))
+  },
+  'update-failure': (mockUser: any) => {
+    const user = createMockUser()
+    user.updateOne = jest.fn().mockRejectedValue(new Error('Update failed'))
+    mockUser.findByClerkId = jest.fn().mockResolvedValue(user)
   }
 }
 
@@ -101,27 +123,7 @@ export const setupUserMocks = (
   mockUser: any,
   scenario: 'found' | 'not-found' | 'create-success' | 'create-failure' | 'update-failure'
 ) => {
-  switch (scenario) {
-    case 'found':
-      mockUser.findByClerkId = jest.fn().mockResolvedValue(createMockUser())
-      break
-    case 'not-found':
-      mockUser.findByClerkId = jest.fn().mockResolvedValue(null)
-      break
-    case 'create-success':
-      mockUser.findByClerkId = jest.fn().mockResolvedValue(null)
-      mockUser.createFromClerkUser = jest.fn().mockResolvedValue(createMockUser())
-      break
-    case 'create-failure':
-      mockUser.findByClerkId = jest.fn().mockResolvedValue(null)
-      mockUser.createFromClerkUser = jest.fn().mockRejectedValue(new Error('Creation failed'))
-      break
-    case 'update-failure':
-      const user = createMockUser()
-      user.updateOne = jest.fn().mockRejectedValue(new Error('Update failed'))
-      mockUser.findByClerkId = jest.fn().mockResolvedValue(user)
-      break
-  }
+  userMockConfigs[scenario](mockUser)
 }
 
 /**
@@ -133,17 +135,11 @@ export const setupValidationMocks = (
   data?: any,
   errorMessage?: string
 ) => {
-  if (success) {
-    mockValidateProfileUpdate.mockReturnValue({
-      success: true,
-      data: data || { profile: { displayName: 'Updated User' } }
-    })
-  } else {
-    mockValidateProfileUpdate.mockReturnValue({
-      success: false,
-      error: { message: errorMessage || 'Validation failed' }
-    })
-  }
+  const result = success
+    ? { success: true, data: data || { profile: { displayName: 'Updated User' } } }
+    : { success: false, error: { message: errorMessage || 'Validation failed' } }
+
+  mockValidateProfileUpdate.mockReturnValue(result)
 }
 
 /**
