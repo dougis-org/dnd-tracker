@@ -13,7 +13,6 @@ primary_region = 'sea'
 NODE_ENV = 'production'
 PORT = '3000'
 HOSTNAME = '0.0.0.0'
-NEXT_PUBLIC_APP_URL = 'https://dnd-tracker.fly.dev'
 
 [http_service]
 internal_port = 3000
