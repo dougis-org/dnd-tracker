@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { ApiErrors, withAuthAndDb, formatUserProfile, buildProfileUpdateObject } from '@/lib/api/common'
 import { auth } from '@clerk/nextjs/server'
 import { connectToDatabase } from '@/lib/db/connection'
-import { expectApiErrorResponse, createMockUser } from '../../utils/test-helpers'
+import { expectApiErrorResponse, createMockUser } from '@tests/utils/test-helpers'
 
 jest.mock('@clerk/nextjs/server')
 jest.mock('@/lib/db/connection')

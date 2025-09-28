@@ -17,7 +17,7 @@ import {
   createError,
   TEST_URLS,
   TEST_REQUEST_BODIES
-} from '../../utils/test-helpers'
+} from '@tests/utils/test-helpers'
 
 const mockAuth = auth as jest.MockedFunction<typeof auth>
 const mockClerkClient = clerkClient as any
