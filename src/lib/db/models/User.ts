@@ -249,8 +249,7 @@ UserSchema.statics.createFromClerkUser = function(clerkUser: ClerkUser, profileD
 }
 
 // Indexes for performance
-UserSchema.index({ id: 1 }, { unique: true })
-UserSchema.index({ email: 1 }, { unique: true })
+// Note: id and email indexes are created automatically via unique: true in field definitions
 UserSchema.index({ 'subscription.tier': 1 })
 UserSchema.index({ createdAt: 1 })
 
