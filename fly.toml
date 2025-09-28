@@ -5,6 +5,9 @@ app = 'dnd-tracker'
 primary_region = 'sea'
 
 [build]
+  [build.args]
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = { from_env = "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" }
+    NEXT_PUBLIC_APP_URL = { from_env = "NEXT_PUBLIC_APP_URL" }
 
 [env]
 NODE_ENV = 'production'
