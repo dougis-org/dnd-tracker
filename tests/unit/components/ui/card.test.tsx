@@ -63,56 +63,52 @@ describe('Card components', () => {
     })
   })
 
-  describe('CardTitle', () => {
-    it('should render with children', () => {
-      render(<CardTitle>Title content</CardTitle>)
-      expect(screen.getByText('Title content')).toBeInTheDocument()
-    })
+  const textComponents = [
+    {
+      name: 'CardTitle',
+      Component: CardTitle,
+      content: 'Title content',
+      testId: 'card-title',
+      customClass: 'custom-title',
+      expectedClasses: ['text-2xl', 'font-semibold', 'leading-none', 'tracking-tight'],
+      elementTest: () => expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument()
+    },
+    {
+      name: 'CardDescription',
+      Component: CardDescription,
+      content: 'Description content',
+      testId: 'card-description',
+      customClass: 'custom-description',
+      expectedClasses: ['text-sm', 'text-muted-foreground'],
+      elementTest: () => expect(screen.getByTestId('card-description').tagName).toBe('P')
+    }
+  ]
 
-    it('should render as h3 element', () => {
-      render(<CardTitle>Title content</CardTitle>)
-      expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument()
-    })
+  textComponents.forEach(({ name, Component, content, testId, customClass, expectedClasses, elementTest }) => {
+    describe(name, () => {
+      it('should render with children', () => {
+        render(<Component>{content}</Component>)
+        expect(screen.getByText(content)).toBeInTheDocument()
+      })
 
-    it('should render with default styles', () => {
-      render(<CardTitle data-testid="card-title">Title content</CardTitle>)
-      const title = screen.getByTestId('card-title')
-      expect(title).toHaveClass('text-2xl', 'font-semibold', 'leading-none', 'tracking-tight')
-    })
+      it('should render with correct element type', () => {
+        render(<Component data-testid={testId}>{content}</Component>)
+        elementTest()
+      })
 
-    it('should apply custom className', () => {
-      render(<CardTitle className="custom-title" data-testid="card-title">Title content</CardTitle>)
-      expect(screen.getByTestId('card-title')).toHaveClass('custom-title')
-    })
+      it('should render with default styles', () => {
+        render(<Component data-testid={testId}>{content}</Component>)
+        expect(screen.getByTestId(testId)).toHaveClass(...expectedClasses)
+      })
 
-    it('should have correct display name', () => {
-      expect(CardTitle.displayName).toBe('CardTitle')
-    })
-  })
+      it('should apply custom className', () => {
+        render(<Component className={customClass} data-testid={testId}>{content}</Component>)
+        expect(screen.getByTestId(testId)).toHaveClass(customClass)
+      })
 
-  describe('CardDescription', () => {
-    it('should render with children', () => {
-      render(<CardDescription>Description content</CardDescription>)
-      expect(screen.getByText('Description content')).toBeInTheDocument()
-    })
-
-    it('should render as p element', () => {
-      render(<CardDescription data-testid="card-description">Description content</CardDescription>)
-      expect(screen.getByTestId('card-description').tagName).toBe('P')
-    })
-
-    it('should render with default styles', () => {
-      render(<CardDescription data-testid="card-description">Description content</CardDescription>)
-      expect(screen.getByTestId('card-description')).toHaveClass('text-sm', 'text-muted-foreground')
-    })
-
-    it('should apply custom className', () => {
-      render(<CardDescription className="custom-description" data-testid="card-description">Description content</CardDescription>)
-      expect(screen.getByTestId('card-description')).toHaveClass('custom-description')
-    })
-
-    it('should have correct display name', () => {
-      expect(CardDescription.displayName).toBe('CardDescription')
+      it('should have correct display name', () => {
+        expect(Component.displayName).toBe(name)
+      })
     })
   })
 

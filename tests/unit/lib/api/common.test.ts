@@ -16,56 +16,19 @@ describe('common API utilities', () => {
   })
 
   describe('ApiErrors', () => {
-    const errorTestCases = [
-      {
-        name: 'unauthorized',
-        method: () => ApiErrors.unauthorized(),
-        expectedStatus: 401,
-        expectedMessage: 'Unauthorized'
-      },
-      {
-        name: 'bad request',
-        method: () => ApiErrors.badRequest('Invalid input'),
-        expectedStatus: 400,
-        expectedMessage: 'Invalid input'
-      },
-      {
-        name: 'not found',
-        method: () => ApiErrors.notFound('Resource not found'),
-        expectedStatus: 404,
-        expectedMessage: 'Resource not found'
-      },
-      {
-        name: 'internal error with default message',
-        method: () => ApiErrors.internalError(),
-        expectedStatus: 500,
-        expectedMessage: 'Internal server error'
-      },
-      {
-        name: 'internal error with custom message',
-        method: () => ApiErrors.internalError('Custom error'),
-        expectedStatus: 500,
-        expectedMessage: 'Custom error'
-      },
-      {
-        name: 'validation error',
-        method: () => ApiErrors.validationError('Missing required field'),
-        expectedStatus: 400,
-        expectedMessage: 'Validation error: Missing required field'
-      },
-      {
-        name: 'method not allowed',
-        method: () => ApiErrors.methodNotAllowed(),
-        expectedStatus: 405,
-        expectedMessage: 'Method not allowed'
-      }
-    ]
-
-    errorTestCases.forEach(({ name, method, expectedStatus, expectedMessage }) => {
+    const testErrorMethod = async (name: string, method: () => Response, expectedStatus: number, expectedMessage: string) => {
       it(`should return correct ${name} response`, async () => {
         await expectApiErrorResponse(method, expectedStatus, expectedMessage)
       })
-    })
+    }
+
+    testErrorMethod('unauthorized', () => ApiErrors.unauthorized(), 401, 'Unauthorized')
+    testErrorMethod('bad request', () => ApiErrors.badRequest('Invalid input'), 400, 'Invalid input')
+    testErrorMethod('not found', () => ApiErrors.notFound('Resource not found'), 404, 'Resource not found')
+    testErrorMethod('internal error with default message', () => ApiErrors.internalError(), 500, 'Internal server error')
+    testErrorMethod('internal error with custom message', () => ApiErrors.internalError('Custom error'), 500, 'Custom error')
+    testErrorMethod('validation error', () => ApiErrors.validationError('Missing required field'), 400, 'Validation error: Missing required field')
+    testErrorMethod('method not allowed', () => ApiErrors.methodNotAllowed(), 405, 'Method not allowed')
   })
 
   describe('withAuthAndDb', () => {
@@ -84,52 +47,51 @@ describe('common API utilities', () => {
       expect(result).toEqual({ success: true })
     })
 
-    const errorScenarios = [
-      {
-        name: 'return unauthorized when no userId',
-        setup: () => mockAuth.mockResolvedValue({ userId: null }),
-        expectedStatus: 401,
-        expectedMessage: 'Unauthorized',
-        shouldCallDb: false
-      },
-      {
-        name: 'return internal error when auth throws',
-        setup: () => mockAuth.mockRejectedValue(new Error('Auth failed')),
-        expectedStatus: 500,
-        expectedMessage: 'Internal server error',
-        shouldCallDb: false
-      },
-      {
-        name: 'return internal error when database connection fails',
-        setup: () => {
+    const testErrorScenario = async (name: string, setup: () => void, expectedStatus: number, expectedMessage: string, shouldCallDb: boolean) => {
+      setup()
+      const mockHandler = jest.fn()
+      const result = await withAuthAndDb(mockHandler)
+
+      expect(mockAuth).toHaveBeenCalled()
+      shouldCallDb ? expect(mockConnectToDatabase).toHaveBeenCalled() : expect(mockConnectToDatabase).not.toHaveBeenCalled()
+      expect(mockHandler).not.toHaveBeenCalled()
+      expect(result).toHaveProperty('status', expectedStatus)
+
+      const data = await (result as any).json()
+      expect(data).toEqual({ error: expectedMessage })
+    }
+
+    it('should return unauthorized when no userId', async () => {
+      await testErrorScenario(
+        'no userId',
+        () => mockAuth.mockResolvedValue({ userId: null }),
+        401,
+        'Unauthorized',
+        false
+      )
+    })
+
+    it('should return internal error when auth throws', async () => {
+      await testErrorScenario(
+        'auth throws',
+        () => mockAuth.mockRejectedValue(new Error('Auth failed')),
+        500,
+        'Internal server error',
+        false
+      )
+    })
+
+    it('should return internal error when database connection fails', async () => {
+      await testErrorScenario(
+        'database fails',
+        () => {
           mockAuth.mockResolvedValue({ userId: 'user123' })
           mockConnectToDatabase.mockRejectedValue(new Error('DB connection failed'))
         },
-        expectedStatus: 500,
-        expectedMessage: 'Internal server error',
-        shouldCallDb: true
-      }
-    ]
-
-    errorScenarios.forEach(({ name, setup, expectedStatus, expectedMessage, shouldCallDb }) => {
-      it(`should ${name}`, async () => {
-        setup()
-        const mockHandler = jest.fn()
-
-        const result = await withAuthAndDb(mockHandler)
-
-        expect(mockAuth).toHaveBeenCalled()
-        if (shouldCallDb) {
-          expect(mockConnectToDatabase).toHaveBeenCalled()
-        } else {
-          expect(mockConnectToDatabase).not.toHaveBeenCalled()
-        }
-        expect(mockHandler).not.toHaveBeenCalled()
-        expect(result).toHaveProperty('status', expectedStatus)
-
-        const data = await (result as any).json()
-        expect(data).toEqual({ error: expectedMessage })
-      })
+        500,
+        'Internal server error',
+        true
+      )
     })
   })
 
