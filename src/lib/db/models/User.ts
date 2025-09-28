@@ -249,9 +249,10 @@ UserSchema.statics.createFromClerkUser = function(clerkUser: ClerkUser, profileD
 }
 
 // Indexes for performance
-UserSchema.index({ id: 1 }, { unique: true })
-UserSchema.index({ email: 1 }, { unique: true })
-UserSchema.index({ 'subscription.tier': 1 })
+// Note: id and email indexes are created automatically via unique: true in field definitions
+// Compound index for queries that filter by tier and sort by creation date
+UserSchema.index({ 'subscription.tier': 1, createdAt: -1 })
+// Keep separate createdAt index for queries that only sort by creation date
 UserSchema.index({ createdAt: 1 })
 
 // Export types
