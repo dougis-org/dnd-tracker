@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { ApiErrors, withAuthAndDb, formatUserProfile, buildProfileUpdateObject } from '@/lib/api/common'
 import { auth } from '@clerk/nextjs/server'
 import { connectToDatabase } from '@/lib/db/connection'
+import { expectApiErrorResponse, createMockUser } from '../../utils/test-helpers'
 
 jest.mock('@clerk/nextjs/server')
 jest.mock('@/lib/db/connection')
@@ -15,57 +16,55 @@ describe('common API utilities', () => {
   })
 
   describe('ApiErrors', () => {
-    it('should return correct unauthorized response', async () => {
-      const response = ApiErrors.unauthorized()
-      const data = await response.json()
-      expect(data).toEqual({ error: 'Unauthorized' })
-      expect(response.status).toBe(401)
-    })
+    const errorTestCases = [
+      {
+        name: 'unauthorized',
+        method: () => ApiErrors.unauthorized(),
+        expectedStatus: 401,
+        expectedMessage: 'Unauthorized'
+      },
+      {
+        name: 'bad request',
+        method: () => ApiErrors.badRequest('Invalid input'),
+        expectedStatus: 400,
+        expectedMessage: 'Invalid input'
+      },
+      {
+        name: 'not found',
+        method: () => ApiErrors.notFound('Resource not found'),
+        expectedStatus: 404,
+        expectedMessage: 'Resource not found'
+      },
+      {
+        name: 'internal error with default message',
+        method: () => ApiErrors.internalError(),
+        expectedStatus: 500,
+        expectedMessage: 'Internal server error'
+      },
+      {
+        name: 'internal error with custom message',
+        method: () => ApiErrors.internalError('Custom error'),
+        expectedStatus: 500,
+        expectedMessage: 'Custom error'
+      },
+      {
+        name: 'validation error',
+        method: () => ApiErrors.validationError('Missing required field'),
+        expectedStatus: 400,
+        expectedMessage: 'Validation error: Missing required field'
+      },
+      {
+        name: 'method not allowed',
+        method: () => ApiErrors.methodNotAllowed(),
+        expectedStatus: 405,
+        expectedMessage: 'Method not allowed'
+      }
+    ]
 
-    it('should return correct bad request response', async () => {
-      const message = 'Invalid input'
-      const response = ApiErrors.badRequest(message)
-      const data = await response.json()
-      expect(data).toEqual({ error: message })
-      expect(response.status).toBe(400)
-    })
-
-    it('should return correct not found response', async () => {
-      const message = 'Resource not found'
-      const response = ApiErrors.notFound(message)
-      const data = await response.json()
-      expect(data).toEqual({ error: message })
-      expect(response.status).toBe(404)
-    })
-
-    it('should return correct internal error response with default message', async () => {
-      const response = ApiErrors.internalError()
-      const data = await response.json()
-      expect(data).toEqual({ error: 'Internal server error' })
-      expect(response.status).toBe(500)
-    })
-
-    it('should return correct internal error response with custom message', async () => {
-      const message = 'Custom error'
-      const response = ApiErrors.internalError(message)
-      const data = await response.json()
-      expect(data).toEqual({ error: message })
-      expect(response.status).toBe(500)
-    })
-
-    it('should return correct validation error response', async () => {
-      const message = 'Missing required field'
-      const response = ApiErrors.validationError(message)
-      const data = await response.json()
-      expect(data).toEqual({ error: 'Validation error: Missing required field' })
-      expect(response.status).toBe(400)
-    })
-
-    it('should return correct method not allowed response', async () => {
-      const response = ApiErrors.methodNotAllowed()
-      const data = await response.json()
-      expect(data).toEqual({ error: 'Method not allowed' })
-      expect(response.status).toBe(405)
+    errorTestCases.forEach(({ name, method, expectedStatus, expectedMessage }) => {
+      it(`should return correct ${name} response`, async () => {
+        await expectApiErrorResponse(method, expectedStatus, expectedMessage)
+      })
     })
   })
 
