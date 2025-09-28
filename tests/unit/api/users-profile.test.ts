@@ -162,5 +162,135 @@ describe('/api/users/profile', () => {
       expect(response.status).toBe(400)
       expect(data.error).toContain('Validation error')
     })
+
+    it('should return 404 if user not found during update', async () => {
+      mockAuth.mockResolvedValue({ userId: 'test-user-id' })
+      mockConnectToDatabase.mockResolvedValue(undefined)
+      mockUser.findByClerkId = jest.fn().mockResolvedValue(null)
+
+      mockValidateProfileUpdate.mockReturnValue({
+        success: true,
+        data: {
+          profile: { displayName: 'Updated User' }
+        }
+      })
+
+      const request = new NextRequest('http://localhost:3000/api/users/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profile: { displayName: 'Updated User' } })
+      })
+
+      const response = await PUT(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(404)
+      expect(data.error).toBe('User profile not found')
+    })
+
+    it('should return 500 if updated user cannot be retrieved', async () => {
+      mockAuth.mockResolvedValue({ userId: 'test-user-id' })
+      mockConnectToDatabase.mockResolvedValue(undefined)
+
+      const mockUserInstance = {
+        id: 'test-user-id',
+        email: 'test@example.com',
+        updateOne: jest.fn().mockResolvedValue({})
+      }
+
+      // First call returns user, second call (after update) returns null
+      mockUser.findByClerkId = jest.fn()
+        .mockResolvedValueOnce(mockUserInstance)
+        .mockResolvedValueOnce(null)
+
+      mockValidateProfileUpdate.mockReturnValue({
+        success: true,
+        data: {
+          profile: { displayName: 'Updated User' }
+        }
+      })
+
+      const request = new NextRequest('http://localhost:3000/api/users/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profile: { displayName: 'Updated User' } })
+      })
+
+      const response = await PUT(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(500)
+      expect(data.error).toBe('Failed to retrieve updated profile')
+    })
+
+    it('should return 400 for invalid JSON in request body', async () => {
+      const request = new NextRequest('http://localhost:3000/api/users/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: 'invalid json'
+      })
+
+      const response = await PUT(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(400)
+      expect(data.error).toBe('Invalid JSON in request body')
+    })
+
+    it('should return 400 for mongoose validation errors', async () => {
+      mockAuth.mockResolvedValue({ userId: 'test-user-id' })
+      mockConnectToDatabase.mockResolvedValue(undefined)
+
+      const validationError = new Error('Mongoose validation failed')
+      validationError.name = 'ValidationError'
+
+      const mockUserInstance = {
+        id: 'test-user-id',
+        email: 'test@example.com',
+        updateOne: jest.fn().mockRejectedValue(validationError)
+      }
+
+      mockUser.findByClerkId = jest.fn().mockResolvedValue(mockUserInstance)
+
+      mockValidateProfileUpdate.mockReturnValue({
+        success: true,
+        data: {
+          profile: { displayName: 'Updated User' }
+        }
+      })
+
+      const request = new NextRequest('http://localhost:3000/api/users/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profile: { displayName: 'Updated User' } })
+      })
+
+      const response = await PUT(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(400)
+      expect(data.error).toContain('Validation error')
+    })
+  })
+})
+
+// Import the other HTTP methods
+import { POST, DELETE } from '@/app/api/users/profile/route'
+
+describe('HTTP method handlers', () => {
+  it('should return 405 for POST method', async () => {
+    const response = await POST()
+    const data = await response.json()
+
+    expect(response.status).toBe(405)
+    expect(data.error).toBe('Method not allowed')
+  })
+
+  it('should return 405 for DELETE method', async () => {
+    const response = await DELETE()
+    const data = await response.json()
+
+    expect(response.status).toBe(405)
+    expect(data.error).toBe('Method not allowed')
   })
 })
