@@ -3,6 +3,9 @@
  * Reference: plan.md:Database Design decisions (lines 159-162)
  */
 import mongoose from 'mongoose'
+import { getConnectionOptions, getMongoDbUri } from './config'
+import { logConnectionSuccess, handleConnectionError, setupConnectionListeners, setupGracefulShutdown, resetCachedConnection } from './utils'
+import { createDatabaseIndexes, logInitializationSuccess } from './indexes'
 
 // MongoDB connection state
 interface MongooseConnection {
@@ -15,8 +18,6 @@ declare global {
   var mongoose: MongooseConnection | undefined
 }
 
-const MONGODB_URI = process.env.MONGODB_URI
-
 // Global mongoose instance to prevent multiple connections in development
 let cached = global.mongoose
 
@@ -24,156 +25,93 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null }
 }
 
+/**
+ * Connect to MongoDB database with caching
+ */
 export async function connectToDatabase(): Promise<typeof mongoose> {
-  if (!MONGODB_URI) {
-    // During build time, provide a more helpful error message
-    if (process.env.NODE_ENV === 'production' && process.env.CI) {
-      throw new Error('MONGODB_URI environment variable is required for build. Please set it in your CI environment.')
-    }
-    throw new Error('Please define the MONGODB_URI environment variable inside .env.local')
-  }
+  const MONGODB_URI = getMongoDbUri()
 
   if (cached?.conn) {
     return cached.conn
   }
 
   if (!cached?.promise) {
-    const opts = {
-      bufferCommands: false, // Disable mongoose buffering
-      maxPoolSize: 10, // Maintain up to 10 socket connections
-      serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-      family: 4, // Use IPv4, skip trying IPv6
-
-      // Atlas-specific optimizations
-      retryWrites: true,
-      w: 'majority' as const,
-
-      // Connection naming for monitoring
-      appName: 'DnD-Tracker-MVP',
-
-      // Enable compression for better performance
-      compressors: ['zlib' as const],
-
-      // Heartbeat frequency
-      heartbeatFrequencyMS: 10000,
-    }
-
-    cached!.promise = mongoose.connect(MONGODB_URI!, opts)
+    const opts = getConnectionOptions()
+    cached!.promise = mongoose.connect(MONGODB_URI, opts)
   }
 
   try {
     cached!.conn = await cached!.promise
-
-    // Log successful connection in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('✅ Connected to MongoDB Atlas')
-    }
-
+    logConnectionSuccess()
     return cached!.conn
   } catch (error) {
-    cached!.promise = null
-    console.error('❌ MongoDB connection error:', error)
-    throw error
+    return handleConnectionError(error, cached!)
   }
 }
 
-// Connection event listeners
-mongoose.connection.on('connected', () => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🔗 Mongoose connected to MongoDB')
-  }
-})
+// Setup connection event listeners and graceful shutdown
+setupConnectionListeners()
+setupGracefulShutdown()
 
-mongoose.connection.on('error', (error) => {
-  console.error('❌ Mongoose connection error:', error)
-})
-
-mongoose.connection.on('disconnected', () => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🔌 Mongoose disconnected from MongoDB')
-  }
-})
-
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  try {
-    await mongoose.connection.close()
-    console.log('🛑 Mongoose connection closed through app termination')
-    process.exit(0)
-  } catch (error) {
-    console.error('Error during database disconnection:', error)
-    process.exit(1)
-  }
-})
-
-// Health check function
+/**
+ * Check if database connection is healthy
+ */
 export async function checkDatabaseHealth(): Promise<boolean> {
   try {
     await connectToDatabase()
-
-    // Simple ping to verify connection
-    const adminDb = mongoose.connection.db?.admin()
-    if (adminDb) {
-      await adminDb.ping()
-      return true
-    }
-
-    return false
+    return await performHealthPing()
   } catch (error) {
     console.error('Database health check failed:', error)
     return false
   }
 }
 
-// Database initialization function
+/**
+ * Perform database ping to verify connection
+ */
+async function performHealthPing(): Promise<boolean> {
+  const adminDb = mongoose.connection.db?.admin()
+  if (adminDb) {
+    await adminDb.ping()
+    return true
+  }
+  return false
+}
+
+/**
+ * Initialize database with connection and indexes
+ */
 export async function initializeDatabase(): Promise<void> {
   try {
     await connectToDatabase()
-
-    // Create indexes if they don't exist
-    const collections = await mongoose.connection.db?.collections()
-
-    if (collections) {
-      for (const collection of collections) {
-        try {
-          await collection.createIndex({ createdAt: 1 })
-          await collection.createIndex({ updatedAt: 1 })
-        } catch (error) {
-          // Index might already exist, ignore duplicate key errors
-          if (error instanceof Error && 'code' in error && typeof (error as { code: number }).code === 'number' && (error as { code: number }).code !== 11000) {
-            console.warn(`Warning: Could not create index for ${collection.collectionName}:`, error)
-          }
-        }
-      }
-    }
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log('✅ Database initialized successfully')
-    }
+    await createDatabaseIndexes()
+    logInitializationSuccess()
   } catch (error) {
     console.error('❌ Database initialization failed:', error)
     throw error
   }
 }
 
-// Utility to close connection (mainly for testing)
+/**
+ * Disconnect from database (mainly for testing)
+ */
 export async function disconnectFromDatabase(): Promise<void> {
   try {
     await mongoose.connection.close()
-
-    // Reset cached connection
-    if (global.mongoose) {
-      global.mongoose.conn = null
-      global.mongoose.promise = null
-    }
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔌 Disconnected from MongoDB')
-    }
+    resetCachedConnection()
+    logDisconnectionSuccess()
   } catch (error) {
     console.error('Error disconnecting from database:', error)
     throw error
+  }
+}
+
+/**
+ * Log successful disconnection in development
+ */
+function logDisconnectionSuccess(): void {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔌 Disconnected from MongoDB')
   }
 }
 
