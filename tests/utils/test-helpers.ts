@@ -94,7 +94,9 @@ export const setupAuthFailure = (
   errorType: 'no-user' | 'clerk-error' | 'db-error',
   mockConnectToDatabase?: jest.MockedFunction<any>
 ) => {
-  authFailureConfigs[errorType](mockAuth, mockConnectToDatabase)
+  if (errorType in authFailureConfigs) {
+    authFailureConfigs[errorType](mockAuth, mockConnectToDatabase)
+  }
 }
 
 const userMockConfigs = {
@@ -123,7 +125,7 @@ export const setupUserMocks = (
   mockUser: any,
   scenario: 'found' | 'not-found' | 'create-success' | 'create-failure' | 'update-failure'
 ) => {
-  userMockConfigs[scenario](mockUser)
+  userMockConfigs[scenario as keyof typeof userMockConfigs](mockUser)
 }
 
 /**
