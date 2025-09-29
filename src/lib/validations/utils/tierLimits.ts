@@ -21,6 +21,13 @@ export const UsageLimitSchema = z.object({
 })
 
 /**
+ * Check if a specific limit is exceeded
+ */
+function isLimitExceeded(limit: number, count: number): boolean {
+  return limit !== -1 && count > limit
+}
+
+/**
  * Validate usage against tier limits
  */
 function validateTierLimits(data: {
@@ -31,17 +38,9 @@ function validateTierLimits(data: {
 }): boolean {
   const limits = TIER_LIMITS[data.tier]
 
-  if (limits.parties !== -1 && data.partiesCount > limits.parties) {
-    return false
-  }
-  if (limits.encounters !== -1 && data.encountersCount > limits.encounters) {
-    return false
-  }
-  if (limits.creatures !== -1 && data.creaturesCount > limits.creatures) {
-    return false
-  }
-
-  return true
+  return !isLimitExceeded(limits.parties, data.partiesCount) &&
+         !isLimitExceeded(limits.encounters, data.encountersCount) &&
+         !isLimitExceeded(limits.creatures, data.creaturesCount)
 }
 
 /**

@@ -23,40 +23,58 @@ export function handleConnectionError(error: unknown, cached: { promise: Promise
 }
 
 /**
+ * Handle connection event
+ */
+function handleConnectionEvent(): void {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔗 Mongoose connected to MongoDB')
+  }
+}
+
+/**
+ * Handle connection error event
+ */
+function handleConnectionErrorEvent(error: unknown): void {
+  console.error('❌ Mongoose connection error:', error)
+}
+
+/**
+ * Handle disconnection event
+ */
+function handleDisconnectionEvent(): void {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔌 Mongoose disconnected from MongoDB')
+  }
+}
+
+/**
  * Setup connection event listeners
  */
 export function setupConnectionListeners(): void {
-  mongoose.connection.on('connected', () => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔗 Mongoose connected to MongoDB')
-    }
-  })
+  mongoose.connection.on('connected', handleConnectionEvent)
+  mongoose.connection.on('error', handleConnectionErrorEvent)
+  mongoose.connection.on('disconnected', handleDisconnectionEvent)
+}
 
-  mongoose.connection.on('error', (error) => {
-    console.error('❌ Mongoose connection error:', error)
-  })
-
-  mongoose.connection.on('disconnected', () => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔌 Mongoose disconnected from MongoDB')
-    }
-  })
+/**
+ * Handle graceful shutdown process
+ */
+async function handleGracefulShutdown(): Promise<void> {
+  try {
+    await mongoose.connection.close()
+    console.log('🛑 Mongoose connection closed through app termination')
+    process.exit(0)
+  } catch (error) {
+    console.error('Error during database disconnection:', error)
+    process.exit(1)
+  }
 }
 
 /**
  * Setup graceful shutdown handler
  */
 export function setupGracefulShutdown(): void {
-  process.on('SIGINT', async () => {
-    try {
-      await mongoose.connection.close()
-      console.log('🛑 Mongoose connection closed through app termination')
-      process.exit(0)
-    } catch (error) {
-      console.error('Error during database disconnection:', error)
-      process.exit(1)
-    }
-  })
+  process.on('SIGINT', handleGracefulShutdown)
 }
 
 /**

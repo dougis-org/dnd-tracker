@@ -16,13 +16,13 @@ type ValidationResult<T> =
   | { success: false; error: z.ZodError }
 
 /**
- * Validate session token data
+ * Generic validation function to reduce code duplication
  */
-export function validateSessionToken(data: unknown): ValidationResult<z.infer<typeof SessionTokenSchema>> {
+function validateWithSchema<T extends z.ZodType>(schema: T, data: unknown): ValidationResult<z.infer<T>> {
   try {
     return {
       success: true as const,
-      data: SessionTokenSchema.parse(data),
+      data: schema.parse(data),
     }
   } catch (error) {
     return {
@@ -30,55 +30,32 @@ export function validateSessionToken(data: unknown): ValidationResult<z.infer<ty
       error: error as z.ZodError,
     }
   }
+}
+
+/**
+ * Validate session token data
+ */
+export function validateSessionToken(data: unknown): ValidationResult<z.infer<typeof SessionTokenSchema>> {
+  return validateWithSchema(SessionTokenSchema, data)
 }
 
 /**
  * Validate profile update data
  */
 export function validateProfileUpdate(data: unknown): ValidationResult<z.infer<typeof ProfileUpdateSchema>> {
-  try {
-    return {
-      success: true as const,
-      data: ProfileUpdateSchema.parse(data),
-    }
-  } catch (error) {
-    return {
-      success: false as const,
-      error: error as z.ZodError,
-    }
-  }
+  return validateWithSchema(ProfileUpdateSchema, data)
 }
 
 /**
  * Validate user creation data
  */
 export function validateUserCreation(data: unknown): ValidationResult<z.infer<typeof UserCreationSchema>> {
-  try {
-    return {
-      success: true as const,
-      data: UserCreationSchema.parse(data),
-    }
-  } catch (error) {
-    return {
-      success: false as const,
-      error: error as z.ZodError,
-    }
-  }
+  return validateWithSchema(UserCreationSchema, data)
 }
 
 /**
  * Validate usage limits data
  */
 export function validateUsageLimits(data: unknown): ValidationResult<z.infer<typeof UsageLimitSchema>> {
-  try {
-    return {
-      success: true as const,
-      data: UsageLimitSchema.parse(data),
-    }
-  } catch (error) {
-    return {
-      success: false as const,
-      error: error as z.ZodError,
-    }
-  }
+  return validateWithSchema(UsageLimitSchema, data)
 }

@@ -6,18 +6,34 @@ import mongoose from 'mongoose'
 import type { Collection } from 'mongodb'
 
 /**
- * Create standard indexes for a single collection
+ * Check if error is a duplicate key error (code 11000)
  */
-async function createCollectionIndexes(collection: Collection): Promise<void> {
+function isDuplicateKeyError(error: unknown): boolean {
+  return error instanceof Error &&
+         'code' in error &&
+         typeof (error as { code: number }).code === 'number' &&
+         (error as { code: number }).code === 11000
+}
+
+/**
+ * Create a single index with error handling
+ */
+async function createSingleIndex(collection: Collection, indexSpec: Record<string, number>): Promise<void> {
   try {
-    await collection.createIndex({ createdAt: 1 })
-    await collection.createIndex({ updatedAt: 1 })
+    await collection.createIndex(indexSpec)
   } catch (error) {
-    // Index might already exist, ignore duplicate key errors
-    if (error instanceof Error && 'code' in error && typeof (error as { code: number }).code === 'number' && (error as { code: number }).code !== 11000) {
+    if (!isDuplicateKeyError(error)) {
       console.warn(`Warning: Could not create index for ${collection.collectionName}:`, error)
     }
   }
+}
+
+/**
+ * Create standard indexes for a single collection
+ */
+async function createCollectionIndexes(collection: Collection): Promise<void> {
+  await createSingleIndex(collection, { createdAt: 1 })
+  await createSingleIndex(collection, { updatedAt: 1 })
 }
 
 /**
