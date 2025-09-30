@@ -4,7 +4,7 @@
  */
 import mongoose from 'mongoose'
 import { getConnectionOptions, validateMongoUri } from './config'
-import { getCachedConnection } from './cache'
+import { getCachedConnection, resetConnectionCache } from './cache'
 
 /**
  * Log successful connection in development
@@ -69,11 +69,7 @@ function logDisconnection(): void {
 export async function disconnectFromDatabase(): Promise<void> {
   try {
     await mongoose.connection.close()
-
-    const cached = getCachedConnection()
-    cached.conn = null
-    cached.promise = null
-
+    resetConnectionCache()
     logDisconnection()
   } catch (error) {
     console.error('Error disconnecting from database:', error)
