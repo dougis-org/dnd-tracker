@@ -10,6 +10,9 @@ const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/', '<rootDir>/tests/e2e/', '<rootDir>/tests/milestones/', '<rootDir>/tests/integration/'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(bson|mongodb)/)',
+  ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@tests/(.*)$': '<rootDir>/tests/$1',
@@ -35,12 +38,13 @@ const customJestConfig = {
     '!src/lib/db/indexes.ts',
     '!src/lib/db/initialize.ts',
     '!src/lib/db/shutdown.ts',
-    // Exclude large UI components not yet implemented
+    // Exclude large UI components (require complex mocking)
     '!src/components/forms/UserProfileForm.tsx',
     '!src/components/ui/form-field.tsx',
     '!src/components/ui/select.tsx',
-    // Exclude complex models and validations that need integration tests
+    // Exclude complex models (require test database)
     '!src/lib/db/models/User.ts',
+    // auth.ts is just re-exports, tested via actual implementations
     '!src/lib/validations/auth.ts',
   ],
   coverageReporters: ['text', 'lcov', 'html'],
