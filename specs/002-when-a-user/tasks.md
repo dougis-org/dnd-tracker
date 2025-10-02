@@ -214,44 +214,46 @@ Using Next.js App Router structure:
 
 ---
 
-## Phase 3.5: API Layer - Profile Management
+## Phase 3.5: API Layer - Profile Management ✅
 
-### T017 [P] Write profile API tests
-**File**: `tests/integration/api/users/profile.test.ts`
+### T017 [P] Write profile API tests ✅
+**File**: `tests/integration/api/users/profile.test.ts` ✅
 **Description**: Write failing tests for profile GET/PATCH endpoints
 **Details**:
-- Test GET /api/users/[id]/profile: returns user profile with auth
-- Test GET unauthorized: returns 401 without Clerk token
-- Test GET forbidden: returns 403 if userId mismatch
-- Test PATCH /api/users/[id]/profile: updates profile fields with validation
-- Test PATCH validation errors: returns 400 with error details
-- Test PATCH unauthorized: returns 401 without auth
-- Test PATCH forbidden: returns 403 if userId mismatch
-- Mock Clerk authentication
+- Test GET /api/users/[id]/profile: returns user profile with auth ✅
+- Test GET unauthorized: returns 401 without Clerk token ✅
+- Test GET forbidden: returns 403 if userId mismatch ✅
+- Test PATCH /api/users/[id]/profile: updates profile fields with validation ✅
+- Test PATCH validation errors: returns 400 with error details ✅
+- Test PATCH unauthorized: returns 401 without auth ✅
+- Test PATCH forbidden: returns 403 if userId mismatch ✅
+- Mock Clerk authentication ✅
 **Reference**: Quickstart scenarios 2, 4, 7, 8
-**Expected**: All tests should FAIL initially (route doesn't exist)
+**Expected**: All tests should FAIL initially (route doesn't exist) ✅
 
-### T018 Run profile API tests to verify failure
-**Command**: `npm run test -- tests/integration/api/users/profile.test.ts`
+### T018 Run profile API tests to verify failure ✅
+**Command**: `npm run test -- tests/integration/api/users/profile.test.ts` ✅
 **Description**: Confirm profile API tests fail before implementation
-**Expected**: 404 errors because route doesn't exist yet
+**Expected**: 404 errors because route doesn't exist yet ✅
 
-### T019 Implement profile API route
-**File**: `src/app/api/users/[id]/profile/route.ts`
+### T019 Implement profile API route ✅
+**File**: `src/app/api/users/[id]/profile/route.ts` ✅
 **Description**: Create GET and PATCH handlers for user profile
 **Details**:
-- GET handler: Verify Clerk auth, check userId matches auth, fetch user profile
-- PATCH handler: Verify auth, validate input with Zod, call userService.updateUserProfile()
-- Return appropriate HTTP status codes (200, 400, 401, 403, 404)
-- Use publicUserSchema for response sanitization (no sensitive fields)
-- Handle Zod validation errors with detailed field-level messages
-**Max Lines**: 150 lines total (both handlers)
-**Max Function**: 50 lines per handler
+- GET handler: Verify Clerk auth, check userId matches auth, fetch user profile ✅
+- PATCH handler: Verify auth, validate input with Zod, call userService.updateUserProfile() ✅
+- Return appropriate HTTP status codes (200, 400, 401, 403, 404) ✅
+- Use publicUserSchema for response sanitization (no sensitive fields) ✅
+- Handle Zod validation errors with detailed field-level messages ✅
+**Max Lines**: 150 lines total (both handlers) ✅ (146 lines)
+**Max Function**: 50 lines per handler ✅
+**Helper Files Created**:
+- `src/lib/services/profileValidation.ts` (113 lines) - Validation & sanitization helpers
 
-### T020 Run profile API tests to verify they pass
-**Command**: `npm run test -- tests/integration/api/users/profile.test.ts`
+### T020 Run profile API tests to verify they pass ✅
+**Command**: `npm run test -- tests/integration/api/users/profile.test.ts` ✅
 **Description**: Verify profile API tests pass after T019 implementation
-**Expected**: All profile API tests should PASS (green phase)
+**Expected**: All profile API tests should PASS (green phase) ✅ (9/9 passing)
 
 ---
 
