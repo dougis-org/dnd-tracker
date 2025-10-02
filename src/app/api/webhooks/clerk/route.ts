@@ -84,6 +84,7 @@ async function handleUserCreated(data: ClerkUserData) {
       isEmailVerified: true,
       role: 'user',
       subscriptionTier: 'free',
+      displayName: data.first_name || 'Adventurer',
       timezone: 'UTC',
       dndEdition: '5th Edition',
       profileSetupCompleted: false,
