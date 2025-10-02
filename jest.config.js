@@ -9,9 +9,18 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testEnvironment: 'jsdom',
-  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/', '<rootDir>/tests/e2e/', '<rootDir>/tests/milestones/', '<rootDir>/tests/integration/'],
+  testPathIgnorePatterns: [
+    '<rootDir>/.next/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/tests/e2e/',
+    '<rootDir>/tests/milestones/',
+    // TODO: Fix broken integration tests that require Clerk auth mocking
+    '<rootDir>/tests/integration/test_auth_session.test.ts',
+    '<rootDir>/tests/integration/test_users_profile.test.ts',
+    '<rootDir>/tests/integration/test_users_profile_update.test.ts',
+  ],
   transformIgnorePatterns: [
-    'node_modules/(?!(bson|mongodb)/)',
+    'node_modules/(?!(bson|mongodb|mongodb-memory-server)/)',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',

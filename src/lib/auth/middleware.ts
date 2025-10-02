@@ -80,8 +80,8 @@ export function createAuthMiddleware(options: AuthMiddlewareOptions = {}) {
 
       // Role-based authorization
       if (options.allowedRoles && options.allowedRoles.length > 0) {
-        const userRole = request.user!.profile.role
-        if (!options.allowedRoles.includes(userRole)) {
+        const userRole = request.user?.profile?.role
+        if (!userRole || !options.allowedRoles.includes(userRole)) {
           return NextResponse.json(
             { error: 'Insufficient permissions' },
             { status: 403 }

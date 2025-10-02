@@ -1,6 +1,6 @@
 # DND Tracker Development Guidelines
 
-Auto-generated from feature planning. Last updated: 2025-09-20
+Auto-generated from feature planning. Last updated: 2025-09-30
 
 ## Active Technologies
 
@@ -60,6 +60,8 @@ tests/
 **Testing**: TDD approach - tests written before implementation
 
 ## Recent Changes
+
+- 002-when-a-user: Added user registration and profile management backend
 
 **2025-09-20**: MVP planning phase completed
 
