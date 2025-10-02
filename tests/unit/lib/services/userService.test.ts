@@ -15,6 +15,7 @@ import {
   setupTestDatabase,
   teardownTestDatabase,
 } from '@tests/helpers/db-helpers';
+import { createTestUser } from '@tests/helpers/user-fixtures';
 import { User } from '@/lib/db/models/User';
 import {
   updateUserProfile,
@@ -32,37 +33,6 @@ afterEach(async () => {
 });
 
 describe('User Service', () => {
-  // Helper to create test user
-  const createTestUser = async () => {
-    return await User.create({
-      id: 'test_user_123',
-      email: 'test@example.com',
-      username: 'testuser',
-      firstName: 'Test',
-      lastName: 'User',
-      profile: {
-        displayName: 'Test User',
-        dndRuleset: '5e',
-        experienceLevel: 'beginner',
-        role: 'player'
-      },
-      subscription: {
-        tier: 'free',
-        status: 'active',
-        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-      },
-      usage: {
-        partiesCount: 0,
-        encountersCount: 0,
-        creaturesCount: 0
-      },
-      preferences: {
-        theme: 'auto',
-        defaultInitiativeType: 'manual',
-        autoAdvanceRounds: false
-      }
-    });
-  };
 
   describe('updateUserProfile', () => {
     test('should update profile fields successfully', async () => {
