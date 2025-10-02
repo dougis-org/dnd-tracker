@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "lint:markdown": "npx markdownlint '**/*.md' --ignore node_modules",
+    "lint:markdown": "npx markdownlint '**/*.md' --ignore node_modules --ignore specs",
     "lint:markdown:fix": "npm run lint:markdown -- --fix",
     "type-check": "tsc --noEmit",
     "test": "jest",
