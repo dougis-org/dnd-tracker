@@ -11,12 +11,14 @@
 ### Phase 3.1-3.4: Backend Implementation (COMPLETE)
 
 **PR #146**: "Issue: #002 Add user registration and profile management backend"
+
 - **Status**: ✅ Merged to main
 - **Commits**: 11 commits (including complexity reduction refactoring)
 - **Tests**: 240/240 passing (98.62% coverage)
 - **Quality**: Grade A (98%), 5% complex files (below 10% goal)
 
-#### Files Created/Modified:
+#### Files Created/Modified
+
 1. **Data Model** (`src/lib/db/models/User.ts`)
    - Added D&D profile fields: `displayName`, `timezone`, `dndEdition`, `experienceLevel`, `primaryRole`
    - Added usage metrics: `sessionsCount`, `charactersCreatedCount`, `campaignsCreatedCount`
@@ -54,18 +56,21 @@
 ## 📋 Follow-up Issues Created (From PR #146 Review)
 
 ### Critical Priority
+
 - **Issue #147**: 🔴 **Add Svix signature verification to Clerk webhook** (P1, Security)
   - Missing webhook authentication - critical security vulnerability
   - Requires `svix` package installation
   - Must add `CLERK_WEBHOOK_SECRET` environment variable
 
 ### High Priority
+
 - **Issue #148**: 🟠 **Fix empty string validation failures** (High, Bug)
   - Webhook handler uses `''` fallbacks instead of `undefined`
   - Will cause Zod validation failures
   - Quick fix required
 
 ### Medium Priority
+
 - **Issue #149**: 🟡 **Improve error handling in user service** (Medium, Enhancement)
   - Add error wrapping with preserved context
   - Custom error types (ValidationError, DatabaseError)
@@ -82,6 +87,7 @@
   - Consider schema versioning
 
 ### Low Priority
+
 - **Issue #151**: 🟢 **Implement feature flag pattern** (Low, Enhancement)
   - Replace commented imports with feature flags
   - Better for gradual rollouts
@@ -91,6 +97,7 @@
 ## 📊 Current Metrics
 
 ### Repository Health
+
 - **Grade**: A (98%)
 - **Coverage**: 98.62%
 - **Complex Files**: 5% (6 files, goal <10%)
@@ -99,6 +106,7 @@
 - **Open Security Issues**: 1 (unpinned GitHub Action - High)
 
 ### Code Statistics
+
 - **Lines of Code**: 22,584
 - **Issues**: 202 (mostly Info-level markdown style)
 - **Open Issues**: 6 (from PR #146 review)
@@ -110,24 +118,30 @@
 ### Pending Tasks (Per Feature Spec)
 
 **Phase 3.5: API Layer - Profile Management Routes**
+
 - T017: [P] Contract test GET /api/users/profile
 - T018: [P] Contract test PUT /api/users/profile
 - T019: Implement GET /api/users/profile route
 - T020: Implement PUT /api/users/profile route
 
 **Phase 3.6: UI Layer - ProfileForm Component**
+
 - T021-T024: ProfileForm component with validation
 
 **Phase 3.7: UI Layer - ProfileSetupWizard**
+
 - T025-T028: Wizard component for onboarding
 
 **Phase 3.8: UI Layer - Page Components**
+
 - T029-T032: Profile and setup pages
 
 **Phase 3.9: End-to-End Tests**
+
 - T033-T036: E2E user journey tests
 
 **Phase 3.10: Integration & Polish**
+
 - T037-T040: Integration testing and refinement
 
 ---
@@ -135,6 +149,7 @@
 ## 🔧 Technical Context
 
 ### Key Dependencies
+
 - **Clerk SDK**: User authentication and webhooks
 - **Mongoose 8.5+**: MongoDB ODM with validation
 - **Zod 4+**: Runtime type validation
@@ -142,6 +157,7 @@
 - **Jest 29.7+**: Testing framework
 
 ### Important Patterns Established
+
 1. **TDD Approach**: Tests written before implementation
 2. **Test Helpers**: Centralized utilities to reduce complexity
 3. **Atomic Operations**: Usage metrics use MongoDB `$inc`
@@ -149,6 +165,7 @@
 5. **Error Handling**: Try/catch with logging (needs improvement per #149)
 
 ### Key File Locations
+
 ```
 src/
 ├── lib/
@@ -169,11 +186,13 @@ tests/
 ## 🚨 Known Issues & Technical Debt
 
 ### Immediate Attention Required
+
 1. **Missing Svix verification** (#147) - Security vulnerability
 2. **Empty string fallbacks** (#148) - Will cause validation errors
 3. **0% webhook route coverage** (#150) - Tests don't exercise actual route
 
 ### Future Improvements
+
 1. Better error handling with context preservation (#149)
 2. Feature flag system for gradual rollouts (#151)
 3. Data migration strategy for production (#152)
@@ -183,6 +202,7 @@ tests/
 ## 📝 Development Standards Applied
 
 ### Quality Checks Performed
+
 ✅ All 240 tests passing
 ✅ Complexity metrics below thresholds (5% < 10%)
 ✅ ESLint clean
@@ -191,6 +211,7 @@ tests/
 ✅ No security vulnerabilities in code
 
 ### Git Workflow Followed
+
 ✅ Feature branch: `002-when-a-user`
 ✅ PR with descriptive title and body
 ✅ Auto-merge enabled
@@ -203,12 +224,15 @@ tests/
 ## 🎯 Recommended Next Steps
 
 ### Option 1: Continue Feature 002 (Recommended)
+
 Start Phase 3.5 with profile management API routes (T017-T020)
 
 ### Option 2: Address Critical Security Issue
+
 Fix Issue #147 (Svix verification) before continuing with new features
 
 ### Option 3: Address High Priority Bug
+
 Fix Issue #148 (empty string fallbacks) to prevent future validation failures
 
 ---
@@ -242,7 +266,7 @@ git pull
   - `data-model.md` - User entity design
   - `spec.md` - Feature specification
   - `contracts/` - API contract specifications
-- **PR #146**: https://github.com/dougis-org/dnd-tracker/pull/146 (merged)
+- **PR #146**: <https://github.com/dougis-org/dnd-tracker/pull/146> (merged)
 - **Parent Issue**: #2 (closed - Clerk auth migration)
 - **Follow-up Issues**: #147-152
 - **Main Branch**: Latest commit includes all Phase 3.1-3.4 work

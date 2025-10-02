@@ -12,7 +12,10 @@ import { auth } from '@clerk/nextjs/server';
 import {
   validateProfileUpdate,
   sanitizeUserResponse,
+  verifyUserAuth,
+  checkUserAuthorization,
   type ProfileUpdateRequest,
+  type DndRuleset,
 } from '@/lib/services/profileValidation';
 
 /**
@@ -24,38 +27,29 @@ export async function GET(
   context: { params: { id: string }; auth?: { userId: string } }
 ) {
   try {
-    // Get Clerk authentication
-    const authResult = context.auth || (await auth());
-    const clerkUserId = authResult?.userId;
-
-    // Check authentication
-    if (!clerkUserId) {
+    // Verify authentication
+    const { clerkUserId, error: authError } = await verifyUserAuth(context, auth);
+    if (authError) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { success: false, error: authError.message },
+        { status: authError.status }
       );
     }
 
     // Fetch user from database
     const user = await User.findById(context.params.id);
 
-    if (!user) {
+    // Check authorization
+    const { error: authzError } = checkUserAuthorization(user, clerkUserId!);
+    if (authzError) {
       return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
-    }
-
-    // Authorization check: user can only access their own profile
-    if (user.id !== clerkUserId) {
-      return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
+        { success: false, error: authzError.message },
+        { status: authzError.status }
       );
     }
 
     // Return sanitized user profile
-    return NextResponse.json(sanitizeUserResponse(user));
+    return NextResponse.json(sanitizeUserResponse(user!));
   } catch (error) {
     console.error('Error fetching user profile:', error);
     return NextResponse.json(
@@ -74,38 +68,39 @@ export async function PATCH(
   context: { params: { id: string }; auth?: { userId: string } }
 ) {
   try {
-    // Get Clerk authentication
-    const authResult = context.auth || (await auth());
-    const clerkUserId = authResult?.userId;
-
-    // Check authentication
-    if (!clerkUserId) {
+    // Verify authentication
+    const { clerkUserId, error: authError } = await verifyUserAuth(context, auth);
+    if (authError) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { success: false, error: authError.message },
+        { status: authError.status }
       );
     }
 
     // Fetch user from database
     const user = await User.findById(context.params.id);
 
-    if (!user) {
+    // Check authorization
+    const { error: authzError } = checkUserAuthorization(user, clerkUserId!);
+    if (authzError) {
       return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
+        { success: false, error: authzError.message },
+        { status: authzError.status }
       );
     }
 
-    // Authorization check: user can only update their own profile
-    if (user.id !== clerkUserId) {
+    // Parse request body with error handling
+    let body: ProfileUpdateRequest;
+    try {
+      body = await req.json();
+    } catch {
       return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
+        { success: false, error: 'Invalid JSON in request body' },
+        { status: 400 }
       );
     }
 
-    // Parse and validate request body
-    const body: ProfileUpdateRequest = await req.json();
+    // Validate request body
     const validationErrors = validateProfileUpdate(body);
 
     if (validationErrors.length > 0) {
@@ -121,23 +116,23 @@ export async function PATCH(
 
     // Update profile fields
     if (body.displayName !== undefined) {
-      user.profile.displayName = body.displayName;
+      user!.profile.displayName = body.displayName;
     }
     if (body.dndRuleset !== undefined) {
-      user.profile.dndRuleset = body.dndRuleset as '5e' | '3.5e' | 'pf1' | 'pf2';
+      user!.profile.dndRuleset = body.dndRuleset as DndRuleset;
     }
     if (body.experienceLevel !== undefined) {
-      user.profile.experienceLevel = body.experienceLevel;
+      user!.profile.experienceLevel = body.experienceLevel;
     }
     if (body.role !== undefined) {
-      user.profile.role = body.role;
+      user!.profile.role = body.role;
     }
 
     // Save updated user
-    await user.save();
+    await user!.save();
 
     // Return updated profile
-    return NextResponse.json(sanitizeUserResponse(user));
+    return NextResponse.json(sanitizeUserResponse(user!));
   } catch (error) {
     console.error('Error updating user profile:', error);
     return NextResponse.json(

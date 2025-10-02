@@ -31,6 +31,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 3. **Expected Result**: Clerk webhook triggers `user.created` event
 
 4. **Verification**:
+
    ```bash
    # Check MongoDB for new user
    db.users.findOne({ email: 'test-user@example.com' })
@@ -50,6 +51,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
    - `createdAt` and `updatedAt` timestamps are set
 
 ### Success Criteria
+
 - ✅ User created in MongoDB via webhook
 - ✅ All default values correctly assigned
 - ✅ No errors in application logs
@@ -78,6 +80,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 5. **Action**: Click "Complete Profile" button
 
 6. **Verification**:
+
    ```bash
    # Check updated profile
    db.users.findOne({ email: 'test-user@example.com' })
@@ -94,6 +97,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
    - `updatedAt` timestamp is more recent than `createdAt`
 
 ### Success Criteria
+
 - ✅ Profile form displays with default values
 - ✅ Form validates input (Zod schema)
 - ✅ Profile saved successfully
@@ -117,6 +121,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 4. **Expected Result**: User redirected to dashboard without completing profile
 
 5. **Verification**:
+
    ```bash
    # Check profile status
    db.users.findOne({ email: 'test-user@example.com' })
@@ -130,6 +135,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
    - Dashboard shows subtle reminder to complete profile (optional UX)
 
 ### Success Criteria
+
 - ✅ Skip button works correctly
 - ✅ User not blocked from app features
 - ✅ Profile remains incomplete in database
@@ -157,6 +163,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 5. **Action**: Click "Save Changes" button
 
 6. **Verification**:
+
    ```bash
    # Check updated profile
    db.users.findOne({ email: 'test-user@example.com' })
@@ -171,6 +178,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
    - Form remains on settings page (no redirect)
 
 ### Success Criteria
+
 - ✅ Current profile values loaded correctly
 - ✅ Form validation works (Zod schema)
 - ✅ Updates persisted to MongoDB
@@ -187,6 +195,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 1. **Setup**: User with `subscriptionTier: 'free'` (limits: 1 party, 3 encounters, 10 characters)
 
 2. **Action**: Simulate creating a character (future feature, but metrics ready)
+
    ```bash
    # Manual increment for testing
    db.users.updateOne(
@@ -199,6 +208,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
    ```
 
 3. **Verification**:
+
    ```bash
    # Check metrics
    db.users.findOne(
@@ -214,11 +224,13 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
    - Atomic increment prevents race conditions
 
 5. **Action**: Check tier limits enforcement (future implementation)
+
    ```typescript
    const canCreate = user.charactersCreatedCount < SUBSCRIPTION_LIMITS[user.subscriptionTier].characters;
    ```
 
 ### Success Criteria
+
 - ✅ Metrics increment atomically
 - ✅ Timestamp updated on metric change
 - ✅ Infrastructure supports future limit enforcement
@@ -241,6 +253,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 3. **Expected Result**: Clerk webhook triggers `user.updated` event
 
 4. **Verification**:
+
    ```bash
    # Check synced updates
    db.users.findOne({ email: 'test-user@example.com' })
@@ -255,6 +268,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
    - D&D profile fields remain unchanged (not managed by Clerk)
 
 ### Success Criteria
+
 - ✅ Clerk updates sync correctly
 - ✅ Only Clerk-managed fields updated
 - ✅ Sync timestamp tracks last update
@@ -280,6 +294,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 4. **Assertions**:
    - API returns 400 status code
    - Response includes validation errors array:
+
      ```json
      {
        "success": false,
@@ -291,10 +306,12 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
        ]
      }
      ```
+
    - Form displays error messages inline
    - Database not updated with invalid data
 
 ### Success Criteria
+
 - ✅ Zod validation catches errors
 - ✅ Clear error messages returned
 - ✅ Invalid data not persisted
@@ -311,6 +328,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 1. **Setup**: Two users: User A (authenticated) and User B
 
 2. **Action**: User A attempts to update User B's profile via API:
+
    ```bash
    PATCH /api/users/{userB_id}/profile
    Authorization: Bearer {userA_token}
@@ -325,6 +343,7 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
    - Attempt logged (optional security logging)
 
 ### Success Criteria
+
 - ✅ Authorization enforced
 - ✅ Cross-user updates blocked
 - ✅ Appropriate error response
@@ -334,16 +353,19 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 ## Automation Notes
 
 ### Unit Tests
+
 - Zod validation schemas: Test all valid/invalid inputs
 - Mongoose model methods: Test defaults, validations, atomic updates
 - User service functions: Test CRUD operations with mocks
 
 ### Integration Tests
+
 - Clerk webhook handler: Test user.created, user.updated, user.deleted events
 - Profile API routes: Test GET, PATCH with authentication
 - Database operations: Test with real MongoDB (test database)
 
 ### E2E Tests (Playwright)
+
 - Full profile setup flow from Clerk authentication to completion
 - Skip flow validation
 - Profile update in settings
@@ -354,16 +376,19 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 ## Troubleshooting
 
 **Issue**: Webhook not triggering
+
 - Check Clerk dashboard webhook configuration
 - Verify webhook URL is publicly accessible (use ngrok for local dev)
 - Check webhook secret is correctly set in environment variables
 
 **Issue**: Validation failing unexpectedly
+
 - Review Zod schema definitions
 - Check for timezone-specific date format issues
 - Verify enum values match exactly (case-sensitive)
 
 **Issue**: Profile not syncing
+
 - Check `lastClerkSync` and `syncStatus` fields
 - Review application logs for webhook errors
 - Verify MongoDB connection is stable

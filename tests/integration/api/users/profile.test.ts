@@ -24,6 +24,7 @@ import {
 import { User } from '@/lib/db/models/User';
 import type { IUser } from '@/lib/db/models/User';
 import { GET, PATCH } from '@/app/api/users/[id]/profile/route';
+import { MAX_DISPLAY_NAME_LENGTH } from '@/lib/services/profileValidation';
 
 beforeAll(async () => {
   await setupTestDatabase();
@@ -313,7 +314,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
 
   test('should return 400 with validation errors for invalid data', async () => {
     const invalidData = {
-      displayName: 'x'.repeat(101), // Exceeds 100 char limit
+      displayName: 'x'.repeat(MAX_DISPLAY_NAME_LENGTH + 1), // Exceeds max length
       experienceLevel: 'invalid_level', // Invalid enum
       dndRuleset: 'invalid_ruleset', // Invalid enum
     };
