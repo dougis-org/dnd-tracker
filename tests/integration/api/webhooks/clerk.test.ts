@@ -13,26 +13,24 @@
 // Unmock User model for real database operations
 jest.unmock('@/lib/db/models/User');
 
-import { describe, test, expect, beforeEach, afterEach, beforeAll } from '@jest/globals';
-import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { describe, test, expect, beforeEach, afterEach, beforeAll, afterAll } from '@jest/globals';
+import {
+  setupTestDatabase,
+  clearTestDatabase,
+  teardownTestDatabase,
+} from '@tests/helpers/db-helpers';
 import { User } from '@/lib/db/models/User';
 
-let mongoServer: MongoMemoryServer;
-
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  await mongoose.connect(mongoServer.getUri());
+  await setupTestDatabase();
 });
 
 afterEach(async () => {
-  // Clear database between tests
-  await User.deleteMany({});
+  await clearTestDatabase();
 });
 
 afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
+  await teardownTestDatabase();
 });
 
 describe('Clerk Webhook Handler - POST /api/webhooks/clerk', () => {

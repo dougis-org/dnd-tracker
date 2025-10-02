@@ -10,23 +10,23 @@
 jest.unmock('@/lib/db/models/User');
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import {
+  setupTestDatabase,
+  clearTestDatabase,
+  teardownTestDatabase,
+  expectDocumentFields,
+} from '@tests/helpers/db-helpers';
 
 // These imports will work with existing model but test new fields
 import { User } from '@/lib/db/models/User';
 import type { IUser } from '@/lib/db/models/User';
 
-let mongoServer: MongoMemoryServer;
-
 beforeEach(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  await mongoose.connect(mongoServer.getUri());
+  await setupTestDatabase();
 });
 
 afterEach(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
+  await teardownTestDatabase();
 });
 
 describe('User Model - D&D Profile Fields', () => {

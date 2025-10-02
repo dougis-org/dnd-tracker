@@ -5,6 +5,12 @@
  */
 
 import { describe, test, expect } from '@jest/globals';
+import {
+  expectValidationSuccess,
+  expectValidationFailure,
+  expectAllValid,
+  expectAllInvalid,
+} from '@tests/helpers/validation-helpers';
 
 // These imports will fail initially - that's expected in TDD
 import {
@@ -19,36 +25,42 @@ import {
 describe('D&D Profile Field Validations', () => {
   describe('displayNameSchema', () => {
     test('should accept null or undefined (optional field)', () => {
-      expect(() => displayNameSchema.parse(null)).not.toThrow();
-      expect(() => displayNameSchema.parse(undefined)).not.toThrow();
+      expectAllValid(displayNameSchema, [null, undefined]);
     });
 
     test('should accept valid display names under 100 characters', () => {
-      expect(() => displayNameSchema.parse('Dungeon Master John')).not.toThrow();
-      expect(() => displayNameSchema.parse('DM Alex')).not.toThrow();
-      expect(() => displayNameSchema.parse('A'.repeat(100))).not.toThrow();
+      expectAllValid(displayNameSchema, [
+        'Dungeon Master John',
+        'DM Alex',
+        'A'.repeat(100),
+      ]);
     });
 
     test('should reject display names over 100 characters', () => {
-      expect(() => displayNameSchema.parse('A'.repeat(101))).toThrow();
+      expectValidationFailure(displayNameSchema, 'A'.repeat(101));
     });
 
     test('should trim whitespace', () => {
-      const result = displayNameSchema.parse('  Trimmed Name  ');
+      const result = expectValidationSuccess(
+        displayNameSchema,
+        '  Trimmed Name  '
+      );
       expect(result).toBe('Trimmed Name');
     });
   });
 
   describe('dndEditionSchema', () => {
     test('should accept valid D&D editions under 50 characters', () => {
-      expect(() => dndEditionSchema.parse('5th Edition')).not.toThrow();
-      expect(() => dndEditionSchema.parse('3.5e')).not.toThrow();
-      expect(() => dndEditionSchema.parse('Pathfinder 2e')).not.toThrow();
-      expect(() => dndEditionSchema.parse('A'.repeat(50))).not.toThrow();
+      expectAllValid(dndEditionSchema, [
+        '5th Edition',
+        '3.5e',
+        'Pathfinder 2e',
+        'A'.repeat(50),
+      ]);
     });
 
     test('should reject editions over 50 characters', () => {
-      expect(() => dndEditionSchema.parse('A'.repeat(51))).toThrow();
+      expectValidationFailure(dndEditionSchema, 'A'.repeat(51));
     });
 
     test('should have default value of "5th Edition"', () => {
@@ -59,33 +71,37 @@ describe('D&D Profile Field Validations', () => {
 
   describe('experienceLevelSchema', () => {
     test('should accept valid experience level enum values', () => {
-      expect(() => experienceLevelSchema.parse('new')).not.toThrow();
-      expect(() => experienceLevelSchema.parse('beginner')).not.toThrow();
-      expect(() => experienceLevelSchema.parse('intermediate')).not.toThrow();
-      expect(() => experienceLevelSchema.parse('experienced')).not.toThrow();
-      expect(() => experienceLevelSchema.parse('veteran')).not.toThrow();
+      expectAllValid(experienceLevelSchema, [
+        'new',
+        'beginner',
+        'intermediate',
+        'experienced',
+        'veteran',
+      ]);
     });
 
     test('should reject invalid experience level values', () => {
-      expect(() => experienceLevelSchema.parse('expert')).toThrow();
-      expect(() => experienceLevelSchema.parse('novice')).toThrow();
-      expect(() => experienceLevelSchema.parse('master')).toThrow();
-      expect(() => experienceLevelSchema.parse('')).toThrow();
+      expectAllInvalid(experienceLevelSchema, [
+        'expert',
+        'novice',
+        'master',
+        '',
+      ]);
     });
   });
 
   describe('primaryRoleSchema', () => {
     test('should accept valid primary role enum values', () => {
-      expect(() => primaryRoleSchema.parse('dm')).not.toThrow();
-      expect(() => primaryRoleSchema.parse('player')).not.toThrow();
-      expect(() => primaryRoleSchema.parse('both')).not.toThrow();
+      expectAllValid(primaryRoleSchema, ['dm', 'player', 'both']);
     });
 
     test('should reject invalid primary role values', () => {
-      expect(() => primaryRoleSchema.parse('DM')).toThrow(); // case sensitive
-      expect(() => primaryRoleSchema.parse('Player')).toThrow();
-      expect(() => primaryRoleSchema.parse('gm')).toThrow();
-      expect(() => primaryRoleSchema.parse('')).toThrow();
+      expectAllInvalid(primaryRoleSchema, [
+        'DM', // case sensitive
+        'Player',
+        'gm',
+        '',
+      ]);
     });
   });
 
@@ -98,13 +114,12 @@ describe('D&D Profile Field Validations', () => {
         experienceLevel: 'intermediate' as const,
         primaryRole: 'dm' as const,
       };
-      expect(() => profileSetupSchema.parse(validProfile)).not.toThrow();
+      expectValidationSuccess(profileSetupSchema, validProfile);
     });
 
     test('should accept profile with only required fields (if any)', () => {
       // Profile setup should allow all fields to be optional for skip functionality
-      const minimalProfile = {};
-      expect(() => profileSetupSchema.parse(minimalProfile)).not.toThrow();
+      expectValidationSuccess(profileSetupSchema, {});
     });
 
     test('should accept profile with partial fields', () => {
@@ -112,7 +127,7 @@ describe('D&D Profile Field Validations', () => {
         primaryRole: 'player' as const,
         experienceLevel: 'beginner' as const,
       };
-      expect(() => profileSetupSchema.parse(partialProfile)).not.toThrow();
+      expectValidationSuccess(profileSetupSchema, partialProfile);
     });
 
     test('should reject profile with invalid enum values', () => {
@@ -120,11 +135,11 @@ describe('D&D Profile Field Validations', () => {
         experienceLevel: 'expert', // invalid
         primaryRole: 'dm' as const,
       };
-      expect(() => profileSetupSchema.parse(invalidProfile)).toThrow();
+      expectValidationFailure(profileSetupSchema, invalidProfile);
     });
 
     test('should apply default values where specified', () => {
-      const profile = profileSetupSchema.parse({});
+      const profile = expectValidationSuccess(profileSetupSchema, {});
       // Defaults should be applied: timezone='UTC', dndEdition='5th Edition'
       expect(profile).toHaveProperty('timezone');
       expect(profile).toHaveProperty('dndEdition');
@@ -140,34 +155,33 @@ describe('D&D Profile Field Validations', () => {
         experienceLevel: 'experienced' as const,
         primaryRole: 'both' as const,
       };
-      expect(() => userProfileUpdateSchema.parse(updateData)).not.toThrow();
+      expectValidationSuccess(userProfileUpdateSchema, updateData);
     });
 
     test('should allow partial updates (all fields optional)', () => {
       const partialUpdate = {
         experienceLevel: 'veteran' as const,
       };
-      expect(() => userProfileUpdateSchema.parse(partialUpdate)).not.toThrow();
+      expectValidationSuccess(userProfileUpdateSchema, partialUpdate);
     });
 
     test('should validate field constraints on update', () => {
       const invalidUpdate = {
         displayName: 'A'.repeat(101), // exceeds max
       };
-      expect(() => userProfileUpdateSchema.parse(invalidUpdate)).toThrow();
+      expectValidationFailure(userProfileUpdateSchema, invalidUpdate);
     });
   });
 });
 
 describe('Default Values', () => {
   test('timezone should default to UTC', () => {
-    // This will be tested when schema with defaults is implemented
-    const schema = profileSetupSchema.parse({});
+    const schema = expectValidationSuccess(profileSetupSchema, {});
     expect(schema.timezone).toBe('UTC');
   });
 
   test('dndEdition should default to "5th Edition"', () => {
-    const schema = profileSetupSchema.parse({});
+    const schema = expectValidationSuccess(profileSetupSchema, {});
     expect(schema.dndEdition).toBe('5th Edition');
   });
 });

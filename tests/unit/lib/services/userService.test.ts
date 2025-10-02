@@ -11,7 +11,10 @@ jest.unmock('@/lib/db/models/User');
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import {
+  setupTestDatabase,
+  teardownTestDatabase,
+} from '@tests/helpers/db-helpers';
 import { User } from '@/lib/db/models/User';
 import {
   updateUserProfile,
@@ -20,16 +23,12 @@ import {
   checkProfileComplete
 } from '@/lib/services/userService';
 
-let mongoServer: MongoMemoryServer;
-
 beforeEach(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  await mongoose.connect(mongoServer.getUri());
+  await setupTestDatabase();
 });
 
 afterEach(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
+  await teardownTestDatabase();
 });
 
 describe('User Service', () => {
