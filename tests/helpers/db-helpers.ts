@@ -79,3 +79,51 @@ export async function expectAtomicIncrement<T extends Document>(
     );
   }
 }
+
+/**
+ * Test that a model accepts all enum values for a field
+ * Reduces complexity by eliminating for-loops in test files
+ */
+export async function expectAllEnumValues<T extends Document>(
+  model: mongoose.Model<T>,
+  createDataFn: (value: string, index: number) => Record<string, unknown>,
+  field: keyof T,
+  values: string[]
+): Promise<void> {
+  for (let i = 0; i < values.length; i++) {
+    const value = values[i];
+    const data = createDataFn(value, i);
+    const doc = await model.create(data);
+    const actualValue = doc[field];
+
+    if (actualValue !== value) {
+      throw new Error(
+        `Expected ${String(field)} to be ${value} but got ${actualValue}`
+      );
+    }
+  }
+}
+
+/**
+ * Test that a model rejects an invalid enum value
+ */
+export async function expectInvalidEnumValue<T extends Document>(
+  model: mongoose.Model<T>,
+  createDataFn: (value: unknown) => Record<string, unknown>,
+  invalidValue: unknown
+): Promise<void> {
+  const data = createDataFn(invalidValue);
+
+  try {
+    await model.create(data);
+    throw new Error(
+      `Expected model to reject value ${JSON.stringify(invalidValue)} but it was accepted`
+    );
+  } catch (error) {
+    // Expected to throw validation error
+    if (error instanceof Error && error.message.includes('Expected model to reject')) {
+      throw error;
+    }
+    // Success - validation error occurred as expected
+  }
+}

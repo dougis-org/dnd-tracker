@@ -15,6 +15,8 @@ import {
   clearTestDatabase,
   teardownTestDatabase,
   expectDocumentFields,
+  expectAllEnumValues,
+  expectInvalidEnumValue,
 } from '@tests/helpers/db-helpers';
 import { createMinimalUserData } from '@tests/helpers/user-fixtures';
 
@@ -138,47 +140,49 @@ describe('User Model - D&D Profile Fields', () => {
     test('should accept valid experienceLevel enum values', async () => {
       const levels = ['new', 'beginner', 'intermediate', 'experienced', 'veteran'];
 
-      for (const level of levels) {
-        const user = await User.create(createMinimalUserData({
+      await expectAllEnumValues(
+        User,
+        (level, i) => createMinimalUserData({
           id: `clerk_test_${level}`,
           email: `${level}@example.com`,
           username: `user_${level}`,
           experienceLevel: level,
-        }));
-
-        expect(user.experienceLevel).toBe(level);
-      }
+        }),
+        'experienceLevel',
+        levels
+      );
     });
 
     test('should reject invalid experienceLevel values', async () => {
-      await expect(
-        User.create(createMinimalUserData({
-          experienceLevel: 'expert' as any, // Invalid value
-        }))
-      ).rejects.toThrow();
+      await expectInvalidEnumValue(
+        User,
+        (value) => createMinimalUserData({ experienceLevel: value as any }),
+        'expert'
+      );
     });
 
     test('should accept valid primaryRole enum values', async () => {
       const roles = ['dm', 'player', 'both'];
 
-      for (const role of roles) {
-        const user = await User.create(createMinimalUserData({
+      await expectAllEnumValues(
+        User,
+        (role, i) => createMinimalUserData({
           id: `clerk_test_${role}`,
           email: `${role}@example.com`,
           username: `user_${role}`,
           primaryRole: role,
-        }));
-
-        expect(user.primaryRole).toBe(role);
-      }
+        }),
+        'primaryRole',
+        roles
+      );
     });
 
     test('should reject invalid primaryRole values', async () => {
-      await expect(
-        User.create(createMinimalUserData({
-          primaryRole: 'gm' as any, // Invalid value
-        }))
-      ).rejects.toThrow();
+      await expectInvalidEnumValue(
+        User,
+        (value) => createMinimalUserData({ primaryRole: value as any }),
+        'gm'
+      );
     });
   });
 
