@@ -88,18 +88,19 @@ export function validateProfileUpdate(
 /**
  * User type for sanitization (matches IUser from Mongoose model)
  */
-interface UserDocument {
+export interface UserDocument {
   _id: unknown;
+  id?: string;
   email: string;
   username: string;
   firstName: string;
   lastName: string;
-  profile: unknown;
-  subscription: unknown;
-  usage: unknown;
-  preferences: unknown;
-  createdAt: Date;
-  updatedAt: Date;
+  profile?: unknown;
+  subscription?: unknown;
+  usage?: unknown;
+  preferences?: unknown;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 /**
@@ -114,7 +115,7 @@ interface AuthResult {
  * Returns clerkUserId if authorized, null otherwise
  */
 export async function verifyUserAuth(
-  context: { params: { id: string }; auth?: AuthResult },
+  context: { params: { id: string }; auth?: AuthResult | undefined },
   authFn: () => Promise<AuthResult | null>
 ): Promise<{ clerkUserId: string | null; error?: { message: string; status: number } }> {
   // Get Clerk authentication
@@ -157,7 +158,7 @@ export function checkUserAuthorization(
  */
 export function sanitizeUserResponse(user: UserDocument) {
   return {
-    id: user._id.toString(),
+    id: String(user._id),
     email: user.email,
     username: user.username,
     firstName: user.firstName,

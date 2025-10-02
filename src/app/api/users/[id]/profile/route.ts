@@ -23,12 +23,17 @@ import {
  * Retrieve user profile information
  */
 export async function GET(
-  req: NextRequest,
-  context: { params: { id: string }; auth?: { userId: string } }
+  _req: NextRequest,
+  context: { params: Promise<{ id: string }>; auth?: { userId: string } }
 ) {
   try {
+    const params = await context.params;
+
     // Verify authentication
-    const { clerkUserId, error: authError } = await verifyUserAuth(context, auth);
+    const { clerkUserId, error: authError } = await verifyUserAuth(
+      { params, auth: context.auth },
+      async () => auth()
+    );
     if (authError) {
       return NextResponse.json(
         { success: false, error: authError.message },
@@ -37,7 +42,7 @@ export async function GET(
     }
 
     // Fetch user from database
-    const user = await User.findById(context.params.id);
+    const user = await User.findById(params.id);
 
     // Check authorization
     const { error: authzError } = checkUserAuthorization(user, clerkUserId!);
@@ -65,11 +70,16 @@ export async function GET(
  */
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string }; auth?: { userId: string } }
+  context: { params: Promise<{ id: string }>; auth?: { userId: string } }
 ) {
   try {
+    const params = await context.params;
+
     // Verify authentication
-    const { clerkUserId, error: authError } = await verifyUserAuth(context, auth);
+    const { clerkUserId, error: authError } = await verifyUserAuth(
+      { params, auth: context.auth },
+      async () => auth()
+    );
     if (authError) {
       return NextResponse.json(
         { success: false, error: authError.message },
@@ -78,7 +88,7 @@ export async function PATCH(
     }
 
     // Fetch user from database
-    const user = await User.findById(context.params.id);
+    const user = await User.findById(params.id);
 
     // Check authorization
     const { error: authzError } = checkUserAuthorization(user, clerkUserId!);
@@ -116,16 +126,16 @@ export async function PATCH(
 
     // Update profile fields
     if (body.displayName !== undefined) {
-      user!.profile.displayName = body.displayName;
+      user!.profile!.displayName = body.displayName;
     }
     if (body.dndRuleset !== undefined) {
-      user!.profile.dndRuleset = body.dndRuleset as DndRuleset;
+      user!.profile!.dndRuleset = body.dndRuleset as DndRuleset;
     }
     if (body.experienceLevel !== undefined) {
-      user!.profile.experienceLevel = body.experienceLevel;
+      user!.profile!.experienceLevel = body.experienceLevel;
     }
     if (body.role !== undefined) {
-      user!.profile.role = body.role;
+      user!.profile!.role = body.role;
     }
 
     // Save updated user

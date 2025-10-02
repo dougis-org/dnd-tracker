@@ -113,7 +113,7 @@ describe('User Profile API - GET /api/users/[id]/profile', () => {
 
     // Call GET handler
     const response = await GET(mockRequest, {
-      params: { id: String(testUser._id) },
+      params: Promise.resolve({ id: String(testUser._id) }),
       auth: mockAuth,
     });
 
@@ -145,7 +145,7 @@ describe('User Profile API - GET /api/users/[id]/profile', () => {
 
     // No auth context provided
     const response = await GET(mockRequest, {
-      params: { id: String(testUser._id) },
+      params: Promise.resolve({ id: String(testUser._id) }),
     });
 
     expect(response.status).toBe(401);
@@ -183,7 +183,7 @@ describe('User Profile API - GET /api/users/[id]/profile', () => {
     };
 
     const response = await GET(mockRequest, {
-      params: { id: String(testUser._id) },
+      params: Promise.resolve({ id: String(testUser._id) }),
       auth: mockAuth,
     });
 
@@ -210,7 +210,7 @@ describe('User Profile API - GET /api/users/[id]/profile', () => {
     };
 
     const response = await GET(mockRequest, {
-      params: { id: '507f1f77bcf86cd799439011' },
+      params: Promise.resolve({ id: '507f1f77bcf86cd799439011' }),
       auth: mockAuth,
     });
 
@@ -255,7 +255,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
     };
 
     const response = await PATCH(mockRequest, {
-      params: { id: String(testUser._id) },
+      params: Promise.resolve({ id: String(testUser._id) }),
       auth: mockAuth,
     });
 
@@ -300,7 +300,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
     };
 
     const response = await PATCH(mockRequest, {
-      params: { id: String(testUser._id) },
+      params: Promise.resolve({ id: String(testUser._id) }),
       auth: mockAuth,
     });
 
@@ -337,7 +337,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
 
     // No auth context provided
     const response = await PATCH(mockRequest, {
-      params: { id: String(testUser._id) },
+      params: Promise.resolve({ id: String(testUser._id) }),
     });
 
     expect(response.status).toBe(401);
@@ -379,7 +379,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
     };
 
     const response = await PATCH(mockRequest, {
-      params: { id: String(testUser._id) },
+      params: Promise.resolve({ id: String(testUser._id) }),
       auth: mockAuth,
     });
 
@@ -414,7 +414,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
     };
 
     const response = await PATCH(mockRequest, {
-      params: { id: '507f1f77bcf86cd799439011' },
+      params: Promise.resolve({ id: '507f1f77bcf86cd799439011' }),
       auth: mockAuth,
     });
 
