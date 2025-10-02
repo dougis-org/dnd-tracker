@@ -61,7 +61,7 @@ tests/
 
 ## Recent Changes
 
-- 002-when-a-user: Added  +
+- 002-when-a-user: Added user registration and profile management backend
 
 **2025-09-20**: MVP planning phase completed
 
