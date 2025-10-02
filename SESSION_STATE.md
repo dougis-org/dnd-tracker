@@ -235,7 +235,13 @@ git pull
 
 ## 📚 References
 
-- **Feature Spec**: Previously in `specs/002-when-a-user/` (not in git)
+- **Feature Spec**: `specs/002-when-a-user/` (restored to git)
+  - `tasks.md` - Complete task breakdown (T001-T040)
+  - `plan.md` - Implementation plan and architecture
+  - `quickstart.md` - Integration test scenarios
+  - `data-model.md` - User entity design
+  - `spec.md` - Feature specification
+  - `contracts/` - API contract specifications
 - **PR #146**: https://github.com/dougis-org/dnd-tracker/pull/146 (merged)
 - **Parent Issue**: #2 (closed - Clerk auth migration)
 - **Follow-up Issues**: #147-152

@@ -1,0 +1,212 @@
+openapi: 3.0.3
+info:
+  title: Clerk Webhook API
+  description: Webhook endpoint for Clerk user lifecycle events
+  version: 1.0.0
+
+paths:
+  /api/webhooks/clerk:
+    post:
+      summary: Handle Clerk webhook events
+      description: |
+        Processes Clerk webhook events for user lifecycle management.
+        Verifies Svix signature and creates/updates/deletes MongoDB user records.
+      operationId: handleClerkWebhook
+      security:
+        - svixSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/UserCreatedEvent'
+                - $ref: '#/components/schemas/UserUpdatedEvent'
+                - $ref: '#/components/schemas/UserDeletedEvent'
+      responses:
+        '200':
+          description: Event processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User created successfully"
+        '400':
+          description: Invalid signature or malformed payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error (triggers Clerk retry)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    svixSignature:
+      type: apiKey
+      in: header
+      name: svix-signature
+      description: |
+        Svix webhook signature for verification.
+        Includes svix-id, svix-timestamp, and svix-signature headers.
+
+  schemas:
+    UserCreatedEvent:
+      type: object
+      required:
+        - type
+        - data
+      properties:
+        type:
+          type: string
+          enum: [user.created]
+        data:
+          $ref: '#/components/schemas/ClerkUser'
+
+    UserUpdatedEvent:
+      type: object
+      required:
+        - type
+        - data
+      properties:
+        type:
+          type: string
+          enum: [user.updated]
+        data:
+          $ref: '#/components/schemas/ClerkUser'
+
+    UserDeletedEvent:
+      type: object
+      required:
+        - type
+        - data
+      properties:
+        type:
+          type: string
+          enum: [user.deleted]
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Clerk user ID
+            deleted:
+              type: boolean
+              example: true
+
+    ClerkUser:
+      type: object
+      required:
+        - id
+        - email_addresses
+      properties:
+        id:
+          type: string
+          description: Clerk user ID
+          example: "user_2abc123def"
+        email_addresses:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              email_address:
+                type: string
+                format: email
+              verification:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [verified, unverified]
+        first_name:
+          type: string
+          nullable: true
+          example: "John"
+        last_name:
+          type: string
+          nullable: true
+          example: "Doe"
+        username:
+          type: string
+          nullable: true
+          example: "johndoe"
+        image_url:
+          type: string
+          format: uri
+          nullable: true
+          example: "https://img.clerk.com/user_2abc123def"
+        created_at:
+          type: integer
+          description: Unix timestamp
+          example: 1700000000000
+        updated_at:
+          type: integer
+          description: Unix timestamp
+          example: 1700000000000
+
+    Error:
+      type: object
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: "Invalid webhook signature"
+
+  examples:
+    UserCreatedExample:
+      value:
+        type: user.created
+        data:
+          id: "user_2abc123def"
+          email_addresses:
+            - id: "email_1xyz"
+              email_address: "john.doe@example.com"
+              verification:
+                status: "verified"
+          first_name: "John"
+          last_name: "Doe"
+          username: "johndoe"
+          image_url: "https://img.clerk.com/user_2abc123def"
+          created_at: 1700000000000
+          updated_at: 1700000000000
+
+    UserUpdatedExample:
+      value:
+        type: user.updated
+        data:
+          id: "user_2abc123def"
+          email_addresses:
+            - id: "email_1xyz"
+              email_address: "john.newemail@example.com"
+              verification:
+                status: "verified"
+          first_name: "John"
+          last_name: "Smith"
+          username: "johnsmith"
+          image_url: "https://img.clerk.com/user_2abc123def"
+          created_at: 1700000000000
+          updated_at: 1700100000000
+
+    UserDeletedExample:
+      value:
+        type: user.deleted
+        data:
+          id: "user_2abc123def"
+          deleted: true
