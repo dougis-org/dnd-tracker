@@ -37,14 +37,12 @@ const createOptionalSchema = <T extends z.ZodTypeAny>(schema: T) =>
 // Subscription tier validation
 export const subscriptionTierSchema = z.enum(
   ['free', 'seasoned', 'expert', 'master', 'guild'],
-  {
-    errorMap: () => ({ message: 'Invalid subscription tier' }),
-  }
+  { message: 'Invalid subscription tier' }
 );
 
 // User role validation
 export const userRoleSchema = z.enum(['user', 'admin'], {
-  errorMap: () => ({ message: 'Invalid user role' }),
+  message: 'Invalid user role'
 });
 
 // User preferences schema
@@ -91,9 +89,7 @@ export const dndEditionSchema = z
  */
 export const experienceLevelSchema = z.enum(
   ['new', 'beginner', 'intermediate', 'experienced', 'veteran'],
-  {
-    errorMap: () => ({ message: 'Invalid experience level' }),
-  }
+  { message: 'Invalid experience level' }
 );
 
 /**
@@ -101,7 +97,7 @@ export const experienceLevelSchema = z.enum(
  * Enum: dm, player, both
  */
 export const primaryRoleSchema = z.enum(['dm', 'player', 'both'], {
-  errorMap: () => ({ message: 'Invalid primary role' }),
+  message: 'Invalid primary role'
 });
 
 // ========================================
