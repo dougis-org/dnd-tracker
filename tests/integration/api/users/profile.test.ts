@@ -38,43 +38,62 @@ afterAll(async () => {
   await teardownTestDatabase();
 });
 
+/**
+ * Create a test user with standard profile data
+ * Extracted to reduce duplication across test suites
+ */
+async function createTestUser(
+  userId = 'user_test123',
+  overrides: Partial<{
+    email: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    dndRuleset: string;
+    experienceLevel: string;
+    role: string;
+  }> = {}
+): Promise<IUser> {
+  return User.create({
+    id: userId,
+    email: overrides.email || 'testuser@example.com',
+    username: overrides.username || 'testuser',
+    firstName: overrides.firstName || 'Test',
+    lastName: overrides.lastName || 'User',
+    authProvider: 'clerk',
+    isEmailVerified: true,
+    profile: {
+      displayName: overrides.displayName || 'Test User',
+      dndRuleset: overrides.dndRuleset || '5e',
+      experienceLevel: overrides.experienceLevel || 'intermediate',
+      role: overrides.role || 'dm',
+    },
+    subscription: {
+      tier: 'free',
+      status: 'active',
+      currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    },
+    usage: {
+      partiesCount: 0,
+      encountersCount: 0,
+      creaturesCount: 0,
+    },
+    preferences: {
+      theme: 'auto',
+      defaultInitiativeType: 'manual',
+      autoAdvanceRounds: false,
+    },
+    lastClerkSync: new Date(),
+    syncStatus: 'active',
+  });
+}
+
 describe('User Profile API - GET /api/users/[id]/profile', () => {
   let testUser: IUser;
 
   beforeEach(async () => {
-    // Create test user with profile data
-    testUser = await User.create({
-      id: 'user_test123',
-      email: 'testuser@example.com',
-      username: 'testuser',
-      firstName: 'Test',
-      lastName: 'User',
-      authProvider: 'clerk',
-      isEmailVerified: true,
-      profile: {
-        displayName: 'Test User',
-        dndRuleset: '5e',
-        experienceLevel: 'intermediate',
-        role: 'dm',
-      },
-      subscription: {
-        tier: 'free',
-        status: 'active',
-        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      },
-      usage: {
-        partiesCount: 0,
-        encountersCount: 0,
-        creaturesCount: 0,
-      },
-      preferences: {
-        theme: 'auto',
-        defaultInitiativeType: 'manual',
-        autoAdvanceRounds: false,
-      },
-      lastClerkSync: new Date(),
-      syncStatus: 'active',
-    });
+    testUser = await createTestUser();
   });
 
   test('should return user profile with authentication', async () => {
@@ -140,37 +159,14 @@ describe('User Profile API - GET /api/users/[id]/profile', () => {
 
   test('should return 403 if user ID does not match authenticated user', async () => {
     // Create different user
-    const otherUser = await User.create({
-      id: 'user_other456',
+    const otherUser = await createTestUser('user_other456', {
       email: 'other@example.com',
       username: 'otheruser',
       firstName: 'Other',
       lastName: 'User',
-      authProvider: 'clerk',
-      isEmailVerified: true,
-      profile: {
-        displayName: 'Other User',
-        dndRuleset: '5e',
-        experienceLevel: 'beginner',
-        role: 'player',
-      },
-      subscription: {
-        tier: 'free',
-        status: 'active',
-        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      },
-      usage: {
-        partiesCount: 0,
-        encountersCount: 0,
-        creaturesCount: 0,
-      },
-      preferences: {
-        theme: 'auto',
-        defaultInitiativeType: 'manual',
-        autoAdvanceRounds: false,
-      },
-      lastClerkSync: new Date(),
-      syncStatus: 'active',
+      displayName: 'Other User',
+      experienceLevel: 'beginner',
+      role: 'player',
     });
 
     const mockRequest = new Request(
@@ -232,39 +228,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
   let testUser: IUser;
 
   beforeEach(async () => {
-    // Create test user with initial profile
-    testUser = await User.create({
-      id: 'user_test123',
-      email: 'testuser@example.com',
-      username: 'testuser',
-      firstName: 'Test',
-      lastName: 'User',
-      authProvider: 'clerk',
-      isEmailVerified: true,
-      profile: {
-        displayName: 'Test User',
-        dndRuleset: '5e',
-        experienceLevel: 'intermediate',
-        role: 'dm',
-      },
-      subscription: {
-        tier: 'free',
-        status: 'active',
-        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      },
-      usage: {
-        partiesCount: 0,
-        encountersCount: 0,
-        creaturesCount: 0,
-      },
-      preferences: {
-        theme: 'auto',
-        defaultInitiativeType: 'manual',
-        autoAdvanceRounds: false,
-      },
-      lastClerkSync: new Date(),
-      syncStatus: 'active',
-    });
+    testUser = await createTestUser();
   });
 
   test('should update profile fields with valid data', async () => {
@@ -387,37 +351,14 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
 
   test('should return 403 if user ID does not match authenticated user', async () => {
     // Create different user
-    const otherUser = await User.create({
-      id: 'user_other456',
+    const otherUser = await createTestUser('user_other456', {
       email: 'other@example.com',
       username: 'otheruser',
       firstName: 'Other',
       lastName: 'User',
-      authProvider: 'clerk',
-      isEmailVerified: true,
-      profile: {
-        displayName: 'Other User',
-        dndRuleset: '5e',
-        experienceLevel: 'beginner',
-        role: 'player',
-      },
-      subscription: {
-        tier: 'free',
-        status: 'active',
-        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      },
-      usage: {
-        partiesCount: 0,
-        encountersCount: 0,
-        creaturesCount: 0,
-      },
-      preferences: {
-        theme: 'auto',
-        defaultInitiativeType: 'manual',
-        autoAdvanceRounds: false,
-      },
-      lastClerkSync: new Date(),
-      syncStatus: 'active',
+      displayName: 'Other User',
+      experienceLevel: 'beginner',
+      role: 'player',
     });
 
     const mockRequest = new Request(
