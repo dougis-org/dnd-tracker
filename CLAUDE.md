@@ -60,8 +60,8 @@ tests/
 **Testing**: TDD approach - tests written before implementation
 
 ## Recent Changes
-- 002-when-a-user: Added  + 
 
+- 002-when-a-user: Added  +
 
 **2025-09-20**: MVP planning phase completed
 
