@@ -89,6 +89,14 @@ async function createTestUser(
   });
 }
 
+/**
+ * Create async route params for Next.js 15 route handlers
+ * Extracted to reduce test duplication
+ */
+function createAsyncParams(id: string) {
+  return Promise.resolve({ id });
+}
+
 describe('User Profile API - GET /api/users/[id]/profile', () => {
   let testUser: IUser;
 
@@ -113,7 +121,7 @@ describe('User Profile API - GET /api/users/[id]/profile', () => {
 
     // Call GET handler
     const response = await GET(mockRequest, {
-      params: Promise.resolve({ id: String(testUser._id) }),
+      params: createAsyncParams(String(testUser._id)),
       auth: mockAuth,
     });
 
@@ -145,7 +153,7 @@ describe('User Profile API - GET /api/users/[id]/profile', () => {
 
     // No auth context provided
     const response = await GET(mockRequest, {
-      params: Promise.resolve({ id: String(testUser._id) }),
+      params: createAsyncParams(String(testUser._id)),
     });
 
     expect(response.status).toBe(401);
@@ -183,7 +191,7 @@ describe('User Profile API - GET /api/users/[id]/profile', () => {
     };
 
     const response = await GET(mockRequest, {
-      params: Promise.resolve({ id: String(testUser._id) }),
+      params: createAsyncParams(String(testUser._id)),
       auth: mockAuth,
     });
 
@@ -210,7 +218,7 @@ describe('User Profile API - GET /api/users/[id]/profile', () => {
     };
 
     const response = await GET(mockRequest, {
-      params: Promise.resolve({ id: '507f1f77bcf86cd799439011' }),
+      params: createAsyncParams('507f1f77bcf86cd799439011'),
       auth: mockAuth,
     });
 
@@ -255,7 +263,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
     };
 
     const response = await PATCH(mockRequest, {
-      params: Promise.resolve({ id: String(testUser._id) }),
+      params: createAsyncParams(String(testUser._id)),
       auth: mockAuth,
     });
 
@@ -300,7 +308,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
     };
 
     const response = await PATCH(mockRequest, {
-      params: Promise.resolve({ id: String(testUser._id) }),
+      params: createAsyncParams(String(testUser._id)),
       auth: mockAuth,
     });
 
@@ -337,7 +345,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
 
     // No auth context provided
     const response = await PATCH(mockRequest, {
-      params: Promise.resolve({ id: String(testUser._id) }),
+      params: createAsyncParams(String(testUser._id)),
     });
 
     expect(response.status).toBe(401);
@@ -379,7 +387,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
     };
 
     const response = await PATCH(mockRequest, {
-      params: Promise.resolve({ id: String(testUser._id) }),
+      params: createAsyncParams(String(testUser._id)),
       auth: mockAuth,
     });
 
@@ -414,7 +422,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
     };
 
     const response = await PATCH(mockRequest, {
-      params: Promise.resolve({ id: '507f1f77bcf86cd799439011' }),
+      params: createAsyncParams('507f1f77bcf86cd799439011'),
       auth: mockAuth,
     });
 

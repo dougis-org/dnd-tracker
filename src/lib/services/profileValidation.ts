@@ -153,6 +153,36 @@ export function checkUserAuthorization(
 }
 
 /**
+ * Combined auth + user fetch + authorization check
+ * Reduces duplication in route handlers
+ */
+export async function authenticateAndFetchUser(
+  context: { params: { id: string }; auth?: AuthResult | undefined },
+  authFn: () => Promise<AuthResult | null>,
+  userFindFn: (id: string) => Promise<UserDocument | null>
+): Promise<{
+  user: UserDocument | null;
+  error?: { message: string; status: number };
+}> {
+  // Verify authentication
+  const { clerkUserId, error: authError } = await verifyUserAuth(context, authFn);
+  if (authError) {
+    return { user: null, error: authError };
+  }
+
+  // Fetch user from database
+  const user = await userFindFn(context.params.id);
+
+  // Check authorization
+  const { error: authzError } = checkUserAuthorization(user, clerkUserId!);
+  if (authzError) {
+    return { user: null, error: authzError };
+  }
+
+  return { user };
+}
+
+/**
  * Sanitize user data for API response
  * Returns only safe user fields (no sensitive data)
  */

@@ -12,8 +12,7 @@ import { auth } from '@clerk/nextjs/server';
 import {
   validateProfileUpdate,
   sanitizeUserResponse,
-  verifyUserAuth,
-  checkUserAuthorization,
+  authenticateAndFetchUser,
   type ProfileUpdateRequest,
   type DndRuleset,
 } from '@/lib/services/profileValidation';
@@ -29,27 +28,16 @@ export async function GET(
   try {
     const params = await context.params;
 
-    // Verify authentication
-    const { clerkUserId, error: authError } = await verifyUserAuth(
+    // Authenticate and fetch user
+    const { user, error } = await authenticateAndFetchUser(
       { params, auth: context.auth },
-      async () => auth()
+      async () => auth(),
+      async (id) => User.findById(id)
     );
-    if (authError) {
+    if (error) {
       return NextResponse.json(
-        { success: false, error: authError.message },
-        { status: authError.status }
-      );
-    }
-
-    // Fetch user from database
-    const user = await User.findById(params.id);
-
-    // Check authorization
-    const { error: authzError } = checkUserAuthorization(user, clerkUserId!);
-    if (authzError) {
-      return NextResponse.json(
-        { success: false, error: authzError.message },
-        { status: authzError.status }
+        { success: false, error: error.message },
+        { status: error.status }
       );
     }
 
@@ -75,27 +63,16 @@ export async function PATCH(
   try {
     const params = await context.params;
 
-    // Verify authentication
-    const { clerkUserId, error: authError } = await verifyUserAuth(
+    // Authenticate and fetch user
+    const { user, error } = await authenticateAndFetchUser(
       { params, auth: context.auth },
-      async () => auth()
+      async () => auth(),
+      async (id) => User.findById(id)
     );
-    if (authError) {
+    if (error) {
       return NextResponse.json(
-        { success: false, error: authError.message },
-        { status: authError.status }
-      );
-    }
-
-    // Fetch user from database
-    const user = await User.findById(params.id);
-
-    // Check authorization
-    const { error: authzError } = checkUserAuthorization(user, clerkUserId!);
-    if (authzError) {
-      return NextResponse.json(
-        { success: false, error: authzError.message },
-        { status: authzError.status }
+        { success: false, error: error.message },
+        { status: error.status }
       );
     }
 
