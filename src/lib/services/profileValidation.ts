@@ -86,6 +86,16 @@ export function validateProfileUpdate(
 }
 
 /**
+ * Profile interface matching Mongoose ProfileSchema
+ */
+export interface UserProfile {
+  displayName: string;
+  dndRuleset: DndRuleset;
+  experienceLevel: ExperienceLevel;
+  role: UserRole;
+}
+
+/**
  * User type for sanitization (matches IUser from Mongoose model)
  */
 export interface UserDocument {
@@ -95,12 +105,13 @@ export interface UserDocument {
   username: string;
   firstName: string;
   lastName: string;
-  profile?: unknown;
+  profile?: UserProfile;
   subscription?: unknown;
   usage?: unknown;
   preferences?: unknown;
   createdAt?: Date;
   updatedAt?: Date;
+  save(): Promise<UserDocument>;
 }
 
 /**
