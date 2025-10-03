@@ -5,6 +5,8 @@
  * Constitutional: Max 100 lines, max 50 lines per function
  */
 
+import type { IUser } from '@/lib/db/models/User';
+
 /**
  * Validation constants
  */
@@ -96,25 +98,6 @@ export interface UserProfile {
 }
 
 /**
- * User type for sanitization (matches IUser from Mongoose model)
- */
-export interface UserDocument {
-  _id: unknown;
-  id?: string;
-  email: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  profile?: UserProfile;
-  subscription?: unknown;
-  usage?: unknown;
-  preferences?: unknown;
-  createdAt?: Date;
-  updatedAt?: Date;
-  save(): Promise<UserDocument>;
-}
-
-/**
  * Auth result type
  */
 interface AuthResult {
@@ -148,7 +131,7 @@ export async function verifyUserAuth(
  * Check if authenticated user matches the user ID in the request
  */
 export function checkUserAuthorization(
-  user: UserDocument | null,
+  user: IUser | null,
   clerkUserId: string
 ): { error?: { message: string; status: number } } {
   if (!user) {
@@ -170,9 +153,9 @@ export function checkUserAuthorization(
 export async function authenticateAndFetchUser(
   context: { params: { id: string }; auth?: AuthResult | undefined },
   authFn: () => Promise<AuthResult | null>,
-  userFindFn: (id: string) => Promise<UserDocument | null>
+  userFindFn: (id: string) => Promise<IUser | null>
 ): Promise<{
-  user: UserDocument | null;
+  user: IUser | null;
   error?: { message: string; status: number };
 }> {
   // Verify authentication
@@ -197,7 +180,7 @@ export async function authenticateAndFetchUser(
  * Sanitize user data for API response
  * Returns only safe user fields (no sensitive data)
  */
-export function sanitizeUserResponse(user: UserDocument) {
+export function sanitizeUserResponse(user: IUser) {
   return {
     id: String(user._id),
     email: user.email,
