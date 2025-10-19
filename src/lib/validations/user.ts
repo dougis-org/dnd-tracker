@@ -109,11 +109,20 @@ export const primaryRoleSchema = z.enum(['dm', 'player', 'both'], {
  * All fields are optional to support skip functionality
  */
 export const profileSetupSchema = z.object({
-  displayName: displayNameSchema,
+  displayName: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    z.string().max(100, 'Display name cannot exceed 100 characters').trim().optional()
+  ),
   timezone: z.string().default('UTC'),
   dndEdition: dndEditionSchema,
-  experienceLevel: experienceLevelSchema.optional().nullable(),
-  primaryRole: primaryRoleSchema.optional().nullable(),
+  experienceLevel: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    experienceLevelSchema.optional()
+  ),
+  primaryRole: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    primaryRoleSchema.optional()
+  ),
 });
 
 // ========================================
