@@ -2,7 +2,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 
 app = 'dnd-tracker'
-primary_region = 'sea'
+primary_region = 'sjc'
 
 [build]
   [build.args]
@@ -29,3 +29,4 @@ cpus = 1
 
 [deploy]
 release_command = 'echo "Deploy starting..."'
+
