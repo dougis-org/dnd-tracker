@@ -5,6 +5,8 @@
  * Constitutional: Max 100 lines, max 50 lines per function
  */
 
+import type { IUser } from '@/lib/db/models/User';
+
 /**
  * Validation constants
  */
@@ -86,20 +88,13 @@ export function validateProfileUpdate(
 }
 
 /**
- * User type for sanitization (matches IUser from Mongoose model)
+ * Profile interface matching Mongoose ProfileSchema
  */
-interface UserDocument {
-  _id: unknown;
-  email: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  profile: unknown;
-  subscription: unknown;
-  usage: unknown;
-  preferences: unknown;
-  createdAt: Date;
-  updatedAt: Date;
+export interface UserProfile {
+  displayName: string;
+  dndRuleset: DndRuleset;
+  experienceLevel: ExperienceLevel;
+  role: UserRole;
 }
 
 /**
@@ -114,7 +109,7 @@ interface AuthResult {
  * Returns clerkUserId if authorized, null otherwise
  */
 export async function verifyUserAuth(
-  context: { params: { id: string }; auth?: AuthResult },
+  context: { params: { id: string }; auth?: AuthResult | undefined },
   authFn: () => Promise<AuthResult | null>
 ): Promise<{ clerkUserId: string | null; error?: { message: string; status: number } }> {
   // Get Clerk authentication
@@ -136,7 +131,7 @@ export async function verifyUserAuth(
  * Check if authenticated user matches the user ID in the request
  */
 export function checkUserAuthorization(
-  user: UserDocument | null,
+  user: IUser | null,
   clerkUserId: string
 ): { error?: { message: string; status: number } } {
   if (!user) {
@@ -152,12 +147,42 @@ export function checkUserAuthorization(
 }
 
 /**
+ * Combined auth + user fetch + authorization check
+ * Reduces duplication in route handlers
+ */
+export async function authenticateAndFetchUser(
+  context: { params: { id: string }; auth?: AuthResult | undefined },
+  authFn: () => Promise<AuthResult | null>,
+  userFindFn: (id: string) => Promise<IUser | null>
+): Promise<{
+  user: IUser | null;
+  error?: { message: string; status: number };
+}> {
+  // Verify authentication
+  const { clerkUserId, error: authError } = await verifyUserAuth(context, authFn);
+  if (authError) {
+    return { user: null, error: authError };
+  }
+
+  // Fetch user from database
+  const user = await userFindFn(context.params.id);
+
+  // Check authorization
+  const { error: authzError } = checkUserAuthorization(user, clerkUserId!);
+  if (authzError) {
+    return { user: null, error: authzError };
+  }
+
+  return { user };
+}
+
+/**
  * Sanitize user data for API response
  * Returns only safe user fields (no sensitive data)
  */
-export function sanitizeUserResponse(user: UserDocument) {
+export function sanitizeUserResponse(user: IUser) {
   return {
-    id: user._id.toString(),
+    id: String(user._id),
     email: user.email,
     username: user.username,
     firstName: user.firstName,

@@ -12,8 +12,7 @@ import { auth } from '@clerk/nextjs/server';
 import {
   validateProfileUpdate,
   sanitizeUserResponse,
-  verifyUserAuth,
-  checkUserAuthorization,
+  authenticateAndFetchUser,
   type ProfileUpdateRequest,
   type DndRuleset,
 } from '@/lib/services/profileValidation';
@@ -23,28 +22,22 @@ import {
  * Retrieve user profile information
  */
 export async function GET(
-  req: NextRequest,
-  context: { params: { id: string }; auth?: { userId: string } }
+  _req: NextRequest,
+  context: { params: Promise<{ id: string }>; auth?: { userId: string } }
 ) {
   try {
-    // Verify authentication
-    const { clerkUserId, error: authError } = await verifyUserAuth(context, auth);
-    if (authError) {
-      return NextResponse.json(
-        { success: false, error: authError.message },
-        { status: authError.status }
-      );
-    }
+    const params = await context.params;
 
-    // Fetch user from database
-    const user = await User.findById(context.params.id);
-
-    // Check authorization
-    const { error: authzError } = checkUserAuthorization(user, clerkUserId!);
-    if (authzError) {
+    // Authenticate and fetch user
+    const { user, error } = await authenticateAndFetchUser(
+      { params, auth: context.auth },
+      async () => auth(),
+      async (id) => User.findById(id)
+    );
+    if (error) {
       return NextResponse.json(
-        { success: false, error: authzError.message },
-        { status: authzError.status }
+        { success: false, error: error.message },
+        { status: error.status }
       );
     }
 
@@ -65,27 +58,21 @@ export async function GET(
  */
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string }; auth?: { userId: string } }
+  context: { params: Promise<{ id: string }>; auth?: { userId: string } }
 ) {
   try {
-    // Verify authentication
-    const { clerkUserId, error: authError } = await verifyUserAuth(context, auth);
-    if (authError) {
-      return NextResponse.json(
-        { success: false, error: authError.message },
-        { status: authError.status }
-      );
-    }
+    const params = await context.params;
 
-    // Fetch user from database
-    const user = await User.findById(context.params.id);
-
-    // Check authorization
-    const { error: authzError } = checkUserAuthorization(user, clerkUserId!);
-    if (authzError) {
+    // Authenticate and fetch user
+    const { user, error } = await authenticateAndFetchUser(
+      { params, auth: context.auth },
+      async () => auth(),
+      async (id) => User.findById(id)
+    );
+    if (error) {
       return NextResponse.json(
-        { success: false, error: authzError.message },
-        { status: authzError.status }
+        { success: false, error: error.message },
+        { status: error.status }
       );
     }
 
@@ -116,16 +103,16 @@ export async function PATCH(
 
     // Update profile fields
     if (body.displayName !== undefined) {
-      user!.profile.displayName = body.displayName;
+      user!.profile!.displayName = body.displayName;
     }
     if (body.dndRuleset !== undefined) {
-      user!.profile.dndRuleset = body.dndRuleset as DndRuleset;
+      user!.profile!.dndRuleset = body.dndRuleset as DndRuleset;
     }
     if (body.experienceLevel !== undefined) {
-      user!.profile.experienceLevel = body.experienceLevel;
+      user!.profile!.experienceLevel = body.experienceLevel;
     }
     if (body.role !== undefined) {
-      user!.profile.role = body.role;
+      user!.profile!.role = body.role;
     }
 
     // Save updated user
