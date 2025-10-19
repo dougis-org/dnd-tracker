@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   typedRoutes: false,
   typescript: {
     tsconfigPath: './tsconfig.json',
