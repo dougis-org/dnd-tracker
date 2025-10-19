@@ -2,3 +2,4 @@ exclude_paths:
   - "jest.setup.ts"
   - "jest.config.ts"
   - "next.config.js"
+  - "/specs/**"

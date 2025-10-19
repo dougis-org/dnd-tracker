@@ -12,6 +12,7 @@ Phase 3.2 (Data Model Layer) has been functionally completed with all D&D profil
 ## Completed Tasks
 
 ### ✅ T005: Write Mongoose User model tests
+
 - **File**: `/home/doug/ai-dev-1/dnd-tracker/tests/unit/lib/models/User.test.ts`
 - **Status**: Written (288 lines, 25 tests)
 - **Blocker**: Jest cannot import User model due to module resolution issue
@@ -24,6 +25,7 @@ Phase 3.2 (Data Model Layer) has been functionally completed with all D&D profil
   - Clerk user creation
 
 ### ✅ T004: Extend Mongoose User model with D&D fields
+
 - **File**: `/home/doug/ai-dev-1/dnd-tracker/src/lib/db/models/User.ts`
 - **Status**: Complete (448 lines - within 450 limit)
 - **Changes Made**:
@@ -67,6 +69,7 @@ Phase 3.2 (Data Model Layer) has been functionally completed with all D&D profil
      - `preferences`: PreferencesSchema
 
 ### ❌ T006/T008: Run model tests - BLOCKED
+
 - **Issue**: `TypeError: Cannot read properties of undefined (reading 'create')`
 - **Root Cause**: Jest cannot import the User model
 - **Investigation Results**:
@@ -110,6 +113,7 @@ export { User };
 ```
 
 **Console output from test**:
+
 ```
 User: undefined
 User type: undefined
@@ -134,6 +138,7 @@ Mongoose models with complex nested schemas + Jest + TypeScript path aliases + N
 ### Option B: Move to Phase 3.3 (Service Layer) - RECOMMENDED
 
 **Rationale**:
+
 - The model implementation is complete and correct
 - TypeScript compiles without errors
 - The model will work fine in the actual application
@@ -143,6 +148,7 @@ Mongoose models with complex nested schemas + Jest + TypeScript path aliases + N
 ### Follow-up Task: Fix Jest Model Test Infrastructure
 
 Create a separate task to:
+
 1. Investigate Jest + Mongoose + Next.js module resolution
 2. Consider using integration tests instead of unit tests for models
 3. Evaluate test database container approach
@@ -151,9 +157,11 @@ Create a separate task to:
 ## Files Modified
 
 ### Created
+
 - `/home/doug/ai-dev-1/dnd-tracker/tests/unit/lib/models/User.test.ts` (288 lines)
 
 ### Modified
+
 - `/home/doug/ai-dev-1/dnd-tracker/src/lib/db/models/User.ts` (448 lines)
   - Added 100+ lines of new schema fields
   - Updated IUser interface
@@ -167,19 +175,23 @@ Create a separate task to:
 ## Validation
 
 ### Model Schema Validation ✅
+
 ```bash
 npx tsc --noEmit src/lib/db/models/User.ts
 # Output: No errors
 ```
 
 ### Constitutional Compliance ✅
+
 - File length: 448 lines (< 450 limit)
 - TDD approach: Tests written first (T005 before T004)
 - All required fields added per spec
 - TypeScript strict mode enforced
 
 ### Data Model Compliance ✅
+
 Compared against `/home/doug/ai-dev-1/dnd-tracker/specs/002-when-a-user/data-model.md`:
+
 - ✅ All identity & authentication fields present
 - ✅ Authorization fields (role, subscriptionTier) at top level
 - ✅ All D&D profile fields present with correct constraints
@@ -192,14 +204,17 @@ Compared against `/home/doug/ai-dev-1/dnd-tracker/specs/002-when-a-user/data-mod
 For context, Phase 3.1 was successfully completed:
 
 ### ✅ T001: Implement Zod validation schemas
+
 - **File**: `/home/doug/ai-dev-1/dnd-tracker/src/lib/validations/user.ts` (157 lines)
 - **Exports**: displayNameSchema, dndEditionSchema, experienceLevelSchema, primaryRoleSchema, profileSetupSchema, userProfileUpdateSchema
 
 ### ✅ T002: Write validation tests
+
 - **File**: `/home/doug/ai-dev-1/dnd-tracker/tests/unit/lib/validations/user.test.ts` (174 lines)
 - **Tests**: 21 tests, all passing
 
 ### ✅ T003/T007: Validation tests verified
+
 - **Status**: All 21 tests PASS
 - **Red-Green-Refactor**: ✅ Complete
 

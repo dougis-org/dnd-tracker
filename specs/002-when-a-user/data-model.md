@@ -11,6 +11,7 @@ This document defines the data model for user registration and profile managemen
 ## Entity: User
 
 ### Purpose
+
 Represents a registered user with authentication credentials, D&D profile preferences, subscription tier, and usage tracking data.
 
 ### Schema Definition
@@ -112,22 +113,26 @@ interface IUser extends Document {
 ### Validation Rules
 
 **Email Validation**:
+
 - Must be valid email format
 - Maximum 254 characters
 - Case-insensitive (stored lowercase)
 - Unique across all users
 
 **Username Validation**:
+
 - 3-30 characters
 - Alphanumeric, underscore, hyphen only
 - Case-insensitive (stored lowercase)
 - Unique across all users
 
 **Name Validation**:
+
 - First name: 1-100 characters, letters/spaces/apostrophes/hyphens
 - Last name: 1-100 characters, letters/spaces/apostrophes/hyphens
 
 **D&D Profile Validation**:
+
 - displayName: Optional, max 100 characters
 - timezone: Non-empty string, valid timezone identifier
 - dndEdition: Max 50 characters
@@ -135,12 +140,14 @@ interface IUser extends Document {
 - primaryRole: Must be one of enum values if provided
 
 **Usage Metrics Validation**:
+
 - All counts must be non-negative integers
 - Increments use atomic $inc operations to prevent race conditions
 
 ### State Transitions
 
 **Profile Setup Flow**:
+
 ```
 User Created (Clerk webhook)
   → profileSetupCompleted: false
@@ -156,6 +163,7 @@ Profile Completed
 ```
 
 **Subscription Tier Transitions**:
+
 ```
 New User: 'free' (default)
   ↓ (upgrade via Stripe)
@@ -171,6 +179,7 @@ Any tier can downgrade to any lower tier
 ```
 
 **Sync Status Flow**:
+
 ```
 User Created: 'pending'
   → First webhook processed: 'active'
@@ -181,18 +190,22 @@ User Created: 'pending'
 ### Relationships
 
 **User → Parties** (future):
+
 - One user can own multiple parties
 - Constrained by subscription tier limits
 
 **User → Characters** (future):
+
 - One user can create multiple characters
 - Constrained by subscription tier limits (charactersCreatedCount)
 
 **User → Encounters** (future):
+
 - One user can create multiple encounters
 - Constrained by subscription tier limits
 
 **User → Sessions** (future):
+
 - One user can have multiple sessions
 - Tracked via sessionsCount metric
 
@@ -236,12 +249,14 @@ export const SUBSCRIPTION_LIMITS = {
 ## Data Migration
 
 ### Phase 1: No Migration Required
+
 - All new fields are optional or have defaults
 - MongoDB handles missing fields gracefully
 - Existing User documents continue to function
 - New fields populate on first read/update
 
 ### Future Considerations
+
 - If usage metrics grow complex → Extract to separate UsageMetrics collection
 - If D&D preferences expand significantly → Extract to UserProfile subdocument
 - If metrics require time-series analysis → Implement event logging
@@ -249,21 +264,25 @@ export const SUBSCRIPTION_LIMITS = {
 ## Security Considerations
 
 **Sensitive Fields** (never exposed to client):
+
 - passwordHash (for local auth users)
 - emailVerificationToken
 - passwordResetToken
 - passwordResetExpires
 
 **Admin-Only Modifications**:
+
 - role field (user → admin requires manual DB update)
 - subscriptionTier (managed via Stripe webhooks or admin panel)
 
 **User-Modifiable Fields**:
+
 - displayName, timezone, dndEdition, experienceLevel, primaryRole
 - preferences object
 - profileSetupCompleted (indirectly via form submission)
 
 **System-Managed Fields**:
+
 - clerkId, lastClerkSync, syncStatus (Clerk webhooks)
 - sessionsCount, charactersCreatedCount, campaignsCreatedCount (usage tracking)
 - createdAt, updatedAt, lastLoginAt (automatic timestamps)
@@ -271,18 +290,21 @@ export const SUBSCRIPTION_LIMITS = {
 ## Performance Considerations
 
 **Read Patterns**:
+
 - Primary key lookup by _id: O(1) with index
 - Clerk ID lookup: O(1) with sparse index
 - Email/username lookup: O(1) with unique indexes
 - Profile reads always fetch complete user document (no JOINs needed)
 
 **Write Patterns**:
+
 - User creation: Single document insert
 - Profile update: Single document update (atomic)
 - Usage increment: Atomic $inc operation (no read-modify-write cycle)
 - Clerk sync: Upsert by clerkId (idempotent)
 
 **Optimization Notes**:
+
 - Embedded usage metrics avoid JOIN overhead
 - Sparse index on clerkId saves space for local auth users
 - Compound indexes deferred until query patterns established
