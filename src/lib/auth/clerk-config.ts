@@ -52,12 +52,18 @@ export const clerkConfig = {
 } as const
 
 // Environment validation
-if (!clerkConfig.publishableKey) {
-  throw new Error('NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is required')
-}
+// Only validate at runtime, not during build (NEXT_PHASE check)
+const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build'
 
-if (!clerkConfig.secretKey) {
-  throw new Error('CLERK_SECRET_KEY is required')
+if (!isBuildTime) {
+  if (!clerkConfig.publishableKey) {
+    throw new Error('NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is required')
+  }
+
+  // Secret key is only needed server-side at runtime
+  if (typeof window === 'undefined' && !clerkConfig.secretKey) {
+    throw new Error('CLERK_SECRET_KEY is required')
+  }
 }
 
 export default clerkConfig
