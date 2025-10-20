@@ -19,7 +19,7 @@ test.describe('Profile Setup and Management', () => {
       await expect(page.locator('h1, h2, h3')).toContainText(/Welcome to D&D Tracker|Set Up Your D&D Profile/i);
 
       // Fill out profile form
-      await page.fill('input[name="displayName"]', 'Dungeon Master Alex');
+      await page.getByTestId('profile-form-display-name').fill('Dungeon Master Alex');
 
       // Timezone should default to UTC
       const timezoneInput = page.locator('input[name="timezone"]');
@@ -39,7 +39,7 @@ test.describe('Profile Setup and Management', () => {
       await page.selectOption('select[name="primaryRole"]', 'dm');
 
       // Submit form
-      await page.click('button:has-text("Complete Profile")');
+      await page.getByTestId('profile-form-submit-button').click();
 
       // Verify redirect to dashboard
       await page.waitForURL(/\/dashboard/, { timeout: 5000 });
@@ -83,7 +83,7 @@ test.describe('Profile Setup and Management', () => {
       await expect(page.locator('h3')).toContainText(/Your D&D Profile/i);
 
       // Update display name
-      const displayNameInput = page.locator('input[name="displayName"]');
+      const displayNameInput = page.getByTestId('profile-form-display-name');
       await displayNameInput.clear();
       await displayNameInput.fill('DM Alex the Great');
 
@@ -94,7 +94,7 @@ test.describe('Profile Setup and Management', () => {
       await page.selectOption('select[name="primaryRole"]', 'both');
 
       // Submit form
-      await page.click('button:has-text("Save Changes")');
+      await page.getByTestId('profile-form-submit-button').click();
 
       // Verify success message appears
       await expect(page.locator('text=/Profile updated successfully|success/i')).toBeVisible({
