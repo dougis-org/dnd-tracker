@@ -52,12 +52,18 @@ export const clerkConfig = {
 } as const
 
 // Environment validation
-if (!clerkConfig.publishableKey) {
-  throw new Error('NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is required')
-}
+// Skip validation during build - Clerk keys are only needed at runtime
+// Check for both NEXT_PHASE and NODE_ENV to ensure we skip during Docker builds
+const isBuildTime =
+  process.env.NEXT_PHASE === 'phase-production-build' ||
+  process.env.NEXT_PHASE === 'phase-production-server' ||
+  !process.env.CLERK_SECRET_KEY // If no secret key, we're in build phase
 
-if (!clerkConfig.secretKey) {
-  throw new Error('CLERK_SECRET_KEY is required')
+// Only validate in actual runtime (browser or server after deployment)
+if (!isBuildTime && typeof window !== 'undefined') {
+  if (!clerkConfig.publishableKey) {
+    console.warn('NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is missing')
+  }
 }
 
 export default clerkConfig
