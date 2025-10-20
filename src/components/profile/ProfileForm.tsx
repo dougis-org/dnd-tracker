@@ -16,6 +16,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { profileSetupSchema, type ProfileSetup } from '@/lib/validations/user';
+import { EXPERIENCE_LEVEL_OPTIONS, PRIMARY_ROLE_OPTIONS } from '@/lib/validations/constants';
 import type { IUser } from '@/lib/db/models/User';
 
 interface ProfileFormProps {
@@ -133,11 +134,11 @@ export default function ProfileForm({
               aria-invalid={errors.experienceLevel ? 'true' : 'false'}
             >
               <option value="">Select experience level</option>
-              <option value="new">New</option>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="experienced">Experienced</option>
-              <option value="veteran">Veteran</option>
+              {EXPERIENCE_LEVEL_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
             {errors.experienceLevel && (
               <p className="text-sm text-red-600" role="alert">
@@ -156,9 +157,11 @@ export default function ProfileForm({
               aria-invalid={errors.primaryRole ? 'true' : 'false'}
             >
               <option value="">Select primary role</option>
-              <option value="dm">DM</option>
-              <option value="player">Player</option>
-              <option value="both">Both</option>
+              {PRIMARY_ROLE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
             {errors.primaryRole && (
               <p className="text-sm text-red-600" role="alert">

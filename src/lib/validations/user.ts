@@ -34,6 +34,9 @@ const nameSchema = z
 const createOptionalSchema = <T extends z.ZodTypeAny>(schema: T) =>
   schema.optional().nullable();
 
+// Helper to preprocess empty strings/null to undefined for optional fields
+const preprocessOptional = (val: unknown) => (val === '' || val === null ? undefined : val);
+
 // Subscription tier validation
 export const subscriptionTierSchema = z.enum(
   ['free', 'seasoned', 'expert', 'master', 'guild'],
@@ -110,19 +113,13 @@ export const primaryRoleSchema = z.enum(['dm', 'player', 'both'], {
  */
 export const profileSetupSchema = z.object({
   displayName: z.preprocess(
-    (val) => (val === '' || val === null ? undefined : val),
+    preprocessOptional,
     z.string().max(100, 'Display name cannot exceed 100 characters').trim().optional()
   ),
   timezone: z.string().default('UTC'),
   dndEdition: dndEditionSchema,
-  experienceLevel: z.preprocess(
-    (val) => (val === '' || val === null ? undefined : val),
-    experienceLevelSchema.optional()
-  ),
-  primaryRole: z.preprocess(
-    (val) => (val === '' || val === null ? undefined : val),
-    primaryRoleSchema.optional()
-  ),
+  experienceLevel: z.preprocess(preprocessOptional, experienceLevelSchema.optional()),
+  primaryRole: z.preprocess(preprocessOptional, primaryRoleSchema.optional()),
 });
 
 // ========================================

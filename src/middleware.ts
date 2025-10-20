@@ -27,7 +27,8 @@ const skipProfileCheck = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
-  const { userId } = await auth();
+  const authData = await auth();
+  const { userId, sessionClaims } = authData;
 
   // Allow public routes without auth
   if (isPublicRoute(request)) {
@@ -46,10 +47,17 @@ export default clerkMiddleware(async (auth, request) => {
     return NextResponse.next();
   }
 
-  // For authenticated routes, check profile setup status
-  // Note: We can't easily access the database in middleware
-  // So we'll use a cookie or rely on the page components to handle this
-  // This is a simplified version - full implementation would need session store
+  // Check profile setup status from Clerk publicMetadata
+  // This is synced from MongoDB via webhook when profile is updated
+  const profileSetupCompleted =
+    (sessionClaims?.publicMetadata as { profileSetupCompleted?: boolean })
+      ?.profileSetupCompleted ?? false;
+
+  if (!profileSetupCompleted) {
+    const profileSetupUrl = new URL('/profile-setup', request.url);
+    return NextResponse.redirect(profileSetupUrl);
+  }
+
   return NextResponse.next();
 });
 

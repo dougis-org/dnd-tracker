@@ -8,25 +8,13 @@
  */
 
 import ProfileSetupWizard from '@/components/profile/ProfileSetupWizard';
+import { updateUserProfile } from '@/lib/services/client/user';
 import type { ProfileSetup } from '@/lib/validations/user';
 
 export default function ProfileSetupClient() {
-
   const handleComplete = async (data: ProfileSetup & { profileSetupCompleted: boolean }) => {
     try {
-      const response = await fetch('/api/users/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to update profile');
-      }
-
+      await updateUserProfile(data, 'Failed to update profile');
       // Success - wizard will handle redirect
     } catch (error) {
       console.error('Failed to update profile:', error);
@@ -34,32 +22,5 @@ export default function ProfileSetupClient() {
     }
   };
 
-  const handleSkip = async (data: { profileSetupCompleted: boolean }) => {
-    try {
-      const response = await fetch('/api/users/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to skip profile setup');
-      }
-
-      // Success - wizard will handle redirect
-    } catch (error) {
-      console.error('Failed to skip profile setup:', error);
-      throw error;
-    }
-  };
-
-  return (
-    <ProfileSetupWizard
-      onComplete={handleComplete}
-      onSkip={handleSkip}
-    />
-  );
+  return <ProfileSetupWizard onComplete={handleComplete} />;
 }

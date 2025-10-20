@@ -10,6 +10,7 @@
 
 import { useRouter } from 'next/navigation';
 import ProfileForm from '@/components/profile/ProfileForm';
+import { updateUserProfile } from '@/lib/services/client/user';
 import type { IUser } from '@/lib/db/models/User';
 import type { ProfileSetup } from '@/lib/validations/user';
 
@@ -21,18 +22,7 @@ export default function ProfileSettingsClient({ user }: ProfileSettingsClientPro
   const router = useRouter();
 
   const handleSubmit = async (data: ProfileSetup) => {
-    const response = await fetch('/api/users/profile', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to update profile');
-    }
+    await updateUserProfile(data, 'Failed to update profile');
 
     // Refresh the page to show updated data
     router.refresh();
