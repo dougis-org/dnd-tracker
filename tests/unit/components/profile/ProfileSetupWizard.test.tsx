@@ -73,15 +73,25 @@ describe('ProfileSetupWizard Component', () => {
 
     test('should show loading state while skipping', async () => {
       const user = userEvent.setup();
-      const onSkip = jest.fn(() => new Promise((resolve) => setTimeout(resolve, 100)));
+      let resolveSkip: (() => void) | undefined;
+      const onSkip = jest.fn(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveSkip = resolve;
+          })
+      );
 
       render(<ProfileSetupWizard onSkip={onSkip} />);
 
       const skipButton = screen.getByRole('button', { name: /skip for now/i });
       await user.click(skipButton);
 
+      // Check loading state immediately
       expect(screen.getByText('Skipping...')).toBeInTheDocument();
       expect(skipButton).toBeDisabled();
+
+      // Resolve the promise to clean up
+      resolveSkip?.();
     });
   });
 

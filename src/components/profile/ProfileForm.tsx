@@ -78,6 +78,7 @@ export default function ProfileForm({
             <Label htmlFor="displayName">Display Name</Label>
             <Input
               id="displayName"
+              data-testid="profile-form-display-name"
               type="text"
               placeholder="e.g., Dungeon Master Alex"
               {...register('displayName')}
@@ -187,7 +188,12 @@ export default function ProfileForm({
           )}
 
           {/* Submit Button */}
-          <Button type="submit" disabled={isSubmitting} className="w-full">
+          <Button
+            type="submit"
+            data-testid="profile-form-submit-button"
+            disabled={isSubmitting}
+            className="w-full"
+          >
             {isSubmitting ? 'Saving...' : submitLabel}
           </Button>
         </form>
