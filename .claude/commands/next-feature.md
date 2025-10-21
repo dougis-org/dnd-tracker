@@ -6,6 +6,12 @@ description: Find the next feature to work on from the roadmap and initiate feat
 
 Start the next feature from the D&D Tracker roadmap. **All contributors must follow CONTRIBUTING.md standards.**
 
+## Step 0: Sync with Remote
+
+1. Switch to main branch: `git checkout main`
+2. Pull latest changes: `git pull origin main`
+3. This ensures all agents are working from the same roadmap file and prevents conflicts
+
 ## Step 1: Find the Next Feature
 
 1. Read `./docs/Feature-Roadmap.md`
@@ -32,7 +38,14 @@ Update Feature-Roadmap.md before proceeding:
 
 This prevents parallel workstreams from starting the same feature.
 
-## Step 4: Generate Feature Description
+## Step 4: Commit and Push Roadmap Update
+
+1. Stage the updated file: `git add docs/Feature-Roadmap.md`
+2. Commit with conventional message: `git commit -m "docs: mark feature [NUMBER] as in progress"`
+3. Push to main: `git push origin main`
+4. This ensures all agents immediately see that the feature is being worked on and don't start duplicate work
+
+## Step 5: Generate Feature Description
 
 Create a feature description including:
 
@@ -65,11 +78,11 @@ Refer to CONTRIBUTING.md for:
 - Database & security best practices
 - Git & PR workflow
 
-## Step 5: Execute /speckit.specify
+## Step 6: Execute /speckit.specify
 
 Run `/speckit.specify` with the feature description. The user ran `/next-feature` to start, so proceed automatically.
 
-## Step 6: Report Completion
+## Step 7: Report Completion
 
 After /speckit.specify completes, report:
 

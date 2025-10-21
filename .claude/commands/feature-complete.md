@@ -15,6 +15,12 @@ Provide the feature number and PR number:
 
 If no arguments provided, ask the user for both the feature number and PR number.
 
+## Step 0: Sync with Remote
+
+1. Switch to main branch: `git checkout main`
+2. Pull latest changes: `git pull origin main`
+3. This ensures all agents are working from the same roadmap file and prevents conflicts
+
 ## Step 1: Get PR Details
 
 1. Parse the feature number and PR number from arguments
@@ -84,9 +90,16 @@ If this feature completes an entire phase:
 2. Change status to: `**Timeline**: Weeks X-Y | **Status**: ✅ Complete (Completed [DATE])`
 3. Add actual completion date if different from estimate
 
-## Step 6: Save and Report
+## Step 6: Commit and Push Changes
 
-1. Save the updated Feature-Roadmap.md
+1. Stage the updated file: `git add docs/Feature-Roadmap.md`
+2. Commit with conventional message: `git commit -m "docs: mark feature [NUMBER] as complete"`
+3. Push to main: `git push origin main`
+4. This ensures all agents are immediately working from the updated roadmap
+
+## Step 7: Save and Report
+
+1. Verify the updated Feature-Roadmap.md is saved
 2. Run `npm run lint:markdown:fix` to ensure formatting
 3. Report completion with summary
 
