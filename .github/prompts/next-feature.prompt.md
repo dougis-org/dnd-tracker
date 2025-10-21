@@ -1,5 +1,6 @@
 ---
-description: Find the next feature to work on from the roadmap and run /specify to start it.
+description: Find the next feature to work on from the roadmap and run 
+`/speckit.specify` to start it.
 ---
 
 **Primary Command Location**: `.claude/commands/next-feature.md`

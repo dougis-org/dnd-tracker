@@ -1,43 +1,40 @@
 ---
-description: Find the next feature to work on from the roadmap and run /specify to start it.
+description: Find the next feature to work on from the roadmap and initiate feature specification
 ---
 
-You are starting the next feature in the D&D Tracker development roadmap. Follow these steps:
+# Next Feature
+
+Start the next feature from the D&D Tracker roadmap. **All contributors must follow CONTRIBUTING.md standards.**
 
 ## Step 1: Find the Next Feature
 
-1. Read `/home/doug/ai-dev-1/dnd-tracker/docs/Feature-Roadmap.md`
-2. Locate the first feature under "## Planned Features (Priority Order)" that is NOT marked as complete (✅) and NOT marked as "In Progress"
-3. Extract the following details from that feature:
+1. Read `./docs/Feature-Roadmap.md`
+2. Locate the first feature under "## Planned Features (Priority Order)" that is NOT complete (✅) and NOT "In Progress"
+3. Extract:
    - Feature number (e.g., "003")
    - Feature name (e.g., "Character Management System")
-   - Description (the full description paragraph)
-   - User Value (the paragraph explaining value to users)
-   - Scope (the bulleted list of what's included)
-   - Key Entities (the data models needed)
-   - API Endpoints (the list of endpoints)
-   - Dependencies (what must be complete first)
+   - Description, User Value, Scope, Key Entities, API Endpoints, Dependencies
 
 ## Step 2: Verify Dependencies
 
-1. Check that all listed dependencies are marked as ✅ Complete in the roadmap
-2. If dependencies are NOT complete, STOP and warn the user which features must be finished first
+1. Check that all dependencies are marked ✅ Complete in the roadmap
+2. If not complete, warn the user which features must finish first
 3. Only proceed if all dependencies are satisfied
 
 ## Step 3: Update Roadmap - Mark as In Progress
 
-Before running /specify, update the Feature-Roadmap.md to mark this feature as "In Progress":
+Update Feature-Roadmap.md before proceeding:
 
-1. Find the feature section in Feature-Roadmap.md
-2. Change the status line to: `**Status**: 🚧 In Progress (Started [TODAY'S DATE])`
-3. Add a line: `**Branch**: [branch-name-from-step-4]`
-4. Save the updated roadmap
+1. Find the feature section
+2. Change status to: `**Status**: 🚧 In Progress (Started [TODAY'S DATE])`
+3. Add: `**Branch**: [branch-name-from-step-4]`
+4. Save the roadmap
 
-This prevents other parallel workstreams from starting the same feature.
+This prevents parallel workstreams from starting the same feature.
 
 ## Step 4: Generate Feature Description
 
-Create a comprehensive feature description in natural language that includes:
+Create a feature description including:
 
 ```
 Feature [NUMBER]: [NAME]
@@ -45,42 +42,39 @@ Feature [NUMBER]: [NAME]
 [DESCRIPTION]
 
 User Value:
-[USER VALUE paragraph]
+[USER VALUE]
 
 What to build:
-[Convert SCOPE bullets into natural language sentences]
+[Convert SCOPE bullets into natural language]
 
 Data needed:
-[Convert KEY ENTITIES into descriptions]
+[Key data models/entities]
 
 API endpoints required:
-[List the endpoints with brief descriptions]
+[List endpoints with descriptions]
 
 Dependencies:
-[List the completed features this builds upon]
-
-Technical context:
-- This is a Next.js 15.5+ full-stack application
-- Using TypeScript 5.9+, MongoDB 8.0+, Mongoose ODM
-- Authentication via Clerk 5.0+
-- UI with shadcn/ui components
-- Testing with Jest + Playwright
-- Following TDD approach with spec kit process
-- All files must be under 450 lines, functions under 50 lines
-- 80%+ test coverage required
+[Completed features this builds upon]
 ```
 
-## Step 5: Run /specify
+Refer to CONTRIBUTING.md for:
 
-Run the `/specify` command with the feature description you generated above. The complete natural language description should be passed as the argument.
+- Code organization standards
+- Testing & quality requirements (80%+ coverage, max 450 lines/file, max 50 lines/function)
+- TypeScript & component standards
+- Database & security best practices
+- Git & PR workflow
 
-**IMPORTANT**: Execute `/specify` immediately - do NOT ask the user if they want to proceed. The user ran `/next-feature` to start the next feature, so proceed automatically.
+## Step 5: Execute /speckit.specify
+
+Run `/speckit.specify` with the feature description. The user ran `/next-feature` to start, so proceed automatically.
 
 ## Step 6: Report Completion
 
-After /specify completes, report:
+After /speckit.specify completes, report:
 
-"✅ Started Feature [NUMBER]: [NAME]
+```
+✅ Started Feature [NUMBER]: [NAME]
 - Branch: [branch-name]
 - Spec file: [spec-file-path]
 - Roadmap updated with 'In Progress' status
@@ -90,22 +84,24 @@ Next steps:
 1. Run /plan to generate design artifacts
 2. Run /tasks to generate implementation tasks
 3. Run /implement to execute the feature
-4. When complete, run /feature-complete to update the roadmap"
+4. When complete, run /feature-complete to update the roadmap
+```
 
 ## Roadmap Update on Feature Completion
 
-**IMPORTANT**: When a feature is fully complete (all tasks done, PR merged), update the roadmap:
+When a feature is fully complete (all tasks done, PR merged), update the roadmap:
 
 1. Find the feature in Feature-Roadmap.md
 2. Change status to: `**Status**: Complete ✅ (Merged via PR #[NUMBER])`
 3. Add completion date: `**Completed**: [MERGE DATE]`
-4. Update the "Current Progress" section at the bottom:
+4. Update the "Current Progress" section:
    - Increment the completed feature count
    - Update the percentage
    - Update "Next Feature" to point to the next planned feature
-5. If this completes a Phase, update the Phase status to "✅ Complete"
+5. If this completes a Phase, update Phase status to "✅ Complete"
 
 Example update:
+
 ```markdown
 ### ✅ Feature 003: Character Management System
 
@@ -123,17 +119,17 @@ Example update:
 
 ## Error Handling
 
-- If no planned features remain: Report "All features in the roadmap are complete! 🎉"
-- If dependencies not met: Report "Cannot start Feature [NUMBER] yet. Must complete [dependency list] first."
-- If roadmap file not found: Report "Feature-Roadmap.md not found. Please create the roadmap first."
-- If feature already "In Progress": Report "Feature [NUMBER] is already being worked on. Please choose a different feature or complete the current one first."
+- If no planned features remain: "All features in the roadmap are complete! 🎉"
+- If dependencies not met: "Cannot start Feature [NUMBER] yet. Must complete [dependency list] first."
+- If roadmap file not found: "Feature-Roadmap.md not found. Please create the roadmap first."
+- If feature already "In Progress": "Feature [NUMBER] is already being worked on. Please choose a different feature or complete the current one first."
 
-## Supporting Parallel Workstreams
+## Parallel Workstream Support
 
-This command supports multiple developers or AI agents working in parallel by:
+This command supports concurrent development by:
 
-1. **Checking for "In Progress" status** - Only selects features not yet started
-2. **Updating roadmap immediately** - Marks feature as "In Progress" before starting work
-3. **Clear completion tracking** - Provides /feature-complete process to update roadmap when done
+1. Checking for "In Progress" status—only selects features not yet started
+2. Updating the roadmap immediately—marks feature as "In Progress" before starting work
+3. Providing clear completion tracking via `/feature-complete` to update roadmap when done
 
-This prevents duplication and allows multiple features to be developed concurrently.
+This prevents duplication and enables multiple features to be developed concurrently.
