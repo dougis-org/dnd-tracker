@@ -5,6 +5,7 @@
  * Dependencies: T012 (User schema), T017 (auth middleware), T018 (validation schemas)
  */
 import { NextRequest, NextResponse } from 'next/server'
+import { clerkClient } from '@clerk/nextjs/server'
 import User from '@/lib/db/models/User'
 import { validateProfileUpdate } from '@/lib/validations/auth'
 import { ApiErrors, withAuthAndDb, formatUserProfile, buildProfileUpdateObject } from '@/lib/api/common'
@@ -50,6 +51,21 @@ export async function PUT(request: NextRequest) {
 
       if (!updatedUser) {
         return ApiErrors.internalError('Failed to retrieve updated profile')
+      }
+
+      // Sync profileSetupCompleted to Clerk publicMetadata for middleware access
+      if ('profileSetupCompleted' in updateObject) {
+        try {
+          const client = await clerkClient();
+          await client.users.updateUserMetadata(userId, {
+            publicMetadata: {
+              profileSetupCompleted: updatedUser.profileSetupCompleted,
+            },
+          });
+        } catch (error) {
+          console.error('Failed to sync profileSetupCompleted to Clerk:', error);
+          // Don't fail the request if Clerk sync fails
+        }
       }
 
       // Return updated user profile
