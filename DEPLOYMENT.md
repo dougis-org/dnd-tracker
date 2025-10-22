@@ -10,19 +10,13 @@
 
 ### Deploying to Fly.io
 
-Due to Next.js requiring `NEXT_PUBLIC_` environment variables at build time, you must pass them as build secrets:
+Simply run:
 
 ```bash
-flyctl deploy \
-  --build-secret NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY \
-  --build-secret NEXT_PUBLIC_APP_URL
+flyctl deploy
 ```
 
-This command:
-
-- Reads the secrets from your Fly.io app's secrets
-- Passes them to Docker as build arguments
-- Makes them available during the Next.js build process
+The deployment uses Fly.io secrets which are automatically available at runtime in the container environment. No special build flags needed!
 
 ### Secrets Configuration
 
@@ -42,33 +36,35 @@ flyctl secrets set MONGODB_URI=mongodb+srv://xxx
 
 ### Automatic Deployments
 
-To enable automatic deployments from GitHub:
+You can set up automatic deployments using Fly.io's GitHub integration or GitHub Actions.
 
-1. Add the Fly.io GitHub Action to `.github/workflows/deploy.yml`
-2. Configure the action to use `--build-secret` flags
-3. Add `FLY_API_TOKEN` to GitHub secrets
+For Fly.io's built-in GitHub integration:
+
+1. Visit <https://fly.io/apps/dnd-tracker/github>
+2. Connect your GitHub repository
+3. Configure automatic deployments on push to `main`
 
 ### Troubleshooting
 
-**Build fails with "InvalidCharacterError":**
+**500 Error "Missing publishableKey":**
 
-- This indicates the `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is not being passed correctly
-- Ensure you're using `flyctl deploy --build-secret` flags
 - Verify secrets are set: `flyctl secrets list`
+- Ensure `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and other required secrets exist
+- Redeploy with `flyctl deploy --no-cache` to force a fresh build
 
-**500 Error on deployment:**
+**Check application logs:**
 
-- Check logs: `flyctl logs`
-- Verify all required secrets are set
-- Ensure secrets don't contain invalid characters or encoding issues
+```bash
+flyctl logs
+```
 
 ### Environment Variables
 
 | Variable | Type | Required | Description |
 |----------|------|----------|-------------|
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Build | Yes | Clerk publishable key (starts with `pk_`) |
-| `NEXT_PUBLIC_APP_URL` | Build | Yes | Full URL of the deployed app |
-| `CLERK_SECRET_KEY` | Runtime | Yes | Clerk secret key (starts with `sk_`) |
-| `MONGODB_URI` | Runtime | Yes | MongoDB connection string |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Secret | Yes | Clerk publishable key (starts with `pk_`) |
+| `NEXT_PUBLIC_APP_URL` | Secret | Yes | Full URL of the deployed app |
+| `CLERK_SECRET_KEY` | Secret | Yes | Clerk secret key (starts with `sk_`) |
+| `MONGODB_URI` | Secret | Yes | MongoDB connection string |
 
-**Note:** `NEXT_PUBLIC_` variables must be available at build time, hence the `--build-secret` requirement.
+**Note:** All secrets are set via `flyctl secrets set` and are automatically available in the container at runtime.

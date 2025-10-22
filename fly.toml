@@ -11,6 +11,9 @@ NODE_ENV = 'production'
 PORT = '3000'
 HOSTNAME = '0.0.0.0'
 
+# Note: NEXT_PUBLIC_ secrets are set via flyctl secrets
+# They will be available at runtime through the container environment
+
 [http_service]
 internal_port = 3000
 force_https = true
