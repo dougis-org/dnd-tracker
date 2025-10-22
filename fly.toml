@@ -5,6 +5,11 @@ app = 'dnd-tracker'
 primary_region = 'sjc'
 
 [build]
+# Pass secrets as build arguments for Next.js NEXT_PUBLIC_ variables
+# These reference the Fly.io secrets and make them available during Docker build
+[build.args]
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "{{ .Env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}"
+  NEXT_PUBLIC_APP_URL = "{{ .Env.NEXT_PUBLIC_APP_URL }}"
 
 [env]
 NODE_ENV = 'production'
