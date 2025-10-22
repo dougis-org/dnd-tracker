@@ -2,10 +2,12 @@ import Link from 'next/link'
 import { Shield, Swords, Users, Clock, Star, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { SiteHeader } from '@/components/layout/site-header'
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-card to-background">
+      <SiteHeader />
       {/* Hero Section */}
       <section className="relative py-20 px-4">
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />

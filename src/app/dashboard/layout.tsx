@@ -1,7 +1,6 @@
-import { ClerkProvider, UserButton } from '@clerk/nextjs'
+import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { Shield, Swords, Users, BookOpen, Settings, Home } from 'lucide-react'
-import clerkConfig from '@/lib/auth/clerk-config'
 import { Button } from '@/components/ui/button'
 
 export default function DashboardLayout({
@@ -10,8 +9,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider publishableKey={clerkConfig.publishableKey}>
-      <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
         {/* Navigation Header */}
         <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
           <div className="container mx-auto px-4">
@@ -157,6 +155,5 @@ export default function DashboardLayout({
           </div>
         </footer>
       </div>
-    </ClerkProvider>
   )
 }
