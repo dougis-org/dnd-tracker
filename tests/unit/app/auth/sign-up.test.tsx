@@ -2,8 +2,18 @@
  * Unit tests for SignUp page
  */
 
-import { describe, test, expect, jest } from '@jest/globals'
+import { describe, test, expect, jest, beforeEach } from '@jest/globals'
 import { render, screen } from '@testing-library/react'
+import { redirect } from 'next/navigation'
+
+// Mock Next.js navigation - redirect throws an error internally
+const mockRedirect = jest.fn((url: string) => {
+  throw new Error(`NEXT_REDIRECT: ${url}`)
+})
+
+jest.mock('next/navigation', () => ({
+  redirect: mockRedirect,
+}))
 
 // Mock Clerk's SignUp component
 const mockSignUp = jest.fn((props) => (
@@ -12,8 +22,15 @@ const mockSignUp = jest.fn((props) => (
   </div>
 ))
 
+// Mock Clerk auth
+const mockAuth = jest.fn()
+
 jest.mock('@clerk/nextjs', () => ({
   SignUp: mockSignUp,
+}))
+
+jest.mock('@clerk/nextjs/server', () => ({
+  auth: mockAuth,
 }))
 
 // Dynamically import page after mocks are set up
@@ -23,9 +40,59 @@ const getSignUpPage = async () => {
 }
 
 describe('SignUpPage', () => {
-  test('renders the Clerk SignUp component with correct props', async () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('redirects to dashboard when user is signed in with complete profile', async () => {
+    mockAuth.mockResolvedValue({
+      userId: 'user_123',
+      sessionClaims: {
+        publicMetadata: {
+          profileSetupCompleted: true,
+        },
+      },
+    })
+
     const SignUpPage = await getSignUpPage()
-    render(<SignUpPage />)
+
+    try {
+      await SignUpPage()
+    } catch (error) {
+      // redirect throws an error internally, which is expected
+      expect(mockRedirect).toHaveBeenCalledWith('/dashboard')
+    }
+  })
+
+  test('redirects to profile-setup when user is signed in without complete profile', async () => {
+    mockAuth.mockResolvedValue({
+      userId: 'user_123',
+      sessionClaims: {
+        publicMetadata: {
+          profileSetupCompleted: false,
+        },
+      },
+    })
+
+    const SignUpPage = await getSignUpPage()
+
+    try {
+      await SignUpPage()
+    } catch (error) {
+      // redirect throws an error internally, which is expected
+      expect(mockRedirect).toHaveBeenCalledWith('/profile-setup')
+    }
+  })
+
+  test('renders the Clerk SignUp component for unauthenticated users', async () => {
+    mockAuth.mockResolvedValue({
+      userId: null,
+      sessionClaims: null,
+    })
+
+    const SignUpPage = await getSignUpPage()
+    const result = await SignUpPage()
+    render(result as React.ReactElement)
 
     expect(screen.getByTestId('clerk-sign-up')).toBeInTheDocument()
     expect(mockSignUp).toHaveBeenCalled()
@@ -39,9 +106,15 @@ describe('SignUpPage', () => {
     })
   })
 
-  test('wraps SignUp in centered container', async () => {
+  test('wraps SignUp in centered container for unauthenticated users', async () => {
+    mockAuth.mockResolvedValue({
+      userId: null,
+      sessionClaims: null,
+    })
+
     const SignUpPage = await getSignUpPage()
-    const { container } = render(<SignUpPage />)
+    const result = await SignUpPage()
+    const { container } = render(result as React.ReactElement)
 
     const wrapper = container.querySelector('.flex.items-center.justify-center')
     expect(wrapper).toBeInTheDocument()
