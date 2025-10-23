@@ -14,7 +14,7 @@ export const clerkConfig = {
   signInUrl: '/sign-in',
   signUpUrl: '/sign-up',
   afterSignInUrl: '/dashboard',
-  afterSignUpUrl: '/profile/setup',
+  afterSignUpUrl: '/profile-setup',
 
   // Appearance customization for D&D theme
   appearance: {
