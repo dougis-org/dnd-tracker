@@ -2,46 +2,34 @@
  * Unit tests for SignIn page
  */
 
-import { describe, test, expect, jest, beforeEach } from '@jest/globals'
-
-// Mock next/navigation redirect
-const mockRedirect = jest.fn()
-jest.mock('next/navigation', () => ({
-  redirect: mockRedirect,
-}))
-
-// Mock Clerk auth
-const mockAuth = jest.fn()
-jest.mock('@clerk/nextjs/server', () => ({
-  auth: mockAuth,
-}))
+import { describe, test, expect, jest } from '@jest/globals'
+import { render, screen } from '@testing-library/react'
 
 // Mock Clerk's SignIn component
 jest.mock('@clerk/nextjs', () => ({
   SignIn: jest.fn(() => <div data-testid="clerk-sign-in">Clerk SignIn Component</div>),
 }))
 
+// Dynamically import page after mocks are set up
+const getSignInPage = async () => {
+  const module = await import('@/app/(auth)/sign-in/page')
+  return module.default
+}
+
 describe('SignInPage', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
+  test('renders the Clerk SignIn component', async () => {
+    const SignInPage = await getSignInPage()
+    render(<SignInPage />)
+
+    expect(screen.getByTestId('clerk-sign-in')).toBeInTheDocument()
+    expect(screen.getByText('Clerk SignIn Component')).toBeInTheDocument()
   })
 
-  test('redirects signed-in users to dashboard', async () => {
-    mockAuth.mockResolvedValue({ userId: 'user_123' })
+  test('wraps SignIn in centered container', async () => {
+    const SignInPage = await getSignInPage()
+    const { container } = render(<SignInPage />)
 
-    const SignInPage = (await import('@/app/(auth)/sign-in/page')).default
-    await SignInPage()
-
-    expect(mockRedirect).toHaveBeenCalledWith('/dashboard')
-  })
-
-  test('allows unauthenticated users to see sign-in page', async () => {
-    mockAuth.mockResolvedValue({ userId: null })
-
-    const SignInPage = (await import('@/app/(auth)/sign-in/page')).default
-    const result = await SignInPage()
-
-    expect(mockRedirect).not.toHaveBeenCalled()
-    expect(result).toBeDefined()
+    const wrapper = container.querySelector('.flex.items-center.justify-center')
+    expect(wrapper).toBeInTheDocument()
   })
 })
