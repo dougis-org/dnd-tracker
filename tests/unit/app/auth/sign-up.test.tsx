@@ -4,7 +4,6 @@
 
 import { describe, test, expect, jest, beforeEach } from '@jest/globals'
 import { render, screen } from '@testing-library/react'
-import { redirect } from 'next/navigation'
 
 // Mock Next.js navigation - redirect throws an error internally
 const mockRedirect = jest.fn((url: string) => {
@@ -56,12 +55,8 @@ describe('SignUpPage', () => {
 
     const SignUpPage = await getSignUpPage()
 
-    try {
-      await SignUpPage()
-    } catch (error) {
-      // redirect throws an error internally, which is expected
-      expect(mockRedirect).toHaveBeenCalledWith('/dashboard')
-    }
+    await expect(SignUpPage()).rejects.toThrow('NEXT_REDIRECT: /dashboard')
+    expect(mockRedirect).toHaveBeenCalledWith('/dashboard')
   })
 
   test('redirects to profile-setup when user is signed in without complete profile', async () => {
@@ -76,12 +71,8 @@ describe('SignUpPage', () => {
 
     const SignUpPage = await getSignUpPage()
 
-    try {
-      await SignUpPage()
-    } catch (error) {
-      // redirect throws an error internally, which is expected
-      expect(mockRedirect).toHaveBeenCalledWith('/profile-setup')
-    }
+    await expect(SignUpPage()).rejects.toThrow('NEXT_REDIRECT: /profile-setup')
+    expect(mockRedirect).toHaveBeenCalledWith('/profile-setup')
   })
 
   test('renders the Clerk SignUp component for unauthenticated users', async () => {
