@@ -29,6 +29,18 @@ const skipProfileCheck = createRouteMatcher([
 export default clerkMiddleware(async (auth, request) => {
   const authData = await auth();
   const { userId, sessionClaims } = authData;
+  const pathname = request.nextUrl.pathname;
+
+  // Redirect authenticated users away from auth pages
+  if (userId && (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up'))) {
+    const profileSetupCompleted = Boolean(
+      (sessionClaims?.publicMetadata as { profileSetupCompleted?: boolean })
+        ?.profileSetupCompleted
+    );
+
+    const redirectUrl = profileSetupCompleted ? '/dashboard' : '/profile-setup';
+    return NextResponse.redirect(new URL(redirectUrl, request.url));
+  }
 
   // Allow public routes without auth
   if (isPublicRoute(request)) {

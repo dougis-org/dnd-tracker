@@ -1,9 +1,8 @@
 import { SignUp } from '@clerk/nextjs'
-import { handleAuthenticatedUserRedirect } from '@/lib/auth/utils'
 
-export default async function SignUpPage() {
-  // Redirect authenticated users based on profile status
-  await handleAuthenticatedUserRedirect()
+export default function SignUpPage() {
+  // Note: Authenticated user redirects are handled in middleware (src/middleware.ts:34-42)
+  // to prevent the Clerk component from rendering for authenticated users
 
   return (
     <div className="flex items-center justify-center">
