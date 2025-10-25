@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider publishableKey={clerkConfig.publishableKey}>
+    <ClerkProvider publishableKey={clerkConfig.publishableKey} dynamic>
       <html lang="en">
         <body>{children}</body>
       </html>
