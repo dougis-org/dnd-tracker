@@ -3,7 +3,7 @@
  */
 import { describe, it, expect, beforeEach, jest } from '@jest/globals'
 import { GET, PUT } from '@/app/api/users/profile/route'
-import { auth } from '@clerk/nextjs/server'
+import { auth, clerkClient } from '@clerk/nextjs/server'
 import { connectToDatabase } from '@/lib/db/connection'
 import User from '@/lib/db/models/User'
 import { validateProfileUpdate } from '@/lib/validations/auth'
@@ -22,6 +22,7 @@ import {
 } from '@tests/utils/test-helpers'
 
 const mockAuth = auth as jest.MockedFunction<typeof auth>
+const mockClerkClient = clerkClient as jest.MockedFunction<typeof clerkClient>
 const mockConnectToDatabase = connectToDatabase as jest.MockedFunction<typeof connectToDatabase>
 const mockUser = User as any
 const mockValidateProfileUpdate = validateProfileUpdate as jest.MockedFunction<typeof validateProfileUpdate>
@@ -33,7 +34,7 @@ describe('/api/users/profile', () => {
 
   describe('GET', () => {
     it('should return user profile for authenticated user', async () => {
-      setupAuthMocks(mockAuth, {}, mockConnectToDatabase)
+      setupAuthMocks(mockAuth, mockClerkClient, mockConnectToDatabase)
       setupUserMocks(mockUser, 'found')
 
       const response = await GET()
@@ -51,7 +52,7 @@ describe('/api/users/profile', () => {
     })
 
     it('should return 404 if user not found', async () => {
-      setupAuthMocks(mockAuth, {}, mockConnectToDatabase)
+      setupAuthMocks(mockAuth, mockClerkClient, mockConnectToDatabase)
       setupUserMocks(mockUser, 'not-found')
 
       const response = await GET()
@@ -61,7 +62,7 @@ describe('/api/users/profile', () => {
 
   describe('PUT', () => {
     it('should update user profile with valid data', async () => {
-      setupAuthMocks(mockAuth, {}, mockConnectToDatabase)
+      setupAuthMocks(mockAuth, mockClerkClient, mockConnectToDatabase)
       setupUserMocks(mockUser, 'found')
       setupValidationMocks(mockValidateProfileUpdate, true, TEST_REQUEST_BODIES.PROFILE_UPDATE)
 
@@ -82,7 +83,7 @@ describe('/api/users/profile', () => {
     })
 
     it('should return 400 for invalid data', async () => {
-      setupAuthMocks(mockAuth, {}, mockConnectToDatabase)
+      setupAuthMocks(mockAuth, mockClerkClient, mockConnectToDatabase)
       setupValidationMocks(mockValidateProfileUpdate, false, undefined, 'Invalid dndRuleset')
 
       const request = createMockRequest(TEST_URLS.USERS_PROFILE, 'PUT', { profile: { dndRuleset: 'invalid' } })
@@ -92,7 +93,7 @@ describe('/api/users/profile', () => {
     })
 
     it('should return 404 if user not found during update', async () => {
-      setupAuthMocks(mockAuth, {}, mockConnectToDatabase)
+      setupAuthMocks(mockAuth, mockClerkClient, mockConnectToDatabase)
       setupUserMocks(mockUser, 'not-found')
       setupValidationMocks(mockValidateProfileUpdate, true, { profile: { displayName: 'Updated User' } })
 
@@ -103,7 +104,7 @@ describe('/api/users/profile', () => {
     })
 
     it('should return 500 if updated user cannot be retrieved', async () => {
-      setupAuthMocks(mockAuth, {}, mockConnectToDatabase)
+      setupAuthMocks(mockAuth, mockClerkClient, mockConnectToDatabase)
       setupValidationMocks(mockValidateProfileUpdate, true, { profile: { displayName: 'Updated User' } })
 
       const mockUserInstance = {
@@ -131,7 +132,7 @@ describe('/api/users/profile', () => {
     })
 
     it('should return 400 for mongoose validation errors', async () => {
-      setupAuthMocks(mockAuth, {}, mockConnectToDatabase)
+      setupAuthMocks(mockAuth, mockClerkClient, mockConnectToDatabase)
       setupValidationMocks(mockValidateProfileUpdate, true, { profile: { displayName: 'Updated User' } })
 
       const validationError = createError('ValidationError', 'Mongoose validation failed')

@@ -58,7 +58,8 @@ export function createAuthMiddleware(options: AuthMiddlewareOptions = {}) {
 
         // Try to recreate user from Clerk data
         try {
-          const clerkUser = await clerkClient.users.getUser(userId)
+          const client = await clerkClient();
+          const clerkUser = await client.users.getUser(userId)
           const newUser = await User.createFromClerkUser(clerkUser)
 
           // Inject user context

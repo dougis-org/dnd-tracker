@@ -69,7 +69,8 @@ export const setupAuthMocks = (
   userId: string | null = 'test-user-id'
 ) => {
   mockAuth.mockResolvedValue({ userId })
-  mockClerkClient.users = createClerkUsersService(userId)
+  // Clerk v6: clerkClient is now async function that returns client with users service
+  mockClerkClient.mockResolvedValue({ users: createClerkUsersService(userId) })
   mockConnectToDatabase.mockResolvedValue(undefined)
 }
 

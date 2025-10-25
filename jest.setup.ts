@@ -46,13 +46,10 @@ jest.mock('@clerk/nextjs', () => ({
 }))
 
 // Mock Clerk server-side
+// Clerk v6: clerkClient is now an async function that returns the client
 jest.mock('@clerk/nextjs/server', () => ({
   auth: jest.fn(),
-  clerkClient: {
-    users: {
-      getUser: jest.fn(),
-    },
-  },
+  clerkClient: jest.fn(),
   currentUser: jest.fn(),
 }))
 

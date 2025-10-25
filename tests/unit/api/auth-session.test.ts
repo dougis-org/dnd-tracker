@@ -20,7 +20,7 @@ import {
 } from '@tests/utils/test-helpers'
 
 const mockAuth = auth as jest.MockedFunction<typeof auth>
-const mockClerkClient = clerkClient as any
+const mockClerkClient = clerkClient as jest.MockedFunction<typeof clerkClient>
 const mockConnectToDatabase = connectToDatabase as jest.MockedFunction<typeof connectToDatabase>
 const mockUser = User as any
 
@@ -67,7 +67,10 @@ describe('/api/auth/session POST', () => {
 
   it('should return 401 when Clerk user is not found', async () => {
     setupAuthMocks(mockAuth, mockClerkClient, mockConnectToDatabase)
-    mockClerkClient.users.getUser.mockResolvedValue(null)
+    // Clerk v6: Override the mock to return null user
+    mockClerkClient.mockResolvedValue({
+      users: { getUser: jest.fn().mockResolvedValue(null) }
+    })
 
     const request = createMockRequest(TEST_URLS.AUTH_SESSION, 'POST', TEST_REQUEST_BODIES.VALID_SESSION_TOKEN)
     const response = await POST(request)

@@ -34,7 +34,8 @@ export async function POST(request: NextRequest) {
       }
 
       // Get full user data from Clerk
-      clerkUser = await clerkClient.users.getUser(userId)
+      const client = await clerkClient();
+      clerkUser = await client.users.getUser(userId)
 
       if (!clerkUser) {
         return ApiErrors.unauthorized()
