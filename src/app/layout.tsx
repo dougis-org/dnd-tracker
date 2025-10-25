@@ -14,6 +14,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
+    // dynamic prop: Clerk v6 defaults to static rendering; this enables runtime auth
+    // Required for middleware-based authentication and session checks to work properly
     <ClerkProvider publishableKey={clerkConfig.publishableKey} dynamic>
       <html lang="en">
         <body>{children}</body>
