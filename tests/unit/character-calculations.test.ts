@@ -40,7 +40,7 @@ describe('getProficiencyBonus', () => {
     [20, 6],
   ]
 
-  it.each(cases)('calculates proficiency bonus %s for total level %s', (level, expectedBonus) => {
+  it.each(cases)('awards total level %s a proficiency bonus of %s', (level, expectedBonus) => {
     expect(getProficiencyBonus(level)).toBe(expectedBonus)
   })
 })
