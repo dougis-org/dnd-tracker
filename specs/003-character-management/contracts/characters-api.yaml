@@ -1,0 +1,580 @@
+openapi: 3.0.0
+info:
+  title: Character Management API
+  description: D&D 5e Character CRUD operations with multiclass support and tier limits
+  version: 1.0.0
+  contact:
+    name: D&D Tracker Team
+
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+  - url: https://dnd-tracker.fly.dev/api
+    description: Production server
+
+tags:
+  - name: Characters
+    description: Character creation, retrieval, update, and deletion
+
+paths:
+  /characters:
+    post:
+      tags:
+        - Characters
+      summary: Create a new character
+      description: Creates a new player character or NPC with D&D 5e stats for the authenticated user
+      operationId: createCharacter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCharacterRequest'
+      responses:
+        '201':
+          description: Character created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterResponse'
+        '400':
+          description: Invalid request data (validation error)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: User has reached tier limit for creatures
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TierLimitErrorResponse'
+        '401':
+          description: Unauthorized - user not authenticated
+        '500':
+          description: Server error
+
+    get:
+      tags:
+        - Characters
+      summary: List user's characters
+      description: Retrieves paginated list of authenticated user's characters with optional search and filters
+      operationId: listCharacters
+      parameters:
+        - name: page
+          in: query
+          description: Page number (1-based, default 1)
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          description: Items per page (1-100, default 20)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: search
+          in: query
+          description: Search by character name (case-insensitive partial match)
+          schema:
+            type: string
+            maxLength: 100
+        - name: class
+          in: query
+          description: Filter by class ID (exact match)
+          schema:
+            type: string
+        - name: race
+          in: query
+          description: Filter by race ID (exact match)
+          schema:
+            type: string
+        - name: minLevel
+          in: query
+          description: Minimum level (1-20)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+        - name: maxLevel
+          in: query
+          description: Maximum level (1-20)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+      responses:
+        '200':
+          description: List of characters retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterListResponse'
+        '401':
+          description: Unauthorized
+        '400':
+          description: Invalid query parameters
+        '500':
+          description: Server error
+
+  /characters/{characterId}:
+    get:
+      tags:
+        - Characters
+      summary: Get character details
+      description: Retrieves complete character data with all D&D 5e stat block details
+      operationId: getCharacter
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Character details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - character belongs to different user
+        '404':
+          description: Character not found
+        '500':
+          description: Server error
+
+    put:
+      tags:
+        - Characters
+      summary: Update character
+      description: Updates character attributes (name, stats, classes, etc.)
+      operationId: updateCharacter
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCharacterRequest'
+      responses:
+        '200':
+          description: Character updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterResponse'
+        '400':
+          description: Invalid request data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - character belongs to different user
+        '404':
+          description: Character not found
+        '500':
+          description: Server error
+
+    delete:
+      tags:
+        - Characters
+      summary: Delete character (soft delete)
+      description: Marks character as deleted (can be recovered within 30 days)
+      operationId: deleteCharacter
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Character deleted successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - character belongs to different user or used in active encounter
+        '404':
+          description: Character not found
+        '500':
+          description: Server error
+
+  /characters/{characterId}/duplicate:
+    post:
+      tags:
+        - Characters
+      summary: Duplicate character
+      description: Creates an independent copy of existing character with same base stats
+      operationId: duplicateCharacter
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character ID to duplicate
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Character duplicated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterResponse'
+        '400':
+          description: Invalid request or user at tier limit
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - character belongs to different user; or Tier limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TierLimitErrorResponse'
+        '404':
+          description: Character not found
+        '500':
+          description: Server error
+
+components:
+  schemas:
+    CreateCharacterRequest:
+      type: object
+      required:
+        - name
+        - raceId
+        - abilityScores
+        - classes
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Character name
+        raceId:
+          type: string
+          description: Race ID (reference to Race entity)
+        abilityScores:
+          $ref: '#/components/schemas/AbilityScores'
+        classes:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/ClassLevel'
+          description: Array of classes and levels (multiclass support)
+        hitPoints:
+          type: integer
+          minimum: 1
+          maximum: 500
+          description: Current hit points (auto-calculated if omitted)
+
+    UpdateCharacterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        raceId:
+          type: string
+        abilityScores:
+          $ref: '#/components/schemas/AbilityScores'
+        classes:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/ClassLevel'
+        hitPoints:
+          type: integer
+          minimum: 1
+          maximum: 500
+
+    CharacterResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Character ID (MongoDB ObjectId)
+        userId:
+          type: string
+          description: Owner user ID
+        name:
+          type: string
+        raceId:
+          type: string
+        race:
+          $ref: '#/components/schemas/Race'
+        abilityScores:
+          $ref: '#/components/schemas/AbilityScores'
+        abilityModifiers:
+          $ref: '#/components/schemas/AbilityModifiers'
+        classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClassLevelWithDetails'
+        totalLevel:
+          type: integer
+          description: Sum of all class levels
+        proficiencyBonus:
+          type: integer
+          description: D&D 5e proficiency bonus based on total level
+        hitPoints:
+          type: integer
+        maxHitPoints:
+          type: integer
+        armorClass:
+          type: integer
+          description: Calculated AC (10 + DEX modifier)
+        initiative:
+          type: integer
+          description: DEX modifier
+        skills:
+          type: object
+          additionalProperties:
+            type: integer
+          description: Skill modifiers indexed by skill name
+        savingThrows:
+          type: object
+          additionalProperties:
+            type: integer
+          description: Saving throw modifiers indexed by ability
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    CharacterListResponse:
+      type: object
+      properties:
+        characters:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharacterListItem'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        usage:
+          $ref: '#/components/schemas/UsageMetrics'
+
+    CharacterListItem:
+      type: object
+      description: Simplified character entry for list views
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        race:
+          type: string
+        classes:
+          type: string
+          description: Comma-separated classes with levels (e.g., "Fighter 5, Wizard 3")
+        totalLevel:
+          type: integer
+        armorClass:
+          type: integer
+        hitPoints:
+          type: integer
+
+    AbilityScores:
+      type: object
+      description: D&D 5e ability scores (STR, DEX, CON, INT, WIS, CHA)
+      required:
+        - str
+        - dex
+        - con
+        - int
+        - wis
+        - cha
+      properties:
+        str:
+          type: integer
+          minimum: 1
+          maximum: 20
+          description: Strength
+        dex:
+          type: integer
+          minimum: 1
+          maximum: 20
+          description: Dexterity
+        con:
+          type: integer
+          minimum: 1
+          maximum: 20
+          description: Constitution
+        int:
+          type: integer
+          minimum: 1
+          maximum: 20
+          description: Intelligence
+        wis:
+          type: integer
+          minimum: 1
+          maximum: 20
+          description: Wisdom
+        cha:
+          type: integer
+          minimum: 1
+          maximum: 20
+          description: Charisma
+
+    AbilityModifiers:
+      type: object
+      properties:
+        str:
+          type: integer
+        dex:
+          type: integer
+        con:
+          type: integer
+        int:
+          type: integer
+        wis:
+          type: integer
+        cha:
+          type: integer
+
+    ClassLevel:
+      type: object
+      required:
+        - classId
+        - level
+      properties:
+        classId:
+          type: string
+          description: D&D 5e class ID
+        level:
+          type: integer
+          minimum: 1
+          maximum: 20
+          description: Level in this class
+
+    ClassLevelWithDetails:
+      type: object
+      properties:
+        classId:
+          type: string
+        class:
+          $ref: '#/components/schemas/Class'
+        level:
+          type: integer
+
+    Race:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        abilityBonuses:
+          $ref: '#/components/schemas/AbilityScores'
+        traits:
+          type: array
+          items:
+            type: string
+
+    Class:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        hitDie:
+          type: string
+          description: Hit die type (e.g., "d8", "d10")
+        proficiencies:
+          type: array
+          items:
+            type: string
+        spellcasting:
+          type: boolean
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+        pages:
+          type: integer
+
+    UsageMetrics:
+      type: object
+      description: User's tier usage metrics
+      properties:
+        creatures:
+          type: object
+          properties:
+            used:
+              type: integer
+            limit:
+              type: integer
+            remaining:
+              type: integer
+            percentage:
+              type: number
+              format: float
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        statusCode:
+          type: integer
+
+    TierLimitErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        statusCode:
+          type: integer
+        upgrade:
+          type: object
+          properties:
+            currentTier:
+              type: string
+            currentLimit:
+              type: integer
+            nextTier:
+              type: string
+            nextLimit:
+              type: integer
+            upgradeUrl:
+              type: string
+              description: URL to upgrade page
+
+  securitySchemes:
+    ClerkAuth:
+      type: http
+      scheme: bearer
+      description: Clerk JWT token in Authorization header
+
+security:
+  - ClerkAuth: []

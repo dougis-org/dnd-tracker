@@ -67,8 +67,10 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 ## Planned Features (Priority Order)
 
-### Feature 003: Character Management System
+### 🚧 Feature 003: Character Management System
 
+**Status**: 🚧 In Progress (Started 2025-10-21)
+**Branch**: `feature/003-character-management`
 **Priority**: P1 - Critical Path
 **Estimated Effort**: 2-3 weeks
 **Description**: Complete CRUD operations for player characters and NPCs with D&D 5e stat tracking, multiclass support, and character templates.
@@ -782,9 +784,10 @@ All features must adhere to:
 ---
 
 **Total Estimated Timeline**: 42 weeks (10 months) for complete feature set
-**Current Progress**: 2 of 20 features complete (10%) - Week 4 of 42
+**Current Progress**: 2 of 20 features complete (10%), 1 in progress (5%) - Week 5 of 42
 **Phase 1 Status**: ✅ Complete (Weeks 1-4)
-**Next Feature**: Feature 003 - Character Management System (P1, Critical Path)
+**Phase 2 Status**: 🚧 In Progress (Week 5+) - Feature 003 Character Management
+**Next Feature**: Feature 004 - Party Management (blocked by Feature 003)
 
 ---
 
