@@ -1,39 +1,46 @@
-# Implementation Plan: User Registration and Profile Management
+# Implementation Plan: User Registration and Profile Management (Enhanced)
 
-**Branch**: `002-when-a-user` | **Date**: 2025-09-30 | **Spec**: [spec.md](./spec.md)
-**Input**: Feature specification from `/home/doug/ai-dev-1/dnd-tracker/specs/002-when-a-user/spec.md`
+**Branch**: `002-when-a-user-phase` | **Date**: 2025-10-25 | **Spec**: [spec.md](./spec.md)
+**Input**: Enhanced feature specification from `/home/doug/ai-dev-1/dnd-tracker/specs/002-when-a-user/spec.md`
+**Status**: Enhanced to include login flow, dashboard, settings with tabs, and comprehensive E2E testing
 
 ## Execution Flow (/plan command scope)
 
 ```
-1. Load feature spec from Input path
-   → If not found: ERROR "No feature spec at {path}"
-2. Fill Technical Context (scan for NEEDS CLARIFICATION)
-   → Detect Project Type from context (web=frontend+backend, mobile=app+api)
-   → Set Structure Decision based on project type
-3. Fill the Constitution Check section based on the content of the constitution document.
-4. Evaluate Constitution Check section below
-   → If violations exist: Document in Complexity Tracking
-   → If no justification possible: ERROR "Simplify approach first"
-   → Update Progress Tracking: Initial Constitution Check
-5. Execute Phase 0 → research.md
-   → If NEEDS CLARIFICATION remain: ERROR "Resolve unknowns"
-6. Execute Phase 1 → contracts, data-model.md, quickstart.md, agent-specific template file
-7. Re-evaluate Constitution Check section
-   → If new violations: Refactor design, return to Phase 1
-   → Update Progress Tracking: Post-Design Constitution Check
-8. Plan Phase 2 → Describe task generation approach (DO NOT create tasks.md)
-9. STOP - Ready for /tasks command
+1. Load feature spec from Input path ✅
+   → Feature spec loaded with enhancements
+2. Fill Technical Context ✅
+   → Next.js 15.5+, TypeScript 5.9+, Clerk 5.0+, MongoDB 8.0+
+3. Fill Constitution Check section ✅
+4. Evaluate Constitution Check ✅
+   → PASS - No violations, mitigation strategies documented
+5. Execute Phase 0 → research.md ✅ (COMPLETED)
+6. Execute Phase 1 → contracts, data-model.md, quickstart.md ✅ (COMPLETED)
+7. Execute Phase 1 Enhancement → Add dashboard, settings contracts ✅ (COMPLETED)
+8. Create E2E test plan → e2e-test-plan.md ✅ (COMPLETED)
+9. Update CLAUDE.md with new context ✅ (COMPLETED)
+10. STOP - Ready for /tasks command
 ```
 
-**IMPORTANT**: The /plan command STOPS at step 8. Phases 2-4 are executed by other commands:
-
-- Phase 2: /tasks command creates tasks.md
-- Phase 3-4: Implementation execution (manual or via tools)
+**IMPORTANT**: The /plan command STOPS here. Phases 2-4 are executed by other commands.
 
 ## Summary
 
-This feature implements user registration and profile management for the D&D Tracker application. When users register through Clerk authentication, the system persists their information in MongoDB, creates a user profile with D&D-specific preferences, assigns the free subscription tier by default, and tracks usage metrics. Users can optionally complete a profile form with their D&D experience level, role (DM/player/both), preferred ruleset, and other preferences. The profile can be skipped or partially completed and updated later through settings.
+This feature implements comprehensive user registration and profile management for the D&D Tracker application. When users register through Clerk authentication, the system persists their information in MongoDB, creates a user profile with D&D-specific preferences, assigns the free subscription tier by default, and tracks usage metrics.
+
+**Core Flows**:
+1. **Authentication**: Users log in via existing Clerk integration (no custom login screen)
+2. **First-Time Setup**: New users complete optional D&D profile form
+3. **Dashboard**: Authenticated users access personalized dashboard with subscription tier, usage progress bars, statistics, and quick actions
+4. **Profile Management**: Users view and edit profile through settings interface with tabs (Profile, Preferences, Account)
+5. **Usage Tracking**: System tracks user activity against subscription limits
+
+**New Enhancements** (2025-10-25):
+- Login flow integration with Clerk (FR-013, FR-019)
+- Enhanced dashboard with progress bars and usage statistics (FR-014)
+- Settings section with tabbed interface (FR-015, FR-016)
+- Authorization enforcement for protected pages (FR-017, FR-018)
+- Comprehensive E2E test coverage (TR-001 to TR-010)
 
 ## Technical Context
 
@@ -43,9 +50,9 @@ This feature implements user registration and profile management for the D&D Tra
 **Testing**: Jest 29.7+ with React Testing Library 16.0+ (unit), Playwright 1.46+ (E2E)
 **Target Platform**: Web application (Next.js App Router with server/client components)
 **Project Type**: web (Next.js full-stack with App Router)
-**Performance Goals**: <1.5s dashboard load for authenticated users, <500ms profile form interactions
+**Performance Goals**: <1.5s dashboard load for authenticated users, <500ms profile form interactions, <800ms settings page load
 **Constraints**: 80%+ test coverage, max 450 lines per file, max 50 lines per function
-**Scale/Scope**: User profile data model, Clerk webhook integration, profile form UI components, usage tracking infrastructure
+**Scale/Scope**: User profile data model, Clerk webhook integration, profile form UI components, usage tracking infrastructure, dashboard with metrics visualization, settings interface with tabs
 
 ## Constitution Check
 
@@ -53,16 +60,14 @@ This feature implements user registration and profile management for the D&D Tra
 
 ### Quality Over Speed ✅
 
-- TDD approach required: Profile validation tests before implementation
+- TDD approach required: Tests before implementation
 - All tests must pass before PR merge
 - Full responsibility for quality and correctness
+- E2E tests validate complete user flows
 
 ### Test-First Development ✅
 
-- Write Zod validation tests before schemas
-- Write Mongoose model tests before model implementation
-- Write API route tests before endpoint implementation
-- Write component tests before UI implementation
+- Write validation/model/API/component/E2E tests before implementation
 - Red-Green-Refactor cycle enforced
 
 ### Remote Authority ✅
@@ -74,20 +79,22 @@ This feature implements user registration and profile management for the D&D Tra
 ### Complexity Reduction ✅
 
 - Leverage existing User model from reference project
-- Reuse validation patterns from `/home/doug/ai-dev-2/dnd-tracker-next-js`
 - Maximum 450 lines per file (uncommented)
 - Maximum 50 lines per function
 - Extract shared utilities for common operations
+- Use shadcn/ui components for dashboard and settings UI
 
 ### Security & Standards ✅
 
-- No sensitive data committed
-- Clerk integration for secure authentication
+- Clerk integration for secure authentication (no custom login)
 - Input validation via Zod schemas
 - TypeScript strict mode enforced
 - 80%+ test coverage on touched code
+- Authorization checks on all protected routes
 
-**Initial Assessment**: No constitutional violations identified. Standard Next.js App Router pattern with Mongoose models aligns with constitution requirements.
+**Initial Assessment**: PASS - No constitutional violations.
+
+**Post-Enhancement Assessment**: PASS - Enhanced scope (dashboard, settings tabs) mitigated with component extraction and composition patterns.
 
 ## Project Structure
 
@@ -95,15 +102,21 @@ This feature implements user registration and profile management for the D&D Tra
 
 ```
 specs/002-when-a-user/
-├── plan.md              # This file (/plan command output)
-├── spec.md              # Feature specification (already created)
-├── research.md          # Phase 0 output (/plan command)
-├── data-model.md        # Phase 1 output (/plan command)
-├── quickstart.md        # Phase 1 output (/plan command)
-├── contracts/           # Phase 1 output (/plan command)
-│   ├── clerk-webhook.yaml
-│   └── profile-api.yaml
-└── tasks.md             # Phase 2 output (/tasks command - NOT created by /plan)
+├── plan.md              # This file (ENHANCED)
+├── spec.md              # Feature specification (ENHANCED)
+├── research.md          # Phase 0 output (COMPLETED)
+├── data-model.md        # Phase 1 output (COMPLETED)
+├── quickstart.md        # Phase 1 output (COMPLETED - Enhanced v2.0)
+├── e2e-test-plan.md     # E2E test scenarios (NEW)
+├── contracts/           # API contracts (COMPLETED)
+│   ├── clerk-webhook.yaml     (COMPLETED)
+│   ├── profile-api.yaml       (COMPLETED)
+│   ├── dashboard-api.yaml     (COMPLETED)
+│   └── settings-api.yaml      (COMPLETED)
+├── checklists/
+│   ├── requirements.md
+│   └── qa-testability.md
+└── tasks.md             # Phase 2 (/tasks command - TO BE UPDATED)
 ```
 
 ### Source Code (repository root)
@@ -112,247 +125,215 @@ specs/002-when-a-user/
 src/
 ├── app/
 │   ├── api/
-│   │   ├── webhooks/
-│   │   │   └── clerk/
-│   │   │       └── route.ts        # Clerk webhook handler
-│   │   └── users/
-│   │       └── [id]/
-│   │           └── profile/
-│   │               └── route.ts    # Profile update API
-│   ├── (auth)/
-│   │   └── profile-setup/
-│   │       └── page.tsx            # Initial profile form
+│   │   ├── webhooks/clerk/route.ts      (EXISTING)
+│   │   ├── users/[id]/profile/route.ts  (EXISTING)
+│   │   └── dashboard/metrics/route.ts   (NEW)
+│   ├── (auth)/profile-setup/page.tsx    (EXISTING)
+│   ├── dashboard/page.tsx               (NEW)
 │   └── settings/
-│       └── profile/
-│           └── page.tsx            # Profile management page
+│       ├── layout.tsx                   (NEW)
+│       ├── page.tsx                     (NEW)
+│       ├── profile/page.tsx             (NEW)
+│       ├── preferences/page.tsx         (NEW)
+│       └── account/page.tsx             (NEW)
 ├── components/
+│   ├── dashboard/
+│   │   ├── DashboardHeader.tsx          (NEW)
+│   │   ├── UsageMetrics.tsx             (NEW)
+│   │   ├── SubscriptionCard.tsx         (NEW)
+│   │   ├── QuickActions.tsx             (NEW)
+│   │   └── RecentActivity.tsx           (NEW)
+│   ├── settings/
+│   │   ├── SettingsTabs.tsx             (NEW)
+│   │   ├── ProfileTab.tsx               (NEW)
+│   │   ├── PreferencesTab.tsx           (NEW)
+│   │   └── AccountTab.tsx               (NEW)
 │   └── profile/
-│       ├── ProfileForm.tsx         # Reusable profile form
-│       └── ProfileSetupWizard.tsx  # First-time setup flow
+│       ├── ProfileForm.tsx              (EXISTING)
+│       └── ProfileSetupWizard.tsx       (EXISTING)
 ├── lib/
-│   ├── models/
-│   │   └── User.ts                 # User Mongoose model (extend existing)
-│   ├── validations/
-│   │   └── user.ts                 # Zod schemas (extend existing)
-│   └── services/
-│       └── userService.ts          # User operations
+│   ├── models/User.ts                   (EXISTING)
+│   ├── validations/user.ts              (EXISTING)
+│   ├── services/
+│   │   ├── userService.ts               (EXISTING)
+│   │   └── dashboardService.ts          (NEW)
+│   └── utils/
+│       ├── subscription.ts              (NEW)
+│       └── metrics.ts                   (NEW)
 └── types/
-    └── user.ts                     # TypeScript interfaces
+    ├── user.ts                          (EXISTING)
+    └── dashboard.ts                     (NEW)
 
 tests/
-├── unit/
-│   ├── lib/
-│   │   ├── validations/
-│   │   │   └── user.test.ts
-│   │   ├── models/
-│   │   │   └── User.test.ts
-│   │   └── services/
-│   │       └── userService.test.ts
-│   └── components/
-│       └── profile/
-│           ├── ProfileForm.test.tsx
-│           └── ProfileSetupWizard.test.tsx
-├── integration/
-│   └── api/
-│       ├── webhooks/
-│       │   └── clerk.test.ts
-│       └── users/
-│           └── profile.test.ts
+├── unit/ (15+ new test files)
+├── integration/ (3+ new test files)
 └── e2e/
-    └── profile-setup.spec.ts
+    ├── auth/login.spec.ts               (NEW)
+    ├── dashboard/dashboard.spec.ts      (NEW)
+    ├── settings/*.spec.ts               (NEW - 3 files)
+    └── profile-setup.spec.ts            (EXISTING)
 ```
 
-**Structure Decision**: Next.js App Router full-stack (web application with server and client components)
+**Structure Decision**: Next.js App Router full-stack with enhanced dashboard and settings sections using tabbed interface pattern via file-based routing.
 
 ## Phase 0: Outline & Research
 
-*Execute research and resolve NEEDS CLARIFICATION items*
+**Status**: ✅ COMPLETED (see research.md)
 
-### Research Tasks
+**Additional Research Needed for Enhancements**:
 
-1. **Clerk Webhook Integration Best Practices**
-   - Research Clerk webhook event types for user lifecycle
-   - Identify required webhook events: user.created, user.updated, user.deleted
-   - Research webhook signature verification patterns
-   - Find best practices for idempotent webhook processing
+1. **Dashboard Metrics Visualization**
+   - Progress bar components for subscription limits
+   - Usage statistics display patterns
+   - Real-time vs cached dashboard data
 
-2. **Mongoose Schema Extension Patterns**
-   - Research how to extend existing User model with new fields
-   - Identify migration approach for adding D&D profile fields
-   - Research Mongoose schema versioning if needed
-   - Find patterns for optional vs required profile fields
+2. **Settings Interface with Tabs**
+   - Next.js App Router file-based tab routing
+   - ARIA accessibility for tab navigation
+   - URL-based tab state (/settings/profile, /settings/preferences)
 
-3. **Usage Metrics Infrastructure**
-   - Research storage approach for usage metrics (embedded vs separate collection)
-   - Identify patterns for extensible metric tracking
-   - Find best practices for incrementing counters efficiently
-   - Research aggregation preparation strategies
-
-4. **Profile Form UX Patterns**
-   - Research progressive disclosure for optional profile setup
-   - Identify Next.js App Router patterns for multi-step forms
-   - Find best practices for form state management with React Hook Form
-   - Research skip/save-for-later patterns
-
-**Output**: research.md with consolidated findings
+**Action**: Update research.md with findings for dashboard and settings patterns.
 
 ## Phase 1: Design & Contracts
 
-*Prerequisites: research.md complete*
+**Status**: ✅ COMPLETED (data-model.md) + 🔄 ENHANCEMENTS IN PROGRESS
 
-### 1. Data Model (`data-model.md`)
+### 1. Data Model - ✅ COMPLETED
 
-Extract from feature spec entities:
+Existing data model (see data-model.md) is sufficient. No additional fields required.
 
-**User Model Extensions**:
+### 2. API Contracts - 🔄 TO BE ENHANCED
 
-- displayName: string (optional, max 100)
-- timezone: string (default "UTC")
-- dndEdition: string (default "5th Edition", max 50)
-- experienceLevel: enum (new, beginner, intermediate, experienced, veteran)
-- primaryRole: enum (dm, player, both)
-- profileSetupCompleted: boolean (default false)
-- role: enum (user, admin) - existing field
-- subscriptionTier: enum (free, seasoned, expert, master, guild) - existing field
+**Existing** (✅ COMPLETED):
+- `contracts/clerk-webhook.yaml`
+- `contracts/profile-api.yaml`
 
-**Usage Metrics** (embedded in User model for Phase 1):
+**NEW** (To be created):
 
-- sessionsCount: number (default 0)
-- charactersCreatedCount: number (default 0)
-- campaignsCreatedCount: number (default 0)
-- metricsLastUpdated: Date
-
-**Validation Rules**:
-
-- displayName: optional, max 100 chars, alphanumeric with spaces
-- timezone: string, non-empty
-- dndEdition: string, max 50 chars
-- experienceLevel: must be one of enum values
-- primaryRole: must be one of enum values
-
-### 2. API Contracts (`contracts/`)
-
-**Clerk Webhook Contract** (`contracts/clerk-webhook.yaml`):
-
+**Dashboard Metrics API** (`contracts/dashboard-api.yaml`):
 ```yaml
-POST /api/webhooks/clerk
-Request:
-  - svix headers for signature verification
-  - body: Clerk webhook event payload
+GET /api/dashboard/metrics
+Auth: Required (Clerk session)
 Response:
-  - 200: Event processed
-  - 400: Invalid signature or payload
-  - 500: Processing error
+  200: { user, subscription: { tier, limits, usage, percentages }, metrics }
+  401: Unauthorized
 ```
 
-**Profile Update Contract** (`contracts/profile-api.yaml`):
-
+**Settings API** (`contracts/settings-api.yaml`):
 ```yaml
-PATCH /api/users/[id]/profile
-Request:
-  - Authentication: Clerk session
-  - body: Partial profile update (Zod validated)
-Response:
-  - 200: Updated user profile
-  - 401: Unauthorized
-  - 400: Validation errors
-  - 404: User not found
+GET /api/users/[id]/settings
+PATCH /api/users/[id]/settings/preferences
+Auth: Required, userId must match session
 ```
 
-### 3. Contract Tests
+### 3. Integration Test Scenarios - 🔄 TO BE ENHANCED
 
-Generate failing tests for:
+**Existing** (✅ quickstart.md):
+1-5. User registration, profile setup, updates
 
-- `tests/integration/api/webhooks/clerk.test.ts` - Clerk webhook handling
-- `tests/integration/api/users/profile.test.ts` - Profile update API
-- `tests/unit/lib/validations/user.test.ts` - Zod schema validation
-- `tests/unit/lib/models/User.test.ts` - Mongoose model operations
+**NEW** (To be added to quickstart.md):
+6. User Login and Dashboard Access
+7. Dashboard Usage Metrics Display
+8. Settings Navigation and Profile Viewing
+9. Settings Profile Editing
+10. Unauthenticated Access Protection
 
-### 4. Integration Test Scenarios (`quickstart.md`)
+### 4. E2E Test Plan - 📝 TO BE CREATED
 
-From user stories:
+Create `e2e-test-plan.md` with comprehensive Playwright test scenarios for TR-001 to TR-010:
 
-1. New user authenticates via Clerk → webhook creates MongoDB user with defaults
-2. User completes profile form → profile data persisted with validation
-3. User skips profile → can access app and complete later
-4. User updates profile in settings → changes saved and validated
-5. Usage metrics tracked when user creates resources
+1. Login flow (TR-001, TR-009)
+2. Dashboard access (TR-002)
+3. Profile viewing (TR-003)
+4. Profile editing (TR-004)
+5. Auth enforcement (TR-005)
+6. Authorization enforcement (TR-006)
+7. First-time user flow (TR-007)
+8. Returning user flow (TR-008)
+9. Validation errors (TR-010)
 
-### 5. Update CLAUDE.md
+### 5. Update CLAUDE.md - 📝 TO BE EXECUTED
 
 Run `.specify/scripts/bash/update-agent-context.sh claude` to add:
-
-- User profile field additions
-- Clerk webhook integration
-- Profile form components
-- Usage tracking infrastructure
-
-**Output**: data-model.md, contracts/*, failing tests, quickstart.md, CLAUDE.md updated
+- Dashboard components and metrics
+- Settings tabs pattern
+- Enhanced E2E testing
+- Dashboard/settings APIs
 
 ## Phase 2: Task Planning Approach
 
-*This section describes what the /tasks command will do - DO NOT execute during /plan*
+*This section describes what the /tasks command will do*
 
-**Task Generation Strategy**:
+**Current State**: tasks.md exists with 40 tasks (T001-T040) covering Phases 3.1-3.8.
 
-1. Load `.specify/templates/tasks-template.md` as base
-2. Generate tasks from Phase 1 artifacts:
-   - Zod validation schema extensions
-   - Mongoose User model updates
-   - Clerk webhook handler implementation
-   - Profile API route implementation
-   - Profile form components
-   - Usage tracking service
-   - Integration tests
-   - E2E tests
+**Enhancement Strategy**:
 
-**Ordering Strategy** (TDD + dependency order):
+The /tasks command should:
+1. Review existing tasks T001-T040 (validation, models, services, APIs, UI)
+2. Add NEW tasks for:
+   - **Phase 3.9**: Dashboard Layer (T041-T050)
+     - Dashboard service, utilities, API, components, page
+   - **Phase 3.10**: Settings Layer (T051-T058)
+     - Settings tabs, profile/preferences/account tabs, layout
+   - **Phase 3.11**: E2E Testing (T059-T067)
+     - 9 comprehensive E2E test scenarios per e2e-test-plan.md
+   - **Phase 3.12**: Integration & Polish (T068-T072)
+     - Dashboard optimization, settings state, full suite, Codacy, quickstart
 
-1. Validation schemas (tests first) [P]
-2. Mongoose model extensions (tests first) [P]
-3. User service methods (tests first) [P]
-4. Clerk webhook handler (tests first)
-5. Profile API routes (tests first)
-6. Profile form components (tests first) [P]
-7. Profile setup wizard component (tests first)
-8. Integration tests
-9. E2E tests
+**Estimated Output**: 72 total tasks (existing 40 + new 32)
 
-**Estimated Output**: 20-25 numbered, dependency-ordered tasks in tasks.md
-
-**IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
-
-## Phase 3+: Future Implementation
-
-*These phases are beyond the scope of the /plan command*
-
-**Phase 3**: Task execution (/tasks command creates tasks.md)
-**Phase 4**: Implementation (execute tasks.md following constitutional principles)
-**Phase 5**: Validation (run tests, execute quickstart.md, performance validation)
+**IMPORTANT**: Executed by /tasks command, NOT by /plan.
 
 ## Complexity Tracking
 
-*No constitutional violations requiring justification*
+**Status**: ✅ NO VIOLATIONS
+
+**Complexity Considerations**:
+- Dashboard: Multiple small components (<450 lines each) vs monolithic page
+- Settings Tabs: File-based routing vs complex client-side state
+- E2E Tests: Separate files by flow with shared fixtures
+
+**Mitigation Strategies**:
+- Extract dashboard widgets to components
+- Use Next.js App Router for tab routing
+- Leverage shadcn/ui components
+- Share Playwright fixtures
 
 ## Progress Tracking
 
-*This checklist is updated during execution flow*
-
 **Phase Status**:
 
-- [x] Phase 0: Research complete (/plan command)
-- [x] Phase 1: Design complete (/plan command)
-- [x] Phase 2: Task planning complete (/plan command - describe approach only)
-- [x] Phase 3: Tasks generated (/tasks command)
-- [ ] Phase 4: Implementation complete
-- [ ] Phase 5: Validation passed
+- [x] Phase 0: Research (ORIGINAL)
+- [x] Phase 0: Dashboard & settings research (COMPLETED)
+- [x] Phase 1: Design (ORIGINAL)
+- [x] Phase 1: Dashboard/settings contracts (COMPLETED)
+- [x] Phase 1: E2E test plan (COMPLETED)
+- [x] Phase 1: Quickstart enhancement (COMPLETED)
+- [x] Phase 1: CLAUDE.md update (COMPLETED)
+- [ ] Phase 2: Task planning (/tasks command)
+- [ ] Phase 3: Implementation
+- [ ] Phase 4: Validation
 
 **Gate Status**:
 
 - [x] Initial Constitution Check: PASS
 - [x] Post-Design Constitution Check: PASS
 - [x] All NEEDS CLARIFICATION resolved
-- [x] Complexity deviations documented (none required)
+- [x] Complexity deviations mitigated
+
+**Enhancement Integration**:
+
+- [x] Login flow (FR-013, FR-019)
+- [x] Dashboard (FR-014)
+- [x] Settings tabs (FR-015, FR-016)
+- [x] Authorization (FR-017, FR-018)
+- [x] E2E tests (TR-001 to TR-010)
+- [x] Project structure updated
+- [x] API contracts created (dashboard-api.yaml, settings-api.yaml)
+- [x] E2E test plan created (e2e-test-plan.md with 10 scenarios)
+- [x] Quickstart scenarios added (scenarios 9-13)
+- [x] CLAUDE.md updated
 
 ---
-*Based on Constitution v1.0.0 - See `.specify/memory/constitution.md`*
+*Based on Constitution v1.0.0*
+*Enhanced: 2025-10-25 for login, dashboard, settings tabs, and E2E testing*

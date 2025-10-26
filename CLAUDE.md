@@ -3,6 +3,8 @@
 Auto-generated from feature planning. Last updated: 2025-09-30
 
 ## Active Technologies
+- TypeScript 5.9+ with strict mode + Next.js 15.5+, React 19.0+, Mongoose 8.5+, Clerk 5.0+, Zod 4+ (002-when-a-user-phase)
+- MongoDB 8.0+ with Mongoose ODM (002-when-a-user-phase)
 
 **Core Stack**: Next.js 15.5+ with TypeScript 5.9+, React 19.0+, App Router
 **Database**: MongoDB 8.0+ with Mongoose 8.5+ ODM for flexible D&D entity schemas
@@ -60,16 +62,13 @@ tests/
 **Testing**: TDD approach - tests written before implementation
 
 ## Recent Changes
+- 002-when-a-user-phase: Added TypeScript 5.9+ with strict mode + Next.js 15.5+, React 19.0+, Mongoose 8.5+, Clerk 5.0+, Zod 4+
 
 - 002-when-a-user: Added user registration and profile management backend
 
 **2025-09-20**: MVP planning phase completed
 
 - Feature specification for D&D encounter tracker
-- Technical architecture with Next.js full-stack approach
-- API contracts for authentication, characters, and combat management
-- Data model for User, Character, Monster, Party, Encounter, CombatSession entities
-- Weekly milestone plan for 8-week iterative development
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

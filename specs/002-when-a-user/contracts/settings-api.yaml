@@ -1,0 +1,229 @@
+openapi: 3.0.0
+info:
+  title: User Settings API
+  version: 1.0.0
+  description: API for managing user settings including profile, preferences, and account information
+
+paths:
+  /api/users/{userId}/settings:
+    get:
+      summary: Get user settings
+      description: Returns complete user settings including profile data and preferences
+      security:
+        - ClerkAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID (must match authenticated user)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Settings retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettings'
+        '401':
+          description: Unauthorized - No valid Clerk session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - userId doesn't match authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/users/{userId}/settings/preferences:
+    patch:
+      summary: Update user preferences
+      description: Updates user application preferences (theme, notifications, etc.)
+      security:
+        - ClerkAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID (must match authenticated user)
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreferencesUpdate'
+            example:
+              theme: "dark"
+              emailNotifications: false
+              diceRollAnimations: true
+      responses:
+        '200':
+          description: Preferences updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettings'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - userId doesn't match authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    ClerkAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Clerk authentication token from session
+
+  schemas:
+    UserSettings:
+      type: object
+      required:
+        - profile
+        - preferences
+      properties:
+        profile:
+          type: object
+          properties:
+            displayName:
+              type: string
+              maxLength: 100
+              nullable: true
+            timezone:
+              type: string
+              default: "UTC"
+            dndEdition:
+              type: string
+              maxLength: 50
+              default: "5th Edition"
+            experienceLevel:
+              type: string
+              enum: [new, beginner, intermediate, experienced, veteran]
+              nullable: true
+            primaryRole:
+              type: string
+              enum: [dm, player, both]
+              nullable: true
+            profileSetupCompleted:
+              type: boolean
+              default: false
+        preferences:
+          type: object
+          required:
+            - theme
+            - emailNotifications
+            - browserNotifications
+            - timezone
+            - language
+            - diceRollAnimations
+            - autoSaveEncounters
+          properties:
+            theme:
+              type: string
+              enum: [light, dark, system]
+              default: "system"
+            emailNotifications:
+              type: boolean
+              default: true
+            browserNotifications:
+              type: boolean
+              default: false
+            timezone:
+              type: string
+              default: "UTC"
+            language:
+              type: string
+              default: "en"
+              description: ISO 639-1 language code
+            diceRollAnimations:
+              type: boolean
+              default: true
+            autoSaveEncounters:
+              type: boolean
+              default: true
+
+    PreferencesUpdate:
+      type: object
+      description: Partial preferences update (all fields optional)
+      properties:
+        theme:
+          type: string
+          enum: [light, dark, system]
+        emailNotifications:
+          type: boolean
+        browserNotifications:
+          type: boolean
+        timezone:
+          type: string
+        language:
+          type: string
+          description: ISO 639-1 language code
+        diceRollAnimations:
+          type: boolean
+        autoSaveEncounters:
+          type: boolean
+
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+
+    ValidationError:
+      type: object
+      required:
+        - error
+        - message
+        - errors
+      properties:
+        error:
+          type: string
+          example: "ValidationError"
+        message:
+          type: string
+          example: "Invalid preferences data"
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: "theme"
+              message:
+                type: string
+                example: "Must be one of: light, dark, system"
+              code:
+                type: string
+                example: "invalid_enum_value"

@@ -421,9 +421,558 @@ Using Next.js App Router structure:
 
 ---
 
-## Phase 3.9: End-to-End Tests
+## Phase 3.9: Dashboard Layer
 
-### T031 [P] Write profile setup E2E test
+### T031 [P] Create subscription utilities
+
+**File**: `src/lib/utils/subscription.ts` (new file)
+**Description**: Create subscription tier limit helpers and usage calculation utilities
+**Details**:
+
+- Export SUBSCRIPTION_LIMITS constant (from data-model.md)
+- `getTierLimits(tier)`: Returns limits object for given subscription tier
+- `calculateUsagePercentage(current, limit)`: Calculate percentage (0-100)
+- `determineWarningLevel(percentage)`: Returns 'info' | 'warning' | 'critical' based on thresholds (<50%, 50-80%, >80%)
+- `generateUsageWarnings(usage, limits)`: Returns array of warning objects with resource, message, severity
+**Max Lines**: 150 lines
+**Test First**: Write tests in T032 before implementing
+
+### T032 [P] Write subscription utilities tests
+
+**File**: `tests/unit/lib/utils/subscription.test.ts`
+**Description**: Write failing tests for subscription utility functions
+**Details**:
+
+- Test getTierLimits: Returns correct limits for all tier enum values
+- Test calculateUsagePercentage: Handles 0/0, division by zero, correct percentages
+- Test determineWarningLevel: Returns correct severity for boundary values (49%, 50%, 79%, 80%, 90%)
+- Test generateUsageWarnings: Returns empty array when usage low, correct warnings when high
+**Expected**: All tests should FAIL initially (utilities don't exist)
+
+### T033 Run subscription utilities tests to verify failure
+
+**Command**: `npm run test -- tests/unit/lib/utils/subscription.test.ts`
+**Description**: Confirm utilities tests fail before implementation
+**Expected**: Tests fail because utilities file doesn't exist yet
+
+### T034 [P] Create metrics utilities
+
+**File**: `src/lib/utils/metrics.ts` (new file)
+**Description**: Create user metrics formatting and transformation helpers
+**Details**:
+
+- `formatLastLogin(date)`: Format last login timestamp to human-readable string
+- `calculateMetricsSummary(user)`: Extract and format activity metrics
+- `buildDashboardMetrics(user)`: Aggregate all dashboard data from user document
+**Max Lines**: 100 lines
+**Test First**: Write tests in T035 before implementing
+
+### T035 [P] Write metrics utilities tests
+
+**File**: `tests/unit/lib/utils/metrics.test.ts`
+**Description**: Write failing tests for metrics utility functions
+**Details**:
+
+- Test formatLastLogin: Handles null, formats dates correctly
+- Test calculateMetricsSummary: Returns correct structure
+- Test buildDashboardMetrics: Aggregates all required dashboard data
+**Expected**: All tests should FAIL initially (utilities don't exist)
+
+### T036 Run metrics utilities tests to verify failure
+
+**Command**: `npm run test -- tests/unit/lib/utils/metrics.test.ts`
+**Description**: Confirm metrics tests fail before implementation
+**Expected**: Tests fail because utilities file doesn't exist yet
+
+### T037 [P] Create dashboard service
+
+**File**: `src/lib/services/dashboardService.ts` (new file)
+**Description**: Create service for dashboard metrics aggregation
+**Details**:
+
+- `getDashboardMetrics(userId)`: Fetch user, calculate subscription usage, build metrics response
+- Integrate subscription utilities for limits and warnings
+- Integrate metrics utilities for activity data
+- Return structure matching dashboard-api.yaml contract
+**Max Lines**: 150 lines
+**Max Function**: 50 lines
+**Test First**: Write tests in T038 before implementing
+
+### T038 [P] Write dashboard service tests
+
+**File**: `tests/unit/lib/services/dashboardService.test.ts`
+**Description**: Write failing tests for dashboard service operations
+**Details**:
+
+- Test getDashboardMetrics: Success with complete data structure
+- Test getDashboardMetrics: User not found returns 404
+- Test subscription usage calculations: Correct percentages and warnings
+- Mock User model and utilities
+**Expected**: All tests should FAIL initially (service doesn't exist)
+
+### T039 Run dashboard service tests to verify failure
+
+**Command**: `npm run test -- tests/unit/lib/services/dashboardService.test.ts`
+**Description**: Confirm dashboard service tests fail before implementation
+**Expected**: Tests fail because service doesn't exist yet
+
+### T040 [P] Write dashboard API integration tests
+
+**File**: `tests/integration/api/dashboard/metrics.test.ts`
+**Description**: Write failing tests for dashboard metrics API endpoint
+**Details**:
+
+- Test GET /api/dashboard/metrics: Returns complete dashboard data with auth
+- Test GET unauthorized: Returns 401 without Clerk token
+- Test response structure: Matches dashboard-api.yaml contract
+- Verify subscription tier, limits, usage, percentages, warnings, metrics
+- Mock Clerk authentication
+**Reference**: Quickstart scenario 10, dashboard-api.yaml contract
+**Expected**: All tests should FAIL initially (route doesn't exist)
+
+### T041 Run dashboard API tests to verify failure
+
+**Command**: `npm run test -- tests/integration/api/dashboard/metrics.test.ts`
+**Description**: Confirm dashboard API tests fail before implementation
+**Expected**: 404 errors because route doesn't exist yet
+
+### T042 Implement dashboard metrics API route
+
+**File**: `src/app/api/dashboard/metrics/route.ts`
+**Description**: Create GET handler for dashboard metrics
+**Details**:
+
+- Verify Clerk authentication
+- Extract userId from Clerk session
+- Call dashboardService.getDashboardMetrics(userId)
+- Return 200 with metrics or appropriate error codes (401, 500)
+- Follow dashboard-api.yaml contract
+**Max Lines**: 100 lines
+**Max Function**: 50 lines
+
+### T043 Run dashboard API tests to verify they pass
+
+**Command**: `npm run test -- tests/integration/api/dashboard/metrics.test.ts`
+**Description**: Verify dashboard API tests pass after T042 implementation
+**Expected**: All dashboard API tests should PASS (green phase)
+
+### T044 [P] Write dashboard component tests
+
+**File**: `tests/unit/components/dashboard/DashboardHeader.test.tsx`
+**Description**: Write failing tests for dashboard header component
+**Details**:
+
+- Test renders user display name
+- Test renders subscription tier badge
+- Test renders correct greeting message
+**Expected**: All tests should FAIL initially (component doesn't exist)
+
+### T045 [P] Write usage metrics component tests
+
+**File**: `tests/unit/components/dashboard/UsageMetrics.test.tsx`
+**Description**: Write failing tests for usage metrics display component
+**Details**:
+
+- Test renders progress bars for parties, encounters, creatures
+- Test displays correct usage numbers and percentages
+- Test applies correct color coding (green/yellow/red)
+- Test displays usage warnings when thresholds exceeded
+**Expected**: All tests should FAIL initially (component doesn't exist)
+
+### T046 Run dashboard component tests to verify failure
+
+**Command**: `npm run test -- tests/unit/components/dashboard/*.test.tsx`
+**Description**: Confirm dashboard component tests fail before implementation
+**Expected**: Tests fail because components don't exist yet
+
+### T047 Implement dashboard header component
+
+**File**: `src/components/dashboard/DashboardHeader.tsx`
+**Description**: Create dashboard header with user info and greeting
+**Details**:
+
+- Display user displayName or fallback to first name
+- Display subscription tier badge with tier name
+- Show greeting message based on time of day (optional)
+- Use shadcn/ui components for styling
+**Max Lines**: 100 lines
+
+### T048 Implement usage metrics component
+
+**File**: `src/components/dashboard/UsageMetrics.tsx`
+**Description**: Create usage metrics display with progress bars
+**Details**:
+
+- Accept metrics prop with subscription data
+- Render progress bars for parties, encounters, creatures
+- Display usage as "X / Y" format
+- Apply color coding: green (<50%), yellow (50-80%), red (>80%)
+- Display warnings array if provided
+- Use shadcn/ui Progress component
+**Max Lines**: 200 lines
+**Max Function**: 50 lines
+**Constitutional**: Extract ProgressBar subcomponent if needed
+
+### T049 Run dashboard component tests to verify they pass
+
+**Command**: `npm run test -- tests/unit/components/dashboard/*.test.tsx`
+**Description**: Verify dashboard component tests pass after implementation
+**Expected**: All component tests should PASS (green phase)
+
+### T050 Create dashboard page
+
+**File**: `src/app/dashboard/page.tsx`
+**Description**: Create authenticated dashboard page with metrics
+**Details**:
+
+- Verify Clerk authentication, redirect to login if not authenticated
+- Fetch dashboard metrics from API
+- Render DashboardHeader with user data
+- Render UsageMetrics with subscription data
+- Show quick actions (Create Party, Create Encounter buttons - placeholders)
+- Server component with client components for interactive parts
+**Max Lines**: 150 lines
+**Performance**: Page load within 1.5s target
+
+---
+
+## Phase 3.10: Settings Layer
+
+### T051 [P] Write settings API integration tests
+
+**File**: `tests/integration/api/users/settings.test.ts`
+**Description**: Write failing tests for settings API endpoints
+**Details**:
+
+- Test GET /api/users/[userId]/settings: Returns complete settings with auth
+- Test GET unauthorized: Returns 401 without Clerk token
+- Test GET forbidden: Returns 403 if userId doesn't match session
+- Test PATCH /api/users/[userId]/settings/preferences: Updates preferences with validation
+- Test PATCH validation errors: Returns 400 with detailed errors
+- Test response structure: Matches settings-api.yaml contract
+- Mock Clerk authentication
+**Reference**: settings-api.yaml contract, quickstart scenarios 11-12
+**Expected**: All tests should FAIL initially (routes don't exist)
+
+### T052 Run settings API tests to verify failure
+
+**Command**: `npm run test -- tests/integration/api/users/settings.test.ts`
+**Description**: Confirm settings API tests fail before implementation
+**Expected**: 404 errors because routes don't exist yet
+
+### T053 Implement settings GET API route
+
+**File**: `src/app/api/users/[userId]/settings/route.ts`
+**Description**: Create GET handler for user settings
+**Details**:
+
+- Verify Clerk authentication
+- Verify userId matches authenticated user (403 if mismatch)
+- Fetch user profile and preferences
+- Return complete settings object matching settings-api.yaml
+- Handle errors (401, 403, 404, 500)
+**Max Lines**: 100 lines
+
+### T054 Implement preferences PATCH API route
+
+**File**: `src/app/api/users/[userId]/settings/preferences/route.ts`
+**Description**: Create PATCH handler for preferences updates
+**Details**:
+
+- Verify Clerk authentication and userId match
+- Validate preferences update with Zod schema
+- Update only provided preferences fields (partial update)
+- Return updated complete settings object
+- Handle validation errors with field-level details
+**Max Lines**: 150 lines
+**Max Function**: 50 lines
+
+### T055 Run settings API tests to verify they pass
+
+**Command**: `npm run test -- tests/integration/api/users/settings.test.ts`
+**Description**: Verify settings API tests pass after T053-T054 implementation
+**Expected**: All settings API tests should PASS (green phase)
+
+### T056 [P] Write settings component tests
+
+**File**: `tests/unit/components/settings/SettingsTabs.test.tsx`
+**Description**: Write failing tests for settings tab navigation component
+**Details**:
+
+- Test renders tab buttons for Profile, Preferences, Account
+- Test active tab indicator reflects current route
+- Test tab navigation updates URL
+- Test keyboard navigation (ARIA compliance)
+**Expected**: All tests should FAIL initially (component doesn't exist)
+
+### T057 [P] Write preferences tab component tests
+
+**File**: `tests/unit/components/settings/PreferencesTab.test.tsx`
+**Description**: Write failing tests for preferences form component
+**Details**:
+
+- Test renders all preference fields (theme, notifications, language, animations, autoSave)
+- Test pre-fills current preference values
+- Test form submission updates preferences
+- Test validation and error display
+**Expected**: All tests should FAIL initially (component doesn't exist)
+
+### T058 Run settings component tests to verify failure
+
+**Command**: `npm run test -- tests/unit/components/settings/*.test.tsx`
+**Description**: Confirm settings component tests fail before implementation
+**Expected**: Tests fail because components don't exist yet
+
+### T059 Implement settings tabs component
+
+**File**: `src/components/settings/SettingsTabs.tsx`
+**Description**: Create tabbed navigation for settings sections
+**Details**:
+
+- Render tabs: Profile, Preferences, Account
+- Use Next.js Link for tab navigation
+- Active tab indicator based on current pathname
+- ARIA attributes for accessibility
+- Use shadcn/ui Tabs component
+**Max Lines**: 100 lines
+
+### T060 Implement preferences tab component
+
+**File**: `src/components/settings/PreferencesTab.tsx`
+**Description**: Create preferences form with theme, notifications, etc.
+**Details**:
+
+- Form fields: theme (select), emailNotifications (toggle), browserNotifications (toggle), timezone (select), language (select), diceRollAnimations (toggle), autoSaveEncounters (toggle)
+- Use React Hook Form with Zod validation
+- Submit updates to preferences API
+- Show success/error feedback
+- Use shadcn/ui form components
+**Max Lines**: 250 lines
+**Max Function**: 50 lines
+**Constitutional**: Extract field groups if file exceeds 250 lines
+
+### T061 Run settings component tests to verify they pass
+
+**Command**: `npm run test -- tests/unit/components/settings/*.test.tsx`
+**Description**: Verify settings component tests pass after implementation
+**Expected**: All component tests should PASS (green phase)
+
+### T062 Create settings layout with tabs
+
+**File**: `src/app/settings/layout.tsx`
+**Description**: Create settings layout with shared tab navigation
+**Details**:
+
+- Render SettingsTabs component
+- Provide layout structure for all settings pages
+- Verify authentication, redirect to login if needed
+- Server component wrapping client components
+**Max Lines**: 80 lines
+
+### T063 Create settings profile tab page
+
+**File**: `src/app/settings/profile/page.tsx`
+**Description**: Create profile editing page within settings
+**Details**:
+
+- Reuse ProfileForm component from T023
+- Fetch current user profile
+- Handle profile updates
+- Show in settings context (not standalone)
+**Max Lines**: 80 lines
+
+### T064 Create settings preferences tab page
+
+**File**: `src/app/settings/preferences/page.tsx`
+**Description**: Create preferences editing page within settings
+**Details**:
+
+- Render PreferencesTab component
+- Fetch current preferences
+- Handle preferences updates
+**Max Lines**: 80 lines
+
+### T065 Create settings account tab page
+
+**File**: `src/app/settings/account/page.tsx`
+**Description**: Create account info page within settings
+**Details**:
+
+- Display subscription tier (read-only)
+- Display account creation date
+- Display last login timestamp
+- Placeholder for "Delete Account" functionality (disabled)
+**Max Lines**: 100 lines
+
+### T066 Create settings index page redirect
+
+**File**: `src/app/settings/page.tsx`
+**Description**: Create redirect from /settings to /settings/profile as default
+**Details**:
+
+- Redirect to /settings/profile using Next.js redirect()
+**Max Lines**: 20 lines
+
+---
+
+## Phase 3.11: End-to-End Tests (Comprehensive E2E Coverage)
+
+### T067 [P] Write login flow E2E test
+
+**File**: `tests/e2e/auth/login.spec.ts` (new file)
+**Description**: Write Playwright test for user login flow (E2E-001 from e2e-test-plan.md)
+**Details**:
+
+- Test TR-001, TR-009: Unauthenticated user redirected to Clerk sign-in
+- Test successful login with valid credentials
+- Test login failure with invalid credentials (Clerk error messages)
+- Test post-login redirect to dashboard
+- Verify Clerk session established
+- Test page load performance (<1.5s for dashboard)
+**Reference**: e2e-test-plan.md E2E-001, quickstart scenario 9
+**Expected**: Test should FAIL initially (dashboard page doesn't exist yet)
+
+### T068 [P] Write dashboard access E2E test
+
+**File**: `tests/e2e/dashboard/dashboard.spec.ts` (new file)
+**Description**: Write Playwright test for dashboard access and display (E2E-002 from e2e-test-plan.md)
+**Details**:
+
+- Test TR-002: Authenticated user can access dashboard
+- Verify dashboard displays subscription tier badge
+- Verify usage metrics with progress bars display correctly
+- Verify usage warnings appear for high usage
+- Verify activity metrics display (sessions, characters, campaigns)
+- Test color coding for progress bars (green/yellow/red)
+**Reference**: e2e-test-plan.md E2E-002, quickstart scenario 10
+**Expected**: Test should FAIL initially (dashboard components not complete)
+
+### T069 [P] Write profile viewing E2E test
+
+**File**: `tests/e2e/settings/profile-view.spec.ts` (new file)
+**Description**: Write Playwright test for profile viewing in settings (E2E-003 from e2e-test-plan.md)
+**Details**:
+
+- Test TR-003: User can navigate to settings and view profile
+- Test settings tab navigation (Profile, Preferences, Account)
+- Verify all profile fields display correctly
+- Verify read-only fields (email from Clerk)
+- Test URL updates with tab changes
+- Test keyboard navigation (ARIA)
+**Reference**: e2e-test-plan.md E2E-003, quickstart scenario 11
+**Expected**: Test should FAIL initially (settings pages don't exist yet)
+
+### T070 [P] Write profile editing E2E test
+
+**File**: `tests/e2e/settings/profile-edit.spec.ts` (new file)
+**Description**: Write Playwright test for profile editing (E2E-004 from e2e-test-plan.md)
+**Details**:
+
+- Test TR-004, TR-010: User can edit profile fields and save changes
+- Test validation errors display correctly
+- Test success message after save
+- Verify database persistence of changes
+- Test form interaction performance (<500ms)
+- Test validation: displayName max length, enum values
+**Reference**: e2e-test-plan.md E2E-004, quickstart scenario 12
+**Expected**: Test should FAIL initially (settings pages don't exist yet)
+
+### T071 [P] Write auth enforcement E2E test
+
+**File**: `tests/e2e/auth/auth-enforcement.spec.ts` (new file)
+**Description**: Write Playwright test for authentication enforcement (E2E-005 from e2e-test-plan.md)
+**Details**:
+
+- Test TR-005: Unauthenticated users redirected from protected pages
+- Test /dashboard requires auth
+- Test /settings requires auth
+- Test /settings/profile requires auth
+- Verify redirect to Clerk sign-in with return URL
+- Test post-login redirect to original destination
+**Reference**: e2e-test-plan.md E2E-005, quickstart scenario 13
+**Expected**: Test should FAIL initially (auth enforcement not complete)
+
+### T072 [P] Write authorization enforcement E2E test
+
+**File**: `tests/e2e/auth/authorization.spec.ts` (new file)
+**Description**: Write Playwright test for authorization enforcement (E2E-006 from e2e-test-plan.md)
+**Details**:
+
+- Test TR-006: Users cannot access other users' data
+- Test API returns 403 for cross-user profile access
+- Test API returns 403 for cross-user settings access
+- Test API returns 403 for cross-user dashboard access
+- Verify no data leakage in error responses
+**Reference**: e2e-test-plan.md E2E-006, quickstart scenario 8
+**Expected**: Test should FAIL initially (authorization checks not complete)
+
+### T073 [P] Write first-time user flow E2E test
+
+**File**: `tests/e2e/profile/first-time-flow.spec.ts` (new file)
+**Description**: Write Playwright test for first-time user complete flow (E2E-007 from e2e-test-plan.md)
+**Details**:
+
+- Test TR-007: Clerk login → profile setup → dashboard
+- Test new user sees profile setup form
+- Test profile completion sets profileSetupCompleted flag
+- Test redirect to dashboard after profile completion
+- Test can skip profile setup and access dashboard
+- Verify full end-to-end flow timing
+**Reference**: e2e-test-plan.md E2E-007, quickstart scenarios 2, 3
+**Expected**: Test should FAIL initially (profile setup page doesn't exist yet)
+
+### T074 [P] Write returning user flow E2E test
+
+**File**: `tests/e2e/profile/returning-user.spec.ts` (new file)
+**Description**: Write Playwright test for returning user flow (E2E-008 from e2e-test-plan.md)
+**Details**:
+
+- Test TR-008: Clerk login → dashboard (skip profile setup)
+- Test returning user (profileSetupCompleted=true) goes directly to dashboard
+- Test no profile setup prompt for returning users
+- Test user can access settings to update profile later
+- Verify dashboard loads with existing user data
+**Reference**: e2e-test-plan.md E2E-008, quickstart scenario 9
+**Expected**: Test should FAIL initially (redirect logic not complete)
+
+### T075 [P] Write settings navigation E2E test
+
+**File**: `tests/e2e/settings/navigation.spec.ts` (new file)
+**Description**: Write Playwright test for settings tab navigation (E2E-009 from e2e-test-plan.md)
+**Details**:
+
+- Test tab navigation between Profile, Preferences, Account
+- Test URL updates correctly for each tab
+- Test active tab indicator
+- Test keyboard navigation works
+- Test settings page load performance (<800ms)
+- Test preferences form displays all fields
+**Reference**: e2e-test-plan.md E2E-009, quickstart scenario 11
+**Expected**: Test should FAIL initially (settings tabs not complete)
+
+### T076 [P] Write validation errors E2E test
+
+**File**: `tests/e2e/profile/validation.spec.ts` (new file)
+**Description**: Write Playwright test for validation error handling (E2E-010 from e2e-test-plan.md)
+**Details**:
+
+- Test TR-010: Validation errors display correctly
+- Test displayName max length validation
+- Test dndEdition max length validation
+- Test enum value validation (experienceLevel, primaryRole)
+- Test inline error messages appear
+- Test form field highlighting on error
+- Test error messages clear after correction
+**Reference**: e2e-test-plan.md E2E-010, quickstart scenario 7, scenario 12
+**Expected**: Test should FAIL initially (validation UI not complete)
+
+### T077 Run all E2E tests to verify initial failure
+
+**Command**: `npm run test:e2e`
+**Description**: Confirm all E2E tests fail before full implementation
+**Expected**: All E2E tests fail because flows not fully implemented
+
+### T078 [P] Write profile setup E2E test (original scenario)
 
 **File**: `tests/e2e/profile-setup.spec.ts`
 **Description**: Write Playwright E2E test for complete profile setup flow
@@ -437,23 +986,11 @@ Using Next.js App Router structure:
 - Test full user journey from authentication to profile completion
 **Expected**: Test should FAIL initially (pages don't exist or aren't wired up)
 
-### T032 Run profile setup E2E test to verify failure
-
-**Command**: `npm run test:e2e -- tests/e2e/profile-setup.spec.ts`
-**Description**: Confirm E2E test fails before pages are complete
-**Expected**: Test fails because flow not fully implemented
-
-### T033 Run profile setup E2E test to verify it passes
-
-**Command**: `npm run test:e2e -- tests/e2e/profile-setup.spec.ts`
-**Description**: Verify E2E test passes after full implementation
-**Expected**: E2E test should PASS (complete flow working)
-
 ---
 
-## Phase 3.10: Integration & Polish
+## Phase 3.12: Integration & Polish
 
-### T034 Wire up profile setup redirect logic
+### T079 Wire up profile setup redirect logic
 
 **File**: `src/middleware.ts` or layout component
 **Description**: Add conditional redirect to /profile-setup for first login
@@ -465,18 +1002,47 @@ Using Next.js App Router structure:
 - Allow access to /settings/profile regardless of completion status
 **Max Lines**: 50 lines addition
 
-### T035 Run full test suite
+### T080 Run all E2E tests to verify they pass
+
+**Command**: `npm run test:e2e`
+**Description**: Verify all E2E tests pass after full implementation
+**Expected**: All E2E tests should PASS (10+ E2E tests covering all TR requirements)
+
+### T081 Optimize dashboard metrics loading
+
+**Description**: Add caching and optimization for dashboard metrics
+**Details**:
+
+- Add React Query for dashboard data fetching
+- Implement loading states for dashboard components
+- Add error boundaries for component failures
+- Optimize database queries in dashboardService
+- Add metrics caching (5 minute TTL)
+**Max Lines**: Review existing files, extract utilities if needed
+
+### T082 Add settings state management
+
+**Description**: Implement optimistic updates for settings changes
+**Details**:
+
+- Add React Query mutations for settings updates
+- Implement optimistic UI updates for preference changes
+- Add rollback on API failure
+- Show loading states during updates
+**Max Lines**: Review existing files, add hooks if needed
+
+### T083 Run full test suite
 
 **Command**: `npm run test:ci`
 **Description**: Run complete test suite to verify all tests pass
 **Details**:
 
-- Unit tests: Validations, models, services, components
-- Integration tests: API routes, webhooks
-- E2E tests: Complete user flows
+- Unit tests: Validations, models, services, utilities, components
+- Integration tests: API routes, webhooks, dashboard, settings
+- E2E tests: Complete user flows (10+ scenarios)
 **Expected**: 100% pass rate, 80%+ coverage on touched files
 
-### T036 Run Codacy analysis
+### T084 Run Codacy analysis
 
 **Command**: `codacy-cli analyze --directory /home/doug/ai-dev-1/dnd-tracker`
 **Description**: Run full Codacy scan with pagination for entire codebase
@@ -489,35 +1055,40 @@ Using Next.js App Router structure:
 - Verify no functions exceed 50 lines
 - Address all findings before proceeding
 
-### T037 [P] Manual testing with quickstart scenarios
+### T085 [P] Manual testing with quickstart scenarios
 
 **File**: `specs/002-when-a-user/quickstart.md`
-**Description**: Execute all 8 quickstart scenarios manually
+**Description**: Execute all 13 quickstart scenarios manually
 **Details**:
 
 - Scenario 1: New user registration via Clerk
 - Scenario 2: First-time profile setup
 - Scenario 3: Skip profile setup
 - Scenario 4: Update profile in settings
-- Scenario 5: Usage metrics tracking (verify infrastructure)
+- Scenario 5: Usage metrics tracking
 - Scenario 6: Clerk user update sync
 - Scenario 7: Profile validation errors
 - Scenario 8: Authorization checks
+- Scenario 9: User login and dashboard access
+- Scenario 10: Dashboard usage metrics display
+- Scenario 11: Settings navigation and profile viewing
+- Scenario 12: Settings profile editing and validation
+- Scenario 13: Unauthenticated access protection
 **Expected**: All scenarios should work as documented
 
-### T038 Run build and verify no errors
+### T086 Run build and verify no errors
 
 **Command**: `npm run build`
 **Description**: Verify production build succeeds without errors
 **Expected**: Build completes successfully, no TypeScript errors
 
-### T039 Run linters and fix issues
+### T087 Run linters and fix issues
 
 **Command**: `npm run lint:fix && npm run lint:markdown:fix`
 **Description**: Run ESLint and Markdown linters, auto-fix issues
 **Expected**: No linter errors remaining
 
-### T040 Code review and refactoring
+### T088 Code review and refactoring
 
 **Description**: Review all changes for code quality and constitutional compliance
 **Details**:
@@ -528,6 +1099,7 @@ Using Next.js App Router structure:
 - Check test coverage meets 80%+ on touched files
 - Ensure no sensitive data in code or tests
 - Verify proper error handling and logging
+- Review dashboard and settings performance targets met
 
 ---
 
@@ -561,11 +1133,35 @@ UI - Pages (T029-T030)
 ├─ T029 (depends on T027)
 └─ T030 (depends on T023)
 
-E2E (T031-T033)
-└─ T031 [P] (depends on T029, T030) → T032 → T033
+Dashboard Layer (T031-T050)
+├─ T031 [P] ─┐
+├─ T032 [P] ─┤
+├─ T034 [P] ─┤
+├─ T035 [P] ─┤
+├─ T037 [P] ─┤
+└─ T038 [P] ─┴─→ T033 → T036 → T039 → T040 [P] → T041 → T042 → T043
+              → T044 [P] → T045 [P] → T046 → T047 → T048 → T049
+              → T050 (depends on T043, T047, T048)
 
-Polish (T034-T040)
-└─ T034 → T035 → T036 → T037 [P] → T038 → T039 → T040
+Settings Layer (T051-T066)
+└─ T051 [P] → T052 → T053 → T054 → T055
+   → T056 [P] → T057 [P] → T058 → T059 → T060 → T061
+   → T062 → T063 → T064 → T065 → T066
+
+E2E Tests (T067-T078)
+├─ T067 [P] (depends on T050) ─┐
+├─ T068 [P] (depends on T050) ─┤
+├─ T069 [P] (depends on T063) ─┤
+├─ T070 [P] (depends on T063) ─┤
+├─ T071 [P] ─────────────────┤
+├─ T072 [P] ─────────────────┤
+├─ T073 [P] (depends on T029) ─┤
+├─ T074 [P] (depends on T050) ─┤
+├─ T075 [P] (depends on T062) ─┤
+└─ T076 [P] (depends on T063) ─┴─→ T077 → T078 [P] (depends on T029, T030, T063)
+
+Polish (T079-T088)
+└─ T079 → T080 → T081 → T082 → T083 → T084 → T085 [P] → T086 → T087 → T088
 ```
 
 ---
@@ -611,6 +1207,59 @@ T017: Write profile API tests in tests/integration/api/users/profile.test.ts
 T021: Write ProfileForm tests in tests/unit/components/profile/ProfileForm.test.tsx
 ```
 
+### Round 6: Dashboard Utilities (After T030)
+
+```bash
+# Can run in parallel - different utility files
+T031: Create subscription utilities in src/lib/utils/subscription.ts
+T032: Write subscription tests in tests/unit/lib/utils/subscription.test.ts
+T034: Create metrics utilities in src/lib/utils/metrics.ts
+T035: Write metrics tests in tests/unit/lib/utils/metrics.test.ts
+T037: Create dashboard service in src/lib/services/dashboardService.ts
+T038: Write dashboard service tests in tests/unit/lib/services/dashboardService.test.ts
+```
+
+### Round 7: Dashboard API (After T039)
+
+```bash
+# Can run in parallel - test file separate from implementation
+T040: Write dashboard API tests in tests/integration/api/dashboard/metrics.test.ts
+```
+
+### Round 8: Dashboard Components (After T043)
+
+```bash
+# Can run in parallel - different component test files
+T044: Write DashboardHeader tests in tests/unit/components/dashboard/DashboardHeader.test.tsx
+T045: Write UsageMetrics tests in tests/unit/components/dashboard/UsageMetrics.test.tsx
+```
+
+### Round 9: Settings Layer (After T050)
+
+```bash
+# Can run in parallel - different test files
+T051: Write settings API tests in tests/integration/api/users/settings.test.ts
+T056: Write settings tabs tests in tests/unit/components/settings/SettingsTabs.test.tsx
+T057: Write preferences tab tests in tests/unit/components/settings/PreferencesTab.test.tsx
+```
+
+### Round 10: E2E Tests (After T066)
+
+```bash
+# Can run in parallel - all E2E test files independent
+T067: Write login flow E2E test in tests/e2e/auth/login.spec.ts
+T068: Write dashboard access E2E test in tests/e2e/dashboard/dashboard.spec.ts
+T069: Write profile viewing E2E test in tests/e2e/settings/profile-view.spec.ts
+T070: Write profile editing E2E test in tests/e2e/settings/profile-edit.spec.ts
+T071: Write auth enforcement E2E test in tests/e2e/auth/auth-enforcement.spec.ts
+T072: Write authorization E2E test in tests/e2e/auth/authorization.spec.ts
+T073: Write first-time flow E2E test in tests/e2e/profile/first-time-flow.spec.ts
+T074: Write returning user E2E test in tests/e2e/profile/returning-user.spec.ts
+T075: Write settings navigation E2E test in tests/e2e/settings/navigation.spec.ts
+T076: Write validation errors E2E test in tests/e2e/profile/validation.spec.ts
+T078: Write profile setup E2E test in tests/e2e/profile-setup.spec.ts
+```
+
 ---
 
 ## Validation Checklist
@@ -642,11 +1291,18 @@ T021: Write ProfileForm tests in tests/unit/components/profile/ProfileForm.test.
 
 ## Notes
 
-- **Total Tasks**: 40 tasks across all phases
-- **Parallel Opportunities**: 14 tasks marked [P] can run concurrently
+- **Total Tasks**: 88 tasks across all phases (T001-T088)
+- **Original Scope**: T001-T030 (Profile management - 30 tasks)
+- **Dashboard Layer**: T031-T050 (Dashboard with metrics - 20 tasks)
+- **Settings Layer**: T051-T066 (Settings with tabs - 16 tasks)
+- **E2E Testing**: T067-T078 (Comprehensive E2E coverage - 12 tasks)
+- **Polish**: T079-T088 (Integration and optimization - 10 tasks)
+- **Parallel Opportunities**: 40+ tasks marked [P] can run concurrently
 - **TDD Enforced**: Every implementation task has a test task that must run first
-- **Estimated Effort**: 2-3 days with TDD approach
-- **File Count**: ~15 new files (tests, components, API routes, services)
+- **Estimated Effort**: 5-7 days with TDD approach (original: 2-3 days)
+- **File Count**: ~45 new files (tests, components, API routes, services, utilities, pages)
+- **E2E Test Files**: 11 comprehensive Playwright test files covering all TR requirements
+- **Performance Targets**: Dashboard <1.5s, Settings <800ms, Form interactions <500ms
 - **Reference Implementation**: `/home/doug/ai-dev-2/dnd-tracker-next-js` for patterns
 
 **Ready for execution**: All tasks are specific, actionable, and follow constitutional principles ✅

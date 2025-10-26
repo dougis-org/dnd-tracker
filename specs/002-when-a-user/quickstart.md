@@ -350,6 +350,311 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 
 ---
 
+## Scenario 9: User Login and Dashboard Access
+
+**User Story**: Users log in via existing Clerk authentication and access their personalized dashboard.
+
+### Steps
+
+1. **Setup**: Existing user account in Clerk with completed profile
+
+2. **Action**: Navigate to application root URL `/`
+
+3. **Expected Result**:
+   - Unauthenticated users redirected to Clerk sign-in page
+   - Clerk authentication interface displayed (not custom login screen)
+
+4. **Action**: Sign in using Clerk interface
+   - Email: `test-user@example.com`
+   - Password: (valid password)
+
+5. **Expected Result**: After successful authentication
+   - User redirected to `/dashboard`
+   - Dashboard page loads within 1.5s
+
+6. **Verification**: Dashboard displays correct user information
+
+7. **Assertions**:
+   - Clerk session established
+   - Dashboard URL is `/dashboard`
+   - User's display name shown in header
+   - Subscription tier badge displayed (e.g., "Free Adventurer")
+   - Quick action buttons visible (Create Party, Create Encounter, etc.)
+   - Navigation includes Dashboard, Parties, Encounters, Settings links
+
+### Success Criteria
+
+- ✅ Clerk authentication works correctly
+- ✅ Successful redirect to dashboard after login
+- ✅ Dashboard loads within performance target
+- ✅ No authentication errors
+
+---
+
+## Scenario 10: Dashboard Usage Metrics Display
+
+**User Story**: Dashboard displays subscription tier limits, current usage, and progress bars to help users track their resource consumption.
+
+### Steps
+
+1. **Setup**: Authenticated user with:
+   - Subscription Tier: `free`
+   - Usage: 2 encounters, 7 creatures, 0 parties
+
+2. **Action**: Navigate to `/dashboard`
+
+3. **Expected Result**: Dashboard loads with usage metrics section
+
+4. **Verification**: Check displayed metrics
+
+5. **Assertions**:
+   - **Subscription Card**:
+     - Tier name: "Free Adventurer"
+     - Tier badge/icon displayed
+     - "Upgrade" button visible (if applicable)
+
+   - **Usage Metrics**:
+     - Parties: "0 / 1" with progress bar at 0%
+     - Encounters: "2 / 3" with progress bar at 66.67%
+     - Creatures: "7 / 10" with progress bar at 70%
+
+   - **Progress Bars**:
+     - Visual indication of usage (filled portion)
+     - Color coding: green (<50%), yellow (50-80%), red (>80%)
+     - Encounters bar shows yellow/warning color
+     - Creatures bar shows yellow/warning color
+
+   - **Usage Warnings** (if usage >50%):
+     - Warning message: "You've used 2 of 3 encounters"
+     - Warning message: "You've used 7 of 10 creatures"
+
+   - **Activity Metrics**:
+     - Sessions count displayed
+     - Characters created count displayed
+     - Campaigns created count displayed
+     - Last login timestamp displayed
+
+6. **Action**: Simulate resource creation (update database):
+
+   ```bash
+   db.users.updateOne(
+     { email: 'test-user@example.com' },
+     {
+       $inc: { encountersCreated: 1 },
+       $set: { metricsLastUpdated: new Date() }
+     }
+   )
+   ```
+
+7. **Action**: Refresh dashboard
+
+8. **Assertions**:
+   - Encounters: "3 / 3" with progress bar at 100%
+   - Progress bar shows red/critical color
+   - Warning message: "You've reached your encounter limit"
+   - Severity: "critical"
+
+### Success Criteria
+
+- ✅ All metrics display correctly
+- ✅ Progress bars show accurate percentages
+- ✅ Color coding indicates usage levels
+- ✅ Warnings appear for high usage
+- ✅ Real-time data from MongoDB
+
+---
+
+## Scenario 11: Settings Navigation and Profile Viewing
+
+**User Story**: Users navigate to settings and view their profile information across tabbed sections.
+
+### Steps
+
+1. **Setup**: Authenticated user with completed profile
+
+2. **Action**: Click "Settings" in navigation menu
+
+3. **Expected Result**: Redirected to `/settings` (or `/settings/profile` as default tab)
+
+4. **Verification**: Settings page structure
+
+5. **Assertions**:
+   - **Settings Layout**:
+     - Page title: "Settings"
+     - Tab navigation visible with tabs: Profile, Preferences, Account
+     - Active tab indicator on "Profile"
+     - URL: `/settings` or `/settings/profile`
+
+   - **Profile Tab** (viewing mode):
+     - Display Name: shown (read-only or editable field)
+     - Email: shown (Clerk-managed, read-only)
+     - Timezone: shown
+     - D&D Edition: shown
+     - Experience Level: shown (human-readable: "Intermediate")
+     - Primary Role: shown (human-readable: "Dungeon Master")
+     - "Edit Profile" button visible (or form is directly editable)
+
+6. **Action**: Click "Preferences" tab
+
+7. **Expected Result**: URL changes to `/settings/preferences`
+
+8. **Assertions**:
+   - Active tab indicator on "Preferences"
+   - Preferences form displayed:
+     - Theme: dropdown (Light/Dark/System)
+     - Email Notifications: toggle
+     - Browser Notifications: toggle
+     - Language: dropdown
+     - Dice Roll Animations: toggle
+     - Auto-Save Encounters: toggle
+
+9. **Action**: Click "Account" tab
+
+10. **Expected Result**: URL changes to `/settings/account`
+
+11. **Assertions**:
+    - Active tab indicator on "Account"
+    - Account information displayed:
+      - Subscription tier
+      - Account creation date
+      - Last login timestamp
+      - "Delete Account" button (with confirmation)
+
+### Success Criteria
+
+- ✅ Settings page loads within 800ms
+- ✅ Tab navigation works correctly
+- ✅ URL updates with tab changes
+- ✅ All profile data displays accurately
+- ✅ Read-only fields clearly indicated
+- ✅ Tabs are keyboard accessible (ARIA)
+
+---
+
+## Scenario 12: Settings Profile Editing and Validation
+
+**User Story**: Users edit their profile in settings with proper validation and feedback.
+
+### Steps
+
+1. **Setup**: Authenticated user on `/settings/profile`
+
+2. **Action**: Edit profile fields:
+   - Display Name: `DM Alex` → `DM Alex the Experienced`
+   - Experience Level: `intermediate` → `experienced`
+   - Primary Role: `dm` → `both`
+
+3. **Action**: Click "Save Changes" button
+
+4. **Expected Result**:
+   - Loading indicator shown briefly
+   - API call to `PATCH /api/users/{userId}/settings/preferences`
+
+5. **Verification**:
+
+   ```bash
+   # Check updated profile
+   db.users.findOne({ email: 'test-user@example.com' })
+   ```
+
+6. **Assertions**:
+   - `displayName` is `'DM Alex the Experienced'`
+   - `experienceLevel` is `'experienced'`
+   - `primaryRole` is `'both'`
+   - `updatedAt` timestamp is current
+   - Success toast/message: "Profile updated successfully"
+   - Form remains on profile tab (no redirect)
+   - Updated values reflected in UI immediately
+
+7. **Action**: Attempt invalid edit:
+   - Display Name: `"x".repeat(101)` (exceeds limit)
+
+8. **Action**: Click "Save Changes"
+
+9. **Expected Result**: Validation error
+
+10. **Assertions**:
+    - Error message displayed: "Display name cannot exceed 100 characters"
+    - Form field highlighted with error
+    - Database not updated
+    - User can correct and retry
+
+### Success Criteria
+
+- ✅ Profile edits save successfully
+- ✅ Validation enforced client-side and server-side
+- ✅ Clear success/error feedback
+- ✅ Optimistic UI updates (optional)
+- ✅ Form interaction within 500ms performance target
+
+---
+
+## Scenario 13: Unauthenticated Access Protection
+
+**User Story**: Unauthenticated users cannot access protected pages and are redirected to login.
+
+### Steps
+
+1. **Setup**: No active Clerk session (logged out state)
+
+2. **Action**: Attempt to navigate to `/dashboard`
+
+3. **Expected Result**:
+   - Redirected to Clerk sign-in page
+   - Original destination saved for post-login redirect
+
+4. **Assertions**:
+   - Dashboard page not accessible
+   - Clerk authentication screen shown
+   - URL includes redirect parameter (e.g., `?redirect_url=/dashboard`)
+
+5. **Action**: Attempt to navigate to `/settings`
+
+6. **Expected Result**: Same redirect behavior
+
+7. **Action**: Attempt to navigate to `/settings/profile`
+
+8. **Expected Result**: Same redirect behavior
+
+9. **Action**: Attempt direct API call without authentication:
+
+   ```bash
+   GET /api/dashboard/metrics
+   # No Authorization header
+   ```
+
+10. **Expected Result**: 401 Unauthorized
+
+11. **Assertions**:
+    - Status code: 401
+    - Response: `{ "error": "Unauthorized", "message": "You must be logged in to access dashboard metrics" }`
+    - No data exposed
+
+12. **Action**: Attempt to access another user's profile:
+
+    ```bash
+    GET /api/users/{otherUserId}/settings
+    Authorization: Bearer {validToken}
+    ```
+
+13. **Expected Result**: 403 Forbidden
+
+14. **Assertions**:
+    - Status code: 403
+    - Response: `{ "error": "Forbidden", "message": "You can only access your own settings" }`
+    - Cross-user access blocked
+
+### Success Criteria
+
+- ✅ All protected routes enforce authentication
+- ✅ Proper redirects to Clerk sign-in
+- ✅ Post-login redirect works correctly
+- ✅ API endpoints return appropriate error codes
+- ✅ Authorization prevents cross-user access
+- ✅ Error messages are clear but don't expose system details
+
+---
+
 ## Automation Notes
 
 ### Unit Tests
@@ -395,4 +700,4 @@ This quickstart guide provides step-by-step scenarios to validate the user regis
 
 ---
 
-*Quickstart scenarios version 1.0 - 2025-09-30*
+*Quickstart scenarios version 2.0 - Enhanced 2025-10-25 with login, dashboard, settings, and auth protection scenarios*
