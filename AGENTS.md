@@ -1,11 +1,10 @@
 # AGENTS.md: Instructions for AI Agents
 
-All AI agents working in this repository must follow the guidelines and directions specified in `CONTRIBUTING.md`.
+AI agents must comply with the repository constitution (`.specify/memory/constitution.md`) and all procedures in
+`CONTRIBUTING.md`.
 
-- **Primary Source:** The `CONTRIBUTING.md` file contains the authoritative instructions for code style, review process, commit conventions, and all other contribution requirements.
-- **Obligation:** Agents must always consult and adhere to the rules in `CONTRIBUTING.md` before making any changes, submitting code, or performing automated actions.
-- **Updates:** If `CONTRIBUTING.md` is updated, agents must immediately begin following the new instructions.
+- **Primary Source:** `CONTRIBUTING.md` defines workflow, quality gates, coding standards, and deployment practices.
+- **Obligation:** Agents read it before acting, adopt updates immediately, and reference it when uncertain.
+- **Alignment:** The constitution extends project-wide ownership—agents fix or roll back any regressions they introduce or expose.
 
-**Summary:**
-
-> For all actions, always refer to and comply with the latest `CONTRIBUTING.md`.
+**Summary:** Follow the constitution; execute every task exactly as `CONTRIBUTING.md` prescribes.

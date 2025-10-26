@@ -1,7 +1,8 @@
 # Contributing to dnd-tracker
 
-Welcome! This project follows strict engineering, workflow, and coding standards to ensure high quality, maintainability,
-and security. All contributors—including any AI agents **must** follow these unified instructions.
+Welcome! This handbook enforces the repository constitution (`.specify/memory/constitution.md`) and provides the
+step-by-step procedures every contributor—human or AI—must follow. `AGENTS.md` simply restates that agents comply with
+the same rules.
 
 - Github organization is dougis-org
 - repository name is dnd-tracker
@@ -21,37 +22,39 @@ and security. All contributors—including any AI agents **must** follow these u
 
 ### 1. Issue Selection & Branching
 
-- Select issues by priority (P1 > P2, Phase1 > Phase2, lower# first).
-  - Examine the docs/execution-plan.md to find the next open issue, if none found, review all open issues in GitHub
-- Do not start work on issues labeled `in-progress` or `effort:human`.
-- Add the `in-progress` label when starting.
-- Create a feature branch from `main` using descriptive, kebab-case naming and including the issue number:  
-  `feature/123-task-description` or `feature/123-component-name`.
-- Push the branch immediately.
+Pick the next eligible issue (priority order: P1 > P2, Phase1 > Phase2, lower ID first). Confirm availability in
+`docs/execution-plan.md` or GitHub, avoid items labeled `in-progress` or `effort:human`, then add the `in-progress`
+label yourself. Create a branch from `main` named `feature/<issue-number>-<kebab-description>` and push immediately.
+
+### Mandatory Quality Gates (Run Early & Often)
+
+Execute these commands after meaningful edits and before opening a PR. Remote CI and Codacy results are authoritative, so fix any failure locally before retrying:
+
+| Purpose | Command |
+| --- | --- |
+| Type safety | `npm run type-check` |
+| Linting (JS/TS) | `npm run lint:fix` |
+| Linting (Markdown) | `npm run lint:markdown:fix` |
+| Unit/Integration tests | `npm run test:ci` |
+| Build verification | `npm run build` |
+| Codacy analysis | `codacy_cli_analyze --file <path>` after each edited file; run project-wide before PR |
+| Dependency security scan | `codacy_cli_analyze --tool trivy` immediately after dependency changes |
 
 ### 2. Development Process (TDD Required)
 
-- Determine if the scope of the issue is appropriate, if the issue can be broken into smaller deliverables
-  create sub issues for those deliverables and iterate over their delivery (following the standards below)
-- Write failing tests before implementing code (Test-Driven Development).
-  - Follow the guidelines in [TESTING.md](TESTING.md)
+- Determine if the scope of the issue is appropriate; if it can be broken into smaller deliverables, create sub-issues and iterate using these standards.
+- Write failing tests before implementing code (Test-Driven Development). Follow the guidelines in [TESTING.md](TESTING.md).
 - Implement code to pass tests; extract duplicated test code to utilities.
 - Follow all coding, security, and documentation standards below.
-- After every file edit, run:
-  - `npm run lint:fix`
-  - `npm run lint:markdown:fix` (for markdown files)
+- After any change, run the commands listed in **Mandatory Quality Gates** and remediate issues immediately.
 - Commit and push after local checks pass.
 
 ### 3. Pre-PR Checklist
 
 Before creating a PR, ensure:
 
-- [ ] All TypeScript errors are resolved (`npm run type-check`)
-- [ ] ESLint passes without errors (`npm run lint`)
-- [ ] Markdownlint passes without errors (`npm run lint:markdown:fix`)
-- [ ] All tests pass (`npm run test:ci`)
-- [ ] Build completes successfully (`npm run build`)
-- [ ] All new dependencies are installed and scanned (see Security below)
+- [ ] Mandatory Quality Gates all pass with clean results (see table above)
+- [ ] Any new dependencies have been scanned (see Security below)
 - [ ] Environment variables are documented in `.env.example`
 - [ ] Code follows all project conventions and best practices
 
@@ -169,17 +172,9 @@ To maintain code quality and keep the codebase maintainable, all contributors mu
 
 ## Testing & Quality Checks
 
-- All code must pass:
-  - `npm run test:ci`
-  - `npm run build`
-  - `npm run lint:fix`
-  - `npm run lint:markdown:fix`
-  - `npm run type-check`
-- After any dependency install, run a security scan:
-  - `codacy_cli_analyze --tool trivy`
-- Before PR, run a full Codacy scan:
-  - `codacy_cli_analyze .`
-- Fix all issues found by remote Codacy or CI, even pre-existing ones.
+- Run the commands listed in **Mandatory Quality Gates** and fix every issue before committing.
+- After any dependency install, execute `codacy_cli_analyze --tool trivy`.
+- Before PR, run `codacy_cli_analyze .` for a full report, then remediate findings (even pre-existing ones) or document rationale with maintainers.
 
 ---
 

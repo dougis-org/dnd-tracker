@@ -1,50 +1,42 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# dnd-tracker Engineering Constitution
+
+This constitution establishes the non-negotiable principles that govern all work on the `dnd-tracker` repository. It must be read together with `CONTRIBUTING.md`, the authoritative procedural handbook for every contributor, and `AGENTS.md`, which binds AI agents to the same directives.
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Alignment with Project Directives
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+All contributors, human and AI, follow the latest instructions in `CONTRIBUTING.md`. `AGENTS.md` simply reiterates this requirement for agents. When conflicts arise, `CONTRIBUTING.md` wins unless this constitution is explicitly amended.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Test-Driven Development (Non-Negotiable)
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+Work proceeds Red → Green → Refactor. Tests are written first, implementation follows to satisfy them, and refactors only occur with tests passing. Exceptions require explicit maintainer approval documented in the relevant issue.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Quality Gates and Tooling Compliance
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+No change is ready until the quality gates enumerated in `CONTRIBUTING.md` (lint, markdown lint, type check, tests, build, Codacy) pass both locally and in CI. Remote CI and Codacy verdicts are authoritative.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Security and Dependency Stewardship
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Security expectations in `CONTRIBUTING.md` (Trivy scans on dependency work, secret handling, environment documentation) are mandatory. Contributors must not merge until security checks are clean.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Maintainability Limits and DRY Enforcement
+
+The file/function size limits and DRY expectations defined in `CONTRIBUTING.md` are enforced. New complexity or duplication introduced by a change must be refactored before review.
+
+### VI. Project-Wide Ownership and Remediation
+
+Contributors own the stability of the entire repository, not only their scoped task. If a change introduces or exposes regressions, test failures, security issues, or lint/type/build errors, those issues must be resolved (or the change rolled back) within the same effort before proceeding.
+
+## Workflow Enforcement
+
+Contributors must follow the workflow described in `CONTRIBUTING.md` (issue selection, TDD, quality gates, commits/PRs,
+and documentation updates). Deviations require maintainer approval recorded in the related issue or PR.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- This constitution supersedes ad-hoc practices. Any exception must be documented in the related issue and approved by maintainers.
+- Updates to `CONTRIBUTING.md` or `AGENTS.md` automatically amend this constitution. Contributors must stay informed of changes and adjust workflows immediately.
+- Amendments to this constitution require a documented proposal linked to a pull request that updates both this file and any referenced standards.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2025-10-26 | **Last Amended**: 2025-10-26
