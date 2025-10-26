@@ -10,3 +10,7 @@ The D&D Encounter Tracker is a web application designed to help Dungeon Masters 
 ## Contributing
 
 Contributions are welcome! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information on how to contribute to this project.
+
+## Character Soft Delete Policy
+
+Characters are soft deleted by setting a `deletedAt` timestamp and remain recoverable for a 30-day grace period. A background cleanup job that permanently removes expired records is deferred until Feature 004.
