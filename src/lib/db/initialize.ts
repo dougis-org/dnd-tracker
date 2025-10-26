@@ -2,10 +2,14 @@
  * Database initialization utilities
  * Simple initialization combining connection, events, and indexes
  */
-import { connectToDatabase } from './connection'
-import { setupConnectionEvents } from './events'
-import { setupGracefulShutdown } from './shutdown'
-import { createDatabaseIndexes } from './indexes'
+import { connectToDatabase } from './connection';
+import { setupConnectionEvents } from './events';
+import { setupGracefulShutdown } from './shutdown';
+import {
+  createCharacterCollectionIndexes,
+  createDatabaseIndexes,
+} from './indexes';
+import { seedSystemEntities } from './seeders';
 
 /**
  * Log initialization success in development
@@ -13,7 +17,7 @@ import { createDatabaseIndexes } from './indexes'
  */
 function logInitializationSuccess(): void {
   if (process.env.NODE_ENV === 'development') {
-    console.log('✅ Database initialized successfully')
+    console.log('✅ Database initialized successfully');
   }
 }
 
@@ -23,13 +27,15 @@ function logInitializationSuccess(): void {
  */
 export async function initializeDatabase(): Promise<void> {
   try {
-    await connectToDatabase()
-    setupConnectionEvents()
-    setupGracefulShutdown()
-    await createDatabaseIndexes()
-    logInitializationSuccess()
+    await connectToDatabase();
+    setupConnectionEvents();
+    setupGracefulShutdown();
+    await createDatabaseIndexes();
+    await createCharacterCollectionIndexes();
+    await seedSystemEntities();
+    logInitializationSuccess();
   } catch (error) {
-    console.error('❌ Database initialization failed:', error)
-    throw error
+    console.error('❌ Database initialization failed:', error);
+    throw error;
   }
 }
