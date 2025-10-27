@@ -7,7 +7,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { connectToDatabase } from '@/lib/db/connection';
-import User from '@/lib/db/models/User';
+import User, { type IUser } from '@/lib/db/models/User';
 import { z } from 'zod';
 
 interface RouteContext {
@@ -34,7 +34,7 @@ const preferencesUpdateSchema = z.object({
  * Build settings response from user document
  * Matches settings-api.yaml contract structure
  */
-function buildSettingsResponse(user: any) {
+function buildSettingsResponse(user: IUser) {
   return {
     profile: {
       displayName: user.profile.displayName || null,
