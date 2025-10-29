@@ -40,6 +40,7 @@
 ### T001 Status: Feature Branch Initialization
 
 **What This Task Does**:
+
 - Create feature branch: `feature/003-character-management`
 - Update `docs/Feature-Roadmap.md` with Feature 003 status
 - Mark as "In Progress" in project roadmap
@@ -55,12 +56,14 @@
 ### Phase 1 Parallelization
 
 **Can Run in Parallel** (Independent files):
+
 - T002: Race model
 - T003: Class model [P]
 - T004: Race seeding [P]
 - T005: Class seeding [P]
 
 **Must Run Sequential**:
+
 - T001 → all others (sets up branch)
 - T006 → after T002-T005 (references Race/Class in validation)
 - T007 → after T002-T005-T006 (exports all models)
@@ -86,12 +89,14 @@ Phase 9 (Quality & Polish)
 
 **Status**: ✅ MARKED COMPLETE IN TASKS.MD
 
-**Action Required**: 
+**Action Required**:
+
 1. Create branch `feature/003-character-management` (if not already created)
 2. Update `docs/Feature-Roadmap.md` to show Feature 003 "In Progress"
 3. Push to remote
 
 **Expected Output**:
+
 - Feature 003 visible in Feature-Roadmap.md
 - Branch name: `feature/003-character-management`
 - Ready for Phase 1 implementation tasks
@@ -105,6 +110,7 @@ Phase 9 (Quality & Polish)
 **File**: `src/lib/db/models/Race.ts`
 
 **What to Implement**:
+
 ```typescript
 import mongoose from 'mongoose';
 
@@ -137,6 +143,7 @@ export const Race = mongoose.model('Race', raceSchema);
 **File**: `src/lib/db/models/Class.ts`
 
 **What to Implement**:
+
 ```typescript
 import mongoose from 'mongoose';
 
@@ -180,6 +187,7 @@ Barbarian (d12), Bard (d8), Cleric (d8), Druid (d8), Fighter (d10), Monk (d8), P
 **File**: `src/lib/validations/character.ts`
 
 **What to Validate**:
+
 1. Name: 1-255 chars, required, string
 2. Ability scores: each 1-20, all required
 3. Level: each class 1-20, total ≤ 20
@@ -188,6 +196,7 @@ Barbarian (d12), Bard (d8), Cleric (d8), Druid (d8), Fighter (d10), Monk (d8), P
 6. Multiclass: max 3 classes, min 1 class
 
 **Use Zod**:
+
 ```typescript
 import { z } from 'zod';
 
@@ -212,6 +221,7 @@ export { Character } from './Character'; // Will exist after T022
 ```
 
 **Indexes** (T008):
+
 ```typescript
 // Character collection indexes
 const characterIndexes = [
@@ -346,7 +356,8 @@ git push origin feature/003-character-management
 ### If TypeScript Fails
 
 **Problem**: Type errors in new files
-**Solution**: 
+**Solution**:
+
 1. Ensure Mongoose version matches tsconfig.json
 2. Use proper TypeScript types: `mongoose.Schema<IDocument>`
 3. Check existing models for pattern
@@ -355,6 +366,7 @@ git push origin feature/003-character-management
 
 **Problem**: Lint errors in new files
 **Solution**:
+
 1. Run `npm run lint -- --fix` (auto-fix)
 2. Check .eslintrc.js for rules
 3. Use existing models as template
@@ -363,6 +375,7 @@ git push origin feature/003-character-management
 
 **Problem**: Database seed doesn't insert data
 **Solution**:
+
 1. Verify MongoDB connection working
 2. Check if Race/Class already exist (skip duplicate inserts)
 3. Add error logging to seed function
@@ -387,4 +400,3 @@ git push origin feature/003-character-management
 **Status**: 🚀 **IMPLEMENTATION IN PROGRESS - PHASE 1 STARTED**  
 **Current Task**: T001-T009 (Phase 1 Setup)  
 **Next Milestone**: Phase 2 - Foundational Infrastructure
-

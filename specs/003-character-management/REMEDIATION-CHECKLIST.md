@@ -42,11 +42,13 @@
 **Action**: Update FR-004 to enumerate all 6 saving throws
 
 **Before**:
+
 ```markdown
 - **FR-004**: System MUST calculate and display all D&D 5e derived values including ability modifiers, saving throws, AC, initiative, proficiency bonus, and skills based on race/class/ability scores.
 ```
 
 **After**:
+
 ```markdown
 - **FR-004**: System MUST calculate and display all D&D 5e derived values including:
   - Ability modifiers (STR, DEX, CON, INT, WIS, CHA): formula = floor((ability_score - 10) / 2)
@@ -111,16 +113,19 @@
 **Action**: Choose Option A (recommended) - Remove version history from US3
 
 **Before** (spec.md, US3 acceptance scenarios, line 4):
+
 ```markdown
 4. **Given** a user editing a character, **When** they save changes, **Then** the edit timestamp updates and version history is maintained.
 ```
 
 **After**:
+
 ```markdown
 4. **Given** a user editing a character, **When** they save changes, **Then** the edit timestamp updates and character data persists.
 ```
 
 **Also add note to spec.md assumptions**:
+
 ```markdown
 - **Version History**: Feature 003 does not implement character version history. Edit timestamps track changes; full version history will be considered in future phases (Feature 007).
 ```
@@ -138,6 +143,7 @@
 **Action**: Clarify cleanup job timeline
 
 **Before** (plan.md, pg 5):
+
 ```markdown
 - Set `deletedAt` timestamp on delete (don't remove from DB)
 - All queries filter `WHERE deletedAt IS NULL`
@@ -145,6 +151,7 @@
 ```
 
 **After**:
+
 ```markdown
 - Set `deletedAt` timestamp on delete (don't remove from DB)
 - All queries filter `WHERE deletedAt IS NULL`
@@ -156,6 +163,7 @@
 **Action**: Add clarification task to Phase 1
 
 **Add after T009**:
+
 ```markdown
 - [ ] T009.5 Document soft delete grace period: Add to code comments and README: "Deleted characters soft-deleted for 30 days, then hard-deleted by cleanup job (Feature 004). 30-day grace period allows potential restoration during transitions."
 ```
@@ -163,6 +171,7 @@
 **Location 3**: Create GitHub issue (separate task)
 
 **Action**: Create tracking issue for Feature 004 cleanup job
+
 - Title: `Feature 004 Task: Implement 30-day soft delete cleanup job`
 - Description: "After Feature 003 launches, implement scheduled cleanup job to hard-delete characters with deletedAt > 30 days old. Ensures data doesn't accumulate indefinitely."
 
@@ -177,11 +186,13 @@
 **Action**: Update FR-008 to clarify "total level" meaning
 
 **Before**:
+
 ```markdown
 - **FR-008**: System MUST support filtering by class, race, and level range.
 ```
 
 **After**:
+
 ```markdown
 - **FR-008**: System MUST support filtering by class, race, and **total character level** (sum of all class levels for multiclass characters). Example: Fighter 5/Wizard 3 has total level 8 and appears in filter "level 6-10".
 ```
@@ -191,11 +202,13 @@
 **Action**: Add acceptance criteria clarity to T055
 
 **Before T055**:
+
 ```markdown
 - [ ] T055 [US2] Write failing integration test for "Filter characters by level range"
 ```
 
 **After**:
+
 ```markdown
 - [ ] T055 [US2] Write failing integration test for "Filter characters by level range" - Verify that Fighter 5/Wizard 3 (total level 8) appears in filter for "level 6-10"
 ```
@@ -235,16 +248,19 @@ Note: Actual constitution.md should be filled in as separate governance task.
 **Action**: Replace "creatures" with "characters" for consistency
 
 **Find+Replace**:
+
 - Search for: `creature` (case-insensitive)
 - Replace with: `character`
 - Locations: FR-012, FR-014, SC-006, SC-008
 
 **Before** (example from SC-006):
+
 ```markdown
 - **SC-006**: Users reach 80% of tier limit receive clear warning, and creation is blocked at limit with contextual upgrade option (Free: 8 of 10 creatures used).
 ```
 
 **After**:
+
 ```markdown
 - **SC-006**: Users reach 80% of tier limit receive clear warning, and creation is blocked at limit with contextual upgrade option (Free: 8 of 10 characters used).
 ```
@@ -288,7 +304,7 @@ Note: Actual constitution.md should be filled in as separate governance task.
 
 ## Quick Apply Steps
 
-### If Path A (Recommended):
+### If Path A (Recommended)
 
 ```bash
 # 1. Apply CRITICAL fixes (30 min)
@@ -310,7 +326,7 @@ Note: Actual constitution.md should be filled in as separate governance task.
 # /speckit.implement
 ```
 
-### If Path B (Pragmatic):
+### If Path B (Pragmatic)
 
 ```bash
 # 1. Apply CRITICAL fixes only (30 min)
@@ -351,10 +367,12 @@ npm run lint:markdown specs/003-character-management/spec.md
 ## Feedback
 
 **If you have questions about any fixes**, see:
+
 - **Detailed analysis**: `ANALYSIS-REPORT-FINAL.md`
 - **Executive summary**: `ANALYSIS-EXECUTIVE-SUMMARY.md`
 
 **To proceed with implementation**, run:
+
 ```bash
 /speckit.implement
 ```
@@ -363,4 +381,3 @@ npm run lint:markdown specs/003-character-management/spec.md
 
 **Checklist Status**: ✅ Ready to Execute  
 **Next Step**: Choose Path A/B/C and apply fixes
-

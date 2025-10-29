@@ -67,7 +67,6 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 ## Planned Features (Priority Order)
 
-
 ### 🚧 Feature 003: Character Management System
 
 **Status**: 🚧 In Progress (Started 2025-10-21)
@@ -76,16 +75,15 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 **Estimated Effort**: 2-3 weeks
 **Description**: Complete CRUD operations for player characters and NPCs with D&D 5e stat tracking, multiclass support, and character templates.
 
-
 **GitHub Issue Tracking:**
 
 - [Parent Issue #178](https://github.com/dougis-org/dnd-tracker/issues/178)
-		- [Specify #202](https://github.com/dougis-org/dnd-tracker/issues/202)
-		- [Plan #203](https://github.com/dougis-org/dnd-tracker/issues/203)
-		- [Tasks #204](https://github.com/dougis-org/dnd-tracker/issues/204)
-		- [Implement #205](https://github.com/dougis-org/dnd-tracker/issues/205)
-		- [Validate #206](https://github.com/dougis-org/dnd-tracker/issues/206)
-		- [Merge #207](https://github.com/dougis-org/dnd-tracker/issues/207)
+  - [Specify #202](https://github.com/dougis-org/dnd-tracker/issues/202)
+  - [Plan #203](https://github.com/dougis-org/dnd-tracker/issues/203)
+  - [Tasks #204](https://github.com/dougis-org/dnd-tracker/issues/204)
+  - [Implement #205](https://github.com/dougis-org/dnd-tracker/issues/205)
+  - [Validate #206](https://github.com/dougis-org/dnd-tracker/issues/206)
+  - [Merge #207](https://github.com/dougis-org/dnd-tracker/issues/207)
 
 **User Value**: DMs can create and manage characters for their campaigns with full D&D 5e stat blocks, including multiclassing, race/class combinations, and saving character templates for reuse.
 
@@ -115,23 +113,21 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 ---
 
-
 ### Feature 004: Party Management
 
 **Priority**: P1 - Critical Path
 **Estimated Effort**: 1-2 weeks
 **Description**: Group characters into parties, manage party composition, and save party templates for campaign organization.
 
-
 **GitHub Issue Tracking:**
 
 - [Parent Issue #179](https://github.com/dougis-org/dnd-tracker/issues/179)
-		- [Specify #208](https://github.com/dougis-org/dnd-tracker/issues/208)
-		- [Plan #209](https://github.com/dougis-org/dnd-tracker/issues/209)
-		- [Tasks #210](https://github.com/dougis-org/dnd-tracker/issues/210)
-		- [Implement #211](https://github.com/dougis-org/dnd-tracker/issues/211)
-		- [Validate #212](https://github.com/dougis-org/dnd-tracker/issues/212)
-		- [Merge #213](https://github.com/dougis-org/dnd-tracker/issues/213)
+  - [Specify #208](https://github.com/dougis-org/dnd-tracker/issues/208)
+  - [Plan #209](https://github.com/dougis-org/dnd-tracker/issues/209)
+  - [Tasks #210](https://github.com/dougis-org/dnd-tracker/issues/210)
+  - [Implement #211](https://github.com/dougis-org/dnd-tracker/issues/211)
+  - [Validate #212](https://github.com/dougis-org/dnd-tracker/issues/212)
+  - [Merge #213](https://github.com/dougis-org/dnd-tracker/issues/213)
 
 **User Value**: DMs can organize characters into parties for different campaigns or gaming groups, with the ability to reuse party compositions across encounters.
 

@@ -10,6 +10,7 @@
 Your Feature 003 (Character Management System) specification is **well-structured and constitutionally compliant**. The analysis identified **14 findings** (4 HIGH, 6 MEDIUM, 4 LOW severity) that need remediation before implementation.
 
 **Key Points**:
+
 - ✅ No constitution violations
 - ✅ 73% of requirements fully specified
 - ⚠️ 4 HIGH severity issues (fixable in <1 hour)
@@ -47,7 +48,9 @@ Your Feature 003 (Character Management System) specification is **well-structure
 I've generated two comprehensive reports in your feature directory:
 
 ### 📋 ANALYSIS-REPORT.md (600 lines)
+
 Complete analysis with:
+
 - All 14 findings with severity, location, and recommendation
 - Detailed write-ups of each HIGH/MEDIUM issue
 - Partial coverage analysis (11/15 FR fully specified)
@@ -55,7 +58,9 @@ Complete analysis with:
 - References and next steps
 
 ### 🛠️ REMEDIATION-PLAN.md (280 lines)
+
 Actionable remediation guide with:
+
 - Prioritized checklist (CRITICAL → HIGH → MEDIUM → LOW)
 - Time estimates for each fix (totals 2-2.5 hours)
 - Specific instructions and code examples
@@ -71,6 +76,7 @@ Actionable remediation guide with:
 Your spec requires calculating saving throws with "100% accuracy" but never defines them.
 
 **Fix**: Add to spec.md FR-004:
+
 ```
 All six D&D 5e saving throws:
 Saving Throw = [Ability Modifier] + [Proficiency Bonus if proficient]
@@ -87,6 +93,7 @@ Class proficiencies: Barbarian (STR, CON), Bard (DEX, CHA), ...
 The contract says "include UsageMetrics" but doesn't define it.
 
 **Fix**: Add to contracts/characters-api.yaml:
+
 ```yaml
 UsageMetrics:
   type: object
@@ -106,6 +113,7 @@ UsageMetrics:
 User Story 3 says "maintain version history" but there's no FR for this.
 
 **Fix** (recommended): Remove from User Story 3 acceptance criteria
+
 - Clean scope (MVP focus)
 - Or: Create FR-016 if version history is actually needed
 
@@ -155,11 +163,13 @@ Before proceeding, decide on:
 ## Files Generated
 
 In `/specs/003-character-management/`:
+
 - ✅ `ANALYSIS-REPORT.md` - Full detailed analysis
 - ✅ `REMEDIATION-PLAN.md` - Step-by-step fix guide
 - ✅ `PHASE-1-COMPLETE.md` - Design completion report
 
 Plus original artifacts:
+
 - ✅ `spec.md` - Feature specification
 - ✅ `plan.md` - Implementation plan
 - ✅ `data-model.md` - MongoDB schemas

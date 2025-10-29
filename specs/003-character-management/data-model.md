@@ -53,12 +53,14 @@ interface Character {
 ```
 
 **Indexes**:
+
 - `{ userId: 1, deletedAt: 1 }` - Fast user-scoped queries
 - `{ userId: 1, name: 'text' }` - Text search by name
 - `{ userId: 1, createdAt: -1 }` - Recent characters
 - `{ deletedAt: 1 }` - Find deleted for hard-delete job
 
 **Validation**:
+
 - `name`: required, 1-100 chars, trimmed
 - `userId`: required, must exist in User collection
 - `raceId`: required, must exist in Race collection
@@ -68,6 +70,7 @@ interface Character {
 - `maxHitPoints`: >= hitPoints, calculated from CON modifier + class hit dice
 
 **Relationships**:
+
 - `userId` → User (many-to-one, owner)
 - `raceId` → Race (many-to-one, configuration)
 - `classes[].classId` → Class (many-to-one per class)
@@ -103,17 +106,21 @@ interface Race {
 ```
 
 **Indexes**:
+
 - `{ name: 1 }` - Unique lookup by name
 
 **Validation**:
+
 - `name`: required, 1-50 chars
 - `abilityBonuses`: each modifier 0-2 (D&D 5e standard)
 - `traits`: array of strings
 
 **Relationships**:
+
 - Referenced by Character (many-to-one, configuration)
 
 **Initial Seed Data** (9 races):
+
 - Human, Elf, Dwarf, Halfling, Dragonborn, Gnome, Half-Elf, Half-Orc, Tiefling
 
 ---
@@ -144,17 +151,21 @@ interface Class {
 ```
 
 **Indexes**:
+
 - `{ name: 1 }` - Unique lookup by name
 
 **Validation**:
+
 - `name`: required, 1-50 chars
 - `hitDie`: required, one of "d6", "d8", "d10", "d12"
 - `spellAbility`: required if spellcasting=true
 
 **Relationships**:
+
 - Referenced by Character (many-to-one per class in multiclass array)
 
 **Initial Seed Data** (12 classes):
+
 - Barbarian (d12), Bard (d8), Cleric (d8), Druid (d8), Fighter (d10), Monk (d8), Paladin (d10), Ranger (d10), Rogue (d8), Sorcerer (d6), Warlock (d8), Wizard (d6)
 
 ---
@@ -238,6 +249,7 @@ Created
 ```
 
 **State Transitions**:
+
 - Created → Active: On creation
 - Active → Soft Deleted: On delete request, sets `deletedAt = now`
 - Soft Deleted → Active: On restore request (admin), clears `deletedAt`
@@ -262,11 +274,13 @@ interface User {
 ```
 
 **Tier Limits**:
+
 - Free: 10 creatures max
 - Seasoned: 50 creatures max
 - Expert: 250 creatures max
 
 **Enforcement**:
+
 1. Before creating character: Query `Character.count({ userId, deletedAt: null })`
 2. If count >= limit: Return 403 Forbidden with upgrade prompt
 3. If count >= (limit * 0.8): Show warning "8 of 10 creature slots used"
@@ -278,6 +292,7 @@ interface User {
 See `/contracts/characters-api.yaml` for complete RESTful API specification.
 
 **Main Endpoints**:
+
 - `POST /api/characters` - Create character
 - `GET /api/characters` - List characters (paginated, searchable)
 - `GET /api/characters/:id` - Get character details
@@ -294,11 +309,13 @@ See `/contracts/characters-api.yaml` for complete RESTful API specification.
 Derived values (`cachedStats`) cached in database to optimize list views:
 
 **When to Invalidate**:
+
 - After character creation
 - After character update (ability scores, race, classes change)
 - After hard delete
 
 **Recalculation**:
+
 ```typescript
 function recalculateStats(character: Character): CachedStats {
   return {

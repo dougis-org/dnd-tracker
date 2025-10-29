@@ -41,6 +41,7 @@ Complete CRUD operations for player characters and NPCs with full D&D 5e stat tr
 ## Notes
 
 - Tier enforcement (Free limit: 10 creatures) will be implemented at plan/implement phases and should be noted in the contract.
+
 # Feature Specification: Character Management System
 
 **Feature Branch**: `003-character-management`  
