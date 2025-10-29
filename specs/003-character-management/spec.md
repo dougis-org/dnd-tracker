@@ -1,3 +1,46 @@
+# Feature 003 — Character Management System (Specify)
+
+Related Issue: [#178](https://github.com/dougis-org/dnd-tracker/issues/178)
+
+## Short Description
+
+Complete CRUD operations for player characters and NPCs with full D&D 5e stat tracking, multiclass support, and character templates.
+
+## Purpose / Value
+
+- Allow DMs and players to create, edit, duplicate, and remove character records.
+- Provide validated, shareable character data to other features (parties, encounters, export).
+
+## Success Criteria
+
+- API endpoints for character CRUD implemented and documented.
+- Front-end character form with validation and templates available.
+- 80%+ unit test coverage for business logic and route handlers.
+
+## Deliverables
+
+- `spec.md` (this file)
+- Data model sketch for `Character`.
+- API contract for `/api/characters`.
+- UI wireframes for create/edit/list.
+
+## High-level Acceptance Tests
+
+1. POST /api/characters with valid payload creates a Character and returns 201 with id.
+2. GET /api/characters returns paginated list supporting filters (ownerId, name).
+3. PUT /api/characters/:id updates fields and enforces validation rules (no negative HP, valid ability scores).
+4. DELETE /api/characters/:id soft-deletes the character (preserve history).
+
+## Initial Tasks (Specify phase)
+
+1. Finalize Character schema: fields, types, relations (ownerId, templates boolean).
+2. Define API request/response contract (OpenAPI snippets).
+3. List validation rules and edge-cases (multiclass XP, level caps).
+4. Identify required unit/integration tests (TDD-first).
+
+## Notes
+
+- Tier enforcement (Free limit: 10 creatures) will be implemented at plan/implement phases and should be noted in the contract.
 # Feature Specification: Character Management System
 
 **Feature Branch**: `003-character-management`  
