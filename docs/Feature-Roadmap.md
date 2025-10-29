@@ -67,6 +67,7 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 ## Planned Features (Priority Order)
 
+
 ### 🚧 Feature 003: Character Management System
 
 **Status**: 🚧 In Progress (Started 2025-10-21)
@@ -74,6 +75,17 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 **Priority**: P1 - Critical Path
 **Estimated Effort**: 2-3 weeks
 **Description**: Complete CRUD operations for player characters and NPCs with D&D 5e stat tracking, multiclass support, and character templates.
+
+
+**GitHub Issue Tracking:**
+
+- [Parent Issue #178](https://github.com/dougis-org/dnd-tracker/issues/178)
+		- [Specify #202](https://github.com/dougis-org/dnd-tracker/issues/202)
+		- [Plan #203](https://github.com/dougis-org/dnd-tracker/issues/203)
+		- [Tasks #204](https://github.com/dougis-org/dnd-tracker/issues/204)
+		- [Implement #205](https://github.com/dougis-org/dnd-tracker/issues/205)
+		- [Validate #206](https://github.com/dougis-org/dnd-tracker/issues/206)
+		- [Merge #207](https://github.com/dougis-org/dnd-tracker/issues/207)
 
 **User Value**: DMs can create and manage characters for their campaigns with full D&D 5e stat blocks, including multiclassing, race/class combinations, and saving character templates for reuse.
 
@@ -103,11 +115,23 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 ---
 
+
 ### Feature 004: Party Management
 
 **Priority**: P1 - Critical Path
 **Estimated Effort**: 1-2 weeks
 **Description**: Group characters into parties, manage party composition, and save party templates for campaign organization.
+
+
+**GitHub Issue Tracking:**
+
+- [Parent Issue #179](https://github.com/dougis-org/dnd-tracker/issues/179)
+		- [Specify #208](https://github.com/dougis-org/dnd-tracker/issues/208)
+		- [Plan #209](https://github.com/dougis-org/dnd-tracker/issues/209)
+		- [Tasks #210](https://github.com/dougis-org/dnd-tracker/issues/210)
+		- [Implement #211](https://github.com/dougis-org/dnd-tracker/issues/211)
+		- [Validate #212](https://github.com/dougis-org/dnd-tracker/issues/212)
+		- [Merge #213](https://github.com/dougis-org/dnd-tracker/issues/213)
 
 **User Value**: DMs can organize characters into parties for different campaigns or gaming groups, with the ability to reuse party compositions across encounters.
 
@@ -145,6 +169,19 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **User Value**: DMs can create custom monsters or NPCs with full stat blocks, manage special abilities, and quickly find creatures for encounters using search and filters.
 
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#214](https://github.com/dougis-org/dnd-tracker/issues/214)
+- Branches:
+
+  - [feature/005-monster-npc-library](https://github.com/dougis-org/dnd-tracker/tree/feature/005-monster-npc-library)
+  - [feature/005-monster-npc-library-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/005-monster-npc-library-specify)
+  - [feature/005-monster-npc-library-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/005-monster-npc-library-plan)
+  - [feature/005-monster-npc-library-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/005-monster-npc-library-tasks)
+  - [feature/005-monster-npc-library-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/005-monster-npc-library-implement)
+  - [feature/005-monster-npc-library-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/005-monster-npc-library-validate)
+  - [feature/005-monster-npc-library-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/005-monster-npc-library-merge)
+
 **Scope**:
 
 - Monster creation form with D&D stat block
@@ -176,6 +213,19 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 **Description**: Design encounters by selecting participants (party + monsters), configure lair settings, and calculate encounter difficulty.
 
 **User Value**: DMs can build balanced encounters by combining parties and monsters, with automatic CR calculation and lair action configuration for memorable combat scenarios.
+
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#221](https://github.com/dougis-org/dnd-tracker/issues/221)
+- Branches:
+
+  - [feature/006-encounter-builder](https://github.com/dougis-org/dnd-tracker/tree/feature/006-encounter-builder)
+  - [feature/006-encounter-builder-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/006-encounter-builder-specify)
+  - [feature/006-encounter-builder-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/006-encounter-builder-plan)
+  - [feature/006-encounter-builder-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/006-encounter-builder-tasks)
+  - [feature/006-encounter-builder-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/006-encounter-builder-implement)
+  - [feature/006-encounter-builder-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/006-encounter-builder-validate)
+  - [feature/006-encounter-builder-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/006-encounter-builder-merge)
 
 **Scope**:
 
@@ -213,6 +263,19 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **User Value**: DMs can quickly start combat with automatic initiative ordering, clear visual indication of current turn, and seamless round progression with minimal bookkeeping.
 
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#228](https://github.com/dougis-org/dnd-tracker/issues/228)
+- Branches:
+
+  - [feature/007-initiative-turn-management](https://github.com/dougis-org/dnd-tracker/tree/feature/007-initiative-turn-management)
+  - [feature/007-initiative-turn-management-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/007-initiative-turn-management-specify)
+  - [feature/007-initiative-turn-management-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/007-initiative-turn-management-plan)
+  - [feature/007-initiative-turn-management-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/007-initiative-turn-management-tasks)
+  - [feature/007-initiative-turn-management-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/007-initiative-turn-management-implement)
+  - [feature/007-initiative-turn-management-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/007-initiative-turn-management-validate)
+  - [feature/007-initiative-turn-management-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/007-initiative-turn-management-merge)
+
 **Scope**:
 
 - Initiative rolling (automated or manual entry)
@@ -247,6 +310,19 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **User Value**: DMs can quickly apply damage or healing to combatants with visual feedback, support temporary HP mechanics, and undo mistakes without breaking combat flow.
 
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#235](https://github.com/dougis-org/dnd-tracker/issues/235)
+- Branches:
+
+  - [feature/008-hp-damage-tracking](https://github.com/dougis-org/dnd-tracker/tree/feature/008-hp-damage-tracking)
+  - [feature/008-hp-damage-tracking-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/008-hp-damage-tracking-specify)
+  - [feature/008-hp-damage-tracking-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/008-hp-damage-tracking-plan)
+  - [feature/008-hp-damage-tracking-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/008-hp-damage-tracking-tasks)
+  - [feature/008-hp-damage-tracking-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/008-hp-damage-tracking-implement)
+  - [feature/008-hp-damage-tracking-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/008-hp-damage-tracking-validate)
+  - [feature/008-hp-damage-tracking-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/008-hp-damage-tracking-merge)
+
 **Scope**:
 
 - Damage application with validation
@@ -278,6 +354,19 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 **Description**: Apply status effects (poisoned, blessed, etc.) with duration tracking, automatic expiration, and condition descriptions.
 
 **User Value**: DMs can track temporary conditions on combatants with automatic duration countdown, reducing mental overhead and ensuring conditions don't get forgotten.
+
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#242](https://github.com/dougis-org/dnd-tracker/issues/242)
+- Branches:
+
+  - [feature/009-status-effects-conditions](https://github.com/dougis-org/dnd-tracker/tree/feature/009-status-effects-conditions)
+  - [feature/009-status-effects-conditions-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/009-status-effects-conditions-specify)
+  - [feature/009-status-effects-conditions-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/009-status-effects-conditions-plan)
+  - [feature/009-status-effects-conditions-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/009-status-effects-conditions-tasks)
+  - [feature/009-status-effects-conditions-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/009-status-effects-conditions-implement)
+  - [feature/009-status-effects-conditions-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/009-status-effects-conditions-validate)
+  - [feature/009-status-effects-conditions-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/009-status-effects-conditions-merge)
 
 **Scope**:
 
@@ -311,6 +400,19 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **User Value**: DMs running lair encounters get automated prompts for lair actions on initiative count 20, making complex boss fights smoother and more dramatic.
 
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#249](https://github.com/dougis-org/dnd-tracker/issues/249)
+- Branches:
+
+  - [feature/010-lair-actions-system](https://github.com/dougis-org/dnd-tracker/tree/feature/010-lair-actions-system)
+  - [feature/010-lair-actions-system-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/010-lair-actions-system-specify)
+  - [feature/010-lair-actions-system-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/010-lair-actions-system-plan)
+  - [feature/010-lair-actions-system-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/010-lair-actions-system-tasks)
+  - [feature/010-lair-actions-system-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/010-lair-actions-system-implement)
+  - [feature/010-lair-actions-system-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/010-lair-actions-system-validate)
+  - [feature/010-lair-actions-system-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/010-lair-actions-system-merge)
+
 **Scope**:
 
 - Lair action creation and library
@@ -342,6 +444,18 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 **Description**: Save combat state, pause/resume sessions, end combat, and persist combat history for later review.
 
 **User Value**: DMs can pause combat mid-session and resume later without losing state, and review past combat sessions for campaign continuity.
+
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#256](https://github.com/dougis-org/dnd-tracker/issues/256)
+- Branches:
+  - [feature/011-combat-session-state-management](https://github.com/dougis-org/dnd-tracker/tree/feature/011-combat-session-state-management)
+  - [feature/011-combat-session-state-management-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/011-combat-session-state-management-specify)
+  - [feature/011-combat-session-state-management-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/011-combat-session-state-management-plan)
+  - [feature/011-combat-session-state-management-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/011-combat-session-state-management-tasks)
+  - [feature/011-combat-session-state-management-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/011-combat-session-state-management-implement)
+  - [feature/011-combat-session-state-management-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/011-combat-session-state-management-validate)
+  - [feature/011-combat-session-state-management-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/011-combat-session-state-management-merge)
 
 **Scope**:
 
@@ -375,6 +489,18 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **User Value**: DMs can run combat without internet connectivity, ensuring games aren't disrupted by network issues, with automatic sync when reconnected.
 
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#263](https://github.com/dougis-org/dnd-tracker/issues/263)
+- Branches:
+  - [feature/012-offline-combat-capability](https://github.com/dougis-org/dnd-tracker/tree/feature/012-offline-combat-capability)
+  - [feature/012-offline-combat-capability-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/012-offline-combat-capability-specify)
+  - [feature/012-offline-combat-capability-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/012-offline-combat-capability-plan)
+  - [feature/012-offline-combat-capability-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/012-offline-combat-capability-tasks)
+  - [feature/012-offline-combat-capability-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/012-offline-combat-capability-implement)
+  - [feature/012-offline-combat-capability-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/012-offline-combat-capability-validate)
+  - [feature/012-offline-combat-capability-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/012-offline-combat-capability-merge)
+
 **Scope**:
 
 - IndexedDB setup for combat sessions
@@ -407,6 +533,18 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **User Value**: Users understand their tier limits and are prompted to upgrade when approaching limits, supporting the freemium business model.
 
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#270](https://github.com/dougis-org/dnd-tracker/issues/270)
+- Branches:
+  - [feature/013-subscription-tier-enforcement](https://github.com/dougis-org/dnd-tracker/tree/feature/013-subscription-tier-enforcement)
+  - [feature/013-subscription-tier-enforcement-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/013-subscription-tier-enforcement-specify)
+  - [feature/013-subscription-tier-enforcement-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/013-subscription-tier-enforcement-plan)
+  - [feature/013-subscription-tier-enforcement-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/013-subscription-tier-enforcement-tasks)
+  - [feature/013-subscription-tier-enforcement-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/013-subscription-tier-enforcement-implement)
+  - [feature/013-subscription-tier-enforcement-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/013-subscription-tier-enforcement-validate)
+  - [feature/013-subscription-tier-enforcement-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/013-subscription-tier-enforcement-merge)
+
 **Scope**:
 
 - Real-time usage tracking (parties, encounters, creatures, participants)
@@ -437,6 +575,18 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **User Value**: DMs get a centralized hub for their campaigns with quick access to recent sessions, parties, and encounters, speeding up session prep.
 
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#277](https://github.com/dougis-org/dnd-tracker/issues/277)
+- Branches:
+  - [feature/014-dashboard-quick-actions](https://github.com/dougis-org/dnd-tracker/tree/feature/014-dashboard-quick-actions)
+  - [feature/014-dashboard-quick-actions-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/014-dashboard-quick-actions-specify)
+  - [feature/014-dashboard-quick-actions-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/014-dashboard-quick-actions-plan)
+  - [feature/014-dashboard-quick-actions-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/014-dashboard-quick-actions-tasks)
+  - [feature/014-dashboard-quick-actions-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/014-dashboard-quick-actions-implement)
+  - [feature/014-dashboard-quick-actions-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/014-dashboard-quick-actions-validate)
+  - [feature/014-dashboard-quick-actions-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/014-dashboard-quick-actions-merge)
+
 **Scope**:
 
 - Dashboard layout with stat cards
@@ -466,6 +616,18 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 **Description**: Public landing page with hero section, feature showcase, pricing tiers, testimonials, and demo combat tracker.
 
 **User Value**: Prospective users can learn about the product, see features in action via interactive demo, and understand pricing before signing up.
+
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#284](https://github.com/dougis-org/dnd-tracker/issues/284)
+- Branches:
+  - [feature/015-landing-page-marketing-site](https://github.com/dougis-org/dnd-tracker/tree/feature/015-landing-page-marketing-site)
+  - [feature/015-landing-page-marketing-site-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/015-landing-page-marketing-site-specify)
+  - [feature/015-landing-page-marketing-site-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/015-landing-page-marketing-site-plan)
+  - [feature/015-landing-page-marketing-site-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/015-landing-page-marketing-site-tasks)
+  - [feature/015-landing-page-marketing-site-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/015-landing-page-marketing-site-implement)
+  - [feature/015-landing-page-marketing-site-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/015-landing-page-marketing-site-validate)
+  - [feature/015-landing-page-marketing-site-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/015-landing-page-marketing-site-merge)
 
 **Scope**:
 
@@ -498,6 +660,18 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **User Value**: Users can backup their data, share characters with other DMs, and maintain campaign records outside the platform.
 
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#291](https://github.com/dougis-org/dnd-tracker/issues/291)
+- Branches:
+  - [feature/016-export-data-portability](https://github.com/dougis-org/dnd-tracker/tree/feature/016-export-data-portability)
+  - [feature/016-export-data-portability-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/016-export-data-portability-specify)
+  - [feature/016-export-data-portability-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/016-export-data-portability-plan)
+  - [feature/016-export-data-portability-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/016-export-data-portability-tasks)
+  - [feature/016-export-data-portability-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/016-export-data-portability-implement)
+  - [feature/016-export-data-portability-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/016-export-data-portability-validate)
+  - [feature/016-export-data-portability-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/016-export-data-portability-merge)
+
 **Scope**:
 
 - Export character to JSON
@@ -528,6 +702,18 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 **Description**: Share characters with other users, set view/edit permissions, and allow collaborative party building.
 
 **User Value**: Players can manage their own characters and share them with DMs, enabling collaborative campaign management and reducing DM workload.
+
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#298](https://github.com/dougis-org/dnd-tracker/issues/298)
+- Branches:
+  - [feature/017-character-sharing-permissions](https://github.com/dougis-org/dnd-tracker/tree/feature/017-character-sharing-permissions)
+  - [feature/017-character-sharing-permissions-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/017-character-sharing-permissions-specify)
+  - [feature/017-character-sharing-permissions-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/017-character-sharing-permissions-plan)
+  - [feature/017-character-sharing-permissions-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/017-character-sharing-permissions-tasks)
+  - [feature/017-character-sharing-permissions-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/017-character-sharing-permissions-implement)
+  - [feature/017-character-sharing-permissions-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/017-character-sharing-permissions-validate)
+  - [feature/017-character-sharing-permissions-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/017-character-sharing-permissions-merge)
 
 **Scope**:
 
@@ -560,6 +746,18 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **User Value**: Paying users get detailed combat analytics for reviewing encounters, analyzing player performance, and creating campaign summaries.
 
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#305](https://github.com/dougis-org/dnd-tracker/issues/305)
+- Branches:
+  - [feature/018-advanced-combat-logging](https://github.com/dougis-org/dnd-tracker/tree/feature/018-advanced-combat-logging)
+  - [feature/018-advanced-combat-logging-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/018-advanced-combat-logging-specify)
+  - [feature/018-advanced-combat-logging-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/018-advanced-combat-logging-plan)
+  - [feature/018-advanced-combat-logging-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/018-advanced-combat-logging-tasks)
+  - [feature/018-advanced-combat-logging-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/018-advanced-combat-logging-implement)
+  - [feature/018-advanced-combat-logging-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/018-advanced-combat-logging-validate)
+  - [feature/018-advanced-combat-logging-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/018-advanced-combat-logging-merge)
+
 **Scope**:
 
 - Turn-by-turn action log
@@ -589,6 +787,18 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **User Value**: Power users can customize the app appearance to match their preferences or accessibility needs, improving usability for long sessions.
 
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#312](https://github.com/dougis-org/dnd-tracker/issues/312)
+- Branches:
+  - [feature/019-custom-themes-ui-customization](https://github.com/dougis-org/dnd-tracker/tree/feature/019-custom-themes-ui-customization)
+  - [feature/019-custom-themes-ui-customization-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/019-custom-themes-ui-customization-specify)
+  - [feature/019-custom-themes-ui-customization-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/019-custom-themes-ui-customization-plan)
+  - [feature/019-custom-themes-ui-customization-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/019-custom-themes-ui-customization-tasks)
+  - [feature/019-custom-themes-ui-customization-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/019-custom-themes-ui-customization-implement)
+  - [feature/019-custom-themes-ui-customization-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/019-custom-themes-ui-customization-validate)
+  - [feature/019-custom-themes-ui-customization-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/019-custom-themes-ui-customization-merge)
+
 **Scope**:
 
 - Theme selector (light, dark, high contrast, sepia)
@@ -617,6 +827,18 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 **Description**: Stripe integration for subscription management, payment processing, upgrade/downgrade flows, and billing dashboard.
 
 **User Value**: Users can self-service their subscription changes, view billing history, and manage payment methods securely.
+
+**GitHub Issue Tracking:**
+
+- Parent Issue: [#319](https://github.com/dougis-org/dnd-tracker/issues/319)
+- Branches:
+  - [feature/020-payment-integration-subscription-management](https://github.com/dougis-org/dnd-tracker/tree/feature/020-payment-integration-subscription-management)
+  - [feature/020-payment-integration-subscription-management-specify](https://github.com/dougis-org/dnd-tracker/tree/feature/020-payment-integration-subscription-management-specify)
+  - [feature/020-payment-integration-subscription-management-plan](https://github.com/dougis-org/dnd-tracker/tree/feature/020-payment-integration-subscription-management-plan)
+  - [feature/020-payment-integration-subscription-management-tasks](https://github.com/dougis-org/dnd-tracker/tree/feature/020-payment-integration-subscription-management-tasks)
+  - [feature/020-payment-integration-subscription-management-implement](https://github.com/dougis-org/dnd-tracker/tree/feature/020-payment-integration-subscription-management-implement)
+  - [feature/020-payment-integration-subscription-management-validate](https://github.com/dougis-org/dnd-tracker/tree/feature/020-payment-integration-subscription-management-validate)
+  - [feature/020-payment-integration-subscription-management-merge](https://github.com/dougis-org/dnd-tracker/tree/feature/020-payment-integration-subscription-management-merge)
 
 **Scope**:
 
