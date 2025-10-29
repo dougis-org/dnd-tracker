@@ -105,14 +105,20 @@ export async function PATCH(
     if (body.displayName !== undefined) {
       user!.profile!.displayName = body.displayName;
     }
+    // Support both old (dndRuleset) and new (dndEdition) field names
     if (body.dndRuleset !== undefined) {
       user!.profile!.dndRuleset = body.dndRuleset as DndRuleset;
+      user!.profile!.dndEdition = body.dndRuleset as string;
     }
     if (body.experienceLevel !== undefined) {
-      user!.profile!.experienceLevel = body.experienceLevel;
+      // Map old enum values to new ones
+      const mappedLevel = body.experienceLevel === 'expert' ? 'experienced' : body.experienceLevel;
+      user!.profile!.experienceLevel = mappedLevel as 'new' | 'beginner' | 'intermediate' | 'experienced' | 'veteran';
     }
+    // Support both old (role) and new (primaryRole) field names
     if (body.role !== undefined) {
       user!.profile!.role = body.role;
+      user!.profile!.primaryRole = body.role;
     }
 
     // Save updated user

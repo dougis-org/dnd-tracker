@@ -6,6 +6,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Swords, BookOpen, Star } from 'lucide-react';
+import type { UsageWarning } from '@/lib/utils/subscription';
 
 interface UsageMetricsProps {
   metrics: {
@@ -27,7 +28,7 @@ interface UsageMetricsProps {
         encounters: number;
         characters: number;
       };
-      warnings: any[];
+      warnings: UsageWarning[];
     };
   };
 }

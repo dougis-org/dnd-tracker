@@ -31,7 +31,7 @@ export default async function DashboardPage() {
     redirect('/profile-setup');
   }
 
-  const metrics = await getDashboardMetrics(user._id.toString());
+  const metrics = await getDashboardMetrics(String(user._id));
 
   return (
     <div className="space-y-6">

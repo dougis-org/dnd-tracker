@@ -126,8 +126,8 @@ export function generateUsageWarnings(
 ): UsageWarning[] {
   const warnings: UsageWarning[] = [];
 
-  // Check each resource
-  const resources: Array<keyof TierLimits> = ['parties', 'encounters', 'characters'];
+  // Check each resource (excluding maxParticipants which is a per-encounter limit)
+  const resources = ['parties', 'encounters', 'characters'] as const;
 
   for (const resource of resources) {
     const current = usage[resource] || 0;

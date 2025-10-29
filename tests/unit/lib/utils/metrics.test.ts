@@ -126,7 +126,6 @@ describe('Metrics Utilities', () => {
       username: 'testuser',
       firstName: 'Test',
       lastName: 'User',
-      displayName: 'DM Test',
       subscriptionTier: 'free',
       role: 'user',
       timezone: 'America/New_York',
@@ -140,9 +139,21 @@ describe('Metrics Utilities', () => {
       lastLoginAt: new Date(),
       createdAt: new Date('2024-01-01'),
       updatedAt: new Date(),
-      // Mock usage data
-      partiesCreated: 1,
-      encountersCreated: 2,
+      // Nested profile data (matches User schema)
+      profile: {
+        displayName: 'DM Test',
+        timezone: 'America/New_York',
+        dndEdition: '5th Edition',
+        experienceLevel: 'intermediate',
+        primaryRole: 'dm',
+        profileSetupCompleted: true,
+      },
+      // Nested usage data (matches User schema)
+      usage: {
+        partiesCount: 1,
+        encountersCount: 2,
+        creaturesCount: 12,
+      },
     };
 
     it('should return complete dashboard metrics structure', () => {
@@ -173,8 +184,8 @@ describe('Metrics Utilities', () => {
       const metrics = buildDashboardMetrics(mockUser);
       expect(metrics.subscription).toHaveProperty('usage');
       expect(metrics.subscription.usage).toMatchObject({
-        parties: mockUser.partiesCreated || 0,
-        encounters: mockUser.encountersCreated || 0,
+        parties: 1,
+        encounters: 2,
         characters: 12,
       });
     });
@@ -189,7 +200,10 @@ describe('Metrics Utilities', () => {
     it('should include usage warnings when appropriate', () => {
       const highUsageUser = {
         ...mockUser,
-        encountersCreated: 3, // 100% of free tier
+        usage: {
+          ...mockUser.usage,
+          encountersCount: 3, // 100% of free tier
+        },
       };
       const metrics = buildDashboardMetrics(highUsageUser);
       expect(metrics.subscription).toHaveProperty('warnings');
@@ -210,7 +224,10 @@ describe('Metrics Utilities', () => {
     it('should handle user without displayName (use firstName)', () => {
       const userWithoutDisplayName = {
         ...mockUser,
-        displayName: undefined,
+        profile: {
+          ...mockUser.profile,
+          displayName: undefined,
+        },
       };
       const metrics = buildDashboardMetrics(userWithoutDisplayName);
       expect(metrics.user.displayName).toBe('Test');
@@ -231,7 +248,10 @@ describe('Metrics Utilities', () => {
       const guildUser = {
         ...mockUser,
         subscriptionTier: 'guild',
-        encountersCreated: 1000,
+        usage: {
+          ...mockUser.usage,
+          encountersCount: 1000,
+        },
       };
       const metrics = buildDashboardMetrics(guildUser);
       expect(metrics.subscription.limits.encounters).toBe(Infinity);

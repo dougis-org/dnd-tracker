@@ -286,7 +286,13 @@ describe('User Model - D&D Profile Fields', () => {
           creaturesCount: 0
         },
         preferences: {
-          theme: 'auto',
+          theme: 'system',
+          emailNotifications: true,
+          browserNotifications: false,
+          timezone: 'UTC',
+          language: 'en',
+          diceRollAnimations: true,
+          autoSaveEncounters: true,
           defaultInitiativeType: 'manual',
           autoAdvanceRounds: false
         },

@@ -5,6 +5,7 @@
  */
 
 import { getTierLimits, calculateUsagePercentage, generateUsageWarnings } from './subscription';
+import type { IUser } from '@/lib/db/models/User';
 
 /**
  * Format last login timestamp to human-readable string
@@ -52,7 +53,7 @@ export function formatLastLogin(date: Date | null | undefined): string {
  * @param user - User document with metrics
  * @returns Summary object with formatted metrics
  */
-export function calculateMetricsSummary(user: any) {
+export function calculateMetricsSummary(user: IUser) {
   return {
     sessionsCount: user.sessionsCount || 0,
     charactersCreatedCount: user.charactersCreatedCount || 0,
@@ -74,16 +75,17 @@ export function calculateMetricsSummary(user: any) {
  * @param user - User document
  * @returns Complete dashboard metrics object
  */
-export function buildDashboardMetrics(user: any) {
+export function buildDashboardMetrics(user: IUser) {
   // Handle both old schema (subscriptionTier) and new schema (subscription.tier)
   const tier = user.subscription?.tier || user.subscriptionTier || 'free';
   const limits = getTierLimits(tier);
 
-  // Extract usage from user document (handle both old and new schema)
+  // Extract usage from user document
+  // User model schema has usage.partiesCount, encountersCount, creaturesCount
   const usage = {
-    parties: user.usage?.partiesCount || user.partiesCreated || 0,
-    encounters: user.usage?.encountersCount || user.encountersCreated || 0,
-    characters: user.usage?.creaturesCount || user.charactersCreatedCount || 0,
+    parties: user.usage?.partiesCount || 0,
+    encounters: user.usage?.encountersCount || 0,
+    characters: user.usage?.creaturesCount || 0,
   };
 
   // Calculate percentages
@@ -101,8 +103,8 @@ export function buildDashboardMetrics(user: any) {
 
   return {
     user: {
-      id: user._id.toString(),
-      displayName: user.profile?.displayName || user.displayName || user.firstName || user.email?.split('@')[0] || 'User',
+      id: String(user._id),
+      displayName: user.profile?.displayName || user.firstName || user.email?.split('@')[0] || 'User',
       email: user.email,
     },
     subscription: {

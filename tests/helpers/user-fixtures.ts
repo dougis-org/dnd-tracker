@@ -10,8 +10,13 @@ import { User } from '@/lib/db/models/User';
  */
 export const DEFAULT_TEST_PROFILE = {
   displayName: 'Test User',
-  dndRuleset: '5e',
+  timezone: 'UTC',
+  dndEdition: '5th Edition',
   experienceLevel: 'beginner',
+  primaryRole: 'player',
+  profileSetupCompleted: false,
+  // Legacy fields for backward compatibility
+  dndRuleset: '5e',
   role: 'player',
 } as const;
 
@@ -37,7 +42,14 @@ export const DEFAULT_TEST_USAGE = {
  * Default preferences for test users
  */
 export const DEFAULT_TEST_PREFERENCES = {
-  theme: 'auto',
+  theme: 'system',
+  emailNotifications: true,
+  browserNotifications: false,
+  timezone: 'UTC',
+  language: 'en',
+  diceRollAnimations: true,
+  autoSaveEncounters: true,
+  // Legacy fields for backward compatibility
   defaultInitiativeType: 'manual',
   autoAdvanceRounds: false,
 } as const;

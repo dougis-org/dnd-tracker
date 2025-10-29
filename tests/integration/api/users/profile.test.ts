@@ -80,7 +80,13 @@ async function createTestUser(
       creaturesCount: 0,
     },
     preferences: {
-      theme: 'auto',
+      theme: 'system',
+      emailNotifications: true,
+      browserNotifications: false,
+      timezone: 'UTC',
+      language: 'en',
+      diceRollAnimations: true,
+      autoSaveEncounters: true,
       defaultInitiativeType: 'manual',
       autoAdvanceRounds: false,
     },
@@ -272,7 +278,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
     const data = await response.json();
     expect(data.profile).toMatchObject({
       displayName: 'Updated DM Name',
-      experienceLevel: 'expert',
+      experienceLevel: 'experienced', // 'expert' maps to 'experienced'
       role: 'both',
       dndRuleset: '5e', // Should remain unchanged
     });
@@ -280,7 +286,7 @@ describe('User Profile API - PATCH /api/users/[id]/profile', () => {
     // Verify database was updated
     const updatedUser = await User.findById(testUser._id);
     expect(updatedUser?.profile.displayName).toBe('Updated DM Name');
-    expect(updatedUser?.profile.experienceLevel).toBe('expert');
+    expect(updatedUser?.profile.experienceLevel).toBe('experienced'); // 'expert' maps to 'experienced'
     expect(updatedUser?.profile.role).toBe('both');
   });
 

@@ -9,21 +9,18 @@ import { auth } from '@clerk/nextjs/server';
 import { connectToDatabase } from '@/lib/db/connection';
 import User from '@/lib/db/models/User';
 
-interface RouteContext {
-  params: {
-    userId: string;
-  };
-}
-
 /**
  * GET /api/users/[userId]/settings
  * Returns complete user settings for the authenticated user
  *
  * @param request - Next.js request object
- * @param context - Route context with userId param
+ * @param context - Route context with userId param (Next.js 15 async params)
  * @returns User settings object or error
  */
-export async function GET(request: Request, context: RouteContext) {
+export async function GET(
+  _request: Request,
+  context: { params: Promise<{ userId: string }> }
+) {
   try {
     // Check authentication
     const { userId: clerkId } = await auth();
@@ -38,8 +35,11 @@ export async function GET(request: Request, context: RouteContext) {
     // Connect to database
     await connectToDatabase();
 
+    // Await params (Next.js 15 requirement)
+    const { userId } = await context.params;
+
     // Find user by MongoDB _id
-    const user = await User.findById(context.params.userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       return NextResponse.json(
@@ -49,7 +49,7 @@ export async function GET(request: Request, context: RouteContext) {
     }
 
     // Verify userId matches authenticated user
-    if (user.clerkId !== clerkId) {
+    if (user.id !== clerkId) {
       return NextResponse.json(
         { error: 'Forbidden', message: 'You can only access your own settings' },
         { status: 403 }
@@ -59,21 +59,21 @@ export async function GET(request: Request, context: RouteContext) {
     // Build settings response matching API contract
     const settings = {
       profile: {
-        displayName: user.profile.displayName || null,
-        timezone: user.profile.timezone || 'UTC',
-        dndEdition: user.profile.dndEdition || '5th Edition',
-        experienceLevel: user.profile.experienceLevel || null,
-        primaryRole: user.profile.primaryRole || null,
-        profileSetupCompleted: user.profile.profileSetupCompleted || false,
+        displayName: user.profile?.displayName || null,
+        timezone: user.profile?.timezone || 'UTC',
+        dndEdition: user.profile?.dndEdition || '5th Edition',
+        experienceLevel: user.profile?.experienceLevel || null,
+        primaryRole: user.profile?.primaryRole || null,
+        profileSetupCompleted: user.profile?.profileSetupCompleted || false,
       },
       preferences: {
-        theme: user.preferences.theme || 'system',
-        emailNotifications: user.preferences.emailNotifications ?? true,
-        browserNotifications: user.preferences.browserNotifications ?? false,
-        timezone: user.preferences.timezone || 'UTC',
-        language: user.preferences.language || 'en',
-        diceRollAnimations: user.preferences.diceRollAnimations ?? true,
-        autoSaveEncounters: user.preferences.autoSaveEncounters ?? true,
+        theme: user.preferences?.theme || 'system',
+        emailNotifications: user.preferences?.emailNotifications ?? true,
+        browserNotifications: user.preferences?.browserNotifications ?? false,
+        timezone: user.preferences?.timezone || 'UTC',
+        language: user.preferences?.language || 'en',
+        diceRollAnimations: user.preferences?.diceRollAnimations ?? true,
+        autoSaveEncounters: user.preferences?.autoSaveEncounters ?? true,
       },
     };
 

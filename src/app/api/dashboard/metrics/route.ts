@@ -42,7 +42,7 @@ export async function GET() {
     }
 
     // Get dashboard metrics using service
-    const metrics = await getDashboardMetrics(user._id.toString());
+    const metrics = await getDashboardMetrics(String(user._id));
 
     // Return metrics
     return NextResponse.json(metrics, { status: 200 });

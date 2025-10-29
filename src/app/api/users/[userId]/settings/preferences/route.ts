@@ -10,12 +10,6 @@ import { connectToDatabase } from '@/lib/db/connection';
 import User, { type IUser } from '@/lib/db/models/User';
 import { z } from 'zod';
 
-interface RouteContext {
-  params: {
-    userId: string;
-  };
-}
-
 /**
  * Zod schema for preferences update validation
  * All fields optional for partial updates
@@ -37,21 +31,21 @@ const preferencesUpdateSchema = z.object({
 function buildSettingsResponse(user: IUser) {
   return {
     profile: {
-      displayName: user.profile.displayName || null,
-      timezone: user.profile.timezone || 'UTC',
-      dndEdition: user.profile.dndEdition || '5th Edition',
-      experienceLevel: user.profile.experienceLevel || null,
-      primaryRole: user.profile.primaryRole || null,
-      profileSetupCompleted: user.profile.profileSetupCompleted || false,
+      displayName: user.profile?.displayName || null,
+      timezone: user.profile?.timezone || 'UTC',
+      dndEdition: user.profile?.dndEdition || '5th Edition',
+      experienceLevel: user.profile?.experienceLevel || null,
+      primaryRole: user.profile?.primaryRole || null,
+      profileSetupCompleted: user.profile?.profileSetupCompleted || false,
     },
     preferences: {
-      theme: user.preferences.theme || 'system',
-      emailNotifications: user.preferences.emailNotifications ?? true,
-      browserNotifications: user.preferences.browserNotifications ?? false,
-      timezone: user.preferences.timezone || 'UTC',
-      language: user.preferences.language || 'en',
-      diceRollAnimations: user.preferences.diceRollAnimations ?? true,
-      autoSaveEncounters: user.preferences.autoSaveEncounters ?? true,
+      theme: user.preferences?.theme || 'system',
+      emailNotifications: user.preferences?.emailNotifications ?? true,
+      browserNotifications: user.preferences?.browserNotifications ?? false,
+      timezone: user.preferences?.timezone || 'UTC',
+      language: user.preferences?.language || 'en',
+      diceRollAnimations: user.preferences?.diceRollAnimations ?? true,
+      autoSaveEncounters: user.preferences?.autoSaveEncounters ?? true,
     },
   };
 }
@@ -61,10 +55,13 @@ function buildSettingsResponse(user: IUser) {
  * Updates user preferences (partial update supported)
  *
  * @param request - Next.js request object with preferences update
- * @param context - Route context with userId param
+ * @param context - Route context with userId param (Next.js 15 async params)
  * @returns Updated settings object or error
  */
-export async function PATCH(request: Request, context: RouteContext) {
+export async function PATCH(
+  request: Request,
+  context: { params: Promise<{ userId: string }> }
+) {
   try {
     // Check authentication
     const { userId: clerkId } = await auth();
@@ -83,7 +80,8 @@ export async function PATCH(request: Request, context: RouteContext) {
     const validation = preferencesUpdateSchema.safeParse(body);
 
     if (!validation.success) {
-      const errors = validation.error.errors.map((err) => ({
+      const zodErrors = validation.error.issues || [];
+      const errors = zodErrors.map((err) => ({
         field: err.path.join('.'),
         message: err.message,
         code: err.code,
@@ -102,8 +100,11 @@ export async function PATCH(request: Request, context: RouteContext) {
     // Connect to database
     await connectToDatabase();
 
+    // Await params (Next.js 15 requirement)
+    const { userId } = await context.params;
+
     // Find user by MongoDB _id
-    const user = await User.findById(context.params.userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       return NextResponse.json(
@@ -113,7 +114,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     }
 
     // Verify userId matches authenticated user
-    if (user.clerkId !== clerkId) {
+    if (user.id !== clerkId) {
       return NextResponse.json(
         { error: 'Forbidden', message: 'You can only update your own preferences' },
         { status: 403 }
@@ -122,9 +123,18 @@ export async function PATCH(request: Request, context: RouteContext) {
 
     // Update preferences (partial update)
     const updates = validation.data;
-    Object.keys(updates).forEach((key) => {
-      user.preferences[key] = updates[key as keyof typeof updates];
-    });
+    if (!user.preferences) {
+      user.preferences = {};
+    }
+
+    // Update each field individually for type safety
+    if (updates.theme !== undefined) user.preferences.theme = updates.theme;
+    if (updates.emailNotifications !== undefined) user.preferences.emailNotifications = updates.emailNotifications;
+    if (updates.browserNotifications !== undefined) user.preferences.browserNotifications = updates.browserNotifications;
+    if (updates.timezone !== undefined) user.preferences.timezone = updates.timezone;
+    if (updates.language !== undefined) user.preferences.language = updates.language;
+    if (updates.diceRollAnimations !== undefined) user.preferences.diceRollAnimations = updates.diceRollAnimations;
+    if (updates.autoSaveEncounters !== undefined) user.preferences.autoSaveEncounters = updates.autoSaveEncounters;
 
     await user.save();
 

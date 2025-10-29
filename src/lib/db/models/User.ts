@@ -25,39 +25,51 @@ interface ProfileData {
 
 // Enum definitions matching data-model.md and contracts
 const DND_RULESETS = ['5e', '3.5e', 'pf1', 'pf2'] as const
-const EXPERIENCE_LEVELS = ['beginner', 'intermediate', 'expert'] as const
 const USER_ROLES = ['player', 'dm', 'both'] as const
 const SUBSCRIPTION_TIERS = ['free', 'seasoned', 'expert', 'master', 'guild'] as const
 const SUBSCRIPTION_STATUSES = ['active', 'cancelled', 'trial'] as const
-const THEMES = ['light', 'dark', 'auto'] as const
 const INITIATIVE_TYPES = ['manual', 'auto'] as const
 
-// Profile schema
+// Profile schema - matches settings-api.yaml contract
 const ProfileSchema = new Schema({
   displayName: {
     type: String,
-    required: true,
     trim: true,
     minlength: 1,
     maxlength: 100,
+    default: null,
   },
-  dndRuleset: {
+  timezone: {
     type: String,
-    required: true,
-    enum: DND_RULESETS,
-    default: '5e',
+    default: 'UTC',
+  },
+  dndEdition: {
+    type: String,
+    maxlength: 50,
+    default: '5th Edition',
   },
   experienceLevel: {
     type: String,
-    required: true,
-    enum: EXPERIENCE_LEVELS,
-    default: 'beginner',
+    enum: ['new', 'beginner', 'intermediate', 'experienced', 'veteran'],
+    default: null,
+  },
+  primaryRole: {
+    type: String,
+    enum: ['dm', 'player', 'both'],
+    default: null,
+  },
+  profileSetupCompleted: {
+    type: Boolean,
+    default: false,
+  },
+  // Legacy fields for backward compatibility
+  dndRuleset: {
+    type: String,
+    enum: DND_RULESETS,
   },
   role: {
     type: String,
-    required: true,
     enum: USER_ROLES,
-    default: 'player',
   },
 }, { _id: false })
 
@@ -104,23 +116,52 @@ const UsageSchema = new Schema({
   },
 }, { _id: false })
 
-// Preferences schema
+// Preferences schema - matches settings-api.yaml contract
 const PreferencesSchema = new Schema({
   theme: {
     type: String,
     required: true,
-    enum: THEMES,
-    default: 'auto',
+    enum: ['light', 'dark', 'system'],
+    default: 'system',
   },
-  defaultInitiativeType: {
+  emailNotifications: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+  browserNotifications: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  timezone: {
     type: String,
     required: true,
+    default: 'UTC',
+  },
+  language: {
+    type: String,
+    required: true,
+    default: 'en',
+  },
+  diceRollAnimations: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+  autoSaveEncounters: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+  // Legacy fields for backward compatibility
+  defaultInitiativeType: {
+    type: String,
     enum: INITIATIVE_TYPES,
     default: 'manual',
   },
   autoAdvanceRounds: {
     type: Boolean,
-    required: true,
     default: false,
   },
 }, { _id: false })
@@ -334,9 +375,11 @@ UserSchema.statics.createFromClerkUser = function(clerkUser: ClerkUser, profileD
     email: clerkUser.emailAddresses[0]?.emailAddress,
     profile: {
       displayName: profileData?.displayName || clerkUser.firstName || 'Adventurer',
-      dndRuleset: profileData?.dndRuleset || '5e',
-      experienceLevel: profileData?.experienceLevel || 'beginner',
-      role: profileData?.role || 'player',
+      dndEdition: '5th Edition',
+      experienceLevel: 'beginner',
+      primaryRole: 'player',
+      timezone: 'UTC',
+      profileSetupCompleted: false,
     },
     subscription: {
       tier: 'free',
@@ -349,7 +392,13 @@ UserSchema.statics.createFromClerkUser = function(clerkUser: ClerkUser, profileD
       creaturesCount: 0,
     },
     preferences: {
-      theme: 'auto',
+      theme: 'system',
+      emailNotifications: true,
+      browserNotifications: false,
+      timezone: 'UTC',
+      language: 'en',
+      diceRollAnimations: true,
+      autoSaveEncounters: true,
       defaultInitiativeType: 'manual',
       autoAdvanceRounds: false,
     },
@@ -400,12 +449,17 @@ export interface IUser extends mongoose.Document {
   syncStatus: 'active' | 'pending' | 'error'
   lastLoginAt?: Date
 
-  // Legacy nested schemas (for backward compatibility)
+  // Nested schemas (matches settings-api.yaml contract)
   profile?: {
-    displayName: string
-    dndRuleset: typeof DND_RULESETS[number]
-    experienceLevel: typeof EXPERIENCE_LEVELS[number]
-    role: typeof USER_ROLES[number]
+    displayName?: string | null
+    timezone?: string
+    dndEdition?: string
+    experienceLevel?: 'new' | 'beginner' | 'intermediate' | 'experienced' | 'veteran' | null
+    primaryRole?: 'dm' | 'player' | 'both' | null
+    profileSetupCompleted?: boolean
+    // Legacy fields for backward compatibility
+    dndRuleset?: typeof DND_RULESETS[number]
+    role?: typeof USER_ROLES[number]
   }
   subscription: {
     tier: typeof SUBSCRIPTION_TIERS[number]
@@ -417,10 +471,17 @@ export interface IUser extends mongoose.Document {
     encountersCount: number
     creaturesCount: number
   }
-  preferences: {
-    theme: typeof THEMES[number]
-    defaultInitiativeType: typeof INITIATIVE_TYPES[number]
-    autoAdvanceRounds: boolean
+  preferences?: {
+    theme?: 'light' | 'dark' | 'system'
+    emailNotifications?: boolean
+    browserNotifications?: boolean
+    timezone?: string
+    language?: string
+    diceRollAnimations?: boolean
+    autoSaveEncounters?: boolean
+    // Legacy fields for backward compatibility
+    defaultInitiativeType?: typeof INITIATIVE_TYPES[number]
+    autoAdvanceRounds?: boolean
   }
 
   createdAt: Date
