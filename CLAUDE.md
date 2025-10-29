@@ -3,6 +3,7 @@
 Auto-generated from feature planning. Last updated: 2025-09-30
 
 ## Active Technologies
+
 - TypeScript 5.9+ with strict mode + Next.js 15.5+, React 19.0+, Mongoose 8.5+, Clerk 5.0+, Zod 4+ (002-when-a-user-phase)
 - MongoDB 8.0+ with Mongoose ODM (002-when-a-user-phase)
 
@@ -62,6 +63,7 @@ tests/
 **Testing**: TDD approach - tests written before implementation
 
 ## Recent Changes
+
 - 002-when-a-user-phase: Added TypeScript 5.9+ with strict mode + Next.js 15.5+, React 19.0+, Mongoose 8.5+, Clerk 5.0+, Zod 4+
 
 - 002-when-a-user: Added user registration and profile management backend
