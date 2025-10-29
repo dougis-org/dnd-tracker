@@ -2,10 +2,7 @@
  * Global E2E test setup
  * Sets up authenticated session for Clerk tests
  */
-import { test as setup, expect } from '@playwright/test';
-import path from 'path';
-
-const authFile = path.join(__dirname, '../../.auth/user.json');
+import { test as setup } from '@playwright/test';
 
 setup('authenticate', async ({ page }) => {
   // For Clerk E2E tests, we need to sign in with a real test user

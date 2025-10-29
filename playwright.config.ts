@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 // Load environment variables from .env.local for E2E tests
-dotenv.config({ path: path.resolve(__dirname, '.env.local') });
+// Use process.cwd() instead of __dirname for cross-environment compatibility
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
 /**
  * See https://playwright.dev/docs/test-configuration.

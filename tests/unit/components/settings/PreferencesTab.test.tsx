@@ -74,8 +74,7 @@ describe('PreferencesTab', () => {
     });
   });
 
-  it('should handle theme selection changes', async () => {
-    const user = userEvent.setup();
+  it('should handle theme selection changes', () => {
     render(<PreferencesTab preferences={mockPreferences} onSave={mockOnSave} />);
 
     // Change theme (implementation will vary based on UI component)
