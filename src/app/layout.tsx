@@ -8,15 +8,16 @@ export const metadata: Metadata = {
   description: 'MVP D&D Encounter Tracker for managing combat sessions',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    // dynamic prop: Clerk v6 defaults to static rendering; this enables runtime auth
-    // Required for middleware-based authentication and session checks to work properly
-    <ClerkProvider publishableKey={clerkConfig.publishableKey} dynamic>
+    // Require dynamic rendering so Clerk sessions align with middleware checks
+    <ClerkProvider publishableKey={clerkConfig.publishableKey}>
       <html lang="en">
         <body>{children}</body>
       </html>

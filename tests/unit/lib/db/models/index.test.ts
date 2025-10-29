@@ -12,6 +12,14 @@ jest.mock('mongoose', () => {
     pre() {
       return this;
     }
+
+    static Types = {
+      ObjectId: class ObjectId {
+        static isValid() {
+          return true;
+        }
+      },
+    };
   }
 
   const mockModels: Record<string, unknown> = {};
@@ -30,6 +38,13 @@ jest.mock('mongoose', () => {
     },
     Document: class {},
     Model: class {},
+    Types: {
+      ObjectId: class ObjectId {
+        static isValid() {
+          return true;
+        }
+      },
+    },
   };
 
   return {

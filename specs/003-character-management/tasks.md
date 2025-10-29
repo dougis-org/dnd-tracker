@@ -44,17 +44,17 @@
 
 ### Foundational Tests (Red Phase)
 
-- [ ] T010 [P] Write failing unit test for D&D 5e ability modifier calculation in `tests/unit/character-calculations.test.ts` (verify formula: mod = floor((score - 10) / 2); test range -4 to +4)
-- [ ] T011 [P] Write failing unit test for proficiency bonus calculation in `tests/unit/character-calculations.test.ts` (verify formula: ceil(totalLevel / 4) + 1; ranges 2-6 for levels 1-20)
-- [ ] T012 [P] Write failing unit test for derived stats in `tests/unit/character-calculations.test.ts` (AC = 10 + DEX modifier, initiative = DEX modifier, HP = class hit die + CON modifier per level)
-- [ ] T013 [P] Write failing unit test for multiclass level tracking in `tests/unit/character-model.test.ts` (total level = sum of class levels)
-- [ ] T014 [P] Write failing unit test for tier limit validation in `tests/unit/character-validation.test.ts` (Free=10, Seasoned=50, Expert=250)
-- [ ] T015 [P] Write failing contract test for POST /api/characters endpoint in `tests/contract/characters-api.test.ts`
-- [ ] T016 [P] Write failing contract test for GET /api/characters endpoint in `tests/contract/characters-api.test.ts`
-- [ ] T017 [P] Write failing contract test for GET /api/characters/:id endpoint in `tests/contract/characters-api.test.ts`
-- [ ] T018 [P] Write failing contract test for PUT /api/characters/:id endpoint in `tests/contract/characters-api.test.ts`
-- [ ] T019 [P] Write failing contract test for DELETE /api/characters/:id endpoint in `tests/contract/characters-api.test.ts`
-- [ ] T020 [P] Write failing contract test for POST /api/characters/:id/duplicate endpoint in `tests/contract/characters-api.test.ts`
+- [x] T010 [P] Write failing unit test for D&D 5e ability modifier calculation in `tests/unit/character-calculations.test.ts` (verify formula: mod = floor((score - 10) / 2); test range -4 to +4)
+- [x] T011 [P] Write failing unit test for proficiency bonus calculation in `tests/unit/character-calculations.test.ts` (verify formula: ceil(totalLevel / 4) + 1; ranges 2-6 for levels 1-20)
+- [x] T012 [P] Write failing unit test for derived stats in `tests/unit/character-calculations.test.ts` (AC = 10 + DEX modifier, initiative = DEX modifier, HP = class hit die + CON modifier per level)
+- [x] T013 [P] Write failing unit test for multiclass level tracking in `tests/unit/character-model.test.ts` (total level = sum of class levels)
+- [x] T014 [P] Write failing unit test for tier limit validation in `tests/unit/character-validation.test.ts` (Free=10, Seasoned=50, Expert=250)
+- [x] T015 [P] Write failing contract test for POST /api/characters endpoint in `tests/contract/characters-api.test.ts`
+- [x] T016 [P] Write failing contract test for GET /api/characters endpoint in `tests/contract/characters-api.test.ts`
+- [x] T017 [P] Write failing contract test for GET /api/characters/:id endpoint in `tests/contract/characters-api.test.ts`
+- [x] T018 [P] Write failing contract test for PUT /api/characters/:id endpoint in `tests/contract/characters-api.test.ts`
+- [x] T019 [P] Write failing contract test for DELETE /api/characters/:id endpoint in `tests/contract/characters-api.test.ts`
+- [x] T020 [P] Write failing contract test for POST /api/characters/:id/duplicate endpoint in `tests/contract/characters-api.test.ts`
 
 ### Foundational Implementation (Green Phase)
 
