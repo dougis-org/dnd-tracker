@@ -1,6 +1,6 @@
 /**
  * User Preferences API Route
- * PATCH /api/users/[userId]/settings/preferences - Updates user preferences
+ * PATCH /api/users/[id]/settings/preferences - Updates user preferences
  * Constitutional: Max 150 lines, max 50 lines per function
  */
 
@@ -51,16 +51,16 @@ function buildSettingsResponse(user: IUser) {
 }
 
 /**
- * PATCH /api/users/[userId]/settings/preferences
+ * PATCH /api/users/[id]/settings/preferences
  * Updates user preferences (partial update supported)
  *
  * @param request - Next.js request object with preferences update
- * @param context - Route context with userId param (Next.js 15 async params)
+ * @param context - Route context with id param (Next.js 15 async params)
  * @returns Updated settings object or error
  */
 export async function PATCH(
   request: Request,
-  context: { params: Promise<{ userId: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -101,10 +101,10 @@ export async function PATCH(
     await connectToDatabase();
 
     // Await params (Next.js 15 requirement)
-    const { userId } = await context.params;
+    const { id } = await context.params;
 
     // Find user by MongoDB _id
-    const user = await User.findById(userId);
+    const user = await User.findById(id);
 
     if (!user) {
       return NextResponse.json(

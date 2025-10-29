@@ -16,8 +16,10 @@ test.describe('Authentication Flow and Redirects', () => {
       // Verify sign-in page loaded without redirect loops
       await expect(page).toHaveURL(/\/sign-in/);
 
-      // Verify Clerk sign-in component is visible
-      await expect(page.locator('[data-clerk-id]')).toBeVisible({ timeout: 5000 });
+      // Verify Clerk sign-in component is visible by checking for key elements
+      await expect(page.getByRole('heading', { name: /sign in/i })).toBeVisible({ timeout: 5000 });
+      await expect(page.getByRole('button', { name: /continue/i })).toBeVisible();
+      await expect(page.getByRole('textbox', { name: /email/i })).toBeVisible();
 
       // Verify no console errors about redirect loops
       const errors: string[] = [];
@@ -43,8 +45,10 @@ test.describe('Authentication Flow and Redirects', () => {
       // Verify sign-up page loaded without redirect loops
       await expect(page).toHaveURL(/\/sign-up/);
 
-      // Verify Clerk sign-up component is visible
-      await expect(page.locator('[data-clerk-id]')).toBeVisible({ timeout: 5000 });
+      // Verify Clerk sign-up component is visible by checking for key elements
+      await expect(page.getByRole('heading', { name: /create your account/i })).toBeVisible({ timeout: 5000 });
+      await expect(page.getByRole('button', { name: /continue/i })).toBeVisible();
+      await expect(page.getByRole('textbox', { name: /email address/i })).toBeVisible();
     });
 
     test('should redirect to sign-in when accessing protected dashboard', async ({ page }) => {
@@ -53,8 +57,9 @@ test.describe('Authentication Flow and Redirects', () => {
       // Should redirect to sign-in page
       await page.waitForURL(/\/sign-in/, { timeout: 5000 });
 
-      // Verify sign-in component is displayed
-      await expect(page.locator('[data-clerk-id]')).toBeVisible();
+      // Verify sign-in component is displayed by checking for key elements
+      await expect(page.getByRole('heading', { name: /sign in/i })).toBeVisible();
+      await expect(page.getByRole('button', { name: /continue/i })).toBeVisible();
     });
 
     test('should redirect to sign-in when accessing profile setup', async ({ page }) => {
@@ -74,7 +79,7 @@ test.describe('Authentication Flow and Redirects', () => {
       });
 
       await page.goto('/sign-in');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load'); // Use 'load' instead of 'networkidle' for Clerk
       await page.waitForTimeout(2000);
 
       // Should stay on sign-in page (maybe with query params)
@@ -92,7 +97,7 @@ test.describe('Authentication Flow and Redirects', () => {
       });
 
       await page.goto('/sign-up');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load'); // Use 'load' instead of 'networkidle' for Clerk
       await page.waitForTimeout(2000);
 
       // Should stay on sign-up page
@@ -121,7 +126,7 @@ test.describe('Authentication Flow and Redirects', () => {
       });
 
       await page.goto('/sign-in');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load'); // Use 'load' instead of 'networkidle' for Clerk
       await page.waitForTimeout(2000);
 
       // Check for specific Clerk warning
@@ -140,7 +145,7 @@ test.describe('Authentication Flow and Redirects', () => {
       });
 
       await page.goto('/sign-up');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load'); // Use 'load' instead of 'networkidle' for Clerk
       await page.waitForTimeout(2000);
 
       const clerkWarnings = consoleMessages.filter(msg =>

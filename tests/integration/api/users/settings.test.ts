@@ -9,15 +9,15 @@
 import { describe, test, expect } from '@jest/globals';
 
 describe('Settings API Contract', () => {
-  describe('GET /api/users/[userId]/settings', () => {
+  describe('GET /api/users/[id]/settings', () => {
     test('should export GET handler', async () => {
-      const route = await import('@/app/api/users/[userId]/settings/route');
+      const route = await import('@/app/api/users/[id]/settings/route');
       expect(route.GET).toBeDefined();
       expect(typeof route.GET).toBe('function');
     });
 
     test('should not export other HTTP methods', async () => {
-      const route = await import('@/app/api/users/[userId]/settings/route');
+      const route = await import('@/app/api/users/[id]/settings/route');
       expect(route.POST).toBeUndefined();
       expect(route.PUT).toBeUndefined();
       expect(route.DELETE).toBeUndefined();
@@ -25,15 +25,15 @@ describe('Settings API Contract', () => {
     });
   });
 
-  describe('PATCH /api/users/[userId]/settings/preferences', () => {
+  describe('PATCH /api/users/[id]/settings/preferences', () => {
     test('should export PATCH handler', async () => {
-      const route = await import('@/app/api/users/[userId]/settings/preferences/route');
+      const route = await import('@/app/api/users/[id]/settings/preferences/route');
       expect(route.PATCH).toBeDefined();
       expect(typeof route.PATCH).toBe('function');
     });
 
     test('should not export other HTTP methods', async () => {
-      const route = await import('@/app/api/users/[userId]/settings/preferences/route');
+      const route = await import('@/app/api/users/[id]/settings/preferences/route');
       expect(route.GET).toBeUndefined();
       expect(route.POST).toBeUndefined();
       expect(route.PUT).toBeUndefined();

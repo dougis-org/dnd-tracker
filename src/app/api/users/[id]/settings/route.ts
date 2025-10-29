@@ -1,6 +1,6 @@
 /**
  * User Settings API Route
- * GET /api/users/[userId]/settings - Returns user settings including profile and preferences
+ * GET /api/users/[id]/settings - Returns user settings including profile and preferences
  * Constitutional: Max 100 lines, proper error handling
  */
 
@@ -10,16 +10,16 @@ import { connectToDatabase } from '@/lib/db/connection';
 import User from '@/lib/db/models/User';
 
 /**
- * GET /api/users/[userId]/settings
+ * GET /api/users/[id]/settings
  * Returns complete user settings for the authenticated user
  *
  * @param request - Next.js request object
- * @param context - Route context with userId param (Next.js 15 async params)
+ * @param context - Route context with id param (Next.js 15 async params)
  * @returns User settings object or error
  */
 export async function GET(
   _request: Request,
-  context: { params: Promise<{ userId: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -36,10 +36,10 @@ export async function GET(
     await connectToDatabase();
 
     // Await params (Next.js 15 requirement)
-    const { userId } = await context.params;
+    const { id } = await context.params;
 
     // Find user by MongoDB _id
-    const user = await User.findById(userId);
+    const user = await User.findById(id);
 
     if (!user) {
       return NextResponse.json(
