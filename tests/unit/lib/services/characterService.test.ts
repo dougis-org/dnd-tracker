@@ -569,3 +569,227 @@ describe('CharacterService.duplicateCharacter', () => {
     });
   });
 });
+
+describe('CharacterService - Error Path Coverage', () => {
+  let createMock: jest.Mock;
+  let calculateMock: jest.Mock;
+  let getDerivedStatsMock: jest.Mock;
+  let findOneMock: jest.Mock;
+  let findOneAndUpdateMock: jest.Mock;
+  let fromUserQueryMock: jest.Mock;
+  let findMock: jest.Mock;
+  let countDocumentsMock: jest.Mock;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    createMock = mockedCharacterModel.create as jest.Mock;
+    calculateMock = mockedCharacterModel.calculateDerivedStats as jest.Mock;
+    getDerivedStatsMock = mockedCharacterModel.getDerivedStats as jest.Mock;
+    findOneMock = mockedCharacterModel.findOne as jest.Mock;
+    findOneAndUpdateMock = mockedCharacterModel.findOneAndUpdate as jest.Mock;
+    fromUserQueryMock = mockedCharacterModel.fromUserQuery as jest.Mock;
+    findMock = mockedCharacterModel.find as jest.Mock;
+    countDocumentsMock = mockedCharacterModel.countDocuments as jest.Mock;
+  });
+
+  describe('createCharacter - error paths', () => {
+    it('throws TypeError when userId is missing', async () => {
+      await expect(
+        CharacterService.createCharacter({
+          userId: '',
+          payload: BASE_CHARACTER_PAYLOAD,
+        })
+      ).rejects.toThrow(TypeError);
+    });
+
+    it('throws TypeError when payload is missing', async () => {
+      await expect(
+        CharacterService.createCharacter({
+          userId: MOCK_USER_ID,
+          payload: null as never,
+        })
+      ).rejects.toThrow(TypeError);
+    });
+
+    it('clamps hit points to maxHitPoints', async () => {
+      calculateMock.mockReturnValue(MOCK_DERIVED_STATS);
+
+      const documentId = '60f7d16d2f1bbf1a3c3f1f3a';
+      const createCall = createMockCharacterDocument({
+        _id: documentId,
+        userId: MOCK_USER_ID,
+      });
+
+      createMock.mockResolvedValue(createCall as never);
+
+      await CharacterService.createCharacter({
+        userId: MOCK_USER_ID,
+        payload: { ...BASE_CHARACTER_PAYLOAD, hitPoints: 1000 },
+      });
+
+      expect(createMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          hitPoints: MOCK_DERIVED_STATS.maxHitPoints,
+        })
+      );
+    });
+
+    it('throws error for non-finite hitPoints', async () => {
+      calculateMock.mockReturnValue(MOCK_DERIVED_STATS);
+
+      await expect(
+        CharacterService.createCharacter({
+          userId: MOCK_USER_ID,
+          payload: { ...BASE_CHARACTER_PAYLOAD, hitPoints: Infinity },
+        })
+      ).rejects.toThrow(TypeError);
+    });
+  });
+
+  describe('getCharacter - error paths', () => {
+    const characterId = '64f7d16d2f1bbf1a3c3f1f3b';
+
+    it('throws TypeError when userId is missing', async () => {
+      await expect(
+        CharacterService.getCharacter({
+          userId: '',
+          characterId,
+        })
+      ).rejects.toThrow(TypeError);
+    });
+
+    it('throws TypeError when characterId is missing', async () => {
+      await expect(
+        CharacterService.getCharacter({
+          userId: MOCK_USER_ID,
+          characterId: '',
+        })
+      ).rejects.toThrow(TypeError);
+    });
+  });
+
+  describe('listCharacters - error paths', () => {
+    it('throws TypeError when userId is missing', async () => {
+      await expect(
+        CharacterService.listCharacters({
+          userId: '',
+        })
+      ).rejects.toThrow(TypeError);
+    });
+
+    it('throws RangeError when page is decimal', async () => {
+      await expect(
+        CharacterService.listCharacters({
+          userId: MOCK_USER_ID,
+          page: 1.5,
+        })
+      ).rejects.toThrow(RangeError);
+    });
+
+    it('throws RangeError when pageSize > 100', async () => {
+      await expect(
+        CharacterService.listCharacters({
+          userId: MOCK_USER_ID,
+          pageSize: 101,
+        })
+      ).rejects.toThrow(RangeError);
+    });
+  });
+
+  describe('updateCharacter - error paths', () => {
+    const characterId = '64f7d16d2f1bbf1a3c3f1f3b';
+
+    it('throws TypeError when userId is missing', async () => {
+      await expect(
+        CharacterService.updateCharacter({
+          userId: '',
+          characterId,
+          updates: { name: 'Updated' },
+        })
+      ).rejects.toThrow(TypeError);
+    });
+
+    it('throws TypeError when characterId is missing', async () => {
+      await expect(
+        CharacterService.updateCharacter({
+          userId: MOCK_USER_ID,
+          characterId: '',
+          updates: { name: 'Updated' },
+        })
+      ).rejects.toThrow(TypeError);
+    });
+  });
+
+  describe('deleteCharacter - error paths', () => {
+    const characterId = '64f7d16d2f1bbf1a3c3f1f3b';
+
+    it('throws TypeError when userId is missing', async () => {
+      await expect(
+        CharacterService.deleteCharacter({
+          userId: '',
+          characterId,
+        })
+      ).rejects.toThrow(TypeError);
+    });
+
+    it('throws TypeError when characterId is missing', async () => {
+      await expect(
+        CharacterService.deleteCharacter({
+          userId: MOCK_USER_ID,
+          characterId: '',
+        })
+      ).rejects.toThrow(TypeError);
+    });
+  });
+
+  describe('duplicateCharacter - error paths', () => {
+    const characterId = '64f7d16d2f1bbf1a3c3f1f3b';
+
+    it('throws TypeError when userId is missing', async () => {
+      await expect(
+        CharacterService.duplicateCharacter({
+          userId: '',
+          characterId,
+        })
+      ).rejects.toThrow(TypeError);
+    });
+
+    it('throws TypeError when characterId is missing', async () => {
+      await expect(
+        CharacterService.duplicateCharacter({
+          userId: MOCK_USER_ID,
+          characterId: '',
+        })
+      ).rejects.toThrow(TypeError);
+    });
+  });
+
+  describe('checkTierLimit - error paths', () => {
+    it('throws RangeError for negative activeCharacterCount', async () => {
+      await expect(
+        CharacterService.checkTierLimit({
+          subscriptionTier: 'free',
+          activeCharacterCount: -1,
+        })
+      ).rejects.toThrow(RangeError);
+    });
+
+    it('throws RangeError for non-integer activeCharacterCount', async () => {
+      await expect(
+        CharacterService.checkTierLimit({
+          subscriptionTier: 'free',
+          activeCharacterCount: 1.5,
+        })
+      ).rejects.toThrow(RangeError);
+    });
+
+    it('throws RangeError for unsupported tier', async () => {
+      await expect(
+        CharacterService.checkTierLimit({
+          subscriptionTier: 'invalid' as never,
+          activeCharacterCount: 1,
+        })
+      ).rejects.toThrow(RangeError);
+    });
+  });
+});

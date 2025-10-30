@@ -1,4 +1,4 @@
-/* global module */
+/* global module, require */
 const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({
