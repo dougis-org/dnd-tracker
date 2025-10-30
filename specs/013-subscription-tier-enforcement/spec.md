@@ -15,3 +15,11 @@ Enforce usage limits per subscription tier, display limit warnings, and show con
 1. Enumerate all quota dimensions (characters, parties, encounters, participants).
 2. Define API for retrieving usage metrics and enforcing limits.
 3. Draft UX for warnings and upgrade prompts.
+
+---
+
+## Feature Specification
+
+**Feature Branch**: `013-subscription-tier-enforcement`
+**Created**: 2025-10-21
+**Status**: Draft

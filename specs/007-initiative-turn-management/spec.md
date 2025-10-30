@@ -15,3 +15,11 @@ Roll initiative, manage turn order with dexterity tie-breaking, track current tu
 1. Define CombatSession and InitiativeEntry data shapes.
 2. Specify APIs for starting a combat session and rolling initiative.
 3. Design UI state transitions for advancing turns and rounds.
+
+---
+
+## Feature Specification
+
+**Feature Branch**: `007-initiative-turn-management`
+**Created**: 2025-10-21
+**Status**: Draft

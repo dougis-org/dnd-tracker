@@ -15,3 +15,11 @@ Stripe integration for subscription management, payment processing, upgrade/down
 1. Outline Stripe integration points and webhook contract.
 2. Define billing dashboard data and UX flows for upgrades/downgrades.
 3. Identify sensitive keys and environment variables required for integration.
+
+---
+
+## Feature Specification
+
+**Feature Branch**: `020-payment-integration-subscription-management`
+**Created**: 2025-10-21
+**Status**: Draft

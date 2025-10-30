@@ -15,3 +15,11 @@ Save combat state, pause/resume sessions, end combat, and persist combat history
 1. Define CombatSession persistence model and snapshot format.
 2. Design pause/resume API and end-of-combat summary.
 3. Determine retention and deletion policies for session history.
+
+---
+
+## Feature Specification
+
+**Feature Branch**: `011-combat-session-state-management`
+**Created**: 2025-10-21
+**Status**: Draft

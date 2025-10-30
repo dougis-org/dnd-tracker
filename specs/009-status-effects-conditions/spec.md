@@ -15,3 +15,11 @@ Apply status effects with duration tracking, automatic expiration, and condition
 1. Define StatusEffect and ActiveStatusEffect models.
 2. Specify APIs to apply/remove/update effects on participants.
 3. Draft behavior for automatic expiration and "until save" semantics.
+
+---
+
+## Feature Specification
+
+**Feature Branch**: `009-status-effects-conditions`
+**Created**: 2025-10-21
+**Status**: Draft
