@@ -571,6 +571,7 @@ jobs:
 - React components: 75%+ (presentational logic)
 
 **Coverage Reports**:
+
 ```bash
 npm run test:coverage
 # Generates: coverage/lcov-report/index.html

@@ -41,8 +41,8 @@ export async function GET() {
       );
     }
 
-    // Get dashboard metrics using service
-    const metrics = await getDashboardMetrics(String(user._id));
+    // Get dashboard metrics using service (pass user object to avoid redundant query)
+    const metrics = await getDashboardMetrics(user);
 
     // Return metrics
     return NextResponse.json(metrics, { status: 200 });

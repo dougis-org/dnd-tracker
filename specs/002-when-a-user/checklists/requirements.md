@@ -33,6 +33,7 @@
 ## Enhancement Summary
 
 **Added Requirements**:
+
 - FR-013: Use existing Clerk-integrated authentication for login with dashboard redirect (clarified: no custom login screen)
 - FR-014: Dashboard page with user-specific information
 - FR-015: Profile page for viewing user information
@@ -42,6 +43,7 @@
 - FR-019: Clerk error message handling for authentication failures
 
 **Added Acceptance Scenarios**:
+
 - Scenario 1: User login flow (new)
 - Scenario 4: Dashboard access with personalized view (enhanced)
 - Scenario 5: Profile page viewing (new)

@@ -36,18 +36,21 @@
 - **Failure Impact**: Frustration during profile editing
 
 **NFR-PERF-005**: Profile form interactions SHALL respond within 500ms
+
 - **Measurement**: Client-side validation, field updates, dropdown interactions
 - **Target**: <500ms for all form interactions
 - **Test Method**: User interaction performance metrics
 - **Failure Impact**: Form feels sluggish and unresponsive
 
 **NFR-PERF-006**: Data validation SHALL complete within 100ms for all profile fields
+
 - **Measurement**: Zod schema validation execution time
 - **Target**: <100ms for complete profile validation
 - **Test Method**: Unit test benchmarks with max-length inputs
 - **Failure Impact**: Form validation delays user feedback
 
 **NFR-PERF-007**: Clerk webhook processing SHALL complete within 5 seconds
+
 - **Measurement**: Webhook handler execution time from receipt to database commit
 - **Target**: <5s for 95% of webhooks, <10s for 99%
 - **Test Method**: Webhook simulation with database latency
@@ -56,6 +59,7 @@
 ### 1.2 Concurrency Requirements
 
 **NFR-PERF-008**: System SHALL support 10 concurrent profile updates per user without race conditions
+
 - **Measurement**: Multiple simultaneous profile edit requests from different sessions
 - **Target**: Last-write-wins or optimistic locking prevents data loss
 - **Test Method**: Concurrent API request simulation
@@ -106,6 +110,7 @@
 - **Compliance**: Secure by default architecture
 
 **NFR-SEC-005**: Authentication sessions SHALL require re-authentication after 7 days of inactivity
+
 - **Enforcement**: Clerk session management with 7-day idle timeout
 - **Failure Behavior**: Redirect to login when session expires
 - **Test Method**: Simulate inactivity period, verify session expiration
@@ -139,12 +144,14 @@
 - **Compliance**: GDPR Article 5 (Data Minimization), CCPA
 
 **NFR-SEC-010**: Password/credential fields SHALL NEVER be stored in MongoDB (Clerk handles auth)
+
 - **Enforcement**: No password fields in User schema; Clerk manages credentials
 - **Failure Behavior**: N/A (architecture decision)
 - **Test Method**: Schema review confirms no password storage
 - **Compliance**: OWASP Password Storage Cheat Sheet
 
 **NFR-SEC-011**: Sensitive fields SHALL be excluded from API responses using schema sanitization
+
 - **Enforcement**: Use `publicUserSchema` in API responses (excludes passwordHash, tokens)
 - **Failure Behavior**: N/A (preventative)
 - **Test Method**: Verify API responses don't include internal fields
@@ -202,6 +209,7 @@
 - **Compliance**: WCAG 2.1 Level A (1.3.1 Info and Relationships)
 
 **NFR-ACCESS-003**: Validation errors SHALL be announced to screen readers (WCAG 3.3.1)
+
 - **Enforcement**: Use `aria-live="polite"` for error messages, `aria-describedby` for field errors
 - **Test Method**: Submit invalid form, verify screen reader announcements
 - **Success Criteria**: Errors announced without page refresh, field-level error association
@@ -261,6 +269,7 @@
 - **Compliance**: WCAG 2.1 Level AA (1.3.5 Identify Input Purpose)
 
 **NFR-COMPAT-004**: Application SHALL degrade gracefully if JavaScript is disabled
+
 - **Enforcement**: Next.js server components provide basic content without JS
 - **Limitation**: Forms require JavaScript; show message if disabled
 - **Test Method**: Disable JavaScript, verify readable content
@@ -289,6 +298,7 @@
 - **Failure Impact**: Unhandled errors crash server
 
 **NFR-REL-004**: User data SHALL be backed up daily with 30-day retention
+
 - **Enforcement**: MongoDB automated backups (managed by hosting provider)
 - **Test Method**: Verify backup schedule in database configuration
 - **Success Criteria**: Point-in-time recovery available for last 30 days

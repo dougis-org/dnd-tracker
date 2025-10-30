@@ -31,7 +31,8 @@ export default async function DashboardPage() {
     redirect('/profile-setup');
   }
 
-  const metrics = await getDashboardMetrics(String(user._id));
+  // Pass user object to avoid redundant database query
+  const metrics = await getDashboardMetrics(user);
 
   return (
     <div className="space-y-6">

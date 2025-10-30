@@ -294,6 +294,7 @@ The /tasks command should:
 - E2E Tests: Separate files by flow with shared fixtures
 
 **Mitigation Strategies**:
+
 - Extract dashboard widgets to components
 - Use Next.js App Router for tab routing
 - Leverage shadcn/ui components

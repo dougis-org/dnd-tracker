@@ -202,6 +202,7 @@ export async function cleanupTestData() {
    ```
 
 **Success Criteria**:
+
 - ✅ Subscription tier displayed correctly
 - ✅ Usage progress bars show correct percentages
 - ✅ Activity metrics match database values
@@ -540,6 +541,7 @@ export async function cleanupTestData() {
    ```
 
 **Success Criteria**:
+
 - ✅ Returning user goes directly to dashboard
 - ✅ No profile setup prompt shown
 - ✅ Dashboard loads with user data
@@ -612,6 +614,7 @@ export async function cleanupTestData() {
    ```
 
 **Success Criteria**:
+
 - ✅ Invalid email shows appropriate error
 - ✅ Wrong password shows appropriate error
 - ✅ Network issues show appropriate error
@@ -741,6 +744,7 @@ Playwright generates:
 - 95%+ test stability (no flaky tests)
 
 **Quality Gates**:
+
 - All E2E tests must pass before PR merge
 - No skipped tests in main branch
 - Failures block deployment

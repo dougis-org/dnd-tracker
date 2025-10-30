@@ -18,6 +18,7 @@
 - Tasks: `TXXX` (e.g., T001, T088)
 
 **Relationships**:
+
 - `FR-XXX` → `TR-XXX`: Functional requirement tested by testing requirement
 - `FR-XXX` → `EC-XXX`: Functional requirement has associated edge case
 - `TR-XXX` → `E2E-XXX`: Testing requirement implemented by E2E test scenario

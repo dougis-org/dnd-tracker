@@ -6,21 +6,31 @@
 
 import User from '@/lib/db/models/User';
 import { buildDashboardMetrics } from '@/lib/utils/metrics';
+import type { IUser } from '@/lib/db/models/User';
 
 /**
  * Get dashboard metrics for a user
- * Fetches user, calculates subscription usage, builds metrics response
+ * Accepts either a user object (to avoid redundant queries) or userId string
  *
- * @param userId - User ID (MongoDB ObjectId)
+ * @param userOrUserId - User object or User ID (MongoDB ObjectId)
  * @returns Complete dashboard metrics object
  * @throws Error if user not found or database error
  */
-export async function getDashboardMetrics(userId: string) {
-  // Fetch user from database
-  const user = await User.findById(userId);
+export async function getDashboardMetrics(
+  userOrUserId: IUser | string
+) {
+  let user: IUser;
 
-  if (!user) {
-    throw new Error('User not found');
+  // If string provided, fetch from database
+  if (typeof userOrUserId === 'string') {
+    const fetchedUser = await User.findById(userOrUserId);
+    if (!fetchedUser) {
+      throw new Error('User not found');
+    }
+    user = fetchedUser;
+  } else {
+    // User object already provided
+    user = userOrUserId;
   }
 
   // Build and return dashboard metrics

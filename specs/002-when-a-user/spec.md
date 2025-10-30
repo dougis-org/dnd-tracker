@@ -323,6 +323,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
   - Retain audit logs per compliance requirements (7 years)
 
 **Subscription Cancellation**:
+
 - Stripe subscription cancelled (future integration)
 - No pro-rated refunds for partial months (per terms of service)
 
@@ -481,6 +482,7 @@ db.users.updateOne(
 ```
 
 **Rationale**:
+
 - Prevents privilege escalation via API vulnerabilities
 - Requires database access (infrastructure-level security)
 - Phase 1: No admin UI for role management
@@ -504,6 +506,7 @@ Clarification of validation rules to avoid ambiguity:
 - **Enforcement**: Zod `.max(100)` validation + Mongoose `maxlength: [100, ...]`
 
 **Max 50 chars (dndEdition)**:
+
 - **Unit**: Unicode code points
 - **Handling**: Same as displayName
 
@@ -552,12 +555,14 @@ Profile state where `profileSetupCompleted: true` but optional fields are null.
 - `primaryRole`: User must select dm, player, or both
 
 **Optional Fields** (can be null after submission):
+
 - `displayName`: Null allowed (fallback to `firstName` in UI)
 - `experienceLevel`: Null allowed (no experience level shown)
 - `dndEdition`: Has default value ("5th Edition") but user can clear it
 - `timezone`: Has default value ("UTC") but user can change it
 
 **User Experience**:
+
 - Form allows submitting with only `primaryRole` selected
 - Dashboard shows "Profile 40% complete" if optional fields empty
 - Settings page highlights incomplete fields with "Add your display name" prompts
