@@ -14,8 +14,11 @@
     "test": "jest",
     "test:ci": "jest --ci --coverage --watchAll=false",
     "test:ci:parallel": "npm run test:ci -- --maxWorkers=50%",
+    "test:integration": "jest --config jest.config.integration.js --ci --watchAll=false",
+    "test:integration:watch": "jest --config jest.config.integration.js --watch",
     "test:e2e": "playwright test",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:all": "npm run test:ci && npm run test:integration && npm run test:e2e"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.34.0",

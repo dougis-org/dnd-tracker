@@ -15,6 +15,7 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
     '<rootDir>/tests/e2e/',
     '<rootDir>/tests/milestones/',
+    '<rootDir>/tests/integration/', // Exclude integration tests from unit test run
     // TODO: Fix broken integration tests that require Clerk auth mocking
     '<rootDir>/tests/integration/test_auth_session.test.ts',
     '<rootDir>/tests/integration/test_users_profile.test.ts',
