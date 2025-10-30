@@ -10,11 +10,12 @@ import { connectToDatabase } from '@/lib/db/connection';
 import User from '@/lib/db/models/User';
 import {
   createMockUser,
-  setupAuthMocks,
   setupAuthFailure,
   expectErrorResponse,
   expectSuccessResponse,
   createError,
+  createMockContext,
+  setupSettingsRouteMocks,
 } from '@tests/utils/test-helpers';
 
 const mockAuth = auth as jest.MockedFunction<typeof auth>;
@@ -30,37 +31,35 @@ describe('/api/users/[id]/settings', () => {
 
   describe('GET', () => {
     const mockRequest = {} as Request;
-    const createMockContext = (id: string) => ({
-      params: Promise.resolve({ id }),
-    });
 
     it('should return user settings for authenticated user', async () => {
       const userId = 'test-user-id';
-      const mockUserDoc = createMockUser({
-        _id: 'user-mongo-id',
-        id: userId,
-        profile: {
-          displayName: 'Test User',
-          timezone: 'America/New_York',
-          dndEdition: '5th Edition',
-          experienceLevel: 'intermediate',
-          primaryRole: 'dm',
-          profileSetupCompleted: true,
-        },
-        preferences: {
-          theme: 'dark',
-          emailNotifications: true,
-          browserNotifications: false,
-          timezone: 'America/New_York',
-          language: 'en',
-          diceRollAnimations: true,
-          autoSaveEncounters: false,
-        },
-      });
-
-      mockAuth.mockResolvedValue({ userId });
-      mockConnectToDatabase.mockResolvedValue(undefined);
-      mockUser.findById = jest.fn().mockResolvedValue(mockUserDoc);
+      const mockUserDoc = setupSettingsRouteMocks(
+        mockAuth,
+        mockConnectToDatabase,
+        mockUser,
+        userId,
+        'user-mongo-id',
+        {
+          profile: {
+            displayName: 'Test User',
+            timezone: 'America/New_York',
+            dndEdition: '5th Edition',
+            experienceLevel: 'intermediate',
+            primaryRole: 'dm',
+            profileSetupCompleted: true,
+          },
+          preferences: {
+            theme: 'dark',
+            emailNotifications: true,
+            browserNotifications: false,
+            timezone: 'America/New_York',
+            language: 'en',
+            diceRollAnimations: true,
+            autoSaveEncounters: false,
+          },
+        }
+      );
 
       const response = await GET(mockRequest, createMockContext('user-mongo-id'));
       const data = await expectSuccessResponse(response, 200, [
@@ -76,16 +75,14 @@ describe('/api/users/[id]/settings', () => {
 
     it('should return default values for missing profile fields', async () => {
       const userId = 'test-user-id';
-      const mockUserDoc = createMockUser({
-        _id: 'user-mongo-id',
-        id: userId,
-        profile: {},
-        preferences: {},
-      });
-
-      mockAuth.mockResolvedValue({ userId });
-      mockConnectToDatabase.mockResolvedValue(undefined);
-      mockUser.findById = jest.fn().mockResolvedValue(mockUserDoc);
+      setupSettingsRouteMocks(
+        mockAuth,
+        mockConnectToDatabase,
+        mockUser,
+        userId,
+        'user-mongo-id',
+        { profile: {}, preferences: {} }
+      );
 
       const response = await GET(mockRequest, createMockContext('user-mongo-id'));
       const data = await expectSuccessResponse(response, 200);
@@ -114,14 +111,14 @@ describe('/api/users/[id]/settings', () => {
     });
 
     it('should return 403 if userId does not match authenticated user', async () => {
-      const mockUserDoc = createMockUser({
-        _id: 'user-mongo-id',
-        id: 'different-user-id',
-      });
-
-      mockAuth.mockResolvedValue({ userId: 'test-user-id' });
-      mockConnectToDatabase.mockResolvedValue(undefined);
-      mockUser.findById = jest.fn().mockResolvedValue(mockUserDoc);
+      setupSettingsRouteMocks(
+        mockAuth,
+        mockConnectToDatabase,
+        mockUser,
+        'test-user-id',
+        'user-mongo-id',
+        { id: 'different-user-id' }
+      );
 
       const response = await GET(mockRequest, createMockContext('user-mongo-id'));
       await expectErrorResponse(response, 403, 'Forbidden');

@@ -9,12 +9,14 @@ import { auth } from '@clerk/nextjs/server';
 import { connectToDatabase } from '@/lib/db/connection';
 import User from '@/lib/db/models/User';
 import {
-  createMockUser,
   createMockRequest,
   setupAuthFailure,
   expectErrorResponse,
   expectSuccessResponse,
   createError,
+  createMockContext,
+  setupSettingsRouteMocks,
+  createSettingsUrl,
 } from '@tests/utils/test-helpers';
 
 const mockAuth = auth as jest.MockedFunction<typeof auth>;
@@ -29,28 +31,26 @@ describe('/api/users/[id]/settings/preferences', () => {
   });
 
   describe('PATCH', () => {
-    const createMockContext = (id: string) => ({
-      params: Promise.resolve({ id }),
-    });
 
     it('should update user preferences with valid data', async () => {
       const userId = 'test-user-id';
-      const mockUserDoc = createMockUser({
-        _id: 'user-mongo-id',
-        id: userId,
-        preferences: {
-          theme: 'light',
-          emailNotifications: false,
-        },
-        save: jest.fn().mockResolvedValue(true),
-      });
-
-      mockAuth.mockResolvedValue({ userId });
-      mockConnectToDatabase.mockResolvedValue(undefined);
-      mockUser.findById = jest.fn().mockResolvedValue(mockUserDoc);
+      const mongoId = 'user-mongo-id';
+      const mockUserDoc = setupSettingsRouteMocks(
+        mockAuth,
+        mockConnectToDatabase,
+        mockUser,
+        userId,
+        mongoId,
+        {
+          preferences: {
+            theme: 'light',
+            emailNotifications: false,
+          },
+        }
+      );
 
       const request = createMockRequest(
-        'http://localhost:3000/api/users/user-mongo-id/settings/preferences',
+        createSettingsUrl(mongoId, '/preferences'),
         'PATCH',
         {
           theme: 'dark',
@@ -73,27 +73,26 @@ describe('/api/users/[id]/settings/preferences', () => {
 
     it('should support partial updates', async () => {
       const userId = 'test-user-id';
-      const mockUserDoc = createMockUser({
-        _id: 'user-mongo-id',
-        id: userId,
-        preferences: {
-          theme: 'dark',
-          emailNotifications: true,
-          browserNotifications: false,
-        },
-        save: jest.fn().mockResolvedValue(true),
-      });
-
-      mockAuth.mockResolvedValue({ userId });
-      mockConnectToDatabase.mockResolvedValue(undefined);
-      mockUser.findById = jest.fn().mockResolvedValue(mockUserDoc);
+      const mongoId = 'user-mongo-id';
+      const mockUserDoc = setupSettingsRouteMocks(
+        mockAuth,
+        mockConnectToDatabase,
+        mockUser,
+        userId,
+        mongoId,
+        {
+          preferences: {
+            theme: 'dark',
+            emailNotifications: true,
+            browserNotifications: false,
+          },
+        }
+      );
 
       const request = createMockRequest(
-        'http://localhost:3000/api/users/user-mongo-id/settings/preferences',
+        createSettingsUrl(mongoId, '/preferences'),
         'PATCH',
-        {
-          theme: 'light',
-        }
+        { theme: 'light' }
       );
 
       const response = await PATCH(request, createMockContext('user-mongo-id'));
@@ -106,23 +105,20 @@ describe('/api/users/[id]/settings/preferences', () => {
 
     it('should initialize preferences if not set', async () => {
       const userId = 'test-user-id';
-      const mockUserDoc = createMockUser({
-        _id: 'user-mongo-id',
-        id: userId,
-        preferences: undefined,
-        save: jest.fn().mockResolvedValue(true),
-      });
-
-      mockAuth.mockResolvedValue({ userId });
-      mockConnectToDatabase.mockResolvedValue(undefined);
-      mockUser.findById = jest.fn().mockResolvedValue(mockUserDoc);
+      const mongoId = 'user-mongo-id';
+      const mockUserDoc = setupSettingsRouteMocks(
+        mockAuth,
+        mockConnectToDatabase,
+        mockUser,
+        userId,
+        mongoId,
+        { preferences: undefined }
+      );
 
       const request = createMockRequest(
-        'http://localhost:3000/api/users/user-mongo-id/settings/preferences',
+        createSettingsUrl(mongoId, '/preferences'),
         'PATCH',
-        {
-          theme: 'dark',
-        }
+        { theme: 'dark' }
       );
 
       const response = await PATCH(request, createMockContext('user-mongo-id'));
@@ -136,7 +132,7 @@ describe('/api/users/[id]/settings/preferences', () => {
       setupAuthFailure(mockAuth, 'no-user');
 
       const request = createMockRequest(
-        'http://localhost:3000/api/users/user-mongo-id/settings/preferences',
+        createSettingsUrl('user-mongo-id', '/preferences'),
         'PATCH',
         { theme: 'dark' }
       );
@@ -149,11 +145,9 @@ describe('/api/users/[id]/settings/preferences', () => {
       mockAuth.mockResolvedValue({ userId: 'test-user-id' });
 
       const request = createMockRequest(
-        'http://localhost:3000/api/users/user-mongo-id/settings/preferences',
+        createSettingsUrl('user-mongo-id', '/preferences'),
         'PATCH',
-        {
-          theme: 'invalid-theme',
-        }
+        { theme: 'invalid-theme' }
       );
 
       const response = await PATCH(request, createMockContext('user-mongo-id'));
@@ -164,11 +158,9 @@ describe('/api/users/[id]/settings/preferences', () => {
       mockAuth.mockResolvedValue({ userId: 'test-user-id' });
 
       const request = createMockRequest(
-        'http://localhost:3000/api/users/user-mongo-id/settings/preferences',
+        createSettingsUrl('user-mongo-id', '/preferences'),
         'PATCH',
-        {
-          emailNotifications: 'not-a-boolean',
-        }
+        { emailNotifications: 'not-a-boolean' }
       );
 
       const response = await PATCH(request, createMockContext('user-mongo-id'));
@@ -191,17 +183,18 @@ describe('/api/users/[id]/settings/preferences', () => {
     });
 
     it('should return 403 if userId does not match authenticated user', async () => {
-      const mockUserDoc = createMockUser({
-        _id: 'user-mongo-id',
-        id: 'different-user-id',
-      });
-
-      mockAuth.mockResolvedValue({ userId: 'test-user-id' });
-      mockConnectToDatabase.mockResolvedValue(undefined);
-      mockUser.findById = jest.fn().mockResolvedValue(mockUserDoc);
+      const mongoId = 'user-mongo-id';
+      setupSettingsRouteMocks(
+        mockAuth,
+        mockConnectToDatabase,
+        mockUser,
+        'test-user-id',
+        mongoId,
+        { id: 'different-user-id' }
+      );
 
       const request = createMockRequest(
-        'http://localhost:3000/api/users/user-mongo-id/settings/preferences',
+        createSettingsUrl(mongoId, '/preferences'),
         'PATCH',
         { theme: 'dark' }
       );
@@ -224,18 +217,18 @@ describe('/api/users/[id]/settings/preferences', () => {
     });
 
     it('should return 500 on save error', async () => {
-      const mockUserDoc = createMockUser({
-        _id: 'user-mongo-id',
-        id: 'test-user-id',
-        save: jest.fn().mockRejectedValue(createError('Error', 'Save failed')),
-      });
-
-      mockAuth.mockResolvedValue({ userId: 'test-user-id' });
-      mockConnectToDatabase.mockResolvedValue(undefined);
-      mockUser.findById = jest.fn().mockResolvedValue(mockUserDoc);
+      const mongoId = 'user-mongo-id';
+      const mockUserDoc = setupSettingsRouteMocks(
+        mockAuth,
+        mockConnectToDatabase,
+        mockUser,
+        'test-user-id',
+        mongoId,
+        { save: jest.fn().mockRejectedValue(createError('Error', 'Save failed')) }
+      );
 
       const request = createMockRequest(
-        'http://localhost:3000/api/users/user-mongo-id/settings/preferences',
+        createSettingsUrl(mongoId, '/preferences'),
         'PATCH',
         { theme: 'dark' }
       );
@@ -246,19 +239,18 @@ describe('/api/users/[id]/settings/preferences', () => {
 
     it('should update all preference fields', async () => {
       const userId = 'test-user-id';
-      const mockUserDoc = createMockUser({
-        _id: 'user-mongo-id',
-        id: userId,
-        preferences: {},
-        save: jest.fn().mockResolvedValue(true),
-      });
-
-      mockAuth.mockResolvedValue({ userId });
-      mockConnectToDatabase.mockResolvedValue(undefined);
-      mockUser.findById = jest.fn().mockResolvedValue(mockUserDoc);
+      const mongoId = 'user-mongo-id';
+      const mockUserDoc = setupSettingsRouteMocks(
+        mockAuth,
+        mockConnectToDatabase,
+        mockUser,
+        userId,
+        mongoId,
+        { preferences: {} }
+      );
 
       const request = createMockRequest(
-        'http://localhost:3000/api/users/user-mongo-id/settings/preferences',
+        createSettingsUrl(mongoId, '/preferences'),
         'PATCH',
         {
           theme: 'dark',

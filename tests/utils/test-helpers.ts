@@ -206,3 +206,35 @@ export const TEST_REQUEST_BODIES = {
     preferences: { theme: 'dark', autoAdvanceRounds: true }
   }
 } as const
+
+/**
+ * Settings route test helpers
+ */
+export const createMockContext = (id: string) => ({
+  params: Promise.resolve({ id }),
+})
+
+export const createSettingsUrl = (mongoId: string, path: string = '') =>
+  `http://localhost:3000/api/users/${mongoId}/settings${path}`
+
+export const setupSettingsRouteMocks = (
+  mockAuth: jest.MockedFunction<any>,
+  mockConnectToDatabase: jest.MockedFunction<any>,
+  mockUser: any,
+  userId: string,
+  mongoId: string,
+  userOverrides?: any
+) => {
+  const mockUserDoc = createMockUser({
+    _id: mongoId,
+    id: userId,
+    save: jest.fn().mockResolvedValue(true),
+    ...userOverrides,
+  })
+
+  mockAuth.mockResolvedValue({ userId })
+  mockConnectToDatabase.mockResolvedValue(undefined)
+  mockUser.findById = jest.fn().mockResolvedValue(mockUserDoc)
+
+  return mockUserDoc
+}
