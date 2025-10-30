@@ -60,6 +60,8 @@ const customJestConfig = {
     '!src/lib/db/models/User.ts',
     // auth.ts is just re-exports, tested via actual implementations
     '!src/lib/validations/auth.ts',
+    // Exclude API routes - tested by integration tests (Node environment)
+    '!src/app/api/**/*.ts',
   ],
   coverageReporters: ['text', 'lcov', 'html'],
   coverageThreshold: {
