@@ -225,7 +225,7 @@ export class CharacterService {
 
     const remaining = limit - activeCharacterCount;
     const warningThreshold = Math.floor(limit * WARNING_THRESHOLD_RATIO);
-    const shouldWarn = activeCharacterCount === warningThreshold;
+    const shouldWarn = activeCharacterCount >= warningThreshold;
 
     const usage: TierUsage = {
       used: activeCharacterCount,
@@ -422,16 +422,27 @@ export class CharacterService {
     let updatePayload: Record<string, unknown> = { ...updates };
 
     if ('abilityScores' in updates || 'classes' in updates) {
-      // If updating ability scores or classes, recalculate derived stats
-      // The test mocks provide the necessary values through the updates
-      const abilityScores = updates.abilityScores as CharacterAbilityScores;
-      const classes = updates.classes as CharacterClassLevel[];
+      // Fetch existing character to merge with updates for recalculation
+      const existing = await CharacterModel.findOne({
+        _id: characterId,
+        ...CharacterModel.fromUserQuery(userId, false),
+      });
 
-      if (!abilityScores || !classes) {
-        throw new TypeError(
-          'Both abilityScores and classes are required for stat recalculation'
-        );
+      if (!existing) {
+        throw new RangeError('Character not found');
       }
+
+      const hydrated = existing as CharacterDocumentLike;
+      const plain =
+        typeof hydrated.toObject === 'function'
+          ? (hydrated.toObject() as CharacterDocumentLike)
+          : hydrated;
+
+      // Merge updates with existing values for recalculation
+      const abilityScores = (updates.abilityScores ??
+        plain.abilityScores) as CharacterAbilityScores;
+      const classes = (updates.classes ??
+        plain.classes) as CharacterClassLevel[];
 
       const derivedInput: CharacterDerivedStatsInput = {
         abilityScores,
@@ -457,8 +468,8 @@ export class CharacterService {
       };
     }
 
-    const updated = await CharacterModel.findByIdAndUpdate(
-      characterId,
+    const updated = await CharacterModel.findOneAndUpdate(
+      { _id: characterId, userId },
       updatePayload,
       {
         new: true,
@@ -491,8 +502,8 @@ export class CharacterService {
       throw new TypeError('A characterId is required to delete a character');
     }
 
-    const updated = await CharacterModel.findByIdAndUpdate(
-      characterId,
+    const updated = await CharacterModel.findOneAndUpdate(
+      { _id: characterId, userId },
       { deletedAt: new Date() },
       { new: true, lean: true }
     );

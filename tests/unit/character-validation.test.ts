@@ -14,28 +14,32 @@ describe('CharacterService.checkTierLimit', () => {
     async ({ tier, limit }) => {
       const result = await CharacterService.checkTierLimit({
         subscriptionTier: tier,
-        activeCharacterCount: limit - 1,
+        activeCharacterCount: Math.floor(limit * 0.7), // Well below 80% threshold
       });
 
       expect(result.canCreate).toBe(true);
       expect(result.shouldWarn).toBe(false);
       expect(result.usage).toMatchObject({
-        used: limit - 1,
+        used: Math.floor(limit * 0.7),
         limit,
-        remaining: 1,
+        remaining: limit - Math.floor(limit * 0.7),
       });
     }
   );
 
-  it('signals a warning when usage meets 80% of the tier limit', async () => {
-    const result = await CharacterService.checkTierLimit({
-      subscriptionTier: 'free',
-      activeCharacterCount: 8,
-    });
+  it.each(tierCases)(
+    'signals a warning when usage is at or above 80% of the tier limit',
+    async ({ tier, limit }) => {
+      const warningThreshold = Math.floor(limit * 0.8);
+      const result = await CharacterService.checkTierLimit({
+        subscriptionTier: tier,
+        activeCharacterCount: warningThreshold,
+      });
 
-    expect(result.shouldWarn).toBe(true);
-    expect(result.usage).toMatchObject({ limit: 10, used: 8 });
-  });
+      expect(result.shouldWarn).toBe(true);
+      expect(result.usage).toMatchObject({ limit, used: warningThreshold });
+    }
+  );
 
   it('rejects creation when usage meets the tier limit', async () => {
     await expect(

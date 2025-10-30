@@ -10,6 +10,7 @@ jest.mock('@/lib/db/models/Character', () => {
       findOne: jest.fn(),
       find: jest.fn(),
       findByIdAndUpdate: jest.fn(),
+      findOneAndUpdate: jest.fn(),
       countDocuments: jest.fn(),
     },
   };
@@ -412,14 +413,16 @@ describe('CharacterService.updateCharacter', () => {
   const characterId = '64f7d16d2f1bbf1a3c3f1f3b';
 
   let fromUserQueryMock: jest.Mock;
-  let findByIdAndUpdateMock: jest.Mock;
+  let findOneAndUpdateMock: jest.Mock;
   let getDerivedStatsMock: jest.Mock;
   let calculateMock: jest.Mock;
+  let findOneMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
     fromUserQueryMock = mockedCharacterModel.fromUserQuery as jest.Mock;
-    findByIdAndUpdateMock = mockedCharacterModel.findByIdAndUpdate as jest.Mock;
+    findOneAndUpdateMock = mockedCharacterModel.findOneAndUpdate as jest.Mock;
+    findOneMock = mockedCharacterModel.findOne as jest.Mock;
     getDerivedStatsMock = mockedCharacterModel.getDerivedStats as jest.Mock;
     calculateMock = mockedCharacterModel.calculateDerivedStats as jest.Mock;
   });
@@ -450,7 +453,7 @@ describe('CharacterService.updateCharacter', () => {
     };
 
     fromUserQueryMock.mockReturnValue({ userId, deletedAt: null });
-    findByIdAndUpdateMock.mockResolvedValue(updatedDocument as never);
+    findOneAndUpdateMock.mockResolvedValue(updatedDocument as never);
     getDerivedStatsMock.mockReturnValue(derivedStats);
 
     const result = await CharacterService.updateCharacter({
@@ -459,8 +462,8 @@ describe('CharacterService.updateCharacter', () => {
       updates: { name: 'Updated Name' },
     });
 
-    expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
-      characterId,
+    expect(findOneAndUpdateMock).toHaveBeenCalledWith(
+      { _id: characterId, userId },
       { name: 'Updated Name' },
       expect.objectContaining({
         new: true,
@@ -506,7 +509,20 @@ describe('CharacterService.updateCharacter', () => {
     };
 
     fromUserQueryMock.mockReturnValue({ userId, deletedAt: null });
-    findByIdAndUpdateMock.mockResolvedValue(updatedDocument as never);
+    findOneMock.mockResolvedValue({
+      _id: characterId,
+      userId,
+      name: basePayload.name,
+      raceId: basePayload.raceId,
+      abilityScores: basePayload.abilityScores,
+      classes: basePayload.classes,
+      hitPoints: basePayload.hitPoints,
+      toObject() {
+        const { toObject: _omit, ...rest } = this as Record<string, unknown>;
+        return rest;
+      },
+    } as never);
+    findOneAndUpdateMock.mockResolvedValue(updatedDocument as never);
     calculateMock.mockReturnValue(updatedDerivedStats);
     getDerivedStatsMock.mockReturnValue(updatedDerivedStats);
 
@@ -523,8 +539,8 @@ describe('CharacterService.updateCharacter', () => {
       abilityScores: newAbilityScores,
       classes: basePayload.classes,
     });
-    expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
-      characterId,
+    expect(findOneAndUpdateMock).toHaveBeenCalledWith(
+      { _id: characterId, userId },
       expect.objectContaining({
         abilityScores: newAbilityScores,
         maxHitPoints: updatedDerivedStats.maxHitPoints,
@@ -541,13 +557,23 @@ describe('CharacterService.updateCharacter', () => {
 
   it('throws when character does not exist', async () => {
     fromUserQueryMock.mockReturnValue({ userId, deletedAt: null });
-    findByIdAndUpdateMock.mockResolvedValue(null as never);
+    findOneMock.mockResolvedValue(null as never);
 
     await expect(
       CharacterService.updateCharacter({
         userId,
         characterId,
-        updates: { name: 'New Name' },
+        updates: {
+          abilityScores: {
+            str: 15,
+            dex: 14,
+            con: 14,
+            int: 10,
+            wis: 11,
+            cha: 9,
+          },
+          classes: basePayload.classes,
+        },
       })
     ).rejects.toThrow(RangeError);
   });
@@ -566,11 +592,11 @@ describe('CharacterService.updateCharacter', () => {
 describe('CharacterService.deleteCharacter', () => {
   const characterId = '64f7d16d2f1bbf1a3c3f1f3b';
 
-  let findByIdAndUpdateMock: jest.Mock;
+  let findOneAndUpdateMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    findByIdAndUpdateMock = mockedCharacterModel.findByIdAndUpdate as jest.Mock;
+    findOneAndUpdateMock = mockedCharacterModel.findOneAndUpdate as jest.Mock;
   });
 
   it('soft-deletes a character by setting deletedAt', async () => {
@@ -594,19 +620,19 @@ describe('CharacterService.deleteCharacter', () => {
       deletedAt: new Date('2025-10-29T12:00:00.000Z'),
     };
 
-    findByIdAndUpdateMock.mockResolvedValue(deletedDocument as never);
+    findOneAndUpdateMock.mockResolvedValue(deletedDocument as never);
 
     await CharacterService.deleteCharacter({ userId, characterId });
 
-    expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
-      characterId,
+    expect(findOneAndUpdateMock).toHaveBeenCalledWith(
+      { _id: characterId, userId },
       { deletedAt: expect.any(Date) },
       { new: true, lean: true }
     );
   });
 
   it('throws when character does not exist', async () => {
-    findByIdAndUpdateMock.mockResolvedValue(null as never);
+    findOneAndUpdateMock.mockResolvedValue(null as never);
 
     await expect(
       CharacterService.deleteCharacter({ userId, characterId })

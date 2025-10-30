@@ -13,7 +13,7 @@
  * @jest-environment browser
  */
 
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 // Mock Clerk authentication for tests
 test.beforeEach(async ({ context }) => {
@@ -79,7 +79,7 @@ test.describe('Character Management E2E', () => {
 
     // Extract character ID from URL
     const url = page.url();
-    const match = url.match(/\/character(?:s)?\/([a-f0-9]+)/);
+    const match = url.match(/\/character(?:s)?\/([a-fA-F0-9]+)/);
     if (match) {
       characterId = match[1];
     }
@@ -400,7 +400,7 @@ test.describe('Character Management E2E', () => {
     };
 
     // Check that key stats are visible
-    for (const [statName, locator] of Object.entries(statElements)) {
+    for (const locator of Object.values(statElements)) {
       if ((await locator.count()) > 0) {
         await expect(locator.first()).toBeVisible();
       }
@@ -475,10 +475,6 @@ test.describe('Character Management E2E', () => {
     const nextButton = page.locator(
       'button:has-text("Next"), a:has-text("Next"), [aria-label*="next"]'
     );
-    const prevButton = page.locator(
-      'button:has-text("Previous"), a:has-text("Previous"), [aria-label*="previous"]'
-    );
-    const pageInfo = page.locator('text=/page.*\\d+.*of.*\\d+/i');
 
     if ((await nextButton.count()) > 0) {
       const isEnabled = await nextButton.isEnabled();
