@@ -14,17 +14,20 @@
 **Framework**: Jest 29.7+ with React Testing Library 16.0+
 
 **Required Configuration**:
+
 - Node.js 18+ LTS
 - TypeScript 5.9+ with strict mode enabled
 - In-memory test environment (no external services)
 
 **Mock Requirements**:
+
 - Mongoose models mocked with `jest.mock()`
 - Clerk SDK mocked for authentication checks
 - Zod schemas tested with real validation (not mocked)
 - React components tested with `@testing-library/react`
 
 **Environment Variables** (`.env.test`):
+
 ```env
 NODE_ENV=test
 MONGODB_URI=mongodb://localhost:27017/test  # Not used (in-memory DB)
@@ -40,11 +43,13 @@ CLERK_WEBHOOK_SECRET=whsec_test_mock
 **Framework**: Jest with mongodb-memory-server
 
 **Required Configuration**:
+
 - mongodb-memory-server for isolated test database
 - Supertest for HTTP request testing
 - Mock Clerk authentication middleware
 
 **Database Setup**:
+
 ```typescript
 // tests/setup/db.ts
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -72,6 +77,7 @@ afterEach(async () => {
 ```
 
 **Mock Clerk Webhooks**:
+
 ```typescript
 // tests/utils/mockWebhook.ts
 import { Webhook } from 'svix';
@@ -86,6 +92,7 @@ export function generateValidWebhookSignature(payload: any, secret: string) {
 ```
 
 **Environment Variables** (`.env.test`):
+
 ```env
 NODE_ENV=test
 CLERK_WEBHOOK_SECRET=whsec_test_fixed_secret_for_testing
@@ -100,20 +107,24 @@ CLERK_SECRET_KEY=sk_test_mock
 **Framework**: Playwright 1.46+
 
 **Required Configuration**:
+
 - Clerk test mode enabled (`CLERK_TEST_MODE=true`)
 - Test MongoDB instance (can be shared, but isolated schema)
 - Headless browser automation (Chromium, Firefox, WebKit)
 
 **Clerk Test Mode Setup**:
+
 - Create Clerk test application with test API keys
 - Use fixed test user accounts (not ephemeral)
 - Test users: `test-user-1@example.com`, `test-dm@example.com`, `test-admin@example.com`
 
 **Database Setup**:
+
 - Option 1: Ephemeral MongoDB instance per test suite (docker-compose)
 - Option 2: Persistent test database with cleanup before each test
 
 **Environment Variables** (`.env.e2e`):
+
 ```env
 NODE_ENV=test
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_<real_test_key>
@@ -124,6 +135,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 **Playwright Configuration**:
+
 ```typescript
 // playwright.config.ts
 export default defineConfig({
@@ -157,6 +169,7 @@ export default defineConfig({
 ### 2.1 Sample User Profiles
 
 **Test User 1: First-Time User (No Profile)**
+
 ```json
 {
   "clerkId": "user_test_new_001",
@@ -175,6 +188,7 @@ export default defineConfig({
 ```
 
 **Test User 2: Experienced DM (Complete Profile)**
+
 ```json
 {
   "clerkId": "user_test_dm_002",
@@ -199,6 +213,7 @@ export default defineConfig({
 ```
 
 **Test User 3: Partial Profile (Skipped Initial Setup)**
+
 ```json
 {
   "clerkId": "user_test_partial_003",
@@ -220,6 +235,7 @@ export default defineConfig({
 ```
 
 **Test User 4: Admin User**
+
 ```json
 {
   "clerkId": "user_test_admin_004",
@@ -243,6 +259,7 @@ export default defineConfig({
 ```
 
 **Test User 5: Edge Case - At Usage Limits**
+
 ```json
 {
   "clerkId": "user_test_limits_005",
@@ -268,6 +285,7 @@ export default defineConfig({
 ### 2.2 Validation Test Data
 
 **Valid Inputs** (Boundary Values):
+
 ```typescript
 const validInputs = {
   displayName: {
@@ -295,6 +313,7 @@ const validInputs = {
 ```
 
 **Invalid Inputs** (Error Cases):
+
 ```typescript
 const invalidInputs = {
   displayName: {
@@ -317,6 +336,7 @@ const invalidInputs = {
 ```
 
 **Special Characters & Edge Cases**:
+
 ```typescript
 const edgeCaseInputs = {
   displayName: {
@@ -338,6 +358,7 @@ const edgeCaseInputs = {
 ### 2.3 Clerk Webhook Payloads
 
 **user.created Event**:
+
 ```json
 {
   "type": "user.created",
@@ -364,6 +385,7 @@ const edgeCaseInputs = {
 ```
 
 **user.updated Event**:
+
 ```json
 {
   "type": "user.updated",
@@ -387,6 +409,7 @@ const edgeCaseInputs = {
 ```
 
 **user.deleted Event**:
+
 ```json
 {
   "type": "user.deleted",
@@ -564,6 +587,7 @@ jobs:
 **Target**: 80%+ coverage on touched code
 
 **Files Requiring High Coverage**:
+
 - `src/lib/validations/user.ts`: 90%+ (critical validation logic)
 - `src/lib/services/userService.ts`: 85%+ (business logic)
 - `src/lib/utils/subscription.ts`: 90%+ (usage limit calculations)
@@ -584,6 +608,7 @@ npm run test:coverage
 **Target**: All API routes covered
 
 **Required Coverage**:
+
 - `src/app/api/webhooks/clerk/route.ts`: All event types tested
 - `src/app/api/users/[id]/profile/route.ts`: GET, PATCH with auth/validation
 - `src/app/api/dashboard/metrics/route.ts`: GET with auth
@@ -597,6 +622,7 @@ npm run test:coverage
 **Target**: All critical user flows covered
 
 **Required Scenarios** (10 tests from e2e-test-plan.md):
+
 - E2E-001: Login flow with valid/invalid credentials
 - E2E-002: Dashboard access and metrics display
 - E2E-003: Settings navigation and profile viewing
@@ -626,11 +652,13 @@ npm run test:coverage
 ### 6.3 E2E Tests
 
 **Option 1: Ephemeral Database** (Recommended for CI)
+
 - Docker container with MongoDB started before tests
 - Container destroyed after tests complete
 - Fresh database for each test run
 
 **Option 2: Cleanup Hooks** (Local development)
+
 - `beforeEach`: Seed required test users
 - `afterEach`: Delete test users created during test
 - Keep baseline test users for faster test execution
@@ -642,16 +670,19 @@ npm run test:coverage
 ### 7.1 Load Test Scenarios
 
 **Scenario 1: Concurrent Profile Updates**
+
 - 100 concurrent users updating profiles
 - Measure: Response time, error rate
 - Target: <2s for 95% of requests, <1% error rate
 
 **Scenario 2: Dashboard Load**
+
 - 500 concurrent dashboard page loads
 - Measure: Time to Interactive, API response time
 - Target: <1.5s TTI, <500ms API response
 
 **Scenario 3: Webhook Burst**
+
 - 50 Clerk webhooks arrive within 1 second
 - Measure: Processing time, duplicate handling
 - Target: All webhooks processed within 30s, no duplicates

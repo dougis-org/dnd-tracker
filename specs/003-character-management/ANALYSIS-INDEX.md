@@ -11,19 +11,25 @@
 ### Start Here (Choose One)
 
 #### For Decision Makers (5 min read)
+
 👉 **ANALYSIS-COMPLETE.md** - Quick status and recommendations
+
 - What was analyzed
 - Key takeaways (✅ good / ⚠️ needs fixing)
 - Next steps with time estimates
 
 #### For Project Leads (15 min read)
+
 👉 **ANALYSIS-EXECUTIVE-SUMMARY.md** - Executive summary
+
 - 3 CRITICAL issues that must be fixed
 - 4 HIGH issues strongly recommended
 - Timeline and path recommendations (Path A/B/C)
 
 #### For Implementers (30 min read + execution)
+
 👉 **REMEDIATION-CHECKLIST.md** - How to fix everything
+
 - Step-by-step instructions for each issue
 - Code snippets showing before/after
 - Time estimates per fix
@@ -32,7 +38,9 @@
 ### Deep Dive (Reference)
 
 #### For Full Analysis (45 min read)
+
 👉 **ANALYSIS-REPORT-FINAL.md** - Complete technical analysis
+
 - All 17 findings with detailed explanations
 - Coverage maps showing requirements to tasks
 - Metrics and statistics
@@ -45,6 +53,7 @@
 ### How Much Time Do You Have?
 
 **75 Minutes Available?** ✅ **RECOMMENDED PATH A**
+
 ```
 1. Read ANALYSIS-EXECUTIVE-SUMMARY.md (5 min)
 2. Follow REMEDIATION-CHECKLIST.md (60 min)
@@ -56,6 +65,7 @@
 ```
 
 **30 Minutes Available?** ⚡ **PATH B (PRAGMATIC)**
+
 ```
 1. Read ANALYSIS-EXECUTIVE-SUMMARY.md (5 min)
 2. Follow REMEDIATION-CHECKLIST.md - CRITICAL only (30 min)
@@ -66,6 +76,7 @@
 ```
 
 **0 Minutes Available?** 🚀 **PATH C (NOT RECOMMENDED)**
+
 ```
 1. Proceed directly to /speckit.implement
 2. Expect 4-6 hours of rework during implementation
@@ -160,6 +171,7 @@
 ## 📋 What's Included in Each Document
 
 ### ANALYSIS-COMPLETE.md
+
 - ✅ What was analyzed (spec/plan/tasks)
 - ✅ Analysis results (17 findings)
 - ✅ Key takeaways (good/bad)
@@ -167,6 +179,7 @@
 - ✅ Best for quick orientation
 
 ### ANALYSIS-EXECUTIVE-SUMMARY.md
+
 - ✅ Overview and key findings
 - ✅ 3 CRITICAL + 4 HIGH issues highlighted
 - ✅ Remediation path recommendations (A/B/C)
@@ -174,6 +187,7 @@
 - ✅ Best for decision makers
 
 ### REMEDIATION-CHECKLIST.md
+
 - ✅ Step-by-step fix instructions
 - ✅ Before/after code examples
 - ✅ Time estimates per fix
@@ -182,6 +196,7 @@
 - ✅ Best for implementers applying fixes
 
 ### ANALYSIS-REPORT-FINAL.md
+
 - ✅ Complete technical analysis (344 lines)
 - ✅ All 17 findings with details
 - ✅ Coverage maps and metrics
@@ -194,6 +209,7 @@
 ## ⚡ Recommended Flow
 
 ### If You're in a Hurry (5 min)
+
 ```
 1. Read this file
 2. Read ANALYSIS-EXECUTIVE-SUMMARY.md
@@ -203,6 +219,7 @@
 ```
 
 ### If You Have 30 Minutes
+
 ```
 1. Read ANALYSIS-EXECUTIVE-SUMMARY.md (5 min)
 2. Follow REMEDIATION-CHECKLIST.md - CRITICAL only (25 min)
@@ -210,6 +227,7 @@
 ```
 
 ### If You Have 75 Minutes (Recommended)
+
 ```
 1. Read ANALYSIS-EXECUTIVE-SUMMARY.md (5 min)
 2. Follow REMEDIATION-CHECKLIST.md - ALL fixes (60 min)
@@ -220,6 +238,7 @@
 ```
 
 ### If You Want All Details
+
 ```
 1. Read ANALYSIS-REPORT-FINAL.md (30 min)
 2. Follow REMEDIATION-CHECKLIST.md (60 min)
@@ -265,6 +284,7 @@ A: ANALYSIS-REPORT-FINAL.md has complete findings with all details.
 ## 🚀 Ready to Proceed?
 
 ### Path A (Recommended - 75 min): Maximum Quality
+
 ```bash
 # 1. Open REMEDIATION-CHECKLIST.md
 # 2. Apply CRITICAL + HIGH fixes (75 min)
@@ -273,6 +293,7 @@ A: ANALYSIS-REPORT-FINAL.md has complete findings with all details.
 ```
 
 ### Path B (Pragmatic - 30 min): Quick Start
+
 ```bash
 # 1. Open REMEDIATION-CHECKLIST.md
 # 2. Apply CRITICAL fixes only (30 min)
@@ -281,6 +302,7 @@ A: ANALYSIS-REPORT-FINAL.md has complete findings with all details.
 ```
 
 ### Path C (Fast - 0 min): No Fixes
+
 ```bash
 # 1. Proceed directly to: /speckit.implement
 # 2. Note: Expect rework during implementation
@@ -292,4 +314,3 @@ A: ANALYSIS-REPORT-FINAL.md has complete findings with all details.
 **Recommendation**: **Choose Path A or B**  
 **Next Step**: Apply fixes from REMEDIATION-CHECKLIST.md  
 **Final Step**: Run `/speckit.implement`
-

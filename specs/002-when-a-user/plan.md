@@ -29,6 +29,7 @@
 This feature implements comprehensive user registration and profile management for the D&D Tracker application. When users register through Clerk authentication, the system persists their information in MongoDB, creates a user profile with D&D-specific preferences, assigns the free subscription tier by default, and tracks usage metrics.
 
 **Core Flows**:
+
 1. **Authentication**: Users log in via existing Clerk integration (no custom login screen)
 2. **First-Time Setup**: New users complete optional D&D profile form
 3. **Dashboard**: Authenticated users access personalized dashboard with subscription tier, usage progress bars, statistics, and quick actions
@@ -36,6 +37,7 @@ This feature implements comprehensive user registration and profile management f
 5. **Usage Tracking**: System tracks user activity against subscription limits
 
 **New Enhancements** (2025-10-25):
+
 - Login flow integration with Clerk (FR-013, FR-019)
 - Enhanced dashboard with progress bars and usage statistics (FR-014)
 - Settings section with tabbed interface (FR-015, FR-016)
@@ -205,12 +207,14 @@ Existing data model (see data-model.md) is sufficient. No additional fields requ
 ### 2. API Contracts - 🔄 TO BE ENHANCED
 
 **Existing** (✅ COMPLETED):
+
 - `contracts/clerk-webhook.yaml`
 - `contracts/profile-api.yaml`
 
 **NEW** (To be created):
 
 **Dashboard Metrics API** (`contracts/dashboard-api.yaml`):
+
 ```yaml
 GET /api/dashboard/metrics
 Auth: Required (Clerk session)
@@ -220,6 +224,7 @@ Response:
 ```
 
 **Settings API** (`contracts/settings-api.yaml`):
+
 ```yaml
 GET /api/users/[id]/settings
 PATCH /api/users/[id]/settings/preferences
@@ -255,6 +260,7 @@ Create `e2e-test-plan.md` with comprehensive Playwright test scenarios for TR-00
 ### 5. Update CLAUDE.md - 📝 TO BE EXECUTED
 
 Run `.specify/scripts/bash/update-agent-context.sh claude` to add:
+
 - Dashboard components and metrics
 - Settings tabs pattern
 - Enhanced E2E testing
@@ -269,6 +275,7 @@ Run `.specify/scripts/bash/update-agent-context.sh claude` to add:
 **Enhancement Strategy**:
 
 The /tasks command should:
+
 1. Review existing tasks T001-T040 (validation, models, services, APIs, UI)
 2. Add NEW tasks for:
    - **Phase 3.9**: Dashboard Layer (T041-T050)
@@ -289,6 +296,7 @@ The /tasks command should:
 **Status**: ✅ NO VIOLATIONS
 
 **Complexity Considerations**:
+
 - Dashboard: Multiple small components (<450 lines each) vs monolithic page
 - Settings Tabs: File-based routing vs complex client-side state
 - E2E Tests: Separate files by flow with shared fixtures

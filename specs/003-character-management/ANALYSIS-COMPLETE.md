@@ -9,12 +9,14 @@
 ## What Was Analyzed
 
 ✅ **spec.md** (168 lines)
+
 - 6 User Stories (US1-US6)
 - 15 Functional Requirements (FR-001-015)
 - 10 Success Criteria
 - Edge cases and assumptions
 
 ✅ **plan.md** (388 lines)  
+
 - Technical context and stack
 - Implementation approach
 - Risk assessment
@@ -22,6 +24,7 @@
 - Constitution check
 
 ✅ **tasks.md** (520 lines)
+
 - 134 tasks across 9 phases
 - TDD-first approach
 - Dependency mapping
@@ -64,11 +67,13 @@
 ### ⚠️ What Needs Fixing
 
 **CRITICAL (Before Implementation)**:
+
 1. Define all 6 D&D 5e saving throws (10 min)
 2. List all 18 D&D 5e skills (10 min)
 3. Clarify version history scope (10 min)
 
 **HIGH (Strongly Recommended)**:
+
 1. Schedule soft delete cleanup job (15 min)
 2. Clarify level filter semantics (10 min)
 3. Add constitution note (5 min)
@@ -79,6 +84,7 @@
 ## Next Steps
 
 ### Option 1: Fix Everything (Recommended)
+
 ```
 Time: 75 minutes
 1. Fix CRITICAL (30 min)
@@ -88,6 +94,7 @@ Result: 100% aligned specification
 ```
 
 ### Option 2: Fix Critical Only
+
 ```
 Time: 30 minutes
 1. Fix CRITICAL (30 min)
@@ -97,6 +104,7 @@ Result: 80% aligned + documented improvements
 ```
 
 ### Option 3: Proceed As-Is
+
 ```
 Time: 0 minutes
 1. Start /speckit.implement immediately
@@ -159,7 +167,8 @@ Then:
 
 ✅ **Fix CRITICAL (30 min) + HIGH (45 min) = 75 min**
 
-**Why**: 
+**Why**:
+
 - The 3 CRITICAL issues block implementation correctness
 - The 4 HIGH issues prevent feature completeness
 - 75 min investment saves 4-6 hours of rework during implementation
@@ -207,10 +216,10 @@ Then:
 Choose your remediation path and apply fixes from **REMEDIATION-CHECKLIST.md**
 
 Then run:
+
 ```bash
 /speckit.implement
 ```
 
 **Analysis Confidence**: HIGH ✅  
 **Ready to Proceed**: YES ✅
-

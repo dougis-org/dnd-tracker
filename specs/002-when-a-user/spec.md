@@ -84,6 +84,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 **Scenario**: User provides invalid email/password or OAuth authentication fails
 
 **System Behavior**:
+
 - Clerk displays authentication error message (e.g., "Invalid credentials", "Account not found")
 - System does NOT create MongoDB user record (no webhook triggered for failed auth)
 - User remains on Clerk sign-in page with error message
@@ -91,6 +92,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 - System logs failed auth attempts via Clerk dashboard (not application logs)
 
 **Error Messages** (Clerk-managed):
+
 - Invalid email/password: "Incorrect email or password"
 - Account not found: "No account found with this email"
 - OAuth error: "Authentication failed. Please try again."
@@ -104,12 +106,14 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 **Scenario**: Network issues, Clerk service outage, or session expiration during authentication
 
 **System Behavior**:
+
 - **Network Timeout**: Clerk SDK retries authentication request 3 times with exponential backoff
 - **Clerk Outage**: User sees "Authentication service unavailable. Please try again later."
 - **Session Expiration**: User redirected to Clerk sign-in with return URL to original destination
 - **Application Response**: Protected pages show "Authenticating..." loading state, then error after 10s timeout
 
 **Error Recovery**:
+
 - User can retry authentication manually
 - Return URL preserved in Clerk redirect flow
 - No partial user records created in MongoDB
@@ -123,6 +127,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 **Scenario**: User clicks "Skip for now" or closes browser during profile setup
 
 **System Behavior**:
+
 - **Skip Button Clicked**:
   - Set `profileSetupCompleted: false` in MongoDB
   - Redirect user to dashboard
@@ -137,6 +142,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
   - Future enhancement: Auto-save draft as user types (not in Phase 1)
 
 **Re-engagement**:
+
 - Dashboard reminder banner with "Complete Profile" link
 - Settings always accessible at `/settings/profile` for later completion
 
@@ -149,6 +155,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 **Scenario**: User submits profile form with validation errors or boundary values
 
 **System Behavior**:
+
 - **Client-Side Validation** (React Hook Form + Zod):
   - Display inline error messages below each invalid field
   - Prevent form submission until all errors resolved
@@ -159,6 +166,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
   - Database update rejected; user sees error state in UI
 
 **Boundary Values Handling**:
+
 - `displayName` at 100 chars: Accepted
 - `displayName` at 101 chars: Rejected with "Maximum 100 characters exceeded"
 - `dndEdition` at 50 chars: Accepted
@@ -166,6 +174,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 - Invalid enum value (e.g., `experienceLevel: "expert+"` ): Rejected with "Invalid experience level"
 
 **Unicode & Special Characters**:
+
 - UTF-8 support for international characters in displayName, dndEdition
 - Emojis allowed (counted as characters based on Unicode code points)
 - HTML tags sanitized / escaped (React auto-escapes, but Zod schema strips tags)
@@ -179,6 +188,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 **Scenario**: Clerk webhook fires twice for same user (retry) or user attempts re-registration
 
 **System Behavior**:
+
 - **Clerk Webhook Duplicate Detection**:
   - Check if user with `clerkId` already exists in MongoDB
   - If exists: Log "User already exists, skipping creation" and return 200 (idempotent)
@@ -192,6 +202,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
   - Second webhook receives duplicate key error, returns 200 after detecting existing user
 
 **Idempotency Guarantee**:
+
 - Webhook processing is idempotent; duplicate events safe to replay
 - `lastClerkSync` timestamp updated on each webhook to track sync freshness
 
@@ -204,6 +215,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 **Scenario**: User attempts to set `role: 'admin'` via profile API or form tampering
 
 **System Behavior**:
+
 - **API Protection**:
   - Profile API (`PATCH /api/users/[id]/profile`) DOES NOT accept `role` field in request body
   - Server-side Zod schema excludes `role` from updateable fields
@@ -216,6 +228,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
   - Future: Admin panel UI for authorized admins to manage roles
 
 **Audit Logging**:
+
 - If `role` field present in profile update request: Log warning with userId and attempted value
 - Alert security team on repeated attempts from same user
 
@@ -228,15 +241,18 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 **Scenario**: User navigates to `/dashboard` without being logged in
 
 **System Behavior**:
+
 - **Next.js Middleware Check**:
   - Verify Clerk session exists before rendering dashboard page
   - If no session: Redirect to Clerk sign-in with `returnUrl=/dashboard`
 - **Redirect Flow**:
-  1. User accesses `/dashboard`
-  2. Middleware detects no auth session
-  3. 302 redirect to Clerk sign-in (e.g., `/sign-in?redirect_url=/dashboard`)
-  4. User completes sign-in
-  5. Clerk redirects back to `/dashboard`
+
+1. User accesses `/dashboard`
+2. Middleware detects no auth session
+3. 302 redirect to Clerk sign-in (e.g., `/sign-in?redirect_url=/dashboard`)
+4. User completes sign-in
+5. Clerk redirects back to `/dashboard`
+
 - **API Protection**:
   - Dashboard metrics API (`GET /api/dashboard/metrics`) returns 401 Unauthorized without auth token
   - No data exposed without valid Clerk session
@@ -250,6 +266,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 **Scenario**: User opens `/settings/profile` in two browser tabs, edits in both, submits sequentially
 
 **System Behavior**:
+
 - **Last-Write-Wins Strategy**:
   - Both tabs fetch same user data initially
   - User edits `displayName` in Tab 1, submits → Save succeeds
@@ -264,10 +281,12 @@ When a new user registers for the DnD Tracker app, they log in through the authe
   - UI shows "Profile updated in another session. Reload to see latest." message
 
 **Race Condition Handling**:
+
 - MongoDB atomic updates ensure partial writes don't occur
 - Single-document updates are atomic (no transaction needed)
 
 **User Guidance**:
+
 - Warning message in UI: "Avoid editing profile in multiple tabs simultaneously"
 
 **Test Coverage**: Integration tests simulate concurrent API requests, verify no data corruption
@@ -279,6 +298,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 **Scenario**: User A attempts to access User B's profile via URL manipulation or API call
 
 **System Behavior**:
+
 - **Profile Page** (`/settings/profile`):
   - Page fetches authenticated user's profile (no userId in URL)
   - User cannot navigate to another user's profile via UI
@@ -291,6 +311,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
   - Phase 1: No admin override; even admins blocked from cross-user access via API
 
 **Authorization Flow**:
+
 1. Extract `userId` from URL parameter
 2. Extract `userId` from Clerk session
 3. If `userId` mismatch: Return 403
@@ -305,6 +326,7 @@ When a new user registers for the DnD Tracker app, they log in through the authe
 **Scenario**: User deletes their account via Clerk or admin deletes user
 
 **System Behavior**:
+
 - **Clerk Deletion Trigger**:
   - User deletes account in Clerk dashboard (or admin deletes via Clerk API)
   - Clerk fires `user.deleted` webhook to `/api/webhooks/clerk`
@@ -405,21 +427,25 @@ Enum values defining user's preferred D&D participation style:
 Boolean flag tracking whether user has submitted the profile form at least once.
 
 **Conditions for `profileSetupCompleted: true`**:
+
 - User submitted profile form (whether complete or partial)
 - At least `primaryRole` field was selected (required field)
 - Other fields (displayName, experienceLevel, dndEdition, timezone) may be null/default
 
 **Conditions for `profileSetupCompleted: false`**:
+
 - User has never submitted profile form
 - User clicked "Skip for now" during initial setup
 - User is a newly registered account (default state)
 
 **Behavior**:
+
 - `true`: User never sees profile setup wizard again on login
 - `false` + first login: User redirected to `/profile-setup` (optional prompt)
 - `false` + returning user: User sees reminder banner in dashboard, no forced redirect
 
 **Partial vs Complete Profile**:
+
 - System allows partial profiles; users can submit form with only required fields filled
 - "Partial profile" = `profileSetupCompleted: true` but optional fields (displayName, experienceLevel) are null
 - "Complete profile" = All fields populated (no operational difference; UX may show "100% complete" badge)
@@ -439,6 +465,7 @@ Quantified thresholds enforced by the application:
 | Guild | Unlimited | Unlimited | Unlimited | 50 |
 
 **Enforcement**:
+
 - When user attempts to create resource exceeding limit: Show error message "Upgrade to [next tier] to create more [parties/encounters/creatures]"
 - Dashboard displays progress bars: "1 / 1 parties used (100%)" with color coding (green <50%, yellow 50-80%, red >80%)
 
@@ -456,12 +483,14 @@ Unique identifier linking user to Clerk authentication system.
 **Format**: Clerk-generated UUID-like string (e.g., `user_2abcdef1234567890`)
 **Purpose**: Correlates MongoDB user record with Clerk user identity
 **Distinction**:
+
 - `clerkId`: Clerk's unique ID (external system)
 - `_id`: MongoDB document ObjectID (internal system)
 - `email`: User's email address (user-facing)
 - `username`: User's chosen username (user-facing)
 
 **Usage**:
+
 - Clerk webhooks identify users by `clerkId` (not email)
 - API authentication verifies `clerkId` matches session token
 - Email/username can change; `clerkId` is immutable
@@ -473,6 +502,7 @@ Unique identifier linking user to Clerk authentication system.
 Requirement FR-008 specifies admin role assignment via manual database operations.
 
 **Specific Procedure**:
+
 ```bash
 # MongoDB shell or admin script
 db.users.updateOne(
@@ -489,6 +519,7 @@ db.users.updateOne(
 - Future: Admin panel with audit logging for role changes
 
 **Prohibited Methods**:
+
 - Profile API does NOT accept `role` field in PATCH requests
 - Profile form UI does NOT display `role` field
 - Middleware/server actions reject `role` updates programmatically
@@ -500,6 +531,7 @@ db.users.updateOne(
 Clarification of validation rules to avoid ambiguity:
 
 **Max 100 chars (displayName)**:
+
 - **Unit**: Unicode code points (not bytes)
 - **Handling**: JavaScript `.length` property (UTF-16 code units)
 - **Example**: "José" = 4 characters, "👨‍👩‍👧‍👦" (family emoji) = 7 characters (surrogate pairs counted separately)
@@ -511,6 +543,7 @@ Clarification of validation rules to avoid ambiguity:
 - **Handling**: Same as displayName
 
 **Unicode Support**:
+
 - International characters (Chinese, Arabic, Cyrillic): Fully supported
 - Emojis: Allowed (counted as multiple code units if complex)
 - Zero-width characters: Allowed but discouraged (no sanitization in Phase 1)
@@ -522,6 +555,7 @@ Clarification of validation rules to avoid ambiguity:
 Nested structure for future metric additions without schema migration.
 
 **Current Implementation** (Phase 1):
+
 ```typescript
 // Flat fields in User schema
 sessionsCount: Number
@@ -530,6 +564,7 @@ campaignsCreatedCount: Number
 ```
 
 **Future Extension** (Phase 2+):
+
 ```typescript
 // Nested structure for organized metrics
 usageMetrics: {
@@ -541,6 +576,7 @@ usageMetrics: {
 ```
 
 **Extension Mechanism**:
+
 - Add new fields to `usageMetrics` subdocument without migration
 - Existing users get new fields with default values on first read
 - Backward-compatible: Old clients ignore unknown fields
@@ -552,6 +588,7 @@ usageMetrics: {
 Profile state where `profileSetupCompleted: true` but optional fields are null.
 
 **Required Field** (must be non-null for submission):
+
 - `primaryRole`: User must select dm, player, or both
 
 **Optional Fields** (can be null after submission):

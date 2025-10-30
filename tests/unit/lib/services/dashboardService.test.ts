@@ -174,5 +174,21 @@ describe('Dashboard Service', () => {
       expect(result.subscription.percentages.parties).toBe(0);
       expect(result.subscription.warnings).toEqual([]);
     });
+
+    test('should accept user object directly to avoid redundant query', async () => {
+      const user = await createTestUser({
+        sessionsCount: 10,
+      });
+      user.subscription.tier = 'seasoned';
+      await user.save();
+
+      // Pass user object instead of ID
+      const result = await getDashboardMetrics(user);
+
+      expect(result).toBeDefined();
+      expect(result.subscription.tier).toBe('seasoned');
+      expect(result.metrics.sessionsCount).toBe(10);
+      expect(result.user.email).toBe(user.email);
+    });
   });
 });

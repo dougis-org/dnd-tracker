@@ -103,38 +103,45 @@ export async function cleanupTestData() {
    - Clear browser cookies and local storage
 
 2. **Navigate to Application**
+
    ```typescript
    await page.goto('/');
    ```
 
 3. **Expect Redirect to Clerk Login**
+
    ```typescript
    await expect(page).toHaveURL(/sign-in/);
    ```
 
 4. **Enter Valid Credentials**
+
    ```typescript
    await page.fill('[name="identifier"]', TEST_USERS.returningUser.email);
    await page.fill('[name="password"]', TEST_USERS.returningUser.password);
    ```
 
 5. **Submit Login Form**
+
    ```typescript
    await page.click('button[type="submit"]');
    ```
 
 6. **Wait for Dashboard Redirect**
+
    ```typescript
    await page.waitForURL('/dashboard', { timeout: 5000 });
    ```
 
 7. **Verify Dashboard Loaded**
+
    ```typescript
    await expect(page.locator('h1')).toContainText('Dashboard');
    await expect(page.locator('[data-testid="user-greeting"]')).toBeVisible();
    ```
 
 **Success Criteria**:
+
 - ✅ User successfully authenticates via Clerk
 - ✅ User is redirected to /dashboard
 - ✅ Dashboard displays user-specific greeting
@@ -155,6 +162,7 @@ export async function cleanupTestData() {
 1. **Setup**
    - Authenticate test user
    - Seed usage data in database:
+
      ```typescript
      await seedTestUser({
        ...TEST_USERS.returningUser,
@@ -166,17 +174,20 @@ export async function cleanupTestData() {
      ```
 
 2. **Navigate to Dashboard**
+
    ```typescript
    await page.goto('/dashboard');
    ```
 
 3. **Verify Subscription Tier Display**
+
    ```typescript
    await expect(page.locator('[data-testid="subscription-tier"]'))
      .toContainText('Free Adventurer');
    ```
 
 4. **Verify Usage Progress Bars**
+
    ```typescript
    // Encounters: 2/3 used
    await expect(page.locator('[data-testid="encounters-progress"]'))
@@ -187,6 +198,7 @@ export async function cleanupTestData() {
    ```
 
 5. **Verify Activity Metrics**
+
    ```typescript
    await expect(page.locator('[data-testid="sessions-count"]'))
      .toContainText('5');
@@ -196,6 +208,7 @@ export async function cleanupTestData() {
    ```
 
 6. **Verify Quick Actions Present**
+
    ```typescript
    await expect(page.locator('[data-testid="quick-actions"]'))
      .toBeVisible();
@@ -222,6 +235,7 @@ export async function cleanupTestData() {
 
 1. **Setup**
    - Authenticate test user with complete profile
+
    ```typescript
    await seedTestUser({
      ...TEST_USERS.returningUser,
@@ -233,6 +247,7 @@ export async function cleanupTestData() {
    ```
 
 2. **Navigate from Dashboard to Settings**
+
    ```typescript
    await page.goto('/dashboard');
    await page.click('[data-testid="user-menu"]');
@@ -240,17 +255,20 @@ export async function cleanupTestData() {
    ```
 
 3. **Verify Redirect to Profile Tab**
+
    ```typescript
    await expect(page).toHaveURL('/settings/profile');
    ```
 
 4. **Verify Settings Tabs Visible**
+
    ```typescript
    await expect(page.locator('[role="tablist"]')).toBeVisible();
    await expect(page.locator('text=Profile')).toHaveClass(/active/);
    ```
 
 5. **Verify Profile Information Displayed**
+
    ```typescript
    await expect(page.locator('[data-testid="display-name"]'))
      .toHaveValue('Test DM');
@@ -266,12 +284,14 @@ export async function cleanupTestData() {
    ```
 
 6. **Verify Subscription Info Displayed**
+
    ```typescript
    await expect(page.locator('[data-testid="subscription-tier"]'))
      .toContainText('Free Adventurer');
    ```
 
 **Success Criteria**:
+
 - ✅ Navigation to settings works from dashboard
 - ✅ Settings tabs are visible and functional
 - ✅ All profile fields display correct values
@@ -294,28 +314,33 @@ export async function cleanupTestData() {
    - Navigate to profile settings
 
 2. **Edit Display Name**
+
    ```typescript
    await page.fill('[data-testid="display-name"]', 'Updated DM Name');
    ```
 
 3. **Edit D&D Preferences**
+
    ```typescript
    await page.selectOption('[data-testid="experience-level"]', 'experienced');
    await page.selectOption('[data-testid="primary-role"]', 'both');
    ```
 
 4. **Submit Form**
+
    ```typescript
    await page.click('button[type="submit"]');
    ```
 
 5. **Wait for Success Message**
+
    ```typescript
    await expect(page.locator('[data-testid="success-message"]'))
      .toContainText('Profile updated successfully');
    ```
 
 6. **Verify Changes Persisted (Reload Page)**
+
    ```typescript
    await page.reload();
 
@@ -327,6 +352,7 @@ export async function cleanupTestData() {
    ```
 
 7. **Verify Changes Reflected in Database**
+
    ```typescript
    const user = await findUserInDatabase(TEST_USERS.returningUser.clerkId);
    expect(user.displayName).toBe('Updated DM Name');
@@ -334,6 +360,7 @@ export async function cleanupTestData() {
    ```
 
 **Success Criteria**:
+
 - ✅ Form fields are editable
 - ✅ Submit button triggers save
 - ✅ Success message displays
@@ -357,34 +384,40 @@ export async function cleanupTestData() {
    - Ensure user is logged out
 
 2. **Attempt to Access Dashboard**
+
    ```typescript
    await page.goto('/dashboard');
    ```
 
 3. **Expect Redirect to Clerk Login**
+
    ```typescript
    await page.waitForURL(/sign-in/, { timeout: 3000 });
    ```
 
 4. **Attempt to Access Profile Settings**
+
    ```typescript
    await page.goto('/settings/profile');
    await page.waitForURL(/sign-in/);
    ```
 
 5. **Verify Return URL Preserved**
+
    ```typescript
    const url = new URL(page.url());
    expect(url.searchParams.get('redirect_url')).toContain('/settings/profile');
    ```
 
 6. **Login and Verify Redirect Back**
+
    ```typescript
    await authenticateUser(page, TEST_USERS.returningUser);
    await expect(page).toHaveURL('/settings/profile');
    ```
 
 **Success Criteria**:
+
 - ✅ Dashboard access redirects to login
 - ✅ Settings access redirects to login
 - ✅ Return URL is preserved
@@ -407,11 +440,13 @@ export async function cleanupTestData() {
    - Seed another user in database
 
 2. **Attempt to Access Other User's Profile**
+
    ```typescript
    await page.goto(`/settings/profile?userId=${TEST_USERS.otherUser.clerkId}`);
    ```
 
 3. **Expect 403 Forbidden or Redirect**
+
    ```typescript
    // Should show error or redirect to own profile
    await expect(page.locator('[data-testid="error-message"]'))
@@ -422,12 +457,14 @@ export async function cleanupTestData() {
    ```
 
 4. **Verify Own User Data Displayed**
+
    ```typescript
    const displayName = await page.locator('[data-testid="display-name"]').inputValue();
    expect(displayName).not.toBe(TEST_USERS.otherUser.displayName);
    ```
 
 5. **Attempt API Call to Other User's Settings**
+
    ```typescript
    const response = await page.request.get(
      `/api/users/${TEST_USERS.otherUser.clerkId}/settings`
@@ -436,6 +473,7 @@ export async function cleanupTestData() {
    ```
 
 **Success Criteria**:
+
 - ✅ Cannot view other users' profiles via URL manipulation
 - ✅ API requests to other users' data return 403
 - ✅ User sees their own data only
@@ -457,22 +495,26 @@ export async function cleanupTestData() {
    - Create MongoDB user via webhook with `profileSetupCompleted: false`
 
 2. **Navigate and Login**
+
    ```typescript
    await page.goto('/');
    await authenticateUser(page, TEST_USERS.newUser);
    ```
 
 3. **Expect Redirect to Profile Setup**
+
    ```typescript
    await expect(page).toHaveURL('/profile-setup');
    ```
 
 4. **Verify Profile Setup Form**
+
    ```typescript
    await expect(page.locator('h1')).toContainText('Complete Your Profile');
    ```
 
 5. **Complete Profile Form**
+
    ```typescript
    await page.fill('[data-testid="display-name"]', 'New Adventurer');
    await page.selectOption('[data-testid="experience-level"]', 'new');
@@ -480,16 +522,19 @@ export async function cleanupTestData() {
    ```
 
 6. **Submit Profile**
+
    ```typescript
    await page.click('text=Complete Profile');
    ```
 
 7. **Expect Redirect to Dashboard**
+
    ```typescript
    await page.waitForURL('/dashboard', { timeout: 5000 });
    ```
 
 8. **Verify Profile Setup Completed in Database**
+
    ```typescript
    const user = await findUserInDatabase(TEST_USERS.newUser.clerkId);
    expect(user.profileSetupCompleted).toBe(true);
@@ -497,6 +542,7 @@ export async function cleanupTestData() {
    ```
 
 **Success Criteria**:
+
 - ✅ New user redirected to profile setup after login
 - ✅ Profile form displays correctly
 - ✅ Form submission successful
@@ -519,23 +565,27 @@ export async function cleanupTestData() {
    - Create test user with `profileSetupCompleted: true`
 
 2. **Navigate and Login**
+
    ```typescript
    await page.goto('/');
    await authenticateUser(page, TEST_USERS.returningUser);
    ```
 
 3. **Expect Direct Redirect to Dashboard**
+
    ```typescript
    await expect(page).toHaveURL('/dashboard');
    await expect(page).not.toHaveURL('/profile-setup');
    ```
 
 4. **Verify No Profile Setup Prompt**
+
    ```typescript
    await expect(page.locator('text=Complete Your Profile')).not.toBeVisible();
    ```
 
 5. **Verify Dashboard Loads Immediately**
+
    ```typescript
    await expect(page.locator('[data-testid="subscription-tier"]')).toBeVisible();
    ```
@@ -561,17 +611,20 @@ export async function cleanupTestData() {
 #### Scenario A: Invalid Email
 
 1. **Navigate to Login**
+
    ```typescript
    await page.goto('/sign-in');
    ```
 
 2. **Enter Invalid Email**
+
    ```typescript
    await page.fill('[name="identifier"]', 'invalid-email@nonexistent.com');
    await page.fill('[name="password"]', 'SomePassword123');
    ```
 
 3. **Submit and Verify Error**
+
    ```typescript
    await page.click('button[type="submit"]');
    await expect(page.locator('[data-clerk-error]'))
@@ -581,12 +634,14 @@ export async function cleanupTestData() {
 #### Scenario B: Invalid Password
 
 1. **Enter Valid Email, Wrong Password**
+
    ```typescript
    await page.fill('[name="identifier"]', TEST_USERS.returningUser.email);
    await page.fill('[name="password"]', 'WrongPassword123');
    ```
 
 2. **Submit and Verify Error**
+
    ```typescript
    await page.click('button[type="submit"]');
    await expect(page.locator('[data-clerk-error]'))
@@ -596,11 +651,13 @@ export async function cleanupTestData() {
 #### Scenario C: Network Timeout
 
 1. **Simulate Network Offline**
+
    ```typescript
    await page.context().setOffline(true);
    ```
 
 2. **Attempt Login**
+
    ```typescript
    await page.fill('[name="identifier"]', TEST_USERS.returningUser.email);
    await page.fill('[name="password"]', TEST_USERS.returningUser.password);
@@ -608,6 +665,7 @@ export async function cleanupTestData() {
    ```
 
 3. **Verify Network Error**
+
    ```typescript
    await expect(page.locator('[data-clerk-error]'))
      .toContainText(/network/i);
@@ -637,6 +695,7 @@ export async function cleanupTestData() {
    - Navigate to profile settings
 
 2. **Test Display Name Length Validation**
+
    ```typescript
    const longName = 'A'.repeat(101); // Exceeds 100 char limit
    await page.fill('[data-testid="display-name"]', longName);
@@ -647,6 +706,7 @@ export async function cleanupTestData() {
    ```
 
 3. **Test D&D Edition Length Validation**
+
    ```typescript
    const longEdition = 'B'.repeat(51); // Exceeds 50 char limit
    await page.fill('[data-testid="dnd-edition"]', longEdition);
@@ -657,6 +717,7 @@ export async function cleanupTestData() {
    ```
 
 4. **Test Required Field Validation (if primary role required)**
+
    ```typescript
    await page.selectOption('[data-testid="primary-role"]', '');
    await page.click('button[type="submit"]');
@@ -667,6 +728,7 @@ export async function cleanupTestData() {
    ```
 
 5. **Fix Errors and Verify Submission**
+
    ```typescript
    await page.fill('[data-testid="display-name"]', 'Valid Name');
    await page.fill('[data-testid="dnd-edition"]', '5th Edition');
@@ -677,6 +739,7 @@ export async function cleanupTestData() {
    ```
 
 **Success Criteria**:
+
 - ✅ Field-level validation errors display inline
 - ✅ Error messages are clear and helpful
 - ✅ Form submission blocked when invalid
@@ -724,6 +787,7 @@ jobs:
 ### Test Reports
 
 Playwright generates:
+
 - HTML reports with screenshots
 - Video recordings of failures
 - Trace files for debugging
@@ -734,11 +798,13 @@ Playwright generates:
 ## Success Metrics
 
 **Coverage Goals**:
+
 - 100% of testing requirements (TR-001 to TR-010) covered
 - All critical user flows validated
 - All authorization scenarios tested
 
 **Performance Targets**:
+
 - Each E2E test completes in <30 seconds
 - Full suite completes in <5 minutes
 - 95%+ test stability (no flaky tests)

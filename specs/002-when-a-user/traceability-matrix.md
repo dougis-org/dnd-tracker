@@ -10,6 +10,7 @@
 ## Traceability Scheme
 
 **Requirement ID Format**:
+
 - Functional Requirements: `FR-XXX` (e.g., FR-001, FR-002)
 - Testing Requirements: `TR-XXX` (e.g., TR-001, TR-010)
 - Non-Functional Requirements: `NFR-CAT-XXX` (e.g., NFR-PERF-001, NFR-SEC-005)
@@ -142,20 +143,24 @@ When defects are found, link them to requirements using this format:
 ## Requirements Coverage Summary
 
 **Functional Requirements**: 19 total (FR-001 to FR-019)
+
 - Fully tested: 19/19 (100%)
 - Mapped to E2E tests: 15/19 (79%)
 - Mapped to edge cases: 10/19 (53%)
 - Mapped to NFRs: 12/19 (63%)
 
 **Testing Requirements**: 10 total (TR-001 to TR-010)
+
 - All mapped to E2E test scenarios (100%)
 - All mapped to functional requirements (100%)
 
 **Edge Cases**: 10 total (EC-001 to EC-010)
+
 - All mapped to functional requirements (100%)
 - All have test coverage defined (100%)
 
 **Non-Functional Requirements**: 48 total (NFR-PERF-001 to NFR-OBS-003)
+
 - Performance: 10 requirements
 - Security: 16 requirements
 - Accessibility: 8 requirements
@@ -164,6 +169,7 @@ When defects are found, link them to requirements using this format:
 - Others: 7 requirements
 
 **E2E Test Scenarios**: 10 scenarios (E2E-001 to E2E-010, excluding E2E-009 which is covered in E2E-003)
+
 - All mapped to testing requirements (100%)
 - All have Playwright test files defined (100%)
 
@@ -190,6 +196,7 @@ When defects are found, link them to requirements using this format:
 When a requirement changes, use this matrix to identify affected artifacts:
 
 **Example**: If FR-009 (validation rules) changes:
+
 1. **Tests to Update**: TR-010, E2E-010, T001, T002
 2. **Test Files**: `tests/unit/lib/validations/user.test.ts`, `tests/e2e/profile/validation.spec.ts`
 3. **Implementation Files**: `src/lib/validations/user.ts`, API routes using validation

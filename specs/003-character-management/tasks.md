@@ -527,4 +527,3 @@ Tests must verify:
 **Optional/Enhanced (US5-6)**: 20  
 **Quality/Polish**: 42  
 **Estimated Duration**: 6-7 working days (MVP: 4-5 days)
-
