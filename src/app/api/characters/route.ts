@@ -9,6 +9,7 @@ import {
   CharacterService,
   type CreateCharacterPayload,
 } from '@/lib/services/characterService';
+import { handleCharacterNotFound, handleCharacterErrors } from '@/lib/api/character-helpers';
 
 export async function POST(req: NextRequest) {
   return withAuthAndDb(async (userId) => {
@@ -55,8 +56,9 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json(character, { status: 201 });
     } catch (error) {
-      console.error('POST /api/characters error:', error);
-      throw error;
+      const handled = handleCharacterNotFound(error);
+      if (handled) return handled;
+      return handleCharacterErrors('POST /api/characters', error) as never;
     }
   });
 }
@@ -88,8 +90,9 @@ export async function GET(req: NextRequest) {
 
       return NextResponse.json(result, { status: 200 });
     } catch (error) {
-      console.error('GET /api/characters error:', error);
-      throw error;
+      const handled = handleCharacterNotFound(error);
+      if (handled) return handled;
+      return handleCharacterErrors('GET /api/characters', error) as never;
     }
   });
 }

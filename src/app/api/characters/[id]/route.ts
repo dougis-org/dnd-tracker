@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ApiErrors, withAuthAndDb } from '@/lib/api/common';
 import { validateUpdateCharacter } from '@/lib/validations/characters';
 import { CharacterService } from '@/lib/services/characterService';
+import { handleCharacterNotFound, handleCharacterErrors } from '@/lib/api/character-helpers';
 
 interface RouteParams {
   id: string;
@@ -22,15 +23,9 @@ export async function GET(
 
       return NextResponse.json(character, { status: 200 });
     } catch (error) {
-      if (
-        error instanceof RangeError &&
-        error.message === 'Character not found'
-      ) {
-        return ApiErrors.notFound('Character not found');
-      }
-
-      console.error('GET /api/characters/[id] error:', error);
-      throw error;
+      const handled = handleCharacterNotFound(error);
+      if (handled) return handled;
+      return handleCharacterErrors('GET /api/characters/[id]', error) as never;
     }
   });
 }
@@ -86,15 +81,9 @@ export async function PUT(
 
       return NextResponse.json(character, { status: 200 });
     } catch (error) {
-      if (
-        error instanceof RangeError &&
-        error.message === 'Character not found'
-      ) {
-        return ApiErrors.notFound('Character not found');
-      }
-
-      console.error('PUT /api/characters/[id] error:', error);
-      throw error;
+      const handled = handleCharacterNotFound(error);
+      if (handled) return handled;
+      return handleCharacterErrors('PUT /api/characters/[id]', error) as never;
     }
   });
 }
@@ -113,15 +102,9 @@ export async function DELETE(
 
       return NextResponse.json({ success: true }, { status: 200 });
     } catch (error) {
-      if (
-        error instanceof RangeError &&
-        error.message === 'Character not found'
-      ) {
-        return ApiErrors.notFound('Character not found');
-      }
-
-      console.error('DELETE /api/characters/[id] error:', error);
-      throw error;
+      const handled = handleCharacterNotFound(error);
+      if (handled) return handled;
+      return handleCharacterErrors('DELETE /api/characters/[id]', error) as never;
     }
   });
 }

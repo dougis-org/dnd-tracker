@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ApiErrors, withAuthAndDb } from '@/lib/api/common';
 import { validateDuplicateCharacter } from '@/lib/validations/characters';
 import { CharacterService } from '@/lib/services/characterService';
+import { handleCharacterNotFound, handleCharacterErrors } from '@/lib/api/character-helpers';
 
 interface RouteParams {
   id: string;
@@ -34,15 +35,9 @@ export async function POST(
 
       return NextResponse.json(character, { status: 201 });
     } catch (error) {
-      if (
-        error instanceof RangeError &&
-        error.message === 'Character not found'
-      ) {
-        return ApiErrors.notFound('Character not found');
-      }
-
-      console.error('POST /api/characters/[id]/duplicate error:', error);
-      throw error;
+      const handled = handleCharacterNotFound(error);
+      if (handled) return handled;
+      return handleCharacterErrors('POST /api/characters/[id]/duplicate', error) as never;
     }
   });
 }

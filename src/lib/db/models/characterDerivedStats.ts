@@ -8,6 +8,7 @@ import {
   DerivedStats as BaseDerivedStats,
   calculateDerivedStats as calculateBaseDerivedStats,
 } from '@/lib/services/dnd5e-calculations';
+import { CLASS_RULES } from './dnd5e-classes';
 
 const ABILITY_KEYS: AbilityScoreKey[] = [
   'str',
@@ -105,142 +106,40 @@ export interface CharacterStatsSource {
   initiative: number;
 }
 
-const CLASS_RULES: Record<string, CharacterClassMetadata> = {
-  barbarian: {
-    id: 'barbarian',
-    slug: 'barbarian',
-    name: 'Barbarian',
-    hitDie: 'd12',
-    savingThrows: ['str', 'con'],
-  },
-  bard: {
-    id: 'bard',
-    slug: 'bard',
-    name: 'Bard',
-    hitDie: 'd8',
-    savingThrows: ['dex', 'cha'],
-  },
-  cleric: {
-    id: 'cleric',
-    slug: 'cleric',
-    name: 'Cleric',
-    hitDie: 'd8',
-    savingThrows: ['wis', 'cha'],
-  },
-  druid: {
-    id: 'druid',
-    slug: 'druid',
-    name: 'Druid',
-    hitDie: 'd8',
-    savingThrows: ['int', 'wis'],
-  },
-  fighter: {
-    id: 'fighter',
-    slug: 'fighter',
-    name: 'Fighter',
-    hitDie: 'd10',
-    savingThrows: ['str', 'con'],
-  },
-  monk: {
-    id: 'monk',
-    slug: 'monk',
-    name: 'Monk',
-    hitDie: 'd8',
-    savingThrows: ['str', 'dex'],
-  },
-  paladin: {
-    id: 'paladin',
-    slug: 'paladin',
-    name: 'Paladin',
-    hitDie: 'd10',
-    savingThrows: ['wis', 'cha'],
-  },
-  ranger: {
-    id: 'ranger',
-    slug: 'ranger',
-    name: 'Ranger',
-    hitDie: 'd10',
-    savingThrows: ['str', 'dex'],
-  },
-  rogue: {
-    id: 'rogue',
-    slug: 'rogue',
-    name: 'Rogue',
-    hitDie: 'd8',
-    savingThrows: ['dex', 'int'],
-  },
-  sorcerer: {
-    id: 'sorcerer',
-    slug: 'sorcerer',
-    name: 'Sorcerer',
-    hitDie: 'd6',
-    savingThrows: ['con', 'cha'],
-  },
-  warlock: {
-    id: 'warlock',
-    slug: 'warlock',
-    name: 'Warlock',
-    hitDie: 'd8',
-    savingThrows: ['wis', 'cha'],
-  },
-  wizard: {
-    id: 'wizard',
-    slug: 'wizard',
-    name: 'Wizard',
-    hitDie: 'd6',
-    savingThrows: ['int', 'wis'],
-  },
-};
-
 const normaliseKey = (value: string): string => value.trim().toLowerCase();
+
+const toClassId = (id: CharacterClassLevel['classId']): string =>
+  typeof id === 'string' ? id : id.toString();
 
 const resolveClassMetadata = (
   entry: CharacterClassLevel,
   metadataMap: CharacterClassMetadataMap | undefined
 ): CharacterClassMetadata => {
   if (entry.hitDie) {
-    const metadata: CharacterClassMetadata = {
-      id:
-        typeof entry.classId === 'string'
-          ? entry.classId
-          : entry.classId.toString(),
+    const classId = toClassId(entry.classId);
+    const slug = typeof entry.classId === 'string' ? normaliseKey(entry.classId) : classId;
+    return {
+      id: classId,
+      slug,
+      name: entry.name ?? '',
       hitDie: entry.hitDie,
       savingThrows: entry.savingThrows ?? [],
     };
-
-    if (typeof entry.classId === 'string') {
-      const slug = normaliseKey(entry.classId);
-      if (slug) {
-        metadata.slug = slug;
-      }
-    }
-
-    if (entry.name) {
-      metadata.name = entry.name;
-    }
-
-    return metadata;
   }
 
-  const lookupKey =
-    typeof entry.classId === 'string'
-      ? entry.classId
-      : entry.classId.toString();
-  const normalisedKey =
-    typeof entry.classId === 'string' ? normaliseKey(entry.classId) : undefined;
+  const classId = toClassId(entry.classId);
+  const normalisedKey = typeof entry.classId === 'string' ? normaliseKey(entry.classId) : undefined;
 
-  const fromMap =
-    metadataMap?.[lookupKey] ??
-    (normalisedKey ? metadataMap?.[normalisedKey] : undefined);
-  if (fromMap) {
-    return fromMap;
+  const result =
+    metadataMap?.[classId] ??
+    (normalisedKey ? metadataMap?.[normalisedKey] : undefined) ??
+    (normalisedKey ? CLASS_RULES[normalisedKey] : undefined);
+
+  if (result) {
+    return result;
   }
 
-  if (normalisedKey && CLASS_RULES[normalisedKey]) {
-    return CLASS_RULES[normalisedKey];
-  }
-
-  throw new RangeError(`Missing class metadata for ${lookupKey}`);
+  throw new RangeError(`Missing class metadata for ${classId}`);
 };
 
 const validateClasses = (classes: CharacterClassLevel[]): void => {

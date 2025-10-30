@@ -7,10 +7,15 @@ import {
   type SkillKey,
 } from '@/lib/db/models/Character';
 import type {
-  CharacterDerivedStats,
   CharacterDerivedStatsInput,
 } from '@/lib/db/models/characterDerivedStats';
 import { TIER_LIMITS, SubscriptionTier } from '@/lib/constants/tierLimits';
+import {
+  toPlainDocument,
+  normaliseCharacterDocument,
+  type CharacterDocumentLike,
+  type CharacterRecord,
+} from './characterService.helpers';
 
 type SupportedTier = Extract<SubscriptionTier, 'free' | 'seasoned' | 'expert'>;
 
@@ -50,40 +55,6 @@ export interface CreateCharacterInput {
   userId: string;
   payload: CreateCharacterPayload;
 }
-
-export interface CharacterRecord {
-  id: string;
-  userId: string;
-  name: string;
-  raceId: string;
-  abilityScores: CharacterAbilityScores;
-  classes: CharacterClassLevel[];
-  hitPoints: number;
-  maxHitPoints: number;
-  armorClass: number;
-  initiative: number;
-  totalLevel: number;
-  proficiencyBonus: number;
-  cachedStats: CharacterCachedStats;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date | null;
-}
-
-type CharacterDocumentLike = CharacterStatsSource & {
-  _id: unknown;
-  userId: unknown;
-  name: string;
-  raceId: unknown;
-  abilityScores: CharacterAbilityScores;
-  classes: CharacterClassLevel[];
-  hitPoints: number;
-  cachedStats?: CharacterCachedStats;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date | null;
-  toObject?: () => CharacterDocumentLike;
-};
 
 export interface GetCharacterInput {
   userId: string;
@@ -137,57 +108,6 @@ const clampHitPoints = (hitPoints: number, maxHitPoints: number): number => {
 
   const nonNegative = Math.max(0, Math.floor(hitPoints));
   return Math.min(nonNegative, maxHitPoints);
-};
-
-const normaliseIdentifier = (value: unknown): string => {
-  if (typeof value === 'string') {
-    return value;
-  }
-
-  if (value && typeof value === 'object' && 'toString' in value) {
-    return (value as { toString(): string }).toString();
-  }
-
-  throw new TypeError('Expected value with string representation');
-};
-
-const normaliseCharacterDocument = (
-  document: CharacterDocumentLike,
-  derivedStats: CharacterDerivedStats
-): CharacterRecord => {
-  const cachedStats: CharacterCachedStats = document.cachedStats ?? {
-    abilityModifiers: derivedStats.abilityModifiers,
-    proficiencyBonus: derivedStats.proficiencyBonus,
-    skills: derivedStats.skills,
-    savingThrows: derivedStats.savingThrows,
-  };
-
-  const record: CharacterRecord = {
-    id: normaliseIdentifier(document._id),
-    userId: normaliseIdentifier(document.userId),
-    name: document.name,
-    raceId: normaliseIdentifier(document.raceId),
-    abilityScores: document.abilityScores,
-    classes: document.classes,
-    hitPoints: document.hitPoints,
-    maxHitPoints: derivedStats.maxHitPoints,
-    armorClass: derivedStats.armorClass,
-    initiative: derivedStats.initiative,
-    totalLevel: derivedStats.totalLevel,
-    proficiencyBonus: derivedStats.proficiencyBonus,
-    cachedStats,
-    deletedAt: document.deletedAt ?? null,
-  };
-
-  if (document.createdAt) {
-    record.createdAt = document.createdAt;
-  }
-
-  if (document.updatedAt) {
-    record.updatedAt = document.updatedAt;
-  }
-
-  return record;
 };
 
 const resolveTierLimit = (tier: SupportedTier): number => {
@@ -294,13 +214,7 @@ export class CharacterService {
     };
 
     const created = await CharacterModel.create(creationPayload);
-
-    const hydrated = created as CharacterDocumentLike;
-    const plain =
-      typeof hydrated.toObject === 'function'
-        ? (hydrated.toObject() as CharacterDocumentLike)
-        : hydrated;
-
+    const plain = toPlainDocument(created as CharacterDocumentLike);
     return normaliseCharacterDocument(plain, derivedStats);
   }
 
@@ -329,12 +243,7 @@ export class CharacterService {
       throw new RangeError('Character not found');
     }
 
-    const hydrated = document as CharacterDocumentLike;
-    const plain =
-      typeof hydrated.toObject === 'function'
-        ? (hydrated.toObject() as CharacterDocumentLike)
-        : hydrated;
-
+    const plain = toPlainDocument(document as CharacterDocumentLike);
     const derivedStats = CharacterModel.getDerivedStats(
       plain as CharacterStatsSource
     );
@@ -375,16 +284,10 @@ export class CharacterService {
     ]);
 
     const characters = documents.map((document) => {
-      const hydrated = document as CharacterDocumentLike;
-      const plain =
-        typeof hydrated.toObject === 'function'
-          ? (hydrated.toObject() as CharacterDocumentLike)
-          : hydrated;
-
+      const plain = toPlainDocument(document as CharacterDocumentLike);
       const derived = CharacterModel.getDerivedStats(
         plain as CharacterStatsSource
       );
-
       return normaliseCharacterDocument(plain, derived);
     });
 
@@ -432,13 +335,7 @@ export class CharacterService {
         throw new RangeError('Character not found');
       }
 
-      const hydrated = existing as CharacterDocumentLike;
-      const plain =
-        typeof hydrated.toObject === 'function'
-          ? (hydrated.toObject() as CharacterDocumentLike)
-          : hydrated;
-
-      // Merge updates with existing values for recalculation
+      const plain = toPlainDocument(existing as CharacterDocumentLike);
       const abilityScores = (updates.abilityScores ??
         plain.abilityScores) as CharacterAbilityScores;
       const classes = (updates.classes ??
@@ -482,7 +379,7 @@ export class CharacterService {
       throw new RangeError('Character not found');
     }
 
-    const plain = updated as CharacterDocumentLike;
+    const plain = toPlainDocument(updated as CharacterDocumentLike);
     const derivedStats = CharacterModel.getDerivedStats(
       plain as CharacterStatsSource
     );
@@ -532,11 +429,7 @@ export class CharacterService {
       throw new RangeError('Character not found');
     }
 
-    const hydrated = source as CharacterDocumentLike;
-    const plain =
-      typeof hydrated.toObject === 'function'
-        ? (hydrated.toObject() as CharacterDocumentLike)
-        : hydrated;
+    const plain = toPlainDocument(source as CharacterDocumentLike);
 
     const nameForDuplicate = newName ?? `${plain.name} (Copy)`;
 
@@ -554,13 +447,7 @@ export class CharacterService {
     };
 
     const duplicated = await CharacterModel.create(duplicationPayload);
-
-    const duplicatedHydrated = duplicated as CharacterDocumentLike;
-    const duplicatedPlain =
-      typeof duplicatedHydrated.toObject === 'function'
-        ? (duplicatedHydrated.toObject() as CharacterDocumentLike)
-        : duplicatedHydrated;
-
+    const duplicatedPlain = toPlainDocument(duplicated as CharacterDocumentLike);
     const derivedStats = CharacterModel.getDerivedStats(
       duplicatedPlain as CharacterStatsSource
     );
