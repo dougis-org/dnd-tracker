@@ -15,3 +15,11 @@ Design encounters by selecting participants (party + monsters), configure lair s
 1. Define Encounter and EncounterParticipant models.
 2. Draft APIs for creating and evaluating encounters.
 3. Define CR calculation algorithm and sample data for testing.
+
+---
+
+## Feature Specification
+
+**Feature Branch**: `006-encounter-builder`
+**Created**: 2025-10-21
+**Status**: Draft

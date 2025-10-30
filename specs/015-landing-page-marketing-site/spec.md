@@ -15,3 +15,11 @@ Public landing page with hero section, feature showcase, pricing tiers, testimon
 1. Define pages and content requirements for `/, /pricing, /demo`.
 2. Identify analytics and SEO requirements.
 3. Draft demo data and constraints for interactive demo.
+
+---
+
+## Feature Specification
+
+**Feature Branch**: `015-landing-page-marketing-site`
+**Created**: 2025-10-21
+**Status**: Draft

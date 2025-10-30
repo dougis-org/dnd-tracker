@@ -15,3 +15,11 @@ Export characters, encounters, and combat logs to JSON and PDF formats for backu
 1. Define export formats for character/encounter/session entities.
 2. Select PDF generation strategy and sample templates.
 3. Specify import contract and validation rules.
+
+---
+
+## Feature Specification
+
+**Feature Branch**: `016-export-data-portability`
+**Created**: 2025-10-21
+**Status**: Draft

@@ -15,3 +15,11 @@ Configure lair actions for encounters and trigger them automatically on initiati
 1. Define LairAction and EncounterLairAction models.
 2. Specify trigger rules and UI presentation for available actions.
 3. Draft API endpoints for creating/assigning/trigging lair actions.
+
+---
+
+## Feature Specification
+
+**Feature Branch**: `010-lair-actions-system`
+**Created**: 2025-10-21
+**Status**: Draft

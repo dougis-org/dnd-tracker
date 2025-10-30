@@ -27,3 +27,11 @@ Group characters into parties, manage composition, and save party templates for 
 1. Define Party schema and relations to Character.
 2. Draft API request/response shapes.
 3. List validation rules and tier limits.
+
+---
+
+## Feature Specification
+
+**Feature Branch**: `004-party-management`
+**Created**: 2025-10-21
+**Status**: Draft

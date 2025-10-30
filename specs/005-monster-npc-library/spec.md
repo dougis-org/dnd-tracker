@@ -20,3 +20,11 @@ Monster/NPC creation with stat blocks, abilities, legendary actions, and searcha
 1. Define Monster schema and SpecialAbility structure.
 2. Draft API contract for `/api/monsters`.
 3. Define import strategy for SRD data (optional).
+
+---
+
+## Feature Specification
+
+**Feature Branch**: `005-monster-npc-library`
+**Created**: 2025-10-21
+**Status**: Draft
