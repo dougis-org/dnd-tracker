@@ -1,4 +1,12 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import {
+  MOCK_DERIVED_STATS,
+  MOCK_USER_ID,
+  BASE_CHARACTER_PAYLOAD,
+  createMockCharacterDocument,
+  createMockCharacterDocuments,
+  DEFAULT_USER_FILTERS,
+} from './characterService.fixtures';
 
 jest.mock('@/lib/db/models/Character', () => {
   return {
@@ -23,69 +31,6 @@ const mockedCharacterModel = CharacterModel as jest.Mocked<
   typeof CharacterModel
 >;
 
-const derivedStats = {
-  totalLevel: 5,
-  proficiencyBonus: 3,
-  armorClass: 12,
-  initiative: 2,
-  maxHitPoints: 39,
-  abilityModifiers: {
-    str: 1,
-    dex: 2,
-    con: 2,
-    int: 1,
-    wis: 0,
-    cha: -1,
-  },
-  skills: {
-    acrobatics: 4,
-    animalHandling: 0,
-    arcana: 3,
-    athletics: 3,
-    deception: 2,
-    history: 3,
-    insight: 0,
-    intimidation: 2,
-    investigation: 3,
-    medicine: 0,
-    nature: 3,
-    perception: 0,
-    performance: 2,
-    persuasion: 2,
-    religion: 3,
-    sleightOfHand: 4,
-    stealth: 4,
-    survival: 0,
-  },
-  savingThrows: {
-    str: 4,
-    dex: 5,
-    con: 4,
-    int: 3,
-    wis: 0,
-    cha: 2,
-  },
-} as const;
-const userId = '507f191e810c19729de860ea';
-
-const basePayload = {
-  name: 'Test Character',
-  raceId: '5f6b9c3e2a1234567890abcd',
-  abilityScores: {
-    str: 12,
-    dex: 14,
-    con: 14,
-    int: 10,
-    wis: 11,
-    cha: 9,
-  },
-  classes: [
-    { classId: 'fighter', level: 3 },
-    { classId: 'wizard', level: 2 },
-  ],
-  hitPoints: 32,
-};
-
 describe('CharacterService.createCharacter', () => {
   let createMock: jest.Mock;
   let calculateMock: jest.Mock;
@@ -97,70 +42,53 @@ describe('CharacterService.createCharacter', () => {
   });
 
   it('stores derived stats and returns a serializable character record', async () => {
-    calculateMock.mockReturnValue(derivedStats);
+    calculateMock.mockReturnValue(MOCK_DERIVED_STATS);
 
     const documentId = '60f7d16d2f1bbf1a3c3f1f3a';
-    const persistedRecord = {
+    const persistedRecord = createMockCharacterDocument({
       _id: documentId,
-      userId,
-      ...basePayload,
-      maxHitPoints: derivedStats.maxHitPoints,
-      armorClass: derivedStats.armorClass,
-      initiative: derivedStats.initiative,
-      cachedStats: {
-        abilityModifiers: derivedStats.abilityModifiers,
-        proficiencyBonus: derivedStats.proficiencyBonus,
-        skills: derivedStats.skills,
-        savingThrows: derivedStats.savingThrows,
-      },
-      toObject: function toObject() {
-        const { toObject: _omit, ...rest } = this as unknown as Record<
-          string,
-          unknown
-        >;
-        return rest;
-      },
-    };
+      userId: MOCK_USER_ID,
+    });
 
     createMock.mockResolvedValue(persistedRecord as never);
 
     const result = await CharacterService.createCharacter({
-      userId,
-      payload: basePayload,
+      userId: MOCK_USER_ID,
+      payload: BASE_CHARACTER_PAYLOAD,
     });
 
     expect(calculateMock).toHaveBeenCalledWith({
-      abilityScores: basePayload.abilityScores,
-      classes: basePayload.classes,
+      abilityScores: BASE_CHARACTER_PAYLOAD.abilityScores,
+      classes: BASE_CHARACTER_PAYLOAD.classes,
     });
 
     expect(createMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        userId,
-        maxHitPoints: derivedStats.maxHitPoints,
-        armorClass: derivedStats.armorClass,
-        initiative: derivedStats.initiative,
+        userId: MOCK_USER_ID,
+        maxHitPoints: MOCK_DERIVED_STATS.maxHitPoints,
+        armorClass: MOCK_DERIVED_STATS.armorClass,
+        initiative: MOCK_DERIVED_STATS.initiative,
         cachedStats: {
-          abilityModifiers: derivedStats.abilityModifiers,
-          proficiencyBonus: derivedStats.proficiencyBonus,
-          skills: derivedStats.skills,
-          savingThrows: derivedStats.savingThrows,
+          abilityModifiers: MOCK_DERIVED_STATS.abilityModifiers,
+          proficiencyBonus: MOCK_DERIVED_STATS.proficiencyBonus,
+          skills: MOCK_DERIVED_STATS.skills,
+          savingThrows: MOCK_DERIVED_STATS.savingThrows,
         },
       })
     );
 
     expect(result).toMatchObject({
       id: documentId,
-      userId,
-      name: basePayload.name,
-      maxHitPoints: derivedStats.maxHitPoints,
-      armorClass: derivedStats.armorClass,
-      initiative: derivedStats.initiative,
+      userId: MOCK_USER_ID,
+      name: BASE_CHARACTER_PAYLOAD.name,
+      maxHitPoints: MOCK_DERIVED_STATS.maxHitPoints,
+      armorClass: MOCK_DERIVED_STATS.armorClass,
+      initiative: MOCK_DERIVED_STATS.initiative,
       cachedStats: {
-        abilityModifiers: derivedStats.abilityModifiers,
-        proficiencyBonus: derivedStats.proficiencyBonus,
-        skills: derivedStats.skills,
-        savingThrows: derivedStats.savingThrows,
+        abilityModifiers: MOCK_DERIVED_STATS.abilityModifiers,
+        proficiencyBonus: MOCK_DERIVED_STATS.proficiencyBonus,
+        skills: MOCK_DERIVED_STATS.skills,
+        savingThrows: MOCK_DERIVED_STATS.savingThrows,
       },
     });
   });
@@ -181,83 +109,62 @@ describe('CharacterService.getCharacter', () => {
   });
 
   it('returns a character that belongs to the provided user', async () => {
-    const storedCharacter = {
+    const storedCharacter = createMockCharacterDocument({
       _id: characterId,
-      userId,
-      name: basePayload.name,
-      raceId: basePayload.raceId,
-      abilityScores: basePayload.abilityScores,
-      classes: basePayload.classes,
-      hitPoints: basePayload.hitPoints,
-      maxHitPoints: derivedStats.maxHitPoints,
-      armorClass: derivedStats.armorClass,
-      initiative: derivedStats.initiative,
-      cachedStats: {
-        abilityModifiers: derivedStats.abilityModifiers,
-        proficiencyBonus: derivedStats.proficiencyBonus,
-        skills: derivedStats.skills,
-        savingThrows: derivedStats.savingThrows,
-      },
-      createdAt: new Date('2025-01-01T00:00:00.000Z'),
-      updatedAt: new Date('2025-01-02T00:00:00.000Z'),
-      deletedAt: null,
-      toObject() {
-        const { toObject: _omit, ...rest } = this as Record<string, unknown>;
-        return rest;
-      },
-    };
+      userId: MOCK_USER_ID,
+    });
 
-    const expectedFilter = { userId, deletedAt: null };
+    const expectedFilter = DEFAULT_USER_FILTERS;
 
     fromUserQueryMock.mockReturnValue(expectedFilter);
     findOneMock.mockResolvedValue(storedCharacter as never);
-    getDerivedStatsMock.mockReturnValue(derivedStats);
+    getDerivedStatsMock.mockReturnValue(MOCK_DERIVED_STATS);
 
     const result = await CharacterService.getCharacter({
-      userId,
+      userId: MOCK_USER_ID,
       characterId,
     });
 
-    expect(fromUserQueryMock).toHaveBeenCalledWith(userId, false);
+    expect(fromUserQueryMock).toHaveBeenCalledWith(MOCK_USER_ID, false);
     expect(findOneMock).toHaveBeenCalledWith({
       ...expectedFilter,
       _id: characterId,
     });
     expect(getDerivedStatsMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        abilityScores: storedCharacter.abilityScores,
-        classes: storedCharacter.classes,
+        abilityScores: BASE_CHARACTER_PAYLOAD.abilityScores,
+        classes: BASE_CHARACTER_PAYLOAD.classes,
         cachedStats: storedCharacter.cachedStats,
-        maxHitPoints: storedCharacter.maxHitPoints,
-        armorClass: storedCharacter.armorClass,
-        initiative: storedCharacter.initiative,
+        maxHitPoints: MOCK_DERIVED_STATS.maxHitPoints,
+        armorClass: MOCK_DERIVED_STATS.armorClass,
+        initiative: MOCK_DERIVED_STATS.initiative,
       })
     );
 
     expect(result).toMatchObject({
       id: characterId,
-      userId,
-      name: basePayload.name,
-      maxHitPoints: derivedStats.maxHitPoints,
-      armorClass: derivedStats.armorClass,
-      initiative: derivedStats.initiative,
-      totalLevel: derivedStats.totalLevel,
-      proficiencyBonus: derivedStats.proficiencyBonus,
+      userId: MOCK_USER_ID,
+      name: BASE_CHARACTER_PAYLOAD.name,
+      maxHitPoints: MOCK_DERIVED_STATS.maxHitPoints,
+      armorClass: MOCK_DERIVED_STATS.armorClass,
+      initiative: MOCK_DERIVED_STATS.initiative,
+      totalLevel: MOCK_DERIVED_STATS.totalLevel,
+      proficiencyBonus: MOCK_DERIVED_STATS.proficiencyBonus,
       cachedStats: {
-        abilityModifiers: derivedStats.abilityModifiers,
-        proficiencyBonus: derivedStats.proficiencyBonus,
-        skills: derivedStats.skills,
-        savingThrows: derivedStats.savingThrows,
+        abilityModifiers: MOCK_DERIVED_STATS.abilityModifiers,
+        proficiencyBonus: MOCK_DERIVED_STATS.proficiencyBonus,
+        skills: MOCK_DERIVED_STATS.skills,
+        savingThrows: MOCK_DERIVED_STATS.savingThrows,
       },
     });
   });
 
   it('throws when the character does not exist for the user', async () => {
-    fromUserQueryMock.mockReturnValue({ userId, deletedAt: null });
+    fromUserQueryMock.mockReturnValue(DEFAULT_USER_FILTERS);
     findOneMock.mockResolvedValue(null as never);
 
     await expect(
-      CharacterService.getCharacter({ userId, characterId })
+      CharacterService.getCharacter({ userId: MOCK_USER_ID, characterId })
     ).rejects.toThrow(RangeError);
   });
 });
@@ -268,8 +175,6 @@ describe('CharacterService.listCharacters', () => {
   let countDocumentsMock: jest.Mock;
   let getDerivedStatsMock: jest.Mock;
 
-  const defaultFilters = { userId, deletedAt: null };
-
   beforeEach(() => {
     jest.clearAllMocks();
     fromUserQueryMock = mockedCharacterModel.fromUserQuery as jest.Mock;
@@ -279,58 +184,27 @@ describe('CharacterService.listCharacters', () => {
   });
 
   it('returns paginated character records with derived stats applied', async () => {
-    const firstDocument = {
-      _id: '60f7d16d2f1bbf1a3c3f1f3a',
-      userId,
-      name: basePayload.name,
-      raceId: basePayload.raceId,
-      abilityScores: basePayload.abilityScores,
-      classes: basePayload.classes,
-      hitPoints: basePayload.hitPoints,
-      maxHitPoints: derivedStats.maxHitPoints,
-      armorClass: derivedStats.armorClass,
-      initiative: derivedStats.initiative,
-      cachedStats: {
-        abilityModifiers: derivedStats.abilityModifiers,
-        proficiencyBonus: derivedStats.proficiencyBonus,
-        skills: derivedStats.skills,
-        savingThrows: derivedStats.savingThrows,
-      },
-      toObject() {
-        const { toObject: _omit, ...rest } = this as Record<string, unknown>;
-        return rest;
-      },
-    };
-
-    const secondDocument = {
-      _id: '70f7d16d2f1bbf1a3c3f1f3b',
-      userId,
+    const characters = createMockCharacterDocuments(2);
+    characters[1] = {
+      ...characters[1],
       name: 'Another Character',
-      raceId: basePayload.raceId,
-      abilityScores: basePayload.abilityScores,
-      classes: basePayload.classes,
-      hitPoints: basePayload.hitPoints,
       cachedStats: undefined,
-      toObject() {
-        const { toObject: _omit, ...rest } = this as Record<string, unknown>;
-        return rest;
-      },
     };
 
-    fromUserQueryMock.mockReturnValue(defaultFilters);
-    findMock.mockResolvedValue([firstDocument, secondDocument] as never);
+    fromUserQueryMock.mockReturnValue(DEFAULT_USER_FILTERS);
+    findMock.mockResolvedValue(characters as never);
     countDocumentsMock.mockResolvedValue(25 as never);
-    getDerivedStatsMock.mockReturnValue(derivedStats);
+    getDerivedStatsMock.mockReturnValue(MOCK_DERIVED_STATS);
 
     const result = await CharacterService.listCharacters({
-      userId,
+      userId: MOCK_USER_ID,
       page: 2,
       pageSize: 10,
     });
 
-    expect(fromUserQueryMock).toHaveBeenCalledWith(userId, false);
+    expect(fromUserQueryMock).toHaveBeenCalledWith(MOCK_USER_ID, false);
     expect(findMock).toHaveBeenCalledWith(
-      defaultFilters,
+      DEFAULT_USER_FILTERS,
       null,
       expect.objectContaining({
         skip: 10,
@@ -338,7 +212,7 @@ describe('CharacterService.listCharacters', () => {
         sort: { createdAt: -1 },
       })
     );
-    expect(countDocumentsMock).toHaveBeenCalledWith(defaultFilters);
+    expect(countDocumentsMock).toHaveBeenCalledWith(DEFAULT_USER_FILTERS);
     expect(getDerivedStatsMock).toHaveBeenCalledTimes(2);
 
     expect(result.pagination).toEqual({
@@ -350,32 +224,32 @@ describe('CharacterService.listCharacters', () => {
 
     expect(result.characters).toHaveLength(2);
     expect(result.characters[0]).toMatchObject({
-      id: firstDocument._id,
-      userId,
-      name: basePayload.name,
-      maxHitPoints: derivedStats.maxHitPoints,
+      id: characters[0]._id,
+      userId: MOCK_USER_ID,
+      name: BASE_CHARACTER_PAYLOAD.name,
+      maxHitPoints: MOCK_DERIVED_STATS.maxHitPoints,
     });
     expect(result.characters[1]).toMatchObject({
-      id: secondDocument._id,
-      userId,
+      id: characters[1]._id,
+      userId: MOCK_USER_ID,
       name: 'Another Character',
-      maxHitPoints: derivedStats.maxHitPoints,
+      maxHitPoints: MOCK_DERIVED_STATS.maxHitPoints,
     });
   });
 
   it('includes deleted records when requested', async () => {
-    const includeDeletedFilters = { userId };
+    const includeDeletedFilters = { userId: MOCK_USER_ID };
 
     fromUserQueryMock.mockReturnValue(includeDeletedFilters);
     findMock.mockResolvedValue([] as never);
     countDocumentsMock.mockResolvedValue(0 as never);
 
     const result = await CharacterService.listCharacters({
-      userId,
+      userId: MOCK_USER_ID,
       includeDeleted: true,
     });
 
-    expect(fromUserQueryMock).toHaveBeenCalledWith(userId, true);
+    expect(fromUserQueryMock).toHaveBeenCalledWith(MOCK_USER_ID, true);
     expect(findMock).toHaveBeenCalledWith(
       includeDeletedFilters,
       null,
@@ -400,11 +274,11 @@ describe('CharacterService.listCharacters', () => {
 
   it('rejects when page or pageSize are invalid', async () => {
     await expect(
-      CharacterService.listCharacters({ userId, page: 0 })
+      CharacterService.listCharacters({ userId: MOCK_USER_ID, page: 0 })
     ).rejects.toThrow(RangeError);
 
     await expect(
-      CharacterService.listCharacters({ userId, pageSize: 0 })
+      CharacterService.listCharacters({ userId: MOCK_USER_ID, pageSize: 0 })
     ).rejects.toThrow(RangeError);
   });
 });
@@ -428,42 +302,24 @@ describe('CharacterService.updateCharacter', () => {
   });
 
   it('updates character name and returns updated record', async () => {
-    const updatedDocument = {
+    const updatedDocument = createMockCharacterDocument({
       _id: characterId,
-      userId,
+      userId: MOCK_USER_ID,
       name: 'Updated Name',
-      raceId: basePayload.raceId,
-      abilityScores: basePayload.abilityScores,
-      classes: basePayload.classes,
-      hitPoints: basePayload.hitPoints,
-      maxHitPoints: derivedStats.maxHitPoints,
-      armorClass: derivedStats.armorClass,
-      initiative: derivedStats.initiative,
-      cachedStats: {
-        abilityModifiers: derivedStats.abilityModifiers,
-        proficiencyBonus: derivedStats.proficiencyBonus,
-        skills: derivedStats.skills,
-        savingThrows: derivedStats.savingThrows,
-      },
-      updatedAt: new Date(),
-      toObject() {
-        const { toObject: _omit, ...rest } = this as Record<string, unknown>;
-        return rest;
-      },
-    };
+    });
 
-    fromUserQueryMock.mockReturnValue({ userId, deletedAt: null });
+    fromUserQueryMock.mockReturnValue(DEFAULT_USER_FILTERS);
     findOneAndUpdateMock.mockResolvedValue(updatedDocument as never);
-    getDerivedStatsMock.mockReturnValue(derivedStats);
+    getDerivedStatsMock.mockReturnValue(MOCK_DERIVED_STATS);
 
     const result = await CharacterService.updateCharacter({
-      userId,
+      userId: MOCK_USER_ID,
       characterId,
       updates: { name: 'Updated Name' },
     });
 
     expect(findOneAndUpdateMock).toHaveBeenCalledWith(
-      { _id: characterId, userId },
+      { _id: characterId, userId: MOCK_USER_ID },
       { name: 'Updated Name' },
       expect.objectContaining({
         new: true,
@@ -488,59 +344,43 @@ describe('CharacterService.updateCharacter', () => {
       cha: 9,
     };
 
-    const updatedDerivedStats = { ...derivedStats, totalLevel: 6 };
+    const updatedDerivedStats = { ...MOCK_DERIVED_STATS, totalLevel: 6 };
 
-    const updatedDocument = {
+    const updatedDocument = createMockCharacterDocument({
       _id: characterId,
-      userId,
-      name: basePayload.name,
-      raceId: basePayload.raceId,
+      userId: MOCK_USER_ID,
+      name: BASE_CHARACTER_PAYLOAD.name,
       abilityScores: newAbilityScores,
-      classes: basePayload.classes,
-      hitPoints: basePayload.hitPoints,
+      cachedStats: undefined,
       maxHitPoints: updatedDerivedStats.maxHitPoints,
       armorClass: updatedDerivedStats.armorClass,
       initiative: updatedDerivedStats.initiative,
-      cachedStats: undefined,
-      toObject() {
-        const { toObject: _omit, ...rest } = this as Record<string, unknown>;
-        return rest;
-      },
-    };
+    });
 
-    fromUserQueryMock.mockReturnValue({ userId, deletedAt: null });
-    findOneMock.mockResolvedValue({
+    fromUserQueryMock.mockReturnValue({ userId: MOCK_USER_ID, deletedAt: null });
+    findOneMock.mockResolvedValue(createMockCharacterDocument({
       _id: characterId,
-      userId,
-      name: basePayload.name,
-      raceId: basePayload.raceId,
-      abilityScores: basePayload.abilityScores,
-      classes: basePayload.classes,
-      hitPoints: basePayload.hitPoints,
-      toObject() {
-        const { toObject: _omit, ...rest } = this as Record<string, unknown>;
-        return rest;
-      },
-    } as never);
+      userId: MOCK_USER_ID,
+    }) as never);
     findOneAndUpdateMock.mockResolvedValue(updatedDocument as never);
     calculateMock.mockReturnValue(updatedDerivedStats);
     getDerivedStatsMock.mockReturnValue(updatedDerivedStats);
 
     const result = await CharacterService.updateCharacter({
-      userId,
+      userId: MOCK_USER_ID,
       characterId,
       updates: {
         abilityScores: newAbilityScores,
-        classes: basePayload.classes,
+        classes: BASE_CHARACTER_PAYLOAD.classes,
       },
     });
 
     expect(calculateMock).toHaveBeenCalledWith({
       abilityScores: newAbilityScores,
-      classes: basePayload.classes,
+      classes: BASE_CHARACTER_PAYLOAD.classes,
     });
     expect(findOneAndUpdateMock).toHaveBeenCalledWith(
-      { _id: characterId, userId },
+      { _id: characterId, userId: MOCK_USER_ID },
       expect.objectContaining({
         abilityScores: newAbilityScores,
         maxHitPoints: updatedDerivedStats.maxHitPoints,
@@ -556,12 +396,12 @@ describe('CharacterService.updateCharacter', () => {
   });
 
   it('throws when character does not exist', async () => {
-    fromUserQueryMock.mockReturnValue({ userId, deletedAt: null });
+    fromUserQueryMock.mockReturnValue({ userId: MOCK_USER_ID, deletedAt: null });
     findOneMock.mockResolvedValue(null as never);
 
     await expect(
       CharacterService.updateCharacter({
-        userId,
+        userId: MOCK_USER_ID,
         characterId,
         updates: {
           abilityScores: {
@@ -572,7 +412,7 @@ describe('CharacterService.updateCharacter', () => {
             wis: 11,
             cha: 9,
           },
-          classes: basePayload.classes,
+          classes: BASE_CHARACTER_PAYLOAD.classes,
         },
       })
     ).rejects.toThrow(RangeError);
@@ -581,7 +421,7 @@ describe('CharacterService.updateCharacter', () => {
   it('rejects when updates object is empty', async () => {
     await expect(
       CharacterService.updateCharacter({
-        userId,
+        userId: MOCK_USER_ID,
         characterId,
         updates: {},
       })
@@ -600,32 +440,18 @@ describe('CharacterService.deleteCharacter', () => {
   });
 
   it('soft-deletes a character by setting deletedAt', async () => {
-    const deletedDocument = {
+    const deletedDocument = createMockCharacterDocument({
       _id: characterId,
-      userId,
-      name: basePayload.name,
-      raceId: basePayload.raceId,
-      abilityScores: basePayload.abilityScores,
-      classes: basePayload.classes,
-      hitPoints: basePayload.hitPoints,
-      maxHitPoints: derivedStats.maxHitPoints,
-      armorClass: derivedStats.armorClass,
-      initiative: derivedStats.initiative,
-      cachedStats: {
-        abilityModifiers: derivedStats.abilityModifiers,
-        proficiencyBonus: derivedStats.proficiencyBonus,
-        skills: derivedStats.skills,
-        savingThrows: derivedStats.savingThrows,
-      },
+      userId: MOCK_USER_ID,
       deletedAt: new Date('2025-10-29T12:00:00.000Z'),
-    };
+    });
 
     findOneAndUpdateMock.mockResolvedValue(deletedDocument as never);
 
-    await CharacterService.deleteCharacter({ userId, characterId });
+    await CharacterService.deleteCharacter({ userId: MOCK_USER_ID, characterId });
 
     expect(findOneAndUpdateMock).toHaveBeenCalledWith(
-      { _id: characterId, userId },
+      { _id: characterId, userId: MOCK_USER_ID },
       { deletedAt: expect.any(Date) },
       { new: true, lean: true }
     );
@@ -635,7 +461,7 @@ describe('CharacterService.deleteCharacter', () => {
     findOneAndUpdateMock.mockResolvedValue(null as never);
 
     await expect(
-      CharacterService.deleteCharacter({ userId, characterId })
+      CharacterService.deleteCharacter({ userId: MOCK_USER_ID, characterId })
     ).rejects.toThrow(RangeError);
   });
 });
@@ -655,67 +481,45 @@ describe('CharacterService.duplicateCharacter', () => {
   });
 
   it('creates a copy of a character with new name', async () => {
-    const sourceCharacter = {
+    const sourceCharacter = createMockCharacterDocument({
       _id: characterId,
-      userId,
-      name: basePayload.name,
-      raceId: basePayload.raceId,
-      abilityScores: basePayload.abilityScores,
-      classes: basePayload.classes,
-      hitPoints: basePayload.hitPoints,
-      maxHitPoints: derivedStats.maxHitPoints,
-      armorClass: derivedStats.armorClass,
-      initiative: derivedStats.initiative,
-      cachedStats: {
-        abilityModifiers: derivedStats.abilityModifiers,
-        proficiencyBonus: derivedStats.proficiencyBonus,
-        skills: derivedStats.skills,
-        savingThrows: derivedStats.savingThrows,
-      },
-      toObject() {
-        const { toObject: _omit, ...rest } = this as Record<string, unknown>;
-        return rest;
-      },
-    };
+      userId: MOCK_USER_ID,
+    });
 
     const newCharacterId = '75f7d16d2f1bbf1a3c3f1f3c';
-    const duplicatedCharacter = {
-      ...sourceCharacter,
+    const duplicatedCharacter = createMockCharacterDocument({
       _id: newCharacterId,
+      userId: MOCK_USER_ID,
       name: 'Test Character (Copy)',
-      toObject() {
-        const { toObject: _omit, ...rest } = this as Record<string, unknown>;
-        return rest;
-      },
-    };
+    });
 
     findOneMock.mockResolvedValue(sourceCharacter as never);
     createMock.mockResolvedValue(duplicatedCharacter as never);
-    getDerivedStatsMock.mockReturnValue(derivedStats);
+    getDerivedStatsMock.mockReturnValue(MOCK_DERIVED_STATS);
 
     const result = await CharacterService.duplicateCharacter({
-      userId,
+      userId: MOCK_USER_ID,
       characterId,
       newName: 'Test Character (Copy)',
     });
 
-    expect(findOneMock).toHaveBeenCalledWith({ _id: characterId, userId });
+    expect(findOneMock).toHaveBeenCalledWith({ _id: characterId, userId: MOCK_USER_ID });
     expect(createMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        userId,
+        userId: MOCK_USER_ID,
         name: 'Test Character (Copy)',
-        raceId: basePayload.raceId,
-        abilityScores: basePayload.abilityScores,
-        classes: basePayload.classes,
-        hitPoints: basePayload.hitPoints,
-        maxHitPoints: derivedStats.maxHitPoints,
-        armorClass: derivedStats.armorClass,
-        initiative: derivedStats.initiative,
+        raceId: BASE_CHARACTER_PAYLOAD.raceId,
+        abilityScores: BASE_CHARACTER_PAYLOAD.abilityScores,
+        classes: BASE_CHARACTER_PAYLOAD.classes,
+        hitPoints: BASE_CHARACTER_PAYLOAD.hitPoints,
+        maxHitPoints: MOCK_DERIVED_STATS.maxHitPoints,
+        armorClass: MOCK_DERIVED_STATS.armorClass,
+        initiative: MOCK_DERIVED_STATS.initiative,
       })
     );
     expect(result).toMatchObject({
       id: newCharacterId,
-      userId,
+      userId: MOCK_USER_ID,
       name: 'Test Character (Copy)',
     });
   });
@@ -725,7 +529,7 @@ describe('CharacterService.duplicateCharacter', () => {
 
     await expect(
       CharacterService.duplicateCharacter({
-        userId,
+        userId: MOCK_USER_ID,
         characterId,
         newName: 'Copy',
       })
@@ -733,46 +537,25 @@ describe('CharacterService.duplicateCharacter', () => {
   });
 
   it('defaults to appending (Copy) to the original name', async () => {
-    const sourceCharacter = {
+    const sourceCharacter = createMockCharacterDocument({
       _id: characterId,
-      userId,
+      userId: MOCK_USER_ID,
       name: 'Original',
-      raceId: basePayload.raceId,
-      abilityScores: basePayload.abilityScores,
-      classes: basePayload.classes,
-      hitPoints: basePayload.hitPoints,
-      maxHitPoints: derivedStats.maxHitPoints,
-      armorClass: derivedStats.armorClass,
-      initiative: derivedStats.initiative,
-      cachedStats: {
-        abilityModifiers: derivedStats.abilityModifiers,
-        proficiencyBonus: derivedStats.proficiencyBonus,
-        skills: derivedStats.skills,
-        savingThrows: derivedStats.savingThrows,
-      },
-      toObject() {
-        const { toObject: _omit, ...rest } = this as Record<string, unknown>;
-        return rest;
-      },
-    };
+    });
 
     const newCharacterId = '75f7d16d2f1bbf1a3c3f1f3c';
-    const duplicatedCharacter = {
-      ...sourceCharacter,
+    const duplicatedCharacter = createMockCharacterDocument({
       _id: newCharacterId,
+      userId: MOCK_USER_ID,
       name: 'Original (Copy)',
-      toObject() {
-        const { toObject: _omit, ...rest } = this as Record<string, unknown>;
-        return rest;
-      },
-    };
+    });
 
     findOneMock.mockResolvedValue(sourceCharacter as never);
     createMock.mockResolvedValue(duplicatedCharacter as never);
-    getDerivedStatsMock.mockReturnValue(derivedStats);
+    getDerivedStatsMock.mockReturnValue(MOCK_DERIVED_STATS);
 
     const result = await CharacterService.duplicateCharacter({
-      userId,
+      userId: MOCK_USER_ID,
       characterId,
     });
 
