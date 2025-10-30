@@ -134,26 +134,29 @@
 | API | RESTful + Zod | Type safety |
 | Performance | < 1s list, < 500ms search | Responsive |
 
-
 ---
 
 ## Multiclass Architecture
 
 ### Decision
+
 Support multiclass via independent level tracking per class with automatic total level calculation.
 
 ### Rationale
+
 - D&D 5e officially supports multiclass with specific rules
 - Players expect full multiclass functionality
 - Must maintain per-class level for hit die progression
 - Total level determines proficiency bonus and spell slots
 
 ### Alternatives Considered
+
 - Single level field + class indicator: Cannot support true multiclass
 - Separate character per class: Would duplicate data, complicate encounters
 - Hard-coded multiclass limits: Reduces player choice
 
 ### Implementation Details
+
 - Character has array of `classes: { class: string, level: number }[]`
 - Total level = sum of all class levels
 - Proficiency bonus based on total level, not individual class levels
@@ -165,20 +168,24 @@ Support multiclass via independent level tracking per class with automatic total
 ## Character Data Model & Relationships
 
 ### Decision
+
 Character is primary entity, owned by User, referenced by Parties and Encounters.
 
 ### Rationale
+
 - Follows DDD (Domain-Driven Design) principle: Character is an Aggregate Root
 - User ownership enables tier limit enforcement
 - References from Party/Encounter prevent data duplication
 - Soft-delete maintains referential integrity with historical data
 
 ### Alternatives Considered
+
 - Embedding characters in parties: Would duplicate data when same character used in multiple parties
 - Creating characters as sub-entities of parties: Would prevent cross-party reuse
 - Hard delete: Would orphan party/encounter references and lose campaign history
 
 ### Implementation Details
+
 - Character is top-level Aggregate Root
 - User owns many Characters (1-to-many relationship)
 - Character references Race and Class entities
@@ -191,20 +198,24 @@ Character is primary entity, owned by User, referenced by Parties and Encounters
 ## Tier Limit Enforcement
 
 ### Decision
+
 Calculate usage at time of character list retrieval; enforce limits at creation time.
 
 ### Rationale
+
 - User.subscription field from Feature 002 determines tier
 - Each tier has fixed creature limit (Free: 10, Seasoned: 50, Expert: 250)
 - Limit enforcement prevents quota bypass
 - Display warnings help users understand limits before upgrade decision
 
 ### Alternatives Considered
+
 - Store aggregate usage count: Requires synchronization, complex updates
 - Hard failure at exact limit: No warning, worse UX
 - No upgrade prompt: Users don't understand why creation blocked
 
 ### Implementation Details
+
 - When creating character: Query `Character.count({ userId, deletedAt: null })` and compare to tier limit
 - If at limit: Return 403 Forbidden with upgrade prompt
 - Display usage: "You have 8 of 10 creature slots" (shows remaining)
@@ -215,20 +226,24 @@ Calculate usage at time of character list retrieval; enforce limits at creation 
 ## Race and Class Configuration
 
 ### Decision
+
 Race and Class are system entities, stored in MongoDB collections, loaded at app startup.
 
 ### Rationale
+
 - D&D 5e has fixed, stable set of official races and classes
 - Loading at startup caches in memory for fast lookups
 - Allows future enhancements (expansions, homebrew support)
 - Data-driven approach separates game data from application logic
 
 ### Alternatives Considered
+
 - Hard-coded race/class arrays in code: Cannot update without redeploy
 - Loaded per-request from DB: Slower, unnecessary repeated queries
 - External API (D&D Beyond): Introduces external dependency, licensing issues
 
 ### Implementation Details
+
 - Seed Race collection with: Human, Elf, Dwarf, Halfling, Dragonborn, Gnome, Half-Elf, Half-Orc, Tiefling
 - Seed Class collection with: Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard
 - Each Race has: `{ name, abilities: { str, dex, con, int, wis, cha }, traits: [] }`
@@ -239,20 +254,24 @@ Race and Class are system entities, stored in MongoDB collections, loaded at app
 ## Character Search and Filtering
 
 ### Decision
+
 Search by name (case-insensitive partial), filter by class/race/level range using MongoDB queries.
 
 ### Rationale
+
 - Case-insensitive matches user expectations ("Search" not case-sensitive by default)
 - Partial matching finds "Legolas" from search "leg"
 - MongoDB regex queries are performant with proper indexing
 - Filters on discrete values (class, race) use exact match; level range uses range query
 
 ### Alternatives Considered
+
 - Full-text search engine (Elasticsearch): Overkill for character search, added complexity
 - In-memory filtering: Would load all characters, scales poorly to 10k+
 - Database sorting only: Requires user pagination through all results
 
 ### Implementation Details
+
 - Name search: `Character.find({ name: { $regex: searchTerm, $options: 'i' } })`
 - Class filter: `Character.find({ 'classes.class': classId })`
 - Race filter: `Character.find({ race: raceId })`
@@ -264,20 +283,24 @@ Search by name (case-insensitive partial), filter by class/race/level range usin
 ## Soft Delete Pattern
 
 ### Decision
+
 Soft delete with 30-day grace period for data recovery.
 
 ### Rationale
+
 - Prevents accidental permanent loss of character data
 - Maintains referential integrity with parties/encounters
 - Allows users to "undo" deletion within grace period
 - Historical records valuable for campaign continuity
 
 ### Alternatives Considered
+
 - Hard delete: Immediate loss, no recovery, orphans references
 - No delete: Storage grows unbounded, confuses users with old characters
 - 90-day grace: Too long, clutters list; 30 days balances recovery vs cleanup
 
 ### Implementation Details
+
 - Add `deletedAt: Date` field to Character schema (null when active)
 - Soft delete: Set `deletedAt = Date.now()`
 - List query: Include filter `{ deletedAt: null }` to hide deleted characters
@@ -289,20 +312,24 @@ Soft delete with 30-day grace period for data recovery.
 ## D&D 5e Derived Calculations
 
 ### Decision
+
 Calculate derived values on-the-fly from base stats, cache in database for performance.
 
 ### Rationale
+
 - Single source of truth: ability scores
 - Recalculating on display ensures consistency with base stats
 - Caching prevents repeated calculations for frequent reads
 - Invalidated on character update
 
 ### Alternatives Considered
+
 - Store all derived values: Database bloat, sync complexity
 - Always calculate: Slower for list displays with 50+ characters
 - External calculation service: Network latency, added complexity
 
 ### Implementation Details
+
 - Stored fields: `abilityScores: { str, dex, con, int, wis, cha }`
 - Calculated on read: Modifiers, saving throws, skills, AC, initiative
 - Cache in Character document: `cachedStats: { modifiers: {}, skills: {}, ac, initiative }`
@@ -313,20 +340,24 @@ Calculate derived values on-the-fly from base stats, cache in database for perfo
 ## API Contract Design
 
 ### Decision
+
 RESTful API with Zod validation, following Next.js app router patterns.
 
 ### Rationale
+
 - Consistent with existing Features 001-002 implementation
 - Zod provides type-safe validation
 - RESTful is standard for CRUD operations
 - Next.js API routes (app/api/characters/*) follow project conventions
 
 ### Alternatives Considered
+
 - GraphQL: Added complexity not justified for straightforward CRUD
 - RPC-style API: Non-standard, confusing
 - Custom validation: Error-prone, duplicated across files
 
 ### Implementation Details
+
 - All requests include userId from Clerk auth context
 - All responses include success status and error details
 - Request validation with Zod schemas
@@ -338,19 +369,23 @@ RESTful API with Zod validation, following Next.js app router patterns.
 ## Character Templates vs Duplication
 
 ### Decision
+
 Implement "duplicate character" feature; templates are created when users duplicate a character.
 
 ### Rationale
+
 - User explicitly duplicates a character to create a template
 - No need for separate template system
 - Simplifies data model: templates are just characters
 - Allows sharing templates (future Feature 017)
 
 ### Alternatives Considered
+
 - Separate template entity: Duplicates character data model, unnecessary
 - Template flag in Character: Would complicate queries to filter templates vs regular
 
 ### Implementation Details
+
 - Duplicate endpoint: Create new Character with same stats + name = "{Original} (Copy)"
 - Consume duplicate endpoint: `/api/characters/:id/duplicate` → POST
 - Both regular characters and duplicates stored in same collection
@@ -361,19 +396,23 @@ Implement "duplicate character" feature; templates are created when users duplic
 ## Performance Targets
 
 ### Decision
+
 Character list view loads 50 characters in < 1 second; search filters return in < 500ms.
 
 ### Rationale
+
 - Users expect responsive UI
 - 50 characters is typical maximum visible per page
 - 500ms search latency is imperceptible (<= 300ms ideal, 500ms acceptable)
 - Based on industry standards for web apps (not real-time, not batch)
 
 ### Alternatives Considered
+
 - Tighter performance: Would require caching layer (Redis), added complexity
 - Looser targets (2-3s): Poor UX, users perceive as "slow"
 
 ### Implementation Details
+
 - Database indexes: `{ userId, deletedAt }` for fast user-scoped queries
 - Pagination: 20 characters per page by default, configurable
 - Lazy load derived values: Calculate only for displayed characters

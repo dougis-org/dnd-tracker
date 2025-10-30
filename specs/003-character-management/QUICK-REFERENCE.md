@@ -53,6 +53,7 @@
 ## Key D&D 5e Rules Documented
 
 ### Saving Throws
+
 - **Formula**: `ability_modifier + [proficiency_bonus if proficient]`
 - **Classes & Proficiencies** (12 documented)
   - Barbarian: STR
@@ -60,6 +61,7 @@
   - (... 10 more documented in spec)
 
 ### Skills (18 Total)
+
 1. Acrobatics (DEX)
 2. Animal Handling (WIS)
 3. Arcana (INT)
@@ -80,6 +82,7 @@
 18. Survival (WIS)
 
 ### Other Formulas Documented
+
 - **Ability Modifier**: `floor((score - 10) / 2)`
 - **Proficiency Bonus**: `ceil(totalLevel / 4) + 1`
 - **AC**: `10 + DEX_modifier`
@@ -91,6 +94,7 @@
 ## Files Updated
 
 ### 1. spec.md
+
 - **FR-004**: Completely rewritten with D&D 5e rules
 - **FR-008**: Clarified level filter semantics
 - **FR-011**: Standardized naming convention
@@ -101,10 +105,12 @@
 - **NEW References**: D&D 5e source materials
 
 ### 2. plan.md
+
 - **Constitution Check**: Added standards alignment
 - **Stack Overview**: Added terminology note
 
 ### 3. tasks.md
+
 - **T006**: Expanded validation specification
 - **T009.5**: Added cleanup documentation task
 - **T010-T012**: Added specific formulas
@@ -129,11 +135,13 @@
 ## Before Implementation
 
 ### Required Reading
+
 1. **spec.md** - All requirements + D&D 5e rules
 2. **plan.md** - Architecture + constraints
 3. **tasks.md** - 134 TDD tasks in order
 
 ### Verify Locally
+
 ```bash
 # Check spec compiles (markdown)
 npm run lint:markdown specs/003-character-management/spec.md
@@ -143,6 +151,7 @@ npm run lint:markdown specs/003-character-management/spec.md
 ```
 
 ### Key Constraints to Remember
+
 - ✅ 450-line file limit
 - ✅ 50-line function limit
 - ✅ 80%+ test coverage mandatory
@@ -155,6 +164,7 @@ npm run lint:markdown specs/003-character-management/spec.md
 ## Implementation Strategy
 
 ### Phase Sequence
+
 ```
 Phase 1: Setup (T001-T009.5)
   ↓
@@ -166,11 +176,13 @@ Phase 9: Polish (T120-T134)
 ```
 
 ### Per-Task Workflow
+
 1. **Red**: Write failing test
 2. **Green**: Implement minimal code to pass
 3. **Refactor**: Improve while keeping tests passing
 
 ### Testing Mix
+
 - 40% unit tests
 - 40% integration tests
 - 20% E2E tests
@@ -195,6 +207,7 @@ Phase 9: Polish (T120-T134)
 ## Success Criteria
 
 ### MVP (US1-US4 P1 Priority)
+
 - ✅ Create, List, Update, Delete characters
 - ✅ All validation working
 - ✅ Tier limits enforced
@@ -202,6 +215,7 @@ Phase 9: Polish (T120-T134)
 - **Timeline**: 4-5 days
 
 ### Full Feature (US1-US6)
+
 - ✅ Add Duplicate and Stat Block features
 - ✅ All quality gates pass
 - ✅ 80%+ coverage maintained
@@ -257,4 +271,3 @@ This will begin the 6-7 day TDD-first implementation using the 134 documented ta
 **Status**: ✅ READY  
 **Confidence**: 🟢 HIGH  
 **Recommendation**: Proceed with implementation
-

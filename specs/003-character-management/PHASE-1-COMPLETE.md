@@ -14,6 +14,7 @@
 **File**: `research.md` (400+ lines)
 
 **Content**:
+
 - 12 key architectural decisions documented
 - D&D 5e rules & calculations defined
 - Multiclass architecture designed
@@ -38,6 +39,7 @@
 **File**: `data-model.md` (300+ lines)
 
 **Content**:
+
 - Character schema with all fields and validation rules
 - Race system entity definition
 - Class system entity definition
@@ -59,6 +61,7 @@
 **File**: `contracts/characters-api.yaml` (450+ lines)
 
 **Endpoints Defined**:
+
 1. ✅ `POST /api/characters` - Create character with validation
 2. ✅ `GET /api/characters` - List with pagination, search, filters
 3. ✅ `GET /api/characters/:id` - Get full stat block
@@ -67,6 +70,7 @@
 6. ✅ `POST /api/characters/:id/duplicate` - Create independent copy
 
 **Features Included**:
+
 - Complete OpenAPI 3.0 specification
 - Request/response schemas with full field definitions
 - Error handling with status codes (400, 401, 403, 404, 500)
@@ -86,6 +90,7 @@
 **File**: `quickstart.md` (250+ lines)
 
 **Sections**:
+
 - File structure for new components and API routes
 - Implementation phases breakdown (6 phases)
 - TDD approach guidance
@@ -94,6 +99,7 @@
 - Dependencies and references
 
 **Features**:
+
 - Phase-by-phase guidance for developers
 - Code examples for D&D 5e calculations
 - Multiclass implementation example
@@ -109,6 +115,7 @@
 **File**: `plan.md` (350+ lines)
 
 **Sections**:
+
 - **Technical Context**: Stack overview, project constraints
 - **Constitution Check**: Dependency verification (all ✅)
 - **Project Structure**: Directory layout with new files/components
@@ -216,6 +223,7 @@ specs/003-character-management/
 **Output**: `tasks.md`
 
 **Deliverable**: TDD-first task breakdown
+
 - Specific failing tests to write first
 - Implementation tasks grouped by phase
 - Clear acceptance criteria per task
@@ -230,6 +238,7 @@ specs/003-character-management/
 **Command**: `/speckit.implement`
 
 **Phases**:
+
 1. Create feature branch: `feature/003-character-management`
 2. Phase 1 implementation (Models & Validation) with tests
 3. Phase 2 implementation (API Routes) with tests
@@ -249,6 +258,7 @@ specs/003-character-management/
 **Quality Gate**: ✅ **PASSED**  
 
 **All acceptance criteria met**:
+
 - ✅ Specification comprehensive and validated
 - ✅ API contract complete and detailed
 - ✅ Data model specified with calculations

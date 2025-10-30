@@ -31,6 +31,7 @@
   - How: Add formula and class proficiency mapping table
   - Time: 20 minutes
   - Example:
+
     ```
     FR-X: System MUST calculate six D&D 5e saving throws:
       Saving Throw = [Ability Modifier] + [+2 Proficiency Bonus if proficient]
@@ -47,6 +48,7 @@
   - How: Add schema definition for usage tracking
   - Time: 15 minutes
   - Schema:
+
     ```yaml
     UsageMetrics:
       type: object
@@ -64,10 +66,12 @@
   - How: Remove "version history is maintained" phrase
   - Time: 10 minutes
   - Change:
+
     ```diff
     - When they save changes, then the edit timestamp updates and version history is maintained.
     + When they save changes, then the edit timestamp updates.
     ```
+
   - Alternative: If version history needed, create FR-016 requirement
 
 ### MEDIUM PRIORITY (Should Fix Before Implement)
@@ -78,6 +82,7 @@
   - How: Add skill → ability mapping
   - Time: 20 minutes
   - Reference:
+
     ```
     18 D&D 5e Skills:
     - Acrobatics (DEX)
@@ -105,6 +110,7 @@
   - How: Update parameter description to clarify
   - Time: 10 minutes
   - Change:
+
     ```yaml
     - name: minLevel
       description: |
@@ -119,6 +125,7 @@
   - How: Change "any attribute" to specific list
   - Time: 10 minutes
   - Change:
+
     ```diff
     - When they click "Edit" and modify any character attribute
     + When they click "Edit" and modify name, race, class, levels, or ability scores
@@ -130,6 +137,7 @@
   - How: Document cleanup job requirements
   - Time: 15 minutes
   - Content:
+
     ```
     ### Hard-Delete Cleanup Job
     - Runs daily to remove soft-deleted characters after 30-day grace period
@@ -145,6 +153,7 @@
   - How: Document seed data requirements
   - Time: 15 minutes
   - Content:
+
     ```
     ### Seed Race and Class System Entities
     - Create 9 D&D 5e Races (Human, Elf, Dwarf, Halfling, Dragonborn, Gnome, Half-Elf, Half-Orc, Tiefling)
@@ -159,6 +168,7 @@
   - How: Document optimization strategy
   - Time: 20 minutes
   - Content:
+
     ```
     ### Database Query Optimization
     - Create MongoDB indexes for fast queries:
@@ -176,6 +186,7 @@
   - How: Add implementation approach details
   - Time: 15 minutes
   - Change:
+
     ```diff
     FR-015: System MUST support race and class data as configurable system entities (D&D 5e standard races and classes).
     
@@ -202,6 +213,7 @@
 ## Execution Path
 
 ### Step 1: Generate tasks.md (BLOCKING)
+
 ```bash
 # Run in VSCode or terminal
 /speckit.tasks
@@ -209,11 +221,13 @@
 ```
 
 ### Step 2: Fix HIGH Priority Issues (45 minutes total)
+
 1. Add saving throws definition to spec.md
 2. Add UsageMetrics schema to API contract
 3. Remove version history from Story 3 (or create FR-016)
 
 ### Step 3: Fix MEDIUM Priority Issues (90 minutes total)
+
 1. Add skills enumeration table
 2. Clarify level filter semantics
 3. Align User Story 3 scope
@@ -223,12 +237,14 @@
 7. Clarify configurability
 
 ### Step 4: Re-Run Analysis
+
 ```bash
 /speckit.analyze
 # Expected: 100% coverage report, no HIGH issues
 ```
 
 ### Step 5: Proceed to Implementation
+
 ```bash
 /speckit.implement
 # Begin TDD-first implementation

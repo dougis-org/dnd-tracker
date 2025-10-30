@@ -11,6 +11,7 @@
 **`tasks.md` DOES NOT EXIST**
 
 Per `/speckit.analyze` requirements, comprehensive analysis requires:
+
 - ✅ spec.md - Present (168 lines)
 - ✅ plan.md - Present (388 lines)
 - ❌ **tasks.md - MISSING** (required for full analysis)
@@ -50,19 +51,22 @@ Per `/speckit.analyze` requirements, comprehensive analysis requires:
 
 **Location**: spec.md lines 48, 240 (FR-004 and SC-005); data-model.md line 67
 
-**Issue**: 
+**Issue**:
 Feature requires calculating "saving throws" but spec does NOT define:
+
 - Which saves? (All 6: STR, DEX, CON, INT, WIS, CHA, or subset?)
 - Formula? (modifier only, or + proficiency bonus if class proficient?)
 - Proficiency tracking? (which classes proficient in which saves?)
 
 **Why Critical**:
+
 - spec.md SC-005: "calculate with **100% accuracy**" against undefined feature
 - Cannot test, implement, or validate undefined requirement
 - D&D 5e combat depends on accurate saving throws
 
 **Recommendation**:
 Add to spec.md Requirements section:
+
 ```
 FR-X: System MUST calculate and display all six D&D 5e saving throws:
   Saving Throw = [Ability Modifier] + [Proficiency Bonus if class proficient]
@@ -83,24 +87,28 @@ Classes proficient in:
 Acceptance criterion states: "When they save changes, then the edit timestamp updates and **version history is maintained**"
 
 But:
+
 - NO Functional Requirement (FR) for version history
 - NOT in data-model.md Character schema
 - NOT in API contract response schemas
 - NOT in plan.md or quickstart.md
 
 **Why Critical**:
+
 - Acceptance criterion without backing requirement is unimplementable
 - Creates scope creep: what is "version history"? Full snapshots? Audit log? Undo stack?
 - Risk: implementing wrong feature, or feature bloats scope
 
 **Recommendation**:
 **Option A** (recommended): Remove from User Story 3:
+
 ```diff
 - "When they save changes, then the edit timestamp updates and version history is maintained"
 + "When they save changes, then the edit timestamp updates"
 ```
 
 **Option B**: Add explicit FR requirement:
+
 ```
 FR-016: System MUST maintain version history of character changes.
   - Each update creates audit log entry (who, what, when)
@@ -116,6 +124,7 @@ FR-016: System MUST maintain version history of character changes.
 
 **Issue**:
 API responses reference component:
+
 ```yaml
 responses:
   '403':
@@ -134,12 +143,14 @@ responses:
 But `UsageMetrics` is NOT in `#/components/schemas/` section.
 
 **Why Critical**:
+
 - Developers cannot implement undefined schema
 - API contract validation fails (OpenAPI 3.0 spec is broken)
 - Frontend cannot parse response if schema missing
 
 **Recommendation**:
 Add to `contracts/characters-api.yaml` components section:
+
 ```yaml
 UsageMetrics:
   type: object
@@ -181,12 +192,14 @@ Data model defines: `skills: Record<string, number>` but NO enumeration of skill
 D&D 5e has 18 distinct skills; spec does NOT list them or map to abilities.
 
 **Why Important**:
+
 - Character stat block incomplete without defined skills
 - UI cannot render without skill list
 - Validation cannot check invalid skills
 
 **Recommendation**:
 Add reference table to spec.md or data-model.md:
+
 ```markdown
 ### D&D 5e Skills (18 Total)
 
@@ -221,17 +234,20 @@ Add reference table to spec.md or data-model.md:
 Requirement: "soft delete with 30-day grace period"
 
 But NO task for:
+
 - Hard-delete job execution (daily? weekly?)
 - Grace period calculation (createdAt + 30 days? deletedAt + 30 days?)
 - Error handling if hard-delete fails
 
 **Why Important**:
+
 - Without cleanup, database grows unbounded with soft-deleted records
 - Affects performance, storage, compliance (GDPR data deletion)
 - Job timing affects data retention policy
 
 **Recommendation**:
 Add task to plan.md Phase 5 (or separate Phase 6):
+
 ```
 - Implement hard-delete maintenance job
   - Runs daily/weekly to remove soft-deleted characters
@@ -248,17 +264,20 @@ Add task to plan.md Phase 5 (or separate Phase 6):
 
 **Issue**:
 Spec documents initial seed data:
+
 - 9 D&D 5e races (Human, Elf, Dwarf, etc.)
 - 12 D&D 5e classes (Fighter, Wizard, etc.)
 
 But NO corresponding implementation task documented. Since `tasks.md` missing, cannot verify coverage.
 
 **Why Important**:
+
 - Without seeded data, system cannot create characters (no races/classes to select)
 - Critical path blocker
 
 **Recommendation**:
 Add task to plan.md Phase 1:
+
 ```
 - Seed Race and Class system entities
   - Create 9 races (Human, Elf, Dwarf, Halfling, Dragonborn, Gnome, Half-Elf, Half-Orc, Tiefling)
@@ -274,21 +293,25 @@ Add task to plan.md Phase 1:
 
 **Issue**:
 Success criteria specify:
+
 - SC-002: "Character list loads in under 1 second with 50 characters"
 - SC-003: "Search filters return in under 500ms across 200+ characters"
 
 But plan.md does NOT detail:
+
 - Query optimization strategy
 - Caching (what to cache? when to invalidate?)
 - Index creation (which fields indexed?)
 
 **Why Important**:
+
 - Without specific optimization tasks, performance targets may not be met
 - Query performance compounds as user count grows
 - Could block feature if performance tests fail
 
 **Recommendation**:
 Add task to plan.md Phase 2 or new Phase:
+
 ```
 - Implement database query optimization
   - Create indexes: {userId: 1, deletedAt: 1}, {userId: 1, name: 'text'}, {userId: 1, createdAt: -1}
@@ -305,21 +328,25 @@ Add task to plan.md Phase 2 or new Phase:
 
 **Issue**:
 API contract allows filtering by `minLevel` and `maxLevel` but does NOT specify:
+
 - Total character level? (sum of all classes)
 - Individual class level? (level in specific class)
 - Max across all classes? (highest level in any class)
 
 **Example ambiguity**:
+
 - Multiclass Fighter 5/Wizard 3: Is total level 8, or is character "level 5" (highest)?
 - Does `minLevel=5` match? Does `minLevel=3`?
 
 **Why Important**:
+
 - API behavior undefined
 - Frontend cannot construct correct query
 - User expectations unclear (what does "level 5" mean for multiclass character?)
 
 **Recommendation**:
 Update API contract parameter documentation:
+
 ```yaml
 parameters:
   - name: minLevel
@@ -339,20 +366,24 @@ parameters:
 **Location**: spec.md User Story 3, line ~95 vs. spec.md FR-009
 
 **Issue**:
+
 - User Story 3 acceptance scenario: "user can edit... character details" (broad: "any attribute")
 - FR-009: "System MUST allow users to edit: name, race, class, levels, ability scores" (specific list)
 
 These are different scopes:
+
 - Story implies: name, race, class, levels, ability scores, HP, AC, traits, etc.
 - Requirement limits: name, race, class, levels, ability scores only
 
 **Why Important**:
+
 - Ambiguity on what is editable
 - HP and AC are auto-calculated (not editable?) but Story implies editability
 - Could lead to scope creep or missed requirements
 
 **Recommendation**:
 Align Story 3 to FR-009:
+
 ```diff
 Story 3 Acceptance Scenario 1:
 - When they click "Edit" and modify any attribute
@@ -368,22 +399,26 @@ Story 3 Acceptance Scenario 1:
 **Location**: Throughout spec.md, plan.md, data-model.md, API contract
 
 **Issue**:
+
 - spec.md FR-012, FR-013, FR-014: "tier-based usage limits: Free: 10 creatures, Seasoned: 50 creatures, Expert: 250 creatures"
 - Everything else: "character" (Character entity, character creation, character list, etc.)
 - API contract: "characters" exclusively
 
 **Why Low Impact**:
+
 - Not ambiguous: "creatures" = usage limit counter term (probably for historical reasons or to indicate "any entity type")
 - "Character" = the main entity type
 - Both correct but inconsistent
 
 **Recommendation** (cosmetic):
 Standardize terminology:
+
 ```diff
 FR-012: System MUST enforce tier-based usage limits: Free=10 characters, Seasoned=50 characters, Expert=250 characters.
 ```
 
 Or use term "slots":
+
 ```
 FR-012: System MUST enforce tier-based usage limits: Free=10 slots, Seasoned=50 slots, Expert=250 slots.
 ```
@@ -398,18 +433,21 @@ FR-012: System MUST enforce tier-based usage limits: Free=10 slots, Seasoned=50 
 Plan states: "Add caching where needed (optional optimization)"
 
 But does NOT specify:
+
 - What to cache? (derived stats? search results? race/class lookups?)
 - How? (in-memory? Redis? application-level?)
 - Cache invalidation? (TTL? on-write invalidation?)
 - Is it optional or required for performance targets?
 
 **Why Low Impact**:
+
 - Marked "optional" in refactoring phase
 - Performance tests might pass without caching
 - Can be deferred
 
 **Recommendation** (if caching needed):
 Add to plan.md Phase 2 or 3:
+
 ```
 Caching Strategy:
 - Cache character derived stats on creation/update (abilityModifiers, proficiencyBonus, AC, initiative)
@@ -540,6 +578,7 @@ Caching Strategy:
 ### For `/speckit.tasks` (Next Command)
 
 When generating `tasks.md`:
+
 1. Ensure ALL 15 FR requirements have associated tasks
 2. Include Race/Class seeding task in Phase 1
 3. Include hard-delete cleanup job (Phase 5 or 6)
@@ -550,6 +589,7 @@ When generating `tasks.md`:
 ### For Developer Review
 
 After tasks are generated:
+
 1. Re-run `/speckit.analyze` with complete artifacts
 2. Verify 100% requirement coverage
 3. Validate task estimates align with 6-7 day timeline
@@ -557,6 +597,7 @@ After tasks are generated:
 ### For Implementation
 
 Before `/speckit.implement`:
+
 1. Fix HIGH priority findings (U1, A1, D1)
 2. Resolve MEDIUM findings if they affect task scope
 3. Confirm tasks.md coverage 100%
