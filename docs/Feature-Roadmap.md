@@ -1,793 +1,1549 @@
-# D&D Tracker Feature Roadmap
+# D&D Tracker - Agile Feature Roadmap (1-2 Day Increments)
 
 **Product**: D&D Encounter Tracker Web App
-**Version**: 1.0
-**Last Updated**: 2025-10-21
-**Status**: Active Development
+**Version**: 2.0 - Agile Incremental Approach
+**Last Updated**: 2025-11-01
+**Status**: Planning Phase
 
-> **Note**: Technical requirements including specific versions for Node, Next.js, MongoDB, and all dependencies are maintained in [Tech-Stack.md](Tech-Stack.md). All feature implementations must comply with the standards defined there.
+> **Core Principle**: Each increment is a discrete, deployable unit of work that can be completed in 1-2 days. Every increment includes TDD with unit, integration, and E2E tests.
 
-## Overview
+## Phase 1: UI Foundation & Site Structure (Week 1)
 
-This roadmap outlines the iterative development plan for the D&D Tracker, breaking down the complete PRD into atomic, isolated features suitable for the spec kit approach. Each feature represents a complete vertical slice of functionality that can be specified, designed, implemented, and tested independently while contributing to the overall system.
+### Increment 001: Project Setup & Design System
 
-## Completed Features
-
-### ✅ Feature 001: MVP Foundation & Architecture
-
-**Status**: Planning Complete (Tasks Defined)
-**Spec Location**: `specs/001-build-dnd-tracker/`
-**Description**: Established project structure, technology stack, data models, API contracts, and architectural patterns for the D&D Tracker application.
-
+**Duration**: Day 1
 **Deliverables**:
 
-- Next.js project structure with TypeScript (see [Tech-Stack.md](Tech-Stack.md) for versions)
-- MongoDB connection and Mongoose ODM setup (see [Tech-Stack.md](Tech-Stack.md) for versions)
-- shadcn/ui component library configuration
-- Complete data model for 8 core entities
-- API contracts for authentication, characters, and combat
-- Integration test scenarios and quickstart guide
+- Next.js 16.0.1 project with TypeScript 5.9.2
+- Tailwind CSS 4.x configuration
+- shadcn/ui setup with all components installed
+- Color scheme, typography, spacing system
+- Dark/light theme toggle (UI only)
+- Common layouts: `MainLayout`, `AuthLayout`, `DashboardLayout`
+- Jest + Playwright test setup
+- Deployment pipeline to Fly.io
+- Tests: Component library smoke tests
 
-**Dependencies**: None (foundation feature)
-**Completion Status**: Design artifacts complete, ready for implementation
+**Acceptance Criteria**:
+
+- [ ] `npm run dev` starts the application
+- [ ] Theme toggle switches between light/dark
+- [ ] All shadcn/ui components render in Storybook
+- [ ] Deploys successfully to Fly.io
 
 ---
 
-### ✅ Feature 002: User Registration and Profile Management
+### Increment 002: Navigation & Not Implemented Page
 
-**Status**: Complete ✅ (Merged via PR #158)
-**Spec Location**: `specs/002-when-a-user/`
-**Completed**: 2025-10-21
-**Description**: User authentication via Clerk, MongoDB persistence, D&D profile preferences, subscription tier assignment, and usage tracking infrastructure.
-
+**Duration**: Day 1
 **Deliverables**:
 
-- Clerk webhook integration for user lifecycle events
-- Extended User Mongoose model with D&D profile fields
-- Profile setup wizard for new users with skip functionality
-- Profile management UI in settings
-- Usage metrics tracking infrastructure
-- Free tier subscription assignment
-- Next.js middleware integration with Clerk auth
-- Complete E2E test coverage for user flows (see [Tech-Stack.md](Tech-Stack.md) for testing requirements)
+- Global navigation component with all menu items
+- Mobile responsive hamburger menu
+- Footer with links
+- `NotImplementedPage` component with friendly message
+- Route configuration for all pages (pointing to NotImplemented)
+- Breadcrumb component
+- Tests: Navigation rendering, route testing
 
-**Dependencies**: Feature 001 (foundation)
-**Completion Status**:
+**Pages/Routes Added**:
 
-- ✅ Validation schemas (Phase 3.1)
-- ✅ Data model extensions (Phase 3.2)
-- ✅ Service layer (Phase 3.3)
-- ✅ Clerk webhook handler (Phase 3.4)
-- ✅ Profile API routes (Phase 3.5)
-- ✅ UI components - ProfileForm & ProfileSetupWizard (Phase 3.6-3.7)
-- ✅ E2E tests - Playwright scenarios (Phase 3.9)
-- ✅ Integration & polish (Phase 3.10)
+```
+/ (landing)
+/dashboard
+/characters
+/characters/new
+/characters/:id
+/parties
+/parties/new
+/parties/:id
+/encounters
+/encounters/new
+/encounters/:id
+/monsters
+/monsters/new
+/monsters/:id
+/items
+/items/new
+/items/:id
+/combat
+/combat/:sessionId
+/profile
+/settings
+/subscription
+/pricing
+```
 
-**Test Results**: 267 tests passing, 100% coverage on new components, all quality checks passed
+**Acceptance Criteria**:
 
----
-
-## Planned Features (Priority Order)
-
-### Feature 003: Character Management System
-
-**Priority**: P1 - Critical Path
-**Estimated Effort**: 2-3 weeks
-**Description**: Complete CRUD operations for player characters and NPCs with D&D 5e stat tracking, multiclass support, and character templates.
-
-**User Value**: DMs can create and manage characters for their campaigns with full D&D 5e stat blocks, including multiclassing, race/class combinations, and saving character templates for reuse.
-
-**Scope**:
-
-- Character creation form with validation
-- Full D&D 5e stats (AC, HP, ability scores, initiative)
-- Multiclass support with level tracking
-- Race and class selection with data validation
-- Character templates for quick creation
-- Character list view with search/filter
-- Character edit and delete operations
-- Tier limit enforcement (Free: 10 creatures max)
-
-**Key Entities**: Character, Player (optional assignment)
-**API Endpoints**:
-
-- `POST /api/characters` - Create character
-- `GET /api/characters` - List characters (paginated, filterable)
-- `GET /api/characters/:id` - Get character details
-- `PUT /api/characters/:id` - Update character
-- `DELETE /api/characters/:id` - Delete character
-- `POST /api/characters/:id/duplicate` - Create from template
-
-**Dependencies**: Feature 002 (user system for ownership and limits)
-**Blocks**: Feature 004 (needs characters), Feature 005 (needs characters)
+- [ ] All routes respond with NotImplementedPage
+- [ ] Navigation menu shows all sections
+- [ ] Mobile menu works on small screens
+- [ ] Breadcrumbs show correct path
 
 ---
 
-### Feature 004: Party Management
+### Increment 003: Landing Page & Marketing Components
 
-**Priority**: P1 - Critical Path
-**Estimated Effort**: 1-2 weeks
-**Description**: Group characters into parties, manage party composition, and save party templates for campaign organization.
+**Duration**: Day 2
+**Deliverables**:
 
-**User Value**: DMs can organize characters into parties for different campaigns or gaming groups, with the ability to reuse party compositions across encounters.
+- Landing page with hero section
+- Feature showcase (3 columns with icons)
+- Interactive demo section (mock data, non-functional)
+- Pricing tier comparison table
+- Testimonials carousel (hardcoded data)
+- CTA buttons (non-functional)
+- SEO meta tags
+- Tests: Landing page components, responsive design
 
-**Scope**:
+**Acceptance Criteria**:
 
-- Party creation with name and description
-- Add/remove characters from parties
-- Party member role assignment (tank, healer, DPS)
-- Party templates for quick setup
-- Party list view with member preview
-- Party edit and delete operations
-- Tier limit enforcement (Free: 1 party, Seasoned: 3 parties)
-
-**Key Entities**: Party, PartyMember (join table)
-**API Endpoints**:
-
-- `POST /api/parties` - Create party
-- `GET /api/parties` - List parties
-- `GET /api/parties/:id` - Get party details with members
-- `PUT /api/parties/:id` - Update party
-- `DELETE /api/parties/:id` - Delete party
-- `POST /api/parties/:id/members` - Add character to party
-- `DELETE /api/parties/:id/members/:characterId` - Remove from party
-
-**Dependencies**: Feature 003 (character system)
-**Blocks**: Feature 005 (encounters use parties)
+- [ ] Landing page displays at `/`
+- [ ] All sections render with mock data
+- [ ] Page is mobile responsive
+- [ ] Meta tags present in page head
 
 ---
 
-### Feature 005: Monster and NPC Library
+### Increment 004: Dashboard Page
 
-**Priority**: P1 - Critical Path
-**Estimated Effort**: 2 weeks
-**Description**: Monster/NPC creation with stat blocks, special abilities, legendary actions, and searchable creature library.
-
-**User Value**: DMs can create custom monsters or NPCs with full stat blocks, manage special abilities, and quickly find creatures for encounters using search and filters.
-
-**Scope**:
-
-- Monster creation form with D&D stat block
-- Special abilities (legendary actions, lair actions, reactions)
-- Monster templates and stat block library
-- Search and filter by CR, type, source
-- Monster list view with quick stats preview
-- Monster edit and delete operations
-- Import from SRD data (optional enhancement)
-
-**Key Entities**: Monster, SpecialAbility
-**API Endpoints**:
-
-- `POST /api/monsters` - Create monster
-- `GET /api/monsters` - List monsters (search, filter by CR/type)
-- `GET /api/monsters/:id` - Get monster details
-- `PUT /api/monsters/:id` - Update monster
-- `DELETE /api/monsters/:id` - Delete monster
-
-**Dependencies**: Feature 002 (user system for ownership)
-**Blocks**: Feature 006 (encounters need monsters)
-
----
-
-### Feature 006: Encounter Builder
-
-**Priority**: P1 - Critical Path
-**Estimated Effort**: 2-3 weeks
-**Description**: Design encounters by selecting participants (party + monsters), configure lair settings, and calculate encounter difficulty.
-
-**User Value**: DMs can build balanced encounters by combining parties and monsters, with automatic CR calculation and lair action configuration for memorable combat scenarios.
-
-**Scope**:
-
-- Encounter creation wizard
-- Add party or individual characters
-- Add monsters with quantity
-- CR calculation and difficulty estimation
-- Lair action configuration (optional)
-- Environmental hazard setup
-- Encounter templates for reuse
-- Encounter list view with quick stats
-- Tier limit enforcement (Free: 3 encounters, 6 max participants)
-
-**Key Entities**: Encounter, EncounterParticipant
-**API Endpoints**:
-
-- `POST /api/encounters` - Create encounter
-- `GET /api/encounters` - List encounters
-- `GET /api/encounters/:id` - Get encounter details
-- `PUT /api/encounters/:id` - Update encounter
-- `DELETE /api/encounters/:id` - Delete encounter
-- `POST /api/encounters/:id/participants` - Add participant
-- `DELETE /api/encounters/:id/participants/:id` - Remove participant
-
-**Dependencies**: Feature 003 (characters), Feature 004 (parties), Feature 005 (monsters)
-**Blocks**: Feature 007 (combat sessions use encounters)
-
----
-
-### Feature 007: Initiative and Turn Management
-
-**Priority**: P1 - Critical Path
-**Estimated Effort**: 2-3 weeks
-**Description**: Roll initiative, manage turn order with dexterity tie-breaking, track current turn, and advance rounds automatically.
-
-**User Value**: DMs can quickly start combat with automatic initiative ordering, clear visual indication of current turn, and seamless round progression with minimal bookkeeping.
-
-**Scope**:
-
-- Initiative rolling (automated or manual entry)
-- Initiative order calculation with dexterity tie-breaking
-- Manual initiative override/reordering
-- Current turn indicator with visual highlight
-- Next/previous turn navigation
-- Round counter with automatic advancement
-- "Delay turn" and "Ready action" support
-- Initiative tracker UI component
-
-**Key Entities**: CombatSession, InitiativeEntry
-**API Endpoints**:
-
-- `POST /api/combat/sessions` - Start combat from encounter
-- `POST /api/combat/sessions/:id/initiative` - Roll initiative
-- `PUT /api/combat/sessions/:id/initiative/:participantId` - Update initiative
-- `POST /api/combat/sessions/:id/next-turn` - Advance to next turn
-- `POST /api/combat/sessions/:id/previous-turn` - Go back one turn
-- `PUT /api/combat/sessions/:id/round` - Set round number
-
-**Dependencies**: Feature 006 (encounters)
-**Blocks**: Feature 008 (HP tracking needs active combat), Feature 009 (status effects need turns)
-
----
-
-### Feature 008: HP and Damage Tracking
-
-**Priority**: P1 - Critical Path
-**Estimated Effort**: 1-2 weeks
-**Description**: Track hit points with damage and healing, temporary HP, visual HP bars, and undo functionality for mistakes.
-
-**User Value**: DMs can quickly apply damage or healing to combatants with visual feedback, support temporary HP mechanics, and undo mistakes without breaking combat flow.
-
-**Scope**:
-
-- Damage application with validation
-- Healing with max HP limits
-- Temporary HP tracking
-- Death saving throws counter
-- HP history with undo (last 5 actions)
-- Visual HP bars with color coding
-- Quick damage buttons (e.g., 5, 10, 15)
-- "Unconscious" and "Dead" status automation
-
-**Key Entities**: CombatSession.participants (HP state)
-**API Endpoints**:
-
-- `POST /api/combat/sessions/:id/damage` - Apply damage
-- `POST /api/combat/sessions/:id/heal` - Apply healing
-- `POST /api/combat/sessions/:id/temp-hp` - Set temporary HP
-- `POST /api/combat/sessions/:id/undo` - Undo last HP change
-
-**Dependencies**: Feature 007 (combat sessions)
-**Blocks**: None
-
----
-
-### Feature 009: Status Effects and Conditions
-
-**Priority**: P1 - Critical Path
-**Estimated Effort**: 2 weeks
-**Description**: Apply status effects (poisoned, blessed, etc.) with duration tracking, automatic expiration, and condition descriptions.
-
-**User Value**: DMs can track temporary conditions on combatants with automatic duration countdown, reducing mental overhead and ensuring conditions don't get forgotten.
-
-**Scope**:
-
-- Status effect library (D&D 5e conditions)
-- Apply status effect with duration (rounds, minutes, hours)
-- Duration tracking with automatic decrements
-- "Until save" and "Concentration" duration types
-- Status effect expiration notifications
-- Multiple effects per participant
-- Status icon visual indicators
-- Effect descriptions and mechanical reminders
-
-**Key Entities**: StatusEffect, ActiveStatusEffect
-**API Endpoints**:
-
-- `GET /api/status-effects` - List available effects
-- `POST /api/combat/sessions/:id/participants/:pid/effects` - Apply effect
-- `DELETE /api/combat/sessions/:id/participants/:pid/effects/:eid` - Remove effect
-- `PUT /api/combat/sessions/:id/participants/:pid/effects/:eid` - Update duration
-
-**Dependencies**: Feature 007 (combat sessions and turns)
-**Blocks**: None
-
----
-
-### Feature 010: Lair Actions System
-
-**Priority**: P2 - Important
-**Estimated Effort**: 1-2 weeks
-**Description**: Configure lair actions for encounters, trigger automatically on initiative 20, and manage environmental effects during combat.
-
-**User Value**: DMs running lair encounters get automated prompts for lair actions on initiative count 20, making complex boss fights smoother and more dramatic.
-
-**Scope**:
-
-- Lair action creation and library
-- Assign lair actions to encounters
-- Automatic trigger on initiative count 20
-- Lair action selection UI during combat
-- Environmental effect descriptions
-- Multiple lair action options per encounter
-- Lair action history log
-
-**Key Entities**: LairAction, EncounterLairAction
-**API Endpoints**:
-
-- `POST /api/lair-actions` - Create lair action template
-- `GET /api/lair-actions` - List lair action templates
-- `POST /api/encounters/:id/lair-actions` - Assign to encounter
-- `POST /api/combat/sessions/:id/lair-action` - Trigger lair action
-- `GET /api/combat/sessions/:id/lair-actions` - Get available actions
-
-**Dependencies**: Feature 006 (encounters), Feature 007 (initiative tracking)
-**Blocks**: None
-
----
-
-### Feature 011: Combat Session State Management
-
-**Priority**: P2 - Important
-**Estimated Effort**: 1 week
-**Description**: Save combat state, pause/resume sessions, end combat, and persist combat history for later review.
-
-**User Value**: DMs can pause combat mid-session and resume later without losing state, and review past combat sessions for campaign continuity.
-
-**Scope**:
-
-- Combat session state persistence
-- Pause/resume combat functionality
-- End combat with summary
-- Combat session list (active vs completed)
-- Combat history with participant snapshots
-- Resume from saved session
-- Combat session deletion
-
-**Key Entities**: CombatSession (status field)
-**API Endpoints**:
-
-- `PUT /api/combat/sessions/:id/pause` - Pause session
-- `PUT /api/combat/sessions/:id/resume` - Resume session
-- `PUT /api/combat/sessions/:id/end` - End session
-- `GET /api/combat/sessions` - List sessions (filter by status)
-- `GET /api/combat/sessions/:id/summary` - Get combat summary
-
-**Dependencies**: Feature 007 (combat sessions)
-**Blocks**: None
-
----
-
-### Feature 012: Offline Combat Capability
-
-**Priority**: P2 - Important
-**Estimated Effort**: 2 weeks
-**Description**: IndexedDB storage for offline combat tracking, background sync when online, and offline-first architecture for core features (see [Tech-Stack.md](Tech-Stack.md) for technology details).
-
-**User Value**: DMs can run combat without internet connectivity, ensuring games aren't disrupted by network issues, with automatic sync when reconnected.
-
-**Scope**:
-
-- Client-side storage for offline combat session creation
-- Local HP and status effect tracking
-- Background sync with server when online
-- Conflict resolution for synced data
-- Offline mode indicator in UI
-- "Sync status" display
-
-**Technical Scope** (see [Tech-Stack.md](Tech-Stack.md)):
-
-- Service Worker setup
-- Client-side storage wrapper utilities
-- Sync queue management
-- Online/offline detection
-- Optimistic UI updates
-
-**Key Entities**: LocalCombatSession (IndexedDB schema)
-
-**Dependencies**: Feature 007 (combat sessions), Feature 008 (HP tracking)
-**Blocks**: None
-
----
-
-### Feature 013: Subscription Tier Enforcement
-
-**Priority**: P2 - Important
-**Estimated Effort**: 1-2 weeks
-**Description**: Enforce usage limits per subscription tier, display limit warnings, and show contextual upgrade prompts.
-
-**User Value**: Users understand their tier limits and are prompted to upgrade when approaching limits, supporting the freemium business model.
-
-**Scope**:
-
-- Real-time usage tracking (parties, encounters, creatures, participants)
-- Limit checks before creation operations
-- Warning at 80% of limit
-- Upgrade prompts when limit reached
-- Usage dashboard showing current limits
-- Tier comparison in upgrade flow
-- Prevent operations when limit exceeded
-
-**Key Entities**: User.usage (metrics), TIER_LIMITS (constants)
-**API Endpoints**:
-
-- `GET /api/users/:id/usage` - Get current usage metrics
-- `GET /api/tiers` - Get tier limits and pricing
-- Validation in existing endpoints (e.g., POST /api/characters checks limit)
-
-**Dependencies**: Feature 002 (user system)
-**Blocks**: None (enhancement to all features)
-
----
-
-### Feature 014: Dashboard and Quick Actions
-
-**Priority**: P2 - Important
-**Estimated Effort**: 1-2 weeks
-**Description**: User dashboard with quick stats, recent activity, quick action buttons, and shortcuts to common workflows.
-
-**User Value**: DMs get a centralized hub for their campaigns with quick access to recent sessions, parties, and encounters, speeding up session prep.
-
-**Scope**:
+**Duration**: Day 1
+**Deliverables**:
 
 - Dashboard layout with stat cards
-- Active campaigns overview
-- Usage metrics display (with tier limits)
-- Recent combat sessions list
-- Quick actions: "Start Combat", "Create Character", "Build Encounter"
-- Recently used characters/monsters
-- Favorite templates shortcuts
-- "Resume Last Session" functionality
+- Quick action buttons grid
+- Recent activity feed (mock data)
+- Campaign overview section
+- Usage metrics display (mock data)
+- Welcome message for new users
+- Tests: Dashboard component rendering
 
-**Key Entities**: Dashboard aggregates from User, Party, Encounter, CombatSession
-**API Endpoints**:
+**Mock Data Includes**:
 
-- `GET /api/dashboard` - Get dashboard data (aggregated)
-- `GET /api/recent` - Get recent activity feed
+- 3 active parties
+- 5 recent combat sessions
+- Usage: 2/3 parties, 8/15 encounters
+- Sample recent activity items
 
-**Dependencies**: Feature 002 (user), Feature 004 (parties), Feature 006 (encounters), Feature 007 (sessions)
-**Blocks**: None
+**Acceptance Criteria**:
 
----
-
-### Feature 015: Landing Page and Marketing Site
-
-**Priority**: P3 - Enhancement
-**Estimated Effort**: 2 weeks
-**Description**: Public landing page with hero section, feature showcase, pricing tiers, testimonials, and demo combat tracker.
-
-**User Value**: Prospective users can learn about the product, see features in action via interactive demo, and understand pricing before signing up.
-
-**Scope**:
-
-- Hero section with value proposition
-- Feature preview tabs (initiative, lair actions, status effects)
-- Interactive demo with sample encounter
-- Pricing tier comparison table
-- Testimonial carousel (data-driven from collection)
-- Call-to-action buttons
-- SEO optimization (meta tags, schema markup)
-- Mobile-responsive design
-
-**Key Entities**: Testimonial (new collection)
-**Pages**:
-
-- `/` - Landing page
-- `/pricing` - Detailed pricing page
-- `/demo` - Interactive demo
-
-**Dependencies**: Feature 002 (authentication for signup)
-**Blocks**: None
+- [ ] Dashboard shows at `/dashboard`
+- [ ] All widgets render with mock data
+- [ ] Quick actions are visible but show NotImplemented on click
+- [ ] Responsive grid layout works
 
 ---
 
-### Feature 016: Export and Data Portability
+### Increment 005: Character Management Pages
 
-**Priority**: P3 - Enhancement
-**Estimated Effort**: 1 week
-**Description**: Export characters, encounters, and combat logs to JSON and PDF formats for backup and sharing.
+**Duration**: Day 2
+**Deliverables**:
 
-**User Value**: Users can backup their data, share characters with other DMs, and maintain campaign records outside the platform.
+- Character list page with search/filter UI
+- Character card component
+- Character detail page layout
+- Character creation/edit form (all fields, no submission)
+- Character stats display component
+- Delete confirmation modal
+- Tests: Character page components, form validation UI
 
-**Scope**:
+**Mock Data**:
 
-- Export character to JSON
-- Export encounter to JSON
-- Export combat session to PDF (summary)
-- Export party roster to PDF
-- Import character from JSON
-- Bulk export (all characters, all encounters)
-- Export history log
+- 5 sample characters with full D&D stats
+- Different classes, races, levels
+- HP, AC, abilities, equipment
 
-**Key Entities**: All entities support export
-**API Endpoints**:
+**Acceptance Criteria**:
 
-- `GET /api/characters/:id/export?format=json` - Export character
-- `GET /api/encounters/:id/export?format=json` - Export encounter
-- `GET /api/combat/sessions/:id/export?format=pdf` - Export combat log
-- `POST /api/characters/import` - Import character from JSON
-
-**Dependencies**: Feature 003 (characters), Feature 006 (encounters), Feature 007 (sessions)
-**Blocks**: None
+- [ ] `/characters` shows list of mock characters
+- [ ] Search and filter UI elements present
+- [ ] `/characters/:id` shows character details
+- [ ] `/characters/new` shows creation form
+- [ ] Form has all D&D 5e fields
 
 ---
 
-### Feature 017: Character Sharing and Permissions
+### Increment 006: Party Management Pages
 
-**Priority**: P3 - Enhancement
-**Estimated Effort**: 1-2 weeks
-**Description**: Share characters with other users, set view/edit permissions, and allow collaborative party building.
+**Duration**: Day 1
+**Deliverables**:
 
-**User Value**: Players can manage their own characters and share them with DMs, enabling collaborative campaign management and reducing DM workload.
+- Party list page
+- Party card with member preview
+- Party detail page with member list
+- Party creation/edit form
+- Add/remove member UI (mock)
+- Party composition stats
+- Tests: Party page components
 
-**Scope**:
+**Mock Data**:
 
-- Character ownership and sharing settings
-- Share via link or email invitation
-- Permission levels (view, edit, play)
-- Shared character list view
-- Accept/reject character shares
-- Collaborative party building
-- Share activity log
+- 2 sample parties
+- 4-5 members per party
+- Party roles (tank, healer, DPS)
 
-**Key Entities**: CharacterShare (permissions table)
-**API Endpoints**:
+**Acceptance Criteria**:
 
-- `POST /api/characters/:id/share` - Create share link
-- `POST /api/characters/:id/permissions` - Grant permission
-- `DELETE /api/characters/:id/permissions/:userId` - Revoke permission
-- `GET /api/characters/shared-with-me` - List shared characters
-
-**Dependencies**: Feature 003 (characters)
-**Blocks**: None
+- [ ] `/parties` shows list of parties
+- [ ] `/parties/:id` shows party details with members
+- [ ] `/parties/new` shows creation form
+- [ ] Member management UI present
 
 ---
 
-### Feature 018: Advanced Combat Logging (Paid Feature)
+### Increment 007: Monster/NPC Management Pages
 
-**Priority**: P3 - Enhancement
-**Estimated Effort**: 1 week
-**Description**: Detailed combat history with turn-by-turn action log, damage breakdown, and combat statistics (Seasoned tier and above).
+**Duration**: Day 2
+**Deliverables**:
 
-**User Value**: Paying users get detailed combat analytics for reviewing encounters, analyzing player performance, and creating campaign summaries.
+- Monster list page with CR filter
+- Monster card component
+- Monster detail page with stat block
+- Monster creation/edit form
+- Special abilities section
+- Legendary/lair actions UI
+- Monster template library UI
+- Tests: Monster page components
 
-**Scope**:
+**Mock Data**:
 
-- Turn-by-turn action log
-- Damage dealt/received per participant
-- Healing statistics
-- Status effect duration tracking
-- Combat duration and round count
-- Export combat log to PDF
-- Tier gate (Seasoned+)
+- 10 sample monsters (various CRs)
+- Legendary creatures with special abilities
+- Lair action examples
 
-**Key Entities**: CombatAction (log table)
-**API Endpoints**:
+**Acceptance Criteria**:
 
-- `GET /api/combat/sessions/:id/log` - Get detailed log (tier check)
-- `GET /api/combat/sessions/:id/stats` - Get combat statistics
-
-**Dependencies**: Feature 007 (combat sessions), Feature 013 (tier enforcement)
-**Blocks**: None
-
----
-
-### Feature 019: Custom Themes and UI Customization (Paid Feature)
-
-**Priority**: P3 - Enhancement
-**Estimated Effort**: 2 weeks
-**Description**: Theme selection (light/dark/high contrast), custom color schemes, and UI layout preferences (Expert tier and above).
-
-**User Value**: Power users can customize the app appearance to match their preferences or accessibility needs, improving usability for long sessions.
-
-**Scope**:
-
-- Theme selector (light, dark, high contrast, sepia)
-- Custom color scheme builder (primary, accent colors)
-- Font size preferences
-- Compact vs spacious layout toggle
-- Save theme per user profile
-- Theme preview before applying
-- Tier gate (Expert+)
-
-**Key Entities**: User.preferences.theme (extended)
-**API Endpoints**:
-
-- `PUT /api/users/:id/theme` - Update theme preferences
-- `GET /api/themes` - List available themes (tier-filtered)
-
-**Dependencies**: Feature 002 (user preferences), Feature 013 (tier enforcement)
-**Blocks**: None
+- [ ] `/monsters` shows filterable list
+- [ ] `/monsters/:id` shows full stat block
+- [ ] `/monsters/new` shows creation form
+- [ ] Special abilities section displays
 
 ---
 
-### Feature 020: Payment Integration and Subscription Management
+### Increment 008: Encounter Builder Pages
 
-**Priority**: P2 - Important (Monetization)
-**Estimated Effort**: 2-3 weeks
-**Description**: Payment processing for subscription management, payment processing, upgrade/downgrade flows, and billing dashboard (see [Tech-Stack.md](Tech-Stack.md) for third-party service details).
+**Duration**: Day 1
+**Deliverables**:
 
-**User Value**: Users can self-service their subscription changes, view billing history, and manage payment methods securely.
+- Encounter list page
+- Encounter card with participant preview
+- Encounter detail page
+- Encounter builder wizard UI
+- Participant selection (parties/monsters)
+- CR calculator display
+- Lair configuration section
+- Tests: Encounter builder components
 
-**Scope**:
+**Mock Data**:
 
-- Subscription checkout integration
-- Subscription creation and upgrades
-- Downgrade with data migration warnings
-- Billing dashboard with invoice history
-- Payment method management
-- Subscription cancellation flow
-- Webhook handlers for subscription events
-- Tier access enforcement
+- 3 sample encounters
+- Mix of party + monster participants
+- Difficulty ratings
 
-**Key Entities**: Subscription (sync), Invoice, PaymentMethod
-**API Endpoints**:
+**Acceptance Criteria**:
 
-- `POST /api/billing/checkout` - Create checkout session
-- `POST /api/billing/portal` - Redirect to customer portal
-- `POST /api/webhooks/stripe` - Handle subscription events
-- `GET /api/billing/invoices` - List invoices
-- `POST /api/billing/upgrade` - Upgrade tier
-- `POST /api/billing/downgrade` - Downgrade tier
-
-**Dependencies**: Feature 002 (user system), Feature 013 (tier enforcement)
-**Blocks**: All paid features (Features 018, 019)
+- [ ] `/encounters` shows list
+- [ ] `/encounters/:id` shows details
+- [ ] `/encounters/new` shows builder wizard
+- [ ] CR calculation displays (mock)
 
 ---
 
-## Feature Dependency Graph
+### Increment 009: Combat Tracker Page
 
+**Duration**: Day 2
+**Deliverables**:
+
+- Combat tracker main interface
+- Initiative order list
+- Current turn indicator
+- HP/damage input controls
+- Status effect pills
+- Round/turn counter
+- Combat action buttons
+- Lair action notification (initiative 20)
+- Combat log panel
+- Mobile-optimized combat view
+- Tests: Combat tracker components
+
+**Mock Data**:
+
+- Active combat session
+- 6 participants with initiatives
+- Some with status effects
+- Current round: 3, turn: 2
+
+**Acceptance Criteria**:
+
+- [ ] `/combat` shows tracker interface
+- [ ] Initiative order displays correctly
+- [ ] HP controls present
+- [ ] Status effects show as pills
+- [ ] Lair action prompt at initiative 20
+
+---
+
+### Increment 010: User Profile & Settings Pages
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Profile page with D&D preferences
+- Settings page with sections
+- Account settings form
+- D&D rules preference selector
+- Experience level selector
+- Role preference (DM/Player/Both)
+- Notification preferences
+- Data export section
+- Tests: Profile/settings forms
+
+**Mock Data**:
+
+- User profile information
+- Current settings/preferences
+
+**Acceptance Criteria**:
+
+- [ ] `/profile` shows user preferences
+- [ ] `/settings` shows all sections
+- [ ] Forms display but don't submit
+- [ ] All preference options visible
+
+---
+
+### Increment 011: Item Catalog Pages
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Item list page with categories
+- Item card component
+- Item detail page
+- Item creation/edit form
+- Magic item properties UI
+- Item rarity indicators
+- Tests: Item page components
+
+**Mock Data**:
+
+- 15 sample items
+- Weapons, armor, magic items
+- Various rarities
+
+**Acceptance Criteria**:
+
+- [ ] `/items` shows categorized list
+- [ ] `/items/:id` shows item details
+- [ ] `/items/new` shows creation form
+- [ ] Rarity indicators display
+
+---
+
+### Increment 012: Subscription & Billing Pages
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Subscription management page
+- Current plan display
+- Usage metrics with progress bars
+- Plan comparison table
+- Upgrade/downgrade buttons (non-functional)
+- Billing history table (mock)
+- Payment method section
+- Tests: Subscription page components
+
+**Mock Data**:
+
+- Current plan: Seasoned Adventurer
+- Usage near limits
+- Sample billing history
+
+**Acceptance Criteria**:
+
+- [ ] `/subscription` shows current plan
+- [ ] Usage metrics display with visual indicators
+- [ ] Plan comparison table renders
+- [ ] Billing history shows mock data
+
+---
+
+## Phase 2: Authentication & User Management (Week 2)
+
+### Increment 013: Clerk Integration & Auth Flow
+
+**Duration**: Day 2
+**Deliverables**:
+
+- Clerk authentication setup
+- Sign in/sign up pages
+- Email/password and social login
+- Protected route middleware
+- Redirect to login for unauthenticated users
+- Session management
+- Sign out functionality
+- Tests: Auth flow E2E tests
+
+**Technical Tasks**:
+
+- Configure Clerk with environment variables
+- Add ClerkProvider to app
+- Create sign-in/sign-up pages
+- Add middleware for protected routes
+- Update navigation with auth state
+
+**Acceptance Criteria**:
+
+- [ ] User can sign up with email
+- [ ] User can sign in
+- [ ] Protected pages redirect to login
+- [ ] Sign out works
+- [ ] Social login buttons present
+
+---
+
+### Increment 014: MongoDB User Model & Webhook
+
+**Duration**: Day 1
+**Deliverables**:
+
+- MongoDB connection setup
+- User Mongoose model
+- Clerk webhook handler
+- User creation on sign-up
+- User profile fields in database
+- Profile data persistence
+- Tests: Webhook handling, database operations
+
+**Database Schema**:
+
+```typescript
+{
+  clerkId: string,
+  email: string,
+  name: string,
+  profile: {
+    experienceLevel: string,
+    preferredRole: string,
+    ruleset: string,
+    createdAt: Date
+  },
+  subscription: {
+    tier: string,
+    status: string
+  },
+  usage: {
+    parties: number,
+    encounters: number,
+    characters: number
+  }
+}
 ```
-Foundation Layer:
-001 (MVP Foundation) → 002 (User System)
 
-Core Entity Layer:
-002 → 003 (Characters)
-002 → 005 (Monsters)
-003 → 004 (Parties)
+**Acceptance Criteria**:
 
-Combat Preparation Layer:
-003 + 004 + 005 → 006 (Encounters)
+- [ ] Webhook creates user in MongoDB
+- [ ] User data persists
+- [ ] Profile fields stored correctly
 
-Combat Execution Layer:
-006 → 007 (Initiative/Turns)
-007 → 008 (HP Tracking)
-007 → 009 (Status Effects)
-006 + 007 → 010 (Lair Actions)
-007 → 011 (State Management)
-007 + 008 → 012 (Offline Mode)
+---
 
-Platform Features:
-002 → 013 (Tier Enforcement)
-002 + 004 + 006 + 007 → 014 (Dashboard)
-002 → 015 (Landing Page)
-003 + 006 + 007 → 016 (Export)
-003 → 017 (Sharing)
+### Increment 015: Profile Setup Wizard
 
-Monetization:
-002 + 013 → 020 (Payments)
-007 + 013 → 018 (Advanced Logging - Paid)
-002 + 013 → 019 (Custom Themes - Paid)
-```
-
-## Development Phases
-
-### Phase 1: Core MVP (Features 001-002) ✅ Complete
-
-**Timeline**: Weeks 1-4
-**Goal**: User authentication and profile management
-**Completion**: 100% (Completed 2025-10-21 via PR #158)
+**Duration**: Day 1
 **Deliverables**:
 
-- User registration via Clerk
-- MongoDB user persistence
-- D&D profile preferences
-- Profile setup wizard
-- Usage tracking infrastructure
+- First-login profile setup flow
+- Multi-step wizard UI
+- Experience level selection
+- Role preference selection
+- Ruleset selection
+- Skip option
+- Save profile to database
+- Tests: Wizard flow, data persistence
 
-### Phase 2: Entity Management (Features 003-006)
+**Acceptance Criteria**:
 
-**Timeline**: Weeks 5-14 (10 weeks)
-**Goal**: Character, party, monster, and encounter creation
+- [ ] New users see setup wizard
+- [ ] Can complete or skip wizard
+- [ ] Selections save to database
+- [ ] Wizard doesn't show again
+
+---
+
+### Increment 016: User Dashboard with Real Data
+
+**Duration**: Day 1
 **Deliverables**:
 
-- Character CRUD with templates
-- Party management
-- Monster library
-- Encounter builder
+- Connect dashboard to user model
+- Display real usage metrics
+- Show user's actual tier
+- Personalized welcome message
+- Empty states for new users
+- Tests: Dashboard data loading
 
-### Phase 3: Combat Engine (Features 007-011)
+**Acceptance Criteria**:
 
-**Timeline**: Weeks 15-24 (10 weeks)
-**Goal**: Full combat tracking with initiative, HP, status effects
+- [ ] Dashboard shows real user data
+- [ ] Usage metrics reflect database
+- [ ] Empty states display for new users
+- [ ] Tier limits shown correctly
+
+---
+
+### Increment 017: Profile Page Functionality
+
+**Duration**: Day 1
 **Deliverables**:
 
-- Initiative system with tie-breaking
-- HP and damage tracking with undo
-- Status effects with duration management
-- Lair actions automation
-- Combat session state persistence
+- Connect profile page to database
+- Load user preferences
+- Save profile updates
+- Update D&D preferences
+- Success/error messages
+- Tests: Profile update flow
 
-### Phase 4: Platform Features (Features 012-014)
+**API Routes**:
 
-**Timeline**: Weeks 25-30 (6 weeks)
-**Goal**: Offline capability, tier enforcement, dashboard
+- `GET /api/v1/users/profile`
+- `PUT /api/v1/users/profile`
+
+**Acceptance Criteria**:
+
+- [ ] Profile loads from database
+- [ ] Can update preferences
+- [ ] Changes persist
+- [ ] Success messages show
+
+---
+
+## Phase 3: Core Entity Management (Week 3-4)
+
+### Increment 018: Character Model & API
+
+**Duration**: Day 2
 **Deliverables**:
 
-- IndexedDB offline storage
-- Subscription limit enforcement
-- User dashboard with quick actions
+- Character Mongoose model
+- Character creation API
+- Character list API
+- Character detail API
+- Character update API
+- Character delete API
+- Validation rules
+- Tests: API endpoints, validation
 
-### Phase 5: Monetization (Feature 020)
+**API Routes**:
 
-**Timeline**: Weeks 31-33 (3 weeks)
-**Goal**: Payment processing and subscription management
+- `POST /api/v1/characters`
+- `GET /api/v1/characters`
+- `GET /api/v1/characters/:id`
+- `PUT /api/v1/characters/:id`
+- `DELETE /api/v1/characters/:id`
+
+**Acceptance Criteria**:
+
+- [ ] Can create character via API
+- [ ] List returns user's characters
+- [ ] Update modifies character
+- [ ] Delete removes character
+- [ ] Validation rejects invalid data
+
+---
+
+### Increment 019: Character List Page Integration
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Connect character list to API
+- Real-time search/filter
+- Loading states
+- Error handling
+- Empty state for no characters
+- Delete functionality
+- Tests: List page integration
+
+**Acceptance Criteria**:
+
+- [ ] List shows real characters
+- [ ] Search filters results
+- [ ] Can delete characters
+- [ ] Loading states display
+
+---
+
+### Increment 020: Character Creation Form
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Connect form to creation API
+- Form validation
+- Success redirect
+- Error handling
+- Multiclass support
+- Tests: Form submission flow
+
+**Acceptance Criteria**:
+
+- [ ] Form creates character
+- [ ] Validation shows errors
+- [ ] Redirects on success
+- [ ] Multiclass works
+
+---
+
+### Increment 021: Character Edit Form
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Load character data in form
+- Connect to update API
+- Optimistic updates
+- Conflict resolution
+- Tests: Edit flow
+
+**Acceptance Criteria**:
+
+- [ ] Form loads existing data
+- [ ] Updates save correctly
+- [ ] Success feedback shown
+
+---
+
+### Increment 022: Character Templates
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Template creation from character
+- Template list UI
+- Create from template
+- Default templates
+- Tests: Template functionality
+
+**API Routes**:
+
+- `POST /api/v1/characters/:id/save-template`
+- `GET /api/v1/characters/templates`
+- `POST /api/v1/characters/from-template`
+
+**Acceptance Criteria**:
+
+- [ ] Can save as template
+- [ ] Templates list shows
+- [ ] Can create from template
+
+---
+
+### Increment 023: Monster Model & API
+
+**Duration**: Day 2
+**Deliverables**:
+
+- Monster Mongoose model
+- Monster CRUD APIs
+- Special abilities sub-schema
+- Legendary/lair actions
+- CR validation
+- Tests: Monster APIs
+
+**API Routes**:
+
+- `POST /api/v1/monsters`
+- `GET /api/v1/monsters`
+- `GET /api/v1/monsters/:id`
+- `PUT /api/v1/monsters/:id`
+- `DELETE /api/v1/monsters/:id`
+
+**Acceptance Criteria**:
+
+- [ ] Monster CRUD works
+- [ ] Special abilities save
+- [ ] CR calculates correctly
+
+---
+
+### Increment 024: Monster List Page Integration
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Connect monster list to API
+- CR filter functionality
+- Type filter
+- Search by name
+- Tests: Monster list integration
+
+**Acceptance Criteria**:
+
+- [ ] List shows monsters
+- [ ] Filters work
+- [ ] Search functions
+
+---
+
+### Increment 025: Monster Creation/Edit Forms
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Connect forms to APIs
+- Stat block builder
+- Ability editor
+- Legendary action editor
+- Tests: Monster form flows
+
+**Acceptance Criteria**:
+
+- [ ] Can create monsters
+- [ ] Can edit monsters
+- [ ] Abilities save correctly
+
+---
+
+### Increment 026: Item Model & API
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Item Mongoose model
+- Item CRUD APIs
+- Magic properties schema
+- Rarity system
+- Tests: Item APIs
+
+**API Routes**:
+
+- `POST /api/v1/items`
+- `GET /api/v1/items`
+- `GET /api/v1/items/:id`
+- `PUT /api/v1/items/:id`
+- `DELETE /api/v1/items/:id`
+
+**Acceptance Criteria**:
+
+- [ ] Item CRUD works
+- [ ] Magic properties save
+- [ ] Categories function
+
+---
+
+### Increment 027: Item Management Pages
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Connect item pages to APIs
+- Category filtering
+- Rarity filtering
+- Item creation/edit
+- Tests: Item page integration
+
+**Acceptance Criteria**:
+
+- [ ] Item pages functional
+- [ ] Filters work
+- [ ] Can manage items
+
+---
+
+### Increment 028: Party Model & API
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Party Mongoose model
+- Party CRUD APIs
+- Member management APIs
+- Tests: Party APIs
+
+**API Routes**:
+
+- `POST /api/v1/parties`
+- `GET /api/v1/parties`
+- `PUT /api/v1/parties/:id`
+- `DELETE /api/v1/parties/:id`
+- `POST /api/v1/parties/:id/members`
+- `DELETE /api/v1/parties/:id/members/:characterId`
+
+**Acceptance Criteria**:
+
+- [ ] Party CRUD works
+- [ ] Can add/remove members
+- [ ] Member limit enforced
+
+---
+
+### Increment 029: Party Management Integration
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Connect party pages to APIs
+- Member selection UI
+- Drag-drop member ordering
+- Role assignment
+- Tests: Party management flow
+
+**Acceptance Criteria**:
+
+- [ ] Can create parties
+- [ ] Can manage members
+- [ ] Roles assign correctly
+
+---
+
+## Phase 4: Combat Engine Core (Week 5-6)
+
+### Increment 030: Encounter Model & API
+
+**Duration**: Day 2
+**Deliverables**:
+
+- Encounter Mongoose model
+- Encounter CRUD APIs
+- Participant management
+- CR calculation
+- Lair action configuration
+- Tests: Encounter APIs
+
+**API Routes**:
+
+- `POST /api/v1/encounters`
+- `GET /api/v1/encounters`
+- `PUT /api/v1/encounters/:id`
+- `DELETE /api/v1/encounters/:id`
+- `POST /api/v1/encounters/:id/participants`
+
+**Acceptance Criteria**:
+
+- [ ] Encounter CRUD works
+- [ ] Can add participants
+- [ ] CR calculates
+
+---
+
+### Increment 031: Encounter Builder Integration
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Connect builder to APIs
+- Party selection
+- Monster selection
+- CR calculation display
+- Lair action setup
+- Tests: Builder functionality
+
+**Acceptance Criteria**:
+
+- [ ] Builder creates encounters
+- [ ] Can add parties/monsters
+- [ ] CR updates live
+
+---
+
+### Increment 032: Combat Session Model
+
+**Duration**: Day 1
+**Deliverables**:
+
+- CombatSession model
+- Session creation from encounter
+- Participant state tracking
+- Round/turn tracking
+- Tests: Session model
+
+**API Routes**:
+
+- `POST /api/v1/combat/sessions`
+- `GET /api/v1/combat/sessions/:id`
+- `PUT /api/v1/combat/sessions/:id`
+
+**Acceptance Criteria**:
+
+- [ ] Can start combat
+- [ ] Session persists
+- [ ] State tracks correctly
+
+---
+
+### Increment 033: Initiative System
+
+**Duration**: Day 2
+**Deliverables**:
+
+- Initiative rolling
+- Manual initiative entry
+- Dexterity tie-breaking
+- Initiative order sorting
+- Turn advancement
+- Tests: Initiative logic
+
+**API Routes**:
+
+- `POST /api/v1/combat/sessions/:id/initiative/roll`
+- `PUT /api/v1/combat/sessions/:id/initiative/:participantId`
+- `POST /api/v1/combat/sessions/:id/next-turn`
+- `POST /api/v1/combat/sessions/:id/previous-turn`
+
+**Acceptance Criteria**:
+
+- [ ] Initiative rolls work
+- [ ] Tie-breaking correct
+- [ ] Turn advances properly
+
+---
+
+### Increment 034: Combat Tracker Basic Integration
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Load combat session
+- Display initiative order
+- Show current turn
+- Next/previous controls
+- Round counter
+- Tests: Tracker integration
+
+**Acceptance Criteria**:
+
+- [ ] Tracker loads session
+- [ ] Initiative displays
+- [ ] Can advance turns
+- [ ] Round increments
+
+---
+
+### Increment 035: HP Tracking System
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Apply damage API
+- Apply healing API
+- Temporary HP
+- HP validation
+- Death/unconscious states
+- Tests: HP system
+
+**API Routes**:
+
+- `POST /api/v1/combat/sessions/:id/damage`
+- `POST /api/v1/combat/sessions/:id/heal`
+- `POST /api/v1/combat/sessions/:id/temp-hp`
+
+**Acceptance Criteria**:
+
+- [ ] Damage applies
+- [ ] Healing works
+- [ ] Temp HP tracks
+- [ ] States update
+
+---
+
+### Increment 036: HP Tracking UI Integration
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Damage/heal inputs
+- HP bars visual
+- Quick damage buttons
+- Temp HP indicator
+- Unconscious/dead display
+- Tests: HP UI integration
+
+**Acceptance Criteria**:
+
+- [ ] Can apply damage/healing
+- [ ] HP bars update
+- [ ] Visual states show
+
+---
+
+### Increment 037: HP History & Undo
+
+**Duration**: Day 1
+**Deliverables**:
+
+- HP change history
+- Undo last action
+- Redo functionality
+- History limit (last 5)
+- Tests: History system
+
+**API Routes**:
+
+- `GET /api/v1/combat/sessions/:id/history`
+- `POST /api/v1/combat/sessions/:id/undo`
+- `POST /api/v1/combat/sessions/:id/redo`
+
+**Acceptance Criteria**:
+
+- [ ] History tracks
+- [ ] Undo works
+- [ ] Limited to 5 actions
+
+---
+
+### Increment 038: Status Effects Model
+
+**Duration**: Day 1
+**Deliverables**:
+
+- StatusEffect definitions
+- ActiveStatusEffect tracking
+- Duration management
+- Effect expiration
+- Tests: Status model
+
+**Data**:
+
+- All D&D 5e conditions
+- Duration types
+- Effect descriptions
+
+**Acceptance Criteria**:
+
+- [ ] Effects defined
+- [ ] Can apply effects
+- [ ] Duration tracks
+
+---
+
+### Increment 039: Status Effects UI
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Apply status effect UI
+- Status pills display
+- Duration countdown
+- Remove effect
+- Effect descriptions
+- Tests: Status UI
+
+**API Routes**:
+
+- `POST /api/v1/combat/sessions/:id/participants/:pid/effects`
+- `DELETE /api/v1/combat/sessions/:id/participants/:pid/effects/:eid`
+
+**Acceptance Criteria**:
+
+- [ ] Can apply effects
+- [ ] Pills display
+- [ ] Duration shows
+- [ ] Can remove
+
+---
+
+### Increment 040: Lair Actions System
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Lair action triggers
+- Initiative 20 handling
+- Action selection UI
+- Environmental effects
+- Tests: Lair system
+
+**API Routes**:
+
+- `POST /api/v1/combat/sessions/:id/lair-action`
+- `GET /api/v1/combat/sessions/:id/available-lair-actions`
+
+**Acceptance Criteria**:
+
+- [ ] Triggers on init 20
+- [ ] Can select action
+- [ ] Effects apply
+
+---
+
+## Phase 5: Combat Polish & State (Week 7)
+
+### Increment 041: Combat Session Management
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Pause/resume combat
+- End combat
+- Combat summary
+- Session list page
+- Tests: Session management
+
+**API Routes**:
+
+- `PUT /api/v1/combat/sessions/:id/pause`
+- `PUT /api/v1/combat/sessions/:id/resume`
+- `PUT /api/v1/combat/sessions/:id/end`
+
+**Acceptance Criteria**:
+
+- [ ] Can pause/resume
+- [ ] End generates summary
+- [ ] List shows sessions
+
+---
+
+### Increment 042: Combat Log System
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Action logging
+- Log display panel
+- Filter by type
+- Export log
+- Tests: Logging system
+
+**Acceptance Criteria**:
+
+- [ ] Actions log
+- [ ] Log displays
+- [ ] Can filter
+- [ ] Export works
+
+---
+
+### Increment 043: Tier Limit Enforcement
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Usage tracking
+- Limit checks
+- Warning at 80%
+- Block at limit
+- Upgrade prompts
+- Tests: Limit enforcement
+
+**Acceptance Criteria**:
+
+- [ ] Usage tracks
+- [ ] Limits enforce
+- [ ] Warnings show
+- [ ] Upgrade prompts work
+
+---
+
+### Increment 044: Data Export System
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Character export (JSON)
+- Encounter export (JSON)
+- Combat log export (PDF)
+- Bulk export
+- Tests: Export functionality
+
+**API Routes**:
+
+- `GET /api/v1/export/characters`
+- `GET /api/v1/export/encounters`
+- `GET /api/v1/export/combat/:id`
+
+**Acceptance Criteria**:
+
+- [ ] Exports generate
+- [ ] Formats correct
+- [ ] Bulk works
+
+---
+
+### Increment 045: Data Import System
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Character import
+- Validation
+- Duplicate handling
+- Error messages
+- Tests: Import flow
+
+**API Routes**:
+
+- `POST /api/v1/import/characters`
+- `POST /api/v1/import/validate`
+
+**Acceptance Criteria**:
+
+- [ ] Import works
+- [ ] Validation catches errors
+- [ ] Duplicates handled
+
+---
+
+## Phase 6: Monetization (Week 8)
+
+### Increment 046: Stripe Setup & Webhooks
+
+**Duration**: Day 2
 **Deliverables**:
 
 - Stripe integration
-- Billing dashboard
-- Tier upgrade/downgrade flows
+- Webhook endpoints
+- Event handling
+- Customer creation
+- Tests: Stripe integration
 
-### Phase 6: Enhancements (Features 015-019)
+**API Routes**:
 
-**Timeline**: Weeks 34-42 (9 weeks)
-**Goal**: Marketing, export, sharing, premium features
+- `POST /api/v1/webhooks/stripe`
+- `POST /api/v1/billing/create-customer`
+
+**Acceptance Criteria**:
+
+- [ ] Stripe connected
+- [ ] Webhooks receive events
+- [ ] Customers created
+
+---
+
+### Increment 047: Subscription Checkout
+
+**Duration**: Day 1
 **Deliverables**:
 
-- Landing page
-- Data export/import
-- Character sharing
-- Advanced combat logging (paid)
-- Custom themes (paid)
+- Checkout session creation
+- Redirect to Stripe
+- Success/cancel pages
+- Subscription activation
+- Tests: Checkout flow
+
+**API Routes**:
+
+- `POST /api/v1/billing/checkout`
+- `GET /api/v1/billing/success`
+- `GET /api/v1/billing/cancel`
+
+**Acceptance Criteria**:
+
+- [ ] Checkout works
+- [ ] Payment processes
+- [ ] Subscription activates
 
 ---
 
-## Success Metrics per Feature
+### Increment 048: Subscription Management
 
-Each feature includes testable acceptance criteria aligned with PRD success metrics:
+**Duration**: Day 1
+**Deliverables**:
 
-- **User Adoption**: Track feature usage rates (target >60% of active users)
-- **Performance**: Page load <3s, interactions <100ms
-- **Quality**: 80%+ test coverage, <5% bug rate
-- **Tier Conversion**: Upgrade prompts shown when limits approached
-- **Retention**: Users return within 7 days of feature use
+- Current plan display
+- Upgrade/downgrade
+- Cancel subscription
+- Resume subscription
+- Tests: Subscription management
 
-## Constitutional Compliance
+**API Routes**:
 
-All features must adhere to:
+- `POST /api/v1/billing/upgrade`
+- `POST /api/v1/billing/downgrade`
+- `POST /api/v1/billing/cancel`
 
-- **TDD Approach**: Tests written before implementation
-- **File Size**: Max 450 lines per file (uncommented)
-- **Function Size**: Max 50 lines per function
-- **Test Coverage**: 80%+ on touched code
-- **No Duplication**: Extract utilities for shared logic
-- **Remote Authority**: Codacy scans and CI checks authoritative
+**Acceptance Criteria**:
 
-## Spec Kit Process per Feature
-
-1. **Specify** (`/specify`): Create `spec.md` from feature description
-2. **Plan** (`/plan`): Generate `plan.md`, `research.md`, `data-model.md`, `contracts/`, `quickstart.md`
-3. **Tasks** (`/tasks`): Generate `tasks.md` with TDD approach
-4. **Implement** (`/implement`): Execute tasks with quality checks
-5. **Validate**: Run tests, Codacy scan, E2E scenarios
-6. **Merge**: Create PR, auto-merge after checks pass
+- [ ] Can change plans
+- [ ] Cancel works
+- [ ] Limits update
 
 ---
 
-**Total Estimated Timeline**: 42 weeks (10 months) for complete feature set
-**Current Progress**: 2 of 20 features complete (10%) - Week 4 of 42
-**Phase 1 Status**: ✅ Complete (Weeks 1-4)
-**Next Feature**: Feature 003 - Character Management System (P1, Critical Path)
+### Increment 049: Billing Portal
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Customer portal link
+- Invoice history
+- Payment methods
+- Billing details
+- Tests: Portal integration
+
+**API Routes**:
+
+- `POST /api/v1/billing/portal`
+- `GET /api/v1/billing/invoices`
+
+**Acceptance Criteria**:
+
+- [ ] Portal accessible
+- [ ] Invoices show
+- [ ] Can update payment
 
 ---
 
-*This roadmap is a living document. Update after each feature completion.*
+### Increment 050: Free Trial System
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Trial activation
+- Trial countdown
+- Trial expiration
+- Conversion prompts
+- Tests: Trial flow
+
+**Acceptance Criteria**:
+
+- [ ] Trial activates
+- [ ] Countdown shows
+- [ ] Expires correctly
+- [ ] Prompts to convert
+
+---
+
+## Phase 7: Offline & Advanced Features (Week 9-10)
+
+### Increment 051: Service Worker Setup
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Service worker registration
+- Cache strategy
+- Offline detection
+- Online/offline indicator
+- Tests: Service worker
+
+**Acceptance Criteria**:
+
+- [ ] SW registers
+- [ ] Caching works
+- [ ] Offline detected
+
+---
+
+### Increment 052: IndexedDB Setup
+
+**Duration**: Day 1
+**Deliverables**:
+
+- IndexedDB wrapper
+- Schema definition
+- CRUD operations
+- Migration support
+- Tests: IndexedDB operations
+
+**Acceptance Criteria**:
+
+- [ ] DB initializes
+- [ ] CRUD works
+- [ ] Migrations run
+
+---
+
+### Increment 053: Offline Combat
+
+**Duration**: Day 2
+**Deliverables**:
+
+- Local combat storage
+- Offline combat creation
+- Local state management
+- Sync queue
+- Tests: Offline combat
+
+**Acceptance Criteria**:
+
+- [ ] Combat works offline
+- [ ] State persists locally
+- [ ] Queue tracks changes
+
+---
+
+### Increment 054: Background Sync
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Sync mechanism
+- Conflict resolution
+- Sync status UI
+- Error handling
+- Tests: Sync system
+
+**Acceptance Criteria**:
+
+- [ ] Syncs when online
+- [ ] Conflicts resolve
+- [ ] Status shows
+
+---
+
+### Increment 055: Character Sharing
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Share link generation
+- Permission system
+- Accept/reject shares
+- Shared character list
+- Tests: Sharing system
+
+**API Routes**:
+
+- `POST /api/v1/characters/:id/share`
+- `GET /api/v1/characters/shared`
+
+**Acceptance Criteria**:
+
+- [ ] Links generate
+- [ ] Permissions work
+- [ ] Can accept/reject
+
+---
+
+### Increment 056: Advanced Combat Logging (Paid)
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Detailed action log
+- Statistics calculation
+- Analytics dashboard
+- Tier gating
+- Tests: Advanced logging
+
+**Acceptance Criteria**:
+
+- [ ] Detailed logs work
+- [ ] Stats calculate
+- [ ] Gated to paid tiers
+
+---
+
+### Increment 057: Custom Themes (Paid)
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Theme selector
+- Custom colors
+- Font preferences
+- Layout density
+- Tests: Theme system
+
+**Acceptance Criteria**:
+
+- [ ] Themes apply
+- [ ] Custom colors work
+- [ ] Preferences save
+
+---
+
+### Increment 058: Collaborative Mode (Paid)
+
+**Duration**: Day 2
+**Deliverables**:
+
+- Real-time sync (Pusher)
+- Shared campaigns
+- Live combat updates
+- Presence indicators
+- Tests: Collaboration
+
+**Acceptance Criteria**:
+
+- [ ] Real-time works
+- [ ] Multiple users sync
+- [ ] Presence shows
+
+---
+
+### Increment 059: Performance Optimization
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Code splitting
+- Lazy loading
+- Image optimization
+- Bundle analysis
+- Tests: Performance metrics
+
+**Acceptance Criteria**:
+
+- [ ] <3s load time
+- [ ] <100ms interactions
+- [ ] 95+ Lighthouse score
+
+---
+
+### Increment 060: Polish & Launch Prep
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Bug fixes
+- UI polish
+- Error boundaries
+- 404 page
+- Analytics setup
+- Launch checklist
+- Tests: Full E2E suite
+
+**Acceptance Criteria**:
+
+- [ ] No critical bugs
+- [ ] All tests pass
+- [ ] Analytics tracking
+- [ ] Ready for launch
+
+---
+
+## Summary
+
+**Total Increments**: 60
+**Estimated Duration**: 10 weeks (50-60 working days)
+**Daily Deployment**: Each increment deploys to production
+
+## Key Milestones
+
+- **End of Week 1**: Complete UI shell (all pages, no functionality)
+- **End of Week 2**: Authentication working, users can sign up/in
+- **End of Week 4**: All entities manageable (characters, monsters, parties, encounters)
+- **End of Week 6**: Combat tracker fully functional (MVP achieved)
+- **End of Week 8**: Monetization live
+- **End of Week 10**: Full feature set complete
+
+## Testing Strategy
+
+Each increment includes:
+
+1. **Unit Tests**: Component and function testing
+2. **Integration Tests**: API endpoint testing
+3. **E2E Tests**: User flow testing with Playwright
+
+## Deployment Strategy
+
+- Continuous deployment to Fly.io
+- Feature flags for incomplete features
+- Database migrations run automatically
+- Zero-downtime deployments
+- Rollback capability for each increment
+
+## Success Criteria
+
+Each increment must:
+
+- [ ] Pass all tests (unit, integration, E2E)
+- [ ] Deploy successfully
+- [ ] Not break existing functionality
+- [ ] Be usable (even if showing "not implemented")
+- [ ] Meet accessibility standards
+- [ ] Work on mobile devices
