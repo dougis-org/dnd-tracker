@@ -5,6 +5,8 @@
 **Last Updated**: 2025-10-21
 **Status**: Active Development
 
+> **Note**: Technical requirements including specific versions for Node, Next.js, MongoDB, and all dependencies are maintained in [Tech-Stack.md](Tech-Stack.md). All feature implementations must comply with the standards defined there.
+
 ## Overview
 
 This roadmap outlines the iterative development plan for the D&D Tracker, breaking down the complete PRD into atomic, isolated features suitable for the spec kit approach. Each feature represents a complete vertical slice of functionality that can be specified, designed, implemented, and tested independently while contributing to the overall system.
@@ -19,8 +21,8 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **Deliverables**:
 
-- Next.js 15.5+ project structure with TypeScript
-- MongoDB 8.0+ connection and Mongoose ODM setup
+- Next.js project structure with TypeScript (see [Tech-Stack.md](Tech-Stack.md) for versions)
+- MongoDB connection and Mongoose ODM setup (see [Tech-Stack.md](Tech-Stack.md) for versions)
 - shadcn/ui component library configuration
 - Complete data model for 8 core entities
 - API contracts for authentication, characters, and combat
@@ -47,7 +49,7 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 - Usage metrics tracking infrastructure
 - Free tier subscription assignment
 - Next.js middleware integration with Clerk auth
-- Complete E2E test coverage for user flows
+- Complete E2E test coverage for user flows (see [Tech-Stack.md](Tech-Stack.md) for testing requirements)
 
 **Dependencies**: Feature 001 (foundation)
 **Completion Status**:
@@ -369,28 +371,28 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **Priority**: P2 - Important
 **Estimated Effort**: 2 weeks
-**Description**: IndexedDB storage for offline combat tracking, background sync when online, and offline-first architecture for core features.
+**Description**: IndexedDB storage for offline combat tracking, background sync when online, and offline-first architecture for core features (see [Tech-Stack.md](Tech-Stack.md) for technology details).
 
 **User Value**: DMs can run combat without internet connectivity, ensuring games aren't disrupted by network issues, with automatic sync when reconnected.
 
 **Scope**:
 
-- IndexedDB setup for combat sessions
-- Offline combat session creation
+- Client-side storage for offline combat session creation
 - Local HP and status effect tracking
 - Background sync with server when online
 - Conflict resolution for synced data
 - Offline mode indicator in UI
 - "Sync status" display
 
-**Key Entities**: LocalCombatSession (IndexedDB schema)
-**Technical Scope**:
+**Technical Scope** (see [Tech-Stack.md](Tech-Stack.md)):
 
 - Service Worker setup
-- IndexedDB wrapper utilities
+- Client-side storage wrapper utilities
 - Sync queue management
 - Online/offline detection
 - Optimistic UI updates
+
+**Key Entities**: LocalCombatSession (IndexedDB schema)
 
 **Dependencies**: Feature 007 (combat sessions), Feature 008 (HP tracking)
 **Blocks**: None
@@ -612,13 +614,13 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 
 **Priority**: P2 - Important (Monetization)
 **Estimated Effort**: 2-3 weeks
-**Description**: Stripe integration for subscription management, payment processing, upgrade/downgrade flows, and billing dashboard.
+**Description**: Payment processing for subscription management, payment processing, upgrade/downgrade flows, and billing dashboard (see [Tech-Stack.md](Tech-Stack.md) for third-party service details).
 
 **User Value**: Users can self-service their subscription changes, view billing history, and manage payment methods securely.
 
 **Scope**:
 
-- Stripe Checkout integration
+- Subscription checkout integration
 - Subscription creation and upgrades
 - Downgrade with data migration warnings
 - Billing dashboard with invoice history
@@ -627,11 +629,11 @@ This roadmap outlines the iterative development plan for the D&D Tracker, breaki
 - Webhook handlers for subscription events
 - Tier access enforcement
 
-**Key Entities**: Subscription (Stripe sync), Invoice, PaymentMethod
+**Key Entities**: Subscription (sync), Invoice, PaymentMethod
 **API Endpoints**:
 
-- `POST /api/billing/checkout` - Create Stripe checkout session
-- `POST /api/billing/portal` - Redirect to Stripe customer portal
+- `POST /api/billing/checkout` - Create checkout session
+- `POST /api/billing/portal` - Redirect to customer portal
 - `POST /api/webhooks/stripe` - Handle subscription events
 - `GET /api/billing/invoices` - List invoices
 - `POST /api/billing/upgrade` - Upgrade tier
