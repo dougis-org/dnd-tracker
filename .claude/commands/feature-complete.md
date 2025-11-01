@@ -10,8 +10,8 @@ Mark a feature as complete in the Feature Roadmap after its PR has been merged. 
 
 Provide the feature number and PR number:
 
-- `/feature-complete 003 165` - Feature 003 completed via PR #165
-- `/feature-complete 004` - Feature 004 completed (will prompt for PR number)
+- `/feature-complete 3 165` - Feature #003 completed via PR #165 (feature IDs are zero padded in the roadmap)
+- `/feature-complete 4` - Feature #004 completed (will prompt for PR number)
 
 If no arguments provided, ask the user for both the feature number and PR number.
 
@@ -42,21 +42,20 @@ Update the feature's section in the roadmap:
 
 1. Change status to: `**Status**: Complete ✅ (Merged via PR #[NUMBER])`
 2. Add completion date: `**Completed**: [MERGE_DATE]`
-3. Move feature from "## Planned Features" to "## Completed Features" section
-4. Preserve all other details (Description, Deliverables, Dependencies, etc.)
+3. Preserve all other details (Description, Deliverables, Dependencies, etc.)
 
 Example transformation:
 
 ```markdown
 BEFORE:
-### Feature 003: Character Management System
+### Feature #003: Character Management System
 **Status**: 🚧 In Progress (Started 2025-10-22)
 **Branch**: 003-character-management
 **Priority**: P1 - Critical Path
 ...
 
 AFTER (in Completed Features section):
-### ✅ Feature 003: Character Management System
+### ✅ Feature #003: Character Management System
 **Status**: Complete ✅ (Merged via PR #165)
 **Completed**: 2025-10-25
 **Spec Location**: `specs/003-character-management/`
@@ -77,27 +76,19 @@ Update the progress tracking section at the bottom of the roadmap:
 Update these lines:
 
 ```markdown
-**Current Progress**: [X] of 20 features complete ([Y]%) - Week [Z] of 42
+**Current Progress**: [X] of [Y] features complete ([Q]%) - Week [Z] of 42
 **Phase [N] Status**: ✅ Complete (if all phase features done) OR In Progress ([X] of [Y] features complete)
 **Next Feature**: Feature [NEXT_NUM] - [NEXT_NAME] (Priority, description)
 ```
 
-## Step 5: Update Development Phases Section
-
-If this feature completes an entire phase:
-
-1. Find the phase section (e.g., "### Phase 2: Entity Management")
-2. Change status to: `**Timeline**: Weeks X-Y | **Status**: ✅ Complete (Completed [DATE])`
-3. Add actual completion date if different from estimate
-
-## Step 6: Commit and Push Changes
+## Step 5: Commit and Push Changes
 
 1. Stage the updated file: `git add docs/Feature-Roadmap.md`
 2. Commit with conventional message: `git commit -m "docs: mark feature [NUMBER] as complete"`
 3. Push to main: `git push origin main`
 4. This ensures all agents are immediately working from the updated roadmap
 
-## Step 7: Save and Report
+## Step 6: Save and Report
 
 1. Verify the updated Feature-Roadmap.md is saved
 2. Run `npm run lint:markdown:fix` to ensure formatting
@@ -135,9 +126,9 @@ Recommended next steps:
 This command works in tandem with `/next-feature`:
 
 1. `/next-feature` marks feature as "In Progress" and runs `/speckit.specify`
-2. Developer works through /plan, /tasks, /implement workflows
+2. Developer works through `/speckit.plan`, `/speckit.tasks`, `/speckit.analyze`, and `/speckit.implement` workflows (following docs/Tech-Stack.md and governance notes)
 3. PR is created and merged
-4. `/feature-complete [NUM] [PR]` marks feature "Complete" and updates progress
+4. `/feature-complete [NUM] [PR]` marks feature "Complete", records governance checkpoint outcomes, and updates progress
 
 For other contribution standards, refer to CONTRIBUTING.md:
 

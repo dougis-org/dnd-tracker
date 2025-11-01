@@ -15,7 +15,7 @@ Start the next feature from the D&D Tracker roadmap. **All contributors must fol
 ## Step 1: Find the Next Feature
 
 1. Read `./docs/Feature-Roadmap.md`
-2. Locate the first feature under "## Planned Features (Priority Order)" that is NOT complete (✅) and NOT "In Progress"
+2. Locate the first feature under "## Planned Features (Priority Order)" that is NOT complete (✅) and NOT "In Progress" (🚧)
 3. Extract:
    - Feature number (e.g., "003")
    - Feature name (e.g., "Character Management System")
@@ -58,7 +58,7 @@ User Value:
 [USER VALUE]
 
 What to build:
-[Convert SCOPE bullets into natural language]
+[Convert SCOPE bullets and acceptance criteria into natural language]
 
 Data needed:
 [Key data models/entities]
@@ -91,13 +91,14 @@ After /speckit.specify completes, report:
 - Branch: [branch-name]
 - Spec file: [spec-file-path]
 - Roadmap updated with 'In Progress' status
-- Ready for /plan command
+- Ready for /speckit.plan command (remember to review docs/Tech-Stack.md and roadmap governance notes)
 
 Next steps:
-1. Run /plan to generate design artifacts
-2. Run /tasks to generate implementation tasks
-3. Run /implement to execute the feature
-4. When complete, run /feature-complete to update the roadmap
+1. Run /speckit.plan to generate design artifacts (review docs/Tech-Stack.md for framework versions before making decisions)
+2. Run /speckit.tasks to generate implementation tasks
+3. Run /speckit.analyze to validate spec/plan/tasks alignment and governance notes
+4. Run /speckit.implement to execute the feature with quality gates
+5. When the PR merges, run /feature-complete to update the roadmap and governance checkpoint status
 ```
 
 ## Roadmap Update on Feature Completion

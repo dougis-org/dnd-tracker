@@ -18,13 +18,15 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Required**: plan.md (tech stack, libraries, structure), spec.md (user stories with priorities)
    - **Optional**: data-model.md (entities), contracts/ (API endpoints), research.md (decisions), quickstart.md (test scenarios)
    - Note: Not all projects have all documents. Generate tasks based on what's available.
+   - Cross-check `docs/Tech-Stack.md` for approved tooling and framework versions and review roadmap governance notes for required evidence or deliverables.
 
 3. **Execute task generation workflow**:
-   - Load plan.md and extract tech stack, libraries, project structure
+   - Load plan.md and extract tech stack, libraries, project structure (validate against docs/Tech-Stack.md)
    - Load spec.md and extract user stories with their priorities (P1, P2, P3, etc.)
    - If data-model.md exists: Extract entities and map to user stories
    - If contracts/ exists: Map endpoints to user stories
    - If research.md exists: Extract decisions for setup tasks
+   - Incorporate governance deliverables (e.g., offline readiness artifacts) as explicit tasks when the roadmap calls them out
    - Generate tasks organized by user story (see Task Generation Rules below)
    - Generate dependency graph showing user story completion order
    - Create parallel execution examples per user story

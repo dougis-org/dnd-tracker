@@ -48,6 +48,8 @@ You **MUST** consider the user input before proceeding (if not empty).
 3. Load and analyze the implementation context:
    - **REQUIRED**: Read tasks.md for the complete task list and execution plan
    - **REQUIRED**: Read plan.md for tech stack, architecture, and file structure
+   - **REQUIRED**: Read `docs/Tech-Stack.md` for approved frameworks, libraries, and tooling expectations
+   - **REQUIRED**: Review the increment entry in `docs/Feature-Roadmap.md` for governance checkpoints and evidence requirements
    - **IF EXISTS**: Read data-model.md for entities and relationships
    - **IF EXISTS**: Read contracts/ for API specifications and test requirements
    - **IF EXISTS**: Read research.md for technical decisions and constraints
@@ -128,7 +130,8 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Verify all required tasks are completed
    - Check that implemented features match the original specification
    - Validate that tests pass and coverage meets requirements
-   - Confirm the implementation follows the technical plan
+   - Confirm the implementation follows the technical plan and roadmap governance notes
+   - Ensure `codacy_cli_analyze` has been run for every modified file (per `.github/instructions/codacy.instructions.md`)
    - Report final status with summary of completed work
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit.tasks` first to regenerate the task list.

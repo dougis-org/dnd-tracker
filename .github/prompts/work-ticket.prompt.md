@@ -26,6 +26,7 @@ Confirm:
 - Issue exists and is open in dougis-org/dnd-tracker
 - User intent is implementation (not replanning)
 - Plan file exists at correct path
+- Latest guidance from `docs/Tech-Stack.md` and roadmap governance notes in `docs/Feature-Roadmap.md` are loaded
 - If no plan found, halt and direct user to run `plan-ticket` first
 
 ---
@@ -34,8 +35,9 @@ Confirm:
 
 0.1 Fetch GitHub issue via GitHub MCP; validate issue number format (numeric) and status (open).
 0.2 Load plan; parse sections; fail fast if missing.
-0.3 Summarize (Sections 1, 3, 5) for confirmation.
-0.4 Add GitHub comment marking "Implementation in progress"; include timestamp & plan file reference.
+0.3 Review `docs/Tech-Stack.md` for approved libraries/tooling and capture governance expectations from the feature entry in `docs/Feature-Roadmap.md`.
+0.4 Summarize (Sections 1, 3, 5) for confirmation, noting Tech-Stack and governance requirements.
+0.5 Add GitHub comment marking "Implementation in progress"; include timestamp & plan file reference.
 
 ---
 
@@ -46,7 +48,7 @@ Confirm:
 - `git checkout main && git pull --ff-only`
   1.2 Switch to feature branch (created during planning):
 - `git switch <prefix>/#{{ISSUE_NUMBER}}-short-kebab-summary`
-  1.3 Confirm branch name matches plan (Section 10 Handoff Package).
+  1.3 Confirm branch name matches plan (Section 10 Handoff Package) and governance expectations.
 
 (See `includes/branch-commit-guidance.md` for naming & commit rules.)
 
@@ -64,7 +66,7 @@ Confirm:
 
 ## Phase 3: Implement (GREEN)
 
-3.1 Domain / DTOs
+3.1 Domain / DTOs (align types/interfaces with `docs/Tech-Stack.md` versions)
 3.2 Service interfaces + impls
 3.3 Data layer (repos, indexes)
 3.4 Controllers / API (validation, auth)
@@ -101,6 +103,7 @@ Confirm:
 | Security/Input | Review validation & logging        | Safe, no secrets    |
 | Feature Flags  | Confirm default OFF or justified   | Documented          |
 | Coverage       | Compare baseline                   | No unjustified drop |
+| Codacy         | `codacy_cli_analyze` per edited file | No new issues       |
 
 Failures → fix root cause (never dilute tests).
 

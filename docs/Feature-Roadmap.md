@@ -1,4 +1,4 @@
-# D&D Tracker - Agile Feature Roadmap (1-2 Day Increments)
+# D&D Tracker - Agile Feature Roadmap (1-2 Day Features)
 
 **Product**: D&D Encounter Tracker Web App
 **Version**: 2.0 - Agile Incremental Approach
@@ -7,13 +7,13 @@
 
 This roadmap is the authoritative plan for delivery cadence and milestones. Scope and expectations remain sourced from `docs/Product-Requirements.md`, while technology selections follow `docs/Tech-Stack.md`.
 
-> **Core Principle**: Each increment is a discrete, deployable unit of work that can be completed in 1-2 days. Every increment includes TDD with unit, integration, and E2E tests.
+> **Core Principle**: Each feature is a discrete, deployable unit of work that can be completed in 1-2 days. Every feature includes TDD with unit, integration, and E2E tests.
 
 ## Phase 1: UI Foundation & Site Structure (Week 1)
 
 **PRD Alignment**: §§5.1-5.4, 8.1-8.3 (Onboarding Experience & Marketing Surfaces)
 
-### Increment 001: Project Setup & Design System
+### Feature 001: Project Setup & Design System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -48,7 +48,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 002: Navigation & Not Implemented Page
+### Feature 002: Navigation & Not Implemented Page
 
 **Duration**: Day 1
 **Deliverables**:
@@ -99,7 +99,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 003: Landing Page & Marketing Components
+### Feature 003: Landing Page & Marketing Components
 
 **Duration**: Day 2
 **Deliverables**:
@@ -123,7 +123,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 004: Dashboard Page
+### Feature 004: Dashboard Page
 
 **Duration**: Day 1
 **Deliverables**:
@@ -153,7 +153,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 005: Character Management Pages
+### Feature 005: Character Management Pages
 
 **Duration**: Day 2
 **Deliverables**:
@@ -183,7 +183,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 006: Party Management Pages
+### Feature 006: Party Management Pages
 
 **Duration**: Day 1
 **Deliverables**:
@@ -212,7 +212,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 007: Monster/NPC Management Pages
+### Feature 007: Monster/NPC Management Pages
 
 **Duration**: Day 2
 **Deliverables**:
@@ -242,7 +242,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 008: Encounter Builder Pages
+### Feature 008: Encounter Builder Pages
 
 **Duration**: Day 1
 **Deliverables**:
@@ -272,7 +272,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 009: Combat Tracker Page
+### Feature 009: Combat Tracker Page
 
 **Duration**: Day 2
 **Deliverables**:
@@ -307,7 +307,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 010: User Profile & Settings Pages
+### Feature 010: User Profile & Settings Pages
 
 **Duration**: Day 1
 **Deliverables**:
@@ -337,7 +337,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 011: Item Catalog Pages
+### Feature 011: Item Catalog Pages
 
 **Duration**: Day 1
 **Deliverables**:
@@ -366,7 +366,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 012: Subscription & Billing Pages
+### Feature 012: Subscription & Billing Pages
 
 **Duration**: Day 1
 **Deliverables**:
@@ -396,13 +396,13 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-**Governance Checkpoint (AI Agent)**: Verify Phase 1 UI deliverables against `docs/Product-Requirements.md §§5-8` and ensure design decisions are documented for future increments.
+**Governance Checkpoint (AI Agent)**: Verify Phase 1 UI deliverables against `docs/Product-Requirements.md §§5-8` and ensure design decisions are documented for future features.
 
 ## Phase 2: Authentication & User Management (Week 2)
 
 **PRD Alignment**: §§4.1, 6.3 (User Management & Security)
 
-### Increment 013: Clerk Integration & Auth Flow
+### Feature 013: Clerk Integration & Auth Flow
 
 **Duration**: Day 2
 **Deliverables**:
@@ -434,7 +434,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 014: MongoDB User Model & Webhook
+### Feature 014: MongoDB User Model & Webhook
 
 **Duration**: Day 1
 **Deliverables**:
@@ -480,7 +480,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 015: Profile Setup Wizard
+### Feature 015: Profile Setup Wizard
 
 **Duration**: Day 1
 **Deliverables**:
@@ -503,7 +503,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 016: User Dashboard with Real Data
+### Feature 016: User Dashboard with Real Data
 
 **Duration**: Day 1
 **Deliverables**:
@@ -524,7 +524,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 017: Profile Page Functionality
+### Feature 017: Profile Page Functionality
 
 **Duration**: Day 1
 **Deliverables**:
@@ -556,7 +556,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **PRD Alignment**: §§4.2-4.4 (Party, Encounter, and Creature Management)
 
-### Increment 018: Character Model & API
+### Feature 018: Character Model & API
 
 **Duration**: Day 2
 **Deliverables**:
@@ -588,7 +588,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 019: Character List Page Integration
+### Feature 019: Character List Page Integration
 
 **Duration**: Day 1
 **Deliverables**:
@@ -610,7 +610,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 020: Character Creation Form
+### Feature 020: Character Creation Form
 
 **Duration**: Day 1
 **Deliverables**:
@@ -631,7 +631,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 021: Character Edit Form
+### Feature 021: Character Edit Form
 
 **Duration**: Day 1
 **Deliverables**:
@@ -650,7 +650,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 022: Character Templates
+### Feature 022: Character Templates
 
 **Duration**: Day 1
 **Deliverables**:
@@ -675,7 +675,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 023: Monster Model & API
+### Feature 023: Monster Model & API
 
 **Duration**: Day 2
 **Deliverables**:
@@ -703,7 +703,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 024: Monster List Page Integration
+### Feature 024: Monster List Page Integration
 
 **Duration**: Day 1
 **Deliverables**:
@@ -722,7 +722,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 025: Monster Creation/Edit Forms
+### Feature 025: Monster Creation/Edit Forms
 
 **Duration**: Day 1
 **Deliverables**:
@@ -741,7 +741,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 026: Item Model & API
+### Feature 026: Item Model & API
 
 **Duration**: Day 1
 **Deliverables**:
@@ -768,7 +768,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 027: Item Management Pages
+### Feature 027: Item Management Pages
 
 **Duration**: Day 1
 **Deliverables**:
@@ -787,7 +787,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 028: Party Model & API
+### Feature 028: Party Model & API
 
 **Duration**: Day 1
 **Deliverables**:
@@ -814,7 +814,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 029: Party Management Integration
+### Feature 029: Party Management Integration
 
 **Duration**: Day 1
 **Deliverables**:
@@ -839,7 +839,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **PRD Alignment**: §§4.6, 6.1, 8.3 (Data Persistence & Offline Experience)
 
-### Increment 030: Service Worker Setup
+### Feature 030: Service Worker Setup
 
 **Duration**: Day 1
 **Deliverables**:
@@ -858,7 +858,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 031: IndexedDB Setup
+### Feature 031: IndexedDB Setup
 
 **Duration**: Day 1
 **Deliverables**:
@@ -877,7 +877,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 032: Offline Combat
+### Feature 032: Offline Combat
 
 **Duration**: Day 2
 **Deliverables**:
@@ -896,7 +896,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 033: Background Sync
+### Feature 033: Background Sync
 
 **Duration**: Day 1
 **Deliverables**:
@@ -921,7 +921,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **PRD Alignment**: §§4.3-4.5 (Encounter Builder & Combat Tracker foundations)
 
-### Increment 034: Encounter Model & API
+### Feature 034: Encounter Model & API
 
 **Duration**: Day 2
 **Deliverables**:
@@ -949,7 +949,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 035: Encounter Builder Integration
+### Feature 035: Encounter Builder Integration
 
 **Duration**: Day 1
 **Deliverables**:
@@ -969,7 +969,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 036: Combat Session Model
+### Feature 036: Combat Session Model
 
 **Duration**: Day 1
 **Deliverables**:
@@ -994,7 +994,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 037: Initiative System
+### Feature 037: Initiative System
 
 **Duration**: Day 2
 **Deliverables**:
@@ -1021,7 +1021,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 038: Combat Tracker Basic Integration
+### Feature 038: Combat Tracker Basic Integration
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1042,7 +1042,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 039: HP Tracking System
+### Feature 039: HP Tracking System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1069,7 +1069,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 040: HP Tracking UI Integration
+### Feature 040: HP Tracking UI Integration
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1089,7 +1089,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 041: HP History & Undo
+### Feature 041: HP History & Undo
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1114,7 +1114,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 042: Status Effects Model
+### Feature 042: Status Effects Model
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1139,7 +1139,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 043: Status Effects UI
+### Feature 043: Status Effects UI
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1165,7 +1165,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 044: Lair Actions System
+### Feature 044: Lair Actions System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1195,7 +1195,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **PRD Alignment**: §§4.5, 5.4 (Combat Flow Enhancements & UX)
 
-### Increment 045: Combat Session Management
+### Feature 045: Combat Session Management
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1220,7 +1220,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 046: Combat Log System
+### Feature 046: Combat Log System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1240,7 +1240,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 047: Tier Limit Enforcement
+### Feature 047: Tier Limit Enforcement
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1261,7 +1261,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 048: Data Export System
+### Feature 048: Data Export System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1286,7 +1286,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 049: Data Import System
+### Feature 049: Data Import System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1316,9 +1316,9 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **PRD Alignment**: §§3, 5.2 (Subscription Strategy & Billing UX)
 
-**Epic Note**: Increments 012 and 050-054 execute as a single monetization epic: mock UI validation → Stripe integration → subscription management → billing portal → trial enablement.
+**Epic Note**: Features 012 and 050-054 execute as a single monetization epic: mock UI validation → Stripe integration → subscription management → billing portal → trial enablement.
 
-### Increment 050: Stripe Setup & Webhooks
+### Feature 050: Stripe Setup & Webhooks
 
 **Duration**: Day 2
 **Deliverables**:
@@ -1342,7 +1342,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 051: Subscription Checkout
+### Feature 051: Subscription Checkout
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1367,7 +1367,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 052: Subscription Management
+### Feature 052: Subscription Management
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1392,7 +1392,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 053: Billing Portal
+### Feature 053: Billing Portal
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1416,7 +1416,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 054: Free Trial System
+### Feature 054: Free Trial System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1442,7 +1442,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **PRD Alignment**: §§3.3, 5.3, 12 (Premium Expansion & Future Enhancements)
 
-### Increment 055: Character Sharing
+### Feature 055: Character Sharing
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1466,7 +1466,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 056: Advanced Combat Logging (Paid)
+### Feature 056: Advanced Combat Logging (Paid)
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1485,7 +1485,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 057: Custom Themes (Paid)
+### Feature 057: Custom Themes (Paid)
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1504,7 +1504,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 058: Collaborative Mode (Paid)
+### Feature 058: Collaborative Mode (Paid)
 
 **Duration**: Day 2
 **Deliverables**:
@@ -1523,7 +1523,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 059: Performance Optimization
+### Feature 059: Performance Optimization
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1542,7 +1542,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Increment 060: Polish & Launch Prep
+### Feature 060: Polish & Launch Prep
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1568,9 +1568,9 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ## Summary
 
-**Total Increments**: 60
+**Total Features**: 60
 **Estimated Duration**: 10 weeks (50-60 working days)
-**Daily Deployment**: Each increment deploys to production
+**Daily Deployment**: Each feature deploys to production
 
 ## Key Milestones
 
@@ -1584,7 +1584,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ## Testing Strategy
 
-Each increment includes:
+Each feature includes:
 
 1. **Unit Tests**: Component and function testing
 2. **Integration Tests**: API endpoint testing
@@ -1596,11 +1596,11 @@ Each increment includes:
 - Feature flags for incomplete features
 - Database migrations run automatically
 - Zero-downtime deployments
-- Rollback capability for each increment
+- Rollback capability for each feature
 
 ## Success Criteria
 
-Each increment must:
+Each feature must:
 
 - [ ] Pass all tests (unit, integration, E2E)
 - [ ] Deploy successfully
