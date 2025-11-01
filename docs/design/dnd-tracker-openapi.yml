@@ -1,0 +1,2234 @@
+openapi: 3.0.0
+info:
+  title: D&D Tracker API
+  description: API for D&D Encounter Tracker Web Application
+  version: 1.0.0
+  contact:
+    name: D&D Tracker Support
+    email: support@dndtracker.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.dndtracker.com/api/v1
+    description: Production server
+  - url: http://localhost:3000/api/v1
+    description: Development server
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Authentication
+    description: Authentication and webhook endpoints
+  - name: Users
+    description: User profile and preferences
+  - name: Characters
+    description: Character management
+  - name: Parties
+    description: Party management
+  - name: Monsters
+    description: Monster and NPC management
+  - name: Items
+    description: Item management
+  - name: Encounters
+    description: Encounter building
+  - name: Combat
+    description: Combat session management
+  - name: Billing
+    description: Subscription and payment management
+  - name: Export
+    description: Data export endpoints
+  - name: Dashboard
+    description: Dashboard and analytics
+
+paths:
+  # Authentication
+  /auth/webhook:
+    post:
+      tags:
+        - Authentication
+      summary: Clerk webhook handler
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [user.created, user.updated, user.deleted]
+                data:
+                  type: object
+      responses:
+        '200':
+          description: Webhook processed successfully
+
+  # Users
+  /users/profile:
+    get:
+      tags:
+        - Users
+      summary: Get user profile
+      responses:
+        '200':
+          description: User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    put:
+      tags:
+        - Users
+      summary: Update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserProfileRequest'
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /users/{userId}/usage:
+    get:
+      tags:
+        - Users
+      summary: Get usage metrics
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: Usage metrics retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageMetricsResponse'
+
+  /users/{userId}/theme:
+    put:
+      tags:
+        - Users
+      summary: Update theme preferences (Paid feature)
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateThemeRequest'
+      responses:
+        '200':
+          description: Theme updated
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+
+  # Characters
+  /characters:
+    get:
+      tags:
+        - Characters
+      summary: List characters
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/sort'
+        - name: filter[class]
+          in: query
+          schema:
+            type: string
+        - name: filter[race]
+          in: query
+          schema:
+            type: string
+        - name: filter[level]
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Characters list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterListResponse'
+
+    post:
+      tags:
+        - Characters
+      summary: Create character
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCharacterRequest'
+      responses:
+        '201':
+          description: Character created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+
+  /characters/{characterId}:
+    get:
+      tags:
+        - Characters
+      summary: Get character details
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+      responses:
+        '200':
+          description: Character details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Characters
+      summary: Update character
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCharacterRequest'
+      responses:
+        '200':
+          description: Character updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterResponse'
+
+    patch:
+      tags:
+        - Characters
+      summary: Partially update character
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchCharacterRequest'
+      responses:
+        '200':
+          description: Character updated
+
+    delete:
+      tags:
+        - Characters
+      summary: Delete character
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+      responses:
+        '204':
+          description: Character deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /characters/{characterId}/save-template:
+    post:
+      tags:
+        - Characters
+      summary: Save character as template
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                templateName:
+                  type: string
+      responses:
+        '201':
+          description: Template created
+
+  /characters/templates:
+    get:
+      tags:
+        - Characters
+      summary: Get character templates
+      responses:
+        '200':
+          description: Templates list
+
+  /characters/from-template:
+    post:
+      tags:
+        - Characters
+      summary: Create character from template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                templateId:
+                  type: string
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Character created from template
+
+  /characters/{characterId}/share:
+    post:
+      tags:
+        - Characters
+      summary: Create share link for character
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateShareRequest'
+      responses:
+        '201':
+          description: Share link created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkResponse'
+
+  /characters/{characterId}/permissions:
+    post:
+      tags:
+        - Characters
+      summary: Grant character permissions
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantPermissionRequest'
+      responses:
+        '201':
+          description: Permissions granted
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /characters/{characterId}/permissions/{userId}:
+    delete:
+      tags:
+        - Characters
+      summary: Revoke character permissions
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '204':
+          description: Permissions revoked
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /characters/shared:
+    get:
+      tags:
+        - Characters
+      summary: List characters I have shared
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: Shared characters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterListResponse'
+
+  /characters/shared-with-me:
+    get:
+      tags:
+        - Characters
+      summary: List characters shared with me
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: Characters shared with current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterListResponse'
+
+  /characters/{characterId}/export:
+    get:
+      tags:
+        - Export
+      summary: Export character
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+        - name: format
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [json, pdf]
+      responses:
+        '200':
+          description: Character exported
+
+  # Parties
+  /parties:
+    get:
+      tags:
+        - Parties
+      summary: List parties
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: Parties list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartyListResponse'
+
+    post:
+      tags:
+        - Parties
+      summary: Create party
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePartyRequest'
+      responses:
+        '201':
+          description: Party created
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+
+  /parties/{partyId}:
+    get:
+      tags:
+        - Parties
+      summary: Get party details
+      parameters:
+        - $ref: '#/components/parameters/partyId'
+      responses:
+        '200':
+          description: Party details
+
+    put:
+      tags:
+        - Parties
+      summary: Update party
+      parameters:
+        - $ref: '#/components/parameters/partyId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePartyRequest'
+      responses:
+        '200':
+          description: Party updated
+
+    delete:
+      tags:
+        - Parties
+      summary: Delete party
+      parameters:
+        - $ref: '#/components/parameters/partyId'
+      responses:
+        '204':
+          description: Party deleted
+
+  /parties/{partyId}/members:
+    post:
+      tags:
+        - Parties
+      summary: Add party member
+      parameters:
+        - $ref: '#/components/parameters/partyId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddPartyMemberRequest'
+      responses:
+        '201':
+          description: Member added
+
+  /parties/{partyId}/members/{characterId}:
+    delete:
+      tags:
+        - Parties
+      summary: Remove party member
+      parameters:
+        - $ref: '#/components/parameters/partyId'
+        - $ref: '#/components/parameters/characterId'
+      responses:
+        '204':
+          description: Member removed
+
+  # Monsters
+  /monsters:
+    get:
+      tags:
+        - Monsters
+      summary: List monsters
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - name: filter[type]
+          in: query
+          schema:
+            type: string
+        - name: filter[cr]
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Monsters list
+
+    post:
+      tags:
+        - Monsters
+      summary: Create monster
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMonsterRequest'
+      responses:
+        '201':
+          description: Monster created
+
+  /monsters/{monsterId}:
+    get:
+      tags:
+        - Monsters
+      summary: Get monster details
+      parameters:
+        - $ref: '#/components/parameters/monsterId'
+      responses:
+        '200':
+          description: Monster details
+
+    put:
+      tags:
+        - Monsters
+      summary: Update monster
+      parameters:
+        - $ref: '#/components/parameters/monsterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMonsterRequest'
+      responses:
+        '200':
+          description: Monster updated
+
+    delete:
+      tags:
+        - Monsters
+      summary: Delete monster
+      parameters:
+        - $ref: '#/components/parameters/monsterId'
+      responses:
+        '204':
+          description: Monster deleted
+
+  # Items
+  /items:
+    get:
+      tags:
+        - Items
+      summary: List items
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - name: filter[category]
+          in: query
+          schema:
+            type: string
+        - name: filter[rarity]
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Items list
+
+    post:
+      tags:
+        - Items
+      summary: Create item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateItemRequest'
+      responses:
+        '201':
+          description: Item created
+
+  /items/{itemId}:
+    get:
+      tags:
+        - Items
+      summary: Get item details
+      parameters:
+        - $ref: '#/components/parameters/itemId'
+      responses:
+        '200':
+          description: Item details
+
+    put:
+      tags:
+        - Items
+      summary: Update item
+      parameters:
+        - $ref: '#/components/parameters/itemId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateItemRequest'
+      responses:
+        '200':
+          description: Item updated
+
+    delete:
+      tags:
+        - Items
+      summary: Delete item
+      parameters:
+        - $ref: '#/components/parameters/itemId'
+      responses:
+        '204':
+          description: Item deleted
+
+  # Encounters
+  /encounters:
+    get:
+      tags:
+        - Encounters
+      summary: List encounters
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - name: filter[difficulty]
+          in: query
+          schema:
+            type: string
+            enum: [easy, medium, hard, deadly]
+      responses:
+        '200':
+          description: Encounters list
+
+    post:
+      tags:
+        - Encounters
+      summary: Create encounter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEncounterRequest'
+      responses:
+        '201':
+          description: Encounter created
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+
+  /encounters/{encounterId}:
+    get:
+      tags:
+        - Encounters
+      summary: Get encounter details
+      parameters:
+        - $ref: '#/components/parameters/encounterId'
+      responses:
+        '200':
+          description: Encounter details
+
+    put:
+      tags:
+        - Encounters
+      summary: Update encounter
+      parameters:
+        - $ref: '#/components/parameters/encounterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEncounterRequest'
+      responses:
+        '200':
+          description: Encounter updated
+
+    delete:
+      tags:
+        - Encounters
+      summary: Delete encounter
+      parameters:
+        - $ref: '#/components/parameters/encounterId'
+      responses:
+        '204':
+          description: Encounter deleted
+
+  /encounters/{encounterId}/participants:
+    post:
+      tags:
+        - Encounters
+      summary: Add participant to encounter
+      parameters:
+        - $ref: '#/components/parameters/encounterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddParticipantRequest'
+      responses:
+        '201':
+          description: Participant added
+
+  /encounters/{encounterId}/lair-actions:
+    post:
+      tags:
+        - Encounters
+      summary: Assign lair actions to encounter
+      parameters:
+        - $ref: '#/components/parameters/encounterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignLairActionsRequest'
+      responses:
+        '201':
+          description: Lair actions assigned
+
+  # Combat Sessions
+  /combat/sessions:
+    get:
+      tags:
+        - Combat
+      summary: List combat sessions
+      parameters:
+        - name: filter[status]
+          in: query
+          schema:
+            type: string
+            enum: [active, paused, completed]
+      responses:
+        '200':
+          description: Combat sessions list
+
+    post:
+      tags:
+        - Combat
+      summary: Start combat session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                encounterId:
+                  type: string
+              required:
+                - encounterId
+      responses:
+        '201':
+          description: Combat session started
+
+  /combat/sessions/{sessionId}:
+    get:
+      tags:
+        - Combat
+      summary: Get combat session
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '200':
+          description: Combat session details
+
+    put:
+      tags:
+        - Combat
+      summary: Update combat session
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCombatSessionRequest'
+      responses:
+        '200':
+          description: Combat session updated
+
+  /combat/sessions/{sessionId}/initiative/roll:
+    post:
+      tags:
+        - Combat
+      summary: Roll initiative
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                method:
+                  type: string
+                  enum: [auto, manual]
+      responses:
+        '200':
+          description: Initiative rolled
+
+  /combat/sessions/{sessionId}/initiative/{participantId}:
+    put:
+      tags:
+        - Combat
+      summary: Update initiative
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+        - $ref: '#/components/parameters/participantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                initiative:
+                  type: integer
+      responses:
+        '200':
+          description: Initiative updated
+
+  /combat/sessions/{sessionId}/next-turn:
+    post:
+      tags:
+        - Combat
+      summary: Advance to next turn
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '200':
+          description: Advanced to next turn
+
+  /combat/sessions/{sessionId}/previous-turn:
+    post:
+      tags:
+        - Combat
+      summary: Go to previous turn
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '200':
+          description: Moved to previous turn
+
+  /combat/sessions/{sessionId}/damage:
+    post:
+      tags:
+        - Combat
+      summary: Apply damage
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyDamageRequest'
+      responses:
+        '200':
+          description: Damage applied
+
+  /combat/sessions/{sessionId}/heal:
+    post:
+      tags:
+        - Combat
+      summary: Apply healing
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyHealingRequest'
+      responses:
+        '200':
+          description: Healing applied
+
+  /combat/sessions/{sessionId}/temp-hp:
+    post:
+      tags:
+        - Combat
+      summary: Set temporary HP
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participantId:
+                  type: string
+                amount:
+                  type: integer
+      responses:
+        '200':
+          description: Temporary HP set
+
+  /combat/sessions/{sessionId}/participants/{participantId}/effects:
+    post:
+      tags:
+        - Combat
+      summary: Apply status effect
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+        - $ref: '#/components/parameters/participantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyStatusEffectRequest'
+      responses:
+        '201':
+          description: Status effect applied
+
+  /combat/sessions/{sessionId}/participants/{participantId}/effects/{effectId}:
+    delete:
+      tags:
+        - Combat
+      summary: Remove status effect
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+        - $ref: '#/components/parameters/participantId'
+        - $ref: '#/components/parameters/effectId'
+      responses:
+        '204':
+          description: Status effect removed
+
+  /combat/sessions/{sessionId}/lair-action:
+    post:
+      tags:
+        - Combat
+      summary: Trigger lair action
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerLairActionRequest'
+      responses:
+        '200':
+          description: Lair action triggered
+
+  /combat/sessions/{sessionId}/lair-actions:
+    get:
+      tags:
+        - Combat
+      summary: Get available lair actions
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '200':
+          description: Available lair actions
+
+  /combat/sessions/{sessionId}/pause:
+    put:
+      tags:
+        - Combat
+      summary: Pause combat
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '200':
+          description: Combat paused
+
+  /combat/sessions/{sessionId}/resume:
+    put:
+      tags:
+        - Combat
+      summary: Resume combat
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '200':
+          description: Combat resumed
+
+  /combat/sessions/{sessionId}/end:
+    put:
+      tags:
+        - Combat
+      summary: End combat
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '200':
+          description: Combat ended with summary
+
+  /combat/sessions/{sessionId}/history:
+    get:
+      tags:
+        - Combat
+      summary: Get combat history
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: Combat history
+
+  /combat/sessions/{sessionId}/export:
+    get:
+      tags:
+        - Combat
+      summary: Export combat session
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+        - name: format
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [json, pdf]
+      responses:
+        '200':
+          description: Combat session exported
+
+  /combat/sessions/{sessionId}/undo:
+    post:
+      tags:
+        - Combat
+      summary: Undo last action
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '200':
+          description: Action undone
+
+  /combat/sessions/{sessionId}/log:
+    get:
+      tags:
+        - Combat
+      summary: Get detailed combat log (Paid feature)
+      parameters:
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '200':
+          description: Detailed combat log
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+
+  # Billing
+  /billing/checkout:
+    post:
+      tags:
+        - Billing
+      summary: Create checkout session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCheckoutRequest'
+      responses:
+        '201':
+          description: Checkout session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutSessionResponse'
+
+  /billing/portal:
+    post:
+      tags:
+        - Billing
+      summary: Get customer portal URL
+      responses:
+        '200':
+          description: Portal URL returned
+
+  /billing/upgrade:
+    post:
+      tags:
+        - Billing
+      summary: Upgrade subscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                toTier:
+                  type: string
+                  enum: [seasoned, expert, master, guild]
+      responses:
+        '200':
+          description: Subscription upgraded
+
+  /billing/downgrade:
+    post:
+      tags:
+        - Billing
+      summary: Downgrade subscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                toTier:
+                  type: string
+                  enum: [free, seasoned, expert, master]
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Subscription downgraded
+
+  /billing/cancel:
+    post:
+      tags:
+        - Billing
+      summary: Cancel subscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                feedback:
+                  type: string
+      responses:
+        '200':
+          description: Subscription canceled
+
+  /billing/invoices:
+    get:
+      tags:
+        - Billing
+      summary: Get invoices
+      responses:
+        '200':
+          description: Invoice list
+
+  /billing/webhooks/stripe:
+    post:
+      tags:
+        - Billing
+      summary: Stripe webhook handler
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Webhook processed
+
+  # Dashboard
+  /dashboard:
+    get:
+      tags:
+        - Dashboard
+      summary: Get dashboard data
+      responses:
+        '200':
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardResponse'
+
+  /recent:
+    get:
+      tags:
+        - Dashboard
+      summary: Get recent activity
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Recent activity
+
+  # Export
+  /export/characters:
+    get:
+      tags:
+        - Export
+      summary: Bulk export characters
+      parameters:
+        - name: format
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [json, csv]
+      responses:
+        '200':
+          description: Characters exported
+
+  /encounters/{encounterId}/export:
+    get:
+      tags:
+        - Export
+      summary: Export encounter
+      parameters:
+        - $ref: '#/components/parameters/encounterId'
+        - name: format
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [json]
+      responses:
+        '200':
+          description: Encounter exported
+
+  /export/encounters:
+    get:
+      tags:
+        - Export
+      summary: Bulk export encounters
+      parameters:
+        - name: format
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [json, csv]
+      responses:
+        '200':
+          description: Encounters exported
+
+  # Import
+  /import/characters:
+    post:
+      tags:
+        - Characters
+      summary: Import character
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Character imported
+
+  /import/validate:
+    post:
+      tags:
+        - Characters
+      summary: Validate import data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Validation results
+
+  # Tier Information
+  /tiers:
+    get:
+      tags:
+        - Billing
+      summary: Get tier information
+      security: []
+      responses:
+        '200':
+          description: Tier information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TierInfoResponse'
+
+  /themes:
+    get:
+      tags:
+        - Users
+      summary: Get available themes
+      responses:
+        '200':
+          description: Available themes
+
+  # Health Check
+  /health:
+    get:
+      tags:
+        - System
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: System health status
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Clerk JWT token
+
+  parameters:
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 1
+
+    pageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        default: 20
+        maximum: 100
+
+    sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        description: Sort field with optional - prefix for descending
+
+    userId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    characterId:
+      name: characterId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    partyId:
+      name: partyId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    monsterId:
+      name: monsterId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    itemId:
+      name: itemId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    encounterId:
+      name: encounterId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    sessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    participantId:
+      name: participantId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    effectId:
+      name: effectId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    PaymentRequired:
+      description: Payment required - tier limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Conflict:
+      description: Resource conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    # Common Schemas
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                [
+                  VALIDATION,
+                  AUTHENTICATION,
+                  AUTHORIZATION,
+                  RATE_LIMIT,
+                  TIER_LIMIT,
+                  NOT_FOUND,
+                  CONFLICT,
+                  INTERNAL,
+                ]
+            message:
+              type: string
+            code:
+              type: string
+            details:
+              type: object
+            timestamp:
+              type: string
+              format: date-time
+            requestId:
+              type: string
+              format: uuid
+
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalItems:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrev:
+          type: boolean
+
+    PaginationLinks:
+      type: object
+      properties:
+        self:
+          type: string
+        first:
+          type: string
+        last:
+          type: string
+        next:
+          type: string
+          nullable: true
+        prev:
+          type: string
+          nullable: true
+
+    # User Schemas
+    UserProfile:
+      type: object
+      properties:
+        experienceLevel:
+          type: string
+          enum: [beginner, intermediate, expert, forever_dm]
+        preferredRole:
+          type: string
+          enum: [player, dm, both]
+        ruleset:
+          type: string
+          enum: ['5e', '3.5e', 'pathfinder', 'homebrew']
+        bio:
+          type: string
+        setupCompleted:
+          type: boolean
+
+    UserProfileResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            name:
+              type: string
+            profile:
+              $ref: '#/components/schemas/UserProfile'
+            subscription:
+              type: object
+              properties:
+                tier:
+                  type: string
+                status:
+                  type: string
+                currentPeriodEnd:
+                  type: string
+                  format: date-time
+            usage:
+              type: object
+              properties:
+                parties:
+                  type: integer
+                encounters:
+                  type: integer
+                characters:
+                  type: integer
+
+    UpdateUserProfileRequest:
+      type: object
+      properties:
+        profile:
+          $ref: '#/components/schemas/UserProfile'
+
+    UsageMetricsResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            current:
+              type: object
+            limits:
+              type: object
+            percentages:
+              type: object
+
+    UpdateThemeRequest:
+      type: object
+      properties:
+        theme:
+          type: string
+          enum: [light, dark, auto]
+        colorScheme:
+          type: string
+        fontSize:
+          type: string
+          enum: [small, medium, large]
+        compactMode:
+          type: boolean
+
+    # Character Schemas
+    AbilityScores:
+      type: object
+      properties:
+        strength:
+          type: integer
+          minimum: 1
+          maximum: 30
+        dexterity:
+          type: integer
+          minimum: 1
+          maximum: 30
+        constitution:
+          type: integer
+          minimum: 1
+          maximum: 30
+        intelligence:
+          type: integer
+          minimum: 1
+          maximum: 30
+        wisdom:
+          type: integer
+          minimum: 1
+          maximum: 30
+        charisma:
+          type: integer
+          minimum: 1
+          maximum: 30
+
+    CharacterClass:
+      type: object
+      properties:
+        className:
+          type: string
+        level:
+          type: integer
+          minimum: 1
+          maximum: 20
+        subclass:
+          type: string
+
+    HitPoints:
+      type: object
+      properties:
+        current:
+          type: integer
+        maximum:
+          type: integer
+        temporary:
+          type: integer
+
+    Character:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        race:
+          type: string
+        classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharacterClass'
+        level:
+          type: integer
+        abilityScores:
+          $ref: '#/components/schemas/AbilityScores'
+        hitPoints:
+          $ref: '#/components/schemas/HitPoints'
+        armorClass:
+          type: integer
+        initiative:
+          type: integer
+        speed:
+          type: integer
+
+    CharacterListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Character'
+        pagination:
+          $ref: '#/components/schemas/PaginationMeta'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+
+    CharacterResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Character'
+
+    CreateCharacterRequest:
+      type: object
+      required:
+        - name
+        - race
+        - classes
+        - abilityScores
+        - hitPoints
+        - armorClass
+      properties:
+        name:
+          type: string
+        race:
+          type: string
+        classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CharacterClass'
+        abilityScores:
+          $ref: '#/components/schemas/AbilityScores'
+        hitPoints:
+          $ref: '#/components/schemas/HitPoints'
+        armorClass:
+          type: integer
+        initiative:
+          type: integer
+
+    UpdateCharacterRequest:
+      $ref: '#/components/schemas/CreateCharacterRequest'
+
+    PatchCharacterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        hitPoints:
+          $ref: '#/components/schemas/HitPoints'
+        level:
+          type: integer
+
+    # Party Schemas
+    PartyMember:
+      type: object
+      properties:
+        characterId:
+          type: string
+        characterName:
+          type: string
+        playerName:
+          type: string
+        role:
+          type: string
+          enum: [tank, healer, dps, support, utility]
+
+    Party:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        campaignName:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartyMember'
+
+    PartyListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Party'
+        pagination:
+          $ref: '#/components/schemas/PaginationMeta'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+
+    CreatePartyRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        campaignName:
+          type: string
+
+    UpdatePartyRequest:
+      $ref: '#/components/schemas/CreatePartyRequest'
+
+    AddPartyMemberRequest:
+      type: object
+      required:
+        - characterId
+      properties:
+        characterId:
+          type: string
+        playerName:
+          type: string
+        role:
+          type: string
+
+    # Monster Schemas
+    Monster:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        size:
+          type: string
+          enum: [Tiny, Small, Medium, Large, Huge, Gargantuan]
+        type:
+          type: string
+        alignment:
+          type: string
+        challengeRating:
+          type: number
+        armorClass:
+          type: object
+          properties:
+            value:
+              type: integer
+            type:
+              type: string
+        hitPoints:
+          type: object
+          properties:
+            average:
+              type: integer
+            formula:
+              type: string
+        speed:
+          type: object
+        abilityScores:
+          $ref: '#/components/schemas/AbilityScores'
+
+    CreateMonsterRequest:
+      type: object
+      required:
+        - name
+        - size
+        - type
+        - challengeRating
+      properties:
+        name:
+          type: string
+        size:
+          type: string
+        type:
+          type: string
+        alignment:
+          type: string
+        challengeRating:
+          type: number
+
+    UpdateMonsterRequest:
+      $ref: '#/components/schemas/CreateMonsterRequest'
+
+    # Item Schemas
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+          enum: [weapon, armor, potion, scroll, wondrous]
+        rarity:
+          type: string
+          enum: [common, uncommon, rare, very_rare, legendary, artifact]
+        properties:
+          type: object
+        description:
+          type: string
+        value:
+          type: object
+          properties:
+            amount:
+              type: number
+            currency:
+              type: string
+
+    CreateItemRequest:
+      type: object
+      required:
+        - name
+        - category
+        - rarity
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        rarity:
+          type: string
+        properties:
+          type: object
+        description:
+          type: string
+
+    UpdateItemRequest:
+      $ref: '#/components/schemas/CreateItemRequest'
+
+    # Encounter Schemas
+    Encounter:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        difficulty:
+          type: object
+          properties:
+            calculated:
+              type: string
+            totalXP:
+              type: integer
+        environment:
+          type: object
+        participants:
+          type: array
+          items:
+            type: object
+
+    CreateEncounterRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        environment:
+          type: object
+
+    UpdateEncounterRequest:
+      $ref: '#/components/schemas/CreateEncounterRequest'
+
+    AddParticipantRequest:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+          enum: [party, character, monster]
+        id:
+          type: string
+        quantity:
+          type: integer
+
+    AssignLairActionsRequest:
+      type: object
+      properties:
+        actions:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              trigger:
+                type: string
+              saveDC:
+                type: integer
+              damage:
+                type: string
+
+    # Combat Schemas
+    CombatSession:
+      type: object
+      properties:
+        id:
+          type: string
+        encounterId:
+          type: string
+        status:
+          type: string
+          enum: [active, paused, completed]
+        round:
+          type: integer
+        turn:
+          type: integer
+        participants:
+          type: array
+          items:
+            type: object
+
+    UpdateCombatSessionRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        round:
+          type: integer
+        turn:
+          type: integer
+
+    ApplyDamageRequest:
+      type: object
+      required:
+        - participantId
+        - amount
+      properties:
+        participantId:
+          type: string
+        amount:
+          type: integer
+        type:
+          type: string
+        source:
+          type: string
+
+    ApplyHealingRequest:
+      type: object
+      required:
+        - participantId
+        - amount
+      properties:
+        participantId:
+          type: string
+        amount:
+          type: integer
+        source:
+          type: string
+
+    ApplyStatusEffectRequest:
+      type: object
+      required:
+        - name
+      properties:
+        effectId:
+          type: string
+        name:
+          type: string
+        duration:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [rounds, minutes, hours, until_save]
+            value:
+              type: integer
+
+    TriggerLairActionRequest:
+      type: object
+      required:
+        - actionId
+      properties:
+        actionId:
+          type: string
+        targets:
+          type: array
+          items:
+            type: string
+        results:
+          type: object
+
+    # Billing Schemas
+    CreateCheckoutRequest:
+      type: object
+      required:
+        - tier
+        - interval
+      properties:
+        tier:
+          type: string
+          enum: [seasoned, expert, master, guild]
+        interval:
+          type: string
+          enum: [monthly, yearly]
+
+    CheckoutSessionResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            checkoutUrl:
+              type: string
+            sessionId:
+              type: string
+
+    TierInfoResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              tier:
+                type: string
+              name:
+                type: string
+              price:
+                type: object
+              limits:
+                type: object
+              features:
+                type: array
+                items:
+                  type: string
+
+    # Dashboard Schemas
+    DashboardResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            stats:
+              type: object
+            usage:
+              type: object
+            recentActivity:
+              type: array
+              items:
+                type: object
+            quickActions:
+              type: array
+              items:
+                type: object
+
+    # Share Schemas
+    CreateShareRequest:
+      type: object
+      properties:
+        permissions:
+          type: object
+          properties:
+            view:
+              type: boolean
+            edit:
+              type: boolean
+            play:
+              type: boolean
+            share:
+              type: boolean
+        expiresIn:
+          type: integer
+
+    ShareLinkResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            shareCode:
+              type: string
+            shareUrl:
+              type: string
+            expiresAt:
+              type: string
+              format: date-time
+
+    GrantPermissionRequest:
+      type: object
+      required:
+        - userId
+        - permissions
+      properties:
+        userId:
+          type: string
+        permissions:
+          type: object
+          properties:
+            view:
+              type: boolean
+            edit:
+              type: boolean
+            play:
+              type: boolean
+            share:
+              type: boolean

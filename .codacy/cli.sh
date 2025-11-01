@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
 
 fatal() {
     echo "Error: $1" >&2
@@ -68,7 +69,6 @@ handle_rate_limit() {
           fatal "Error: GitHub API rate limit exceeded. Please try again later"
     fi
 }
-
 download_file() {
     local url="$1"
 

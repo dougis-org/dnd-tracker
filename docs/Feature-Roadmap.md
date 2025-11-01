@@ -14,15 +14,26 @@
 **Duration**: Day 1
 **Deliverables**:
 
-- Next.js 16.0.1 project with TypeScript 5.9.2
+- Next.js 16.0.1 project with TypeScript 5.9.2 and Node 25.1.0
 - Tailwind CSS 4.x configuration
 - shadcn/ui setup with all components installed
+- ESLint integrated and using existing `.eslintrc.js`
+- Markdownlint integrated and using existing `.markdownlint.json`
 - Color scheme, typography, spacing system
 - Dark/light theme toggle (UI only)
 - Common layouts: `MainLayout`, `AuthLayout`, `DashboardLayout`
 - Jest + Playwright test setup
 - Deployment pipeline to Fly.io
 - Tests: Component library smoke tests
+- Commands: npm run commands expected by CI are setup
+  - test:ci:parallel
+    - Runs the entire test suite using `--maxWorkers=50%`
+  - lint
+    - Runs ESLint
+  - lint:markdown
+    - Runs markdownlint
+  - lint:markdown:fix
+    - runs npm run lint:markdown passing `--fix`
 
 **Acceptance Criteria**:
 

@@ -49,7 +49,7 @@ Before creating a PR, ensure:
 - [ ] All TypeScript errors are resolved (`npm run type-check`)
 - [ ] ESLint passes without errors (`npm run lint`)
 - [ ] Markdownlint passes without errors (`npm run lint:markdown:fix`)
-- [ ] All tests pass (`npm run test:ci`)
+- [ ] All tests pass (`npm run test:ci:parallel`)
 - [ ] Build completes successfully (`npm run build`)
 - [ ] All new dependencies are installed and scanned (see Security below)
 - [ ] Environment variables are documented in `.env.example`
