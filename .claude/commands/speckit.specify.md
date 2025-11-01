@@ -39,7 +39,7 @@ Given that feature description, do this:
    - You must only ever run this script once
    - The JSON is provided in the terminal as output - always refer to it to get the actual content you're looking for
 
-3. Load `.specify/templates/spec-template.md` to understand required sections.
+3. Load `.specify/templates/spec-template.md` to understand required sections. Also, review `docs/Feature-Roadmap.md` to understand the feature's context and dependencies, and check `docs/design/` for relevant design documents.
 
 4. Follow this execution flow:
 
