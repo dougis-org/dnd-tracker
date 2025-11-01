@@ -13,18 +13,18 @@ This command is maintained in the Claude Code commands directory. For the comple
 **Usage**: `/feature-complete 003 165` (feature number, PR number)
 
 **What it does**:
-1. Verifies PR is merged using `gh pr view`
-2. Extracts merge date from PR
+1. Verifies the PR is merged using `gh pr view` and cross-checks that the roadmap increment has no open governance checklist items
+2. Extracts the merge date from the PR for status history
 3. Updates `docs/Feature-Roadmap.md`:
-   - Marks feature as "Complete ✅"
-   - Moves to "Completed Features" section
-   - Updates progress tracking
-   - Updates phase completion status
-4. Reports summary and next steps
+   - Marks the increment as "Complete ✅" and records the merge date
+   - Moves the entry into the "Completed Features" section while preserving any governance notes
+   - Refreshes progress tracking and phase completion roll-ups
+   - Confirms downstream dependencies can now be unblocked
+4. Reports the summary, highlights any follow-on governance actions, and reminds the agent to queue `/next-feature`
 
 **Workflow Integration**:
 ```
-[PR merged] → /feature-complete [NUM] [PR] → /next-feature (for next one)
+[PR merged + governance checkpoint passed] → /feature-complete [NUM] [PR] → /next-feature (for next one)
 ```
 
 **For Full Documentation**: See `.claude/commands/feature-complete.md` and `docs/Slash-Commands.md`

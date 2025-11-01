@@ -5,9 +5,13 @@
 **Last Updated**: 2025-11-01
 **Status**: Planning Phase
 
+This roadmap is the authoritative plan for delivery cadence and milestones. Scope and expectations remain sourced from `docs/Product-Requirements.md`, while technology selections follow `docs/Tech-Stack.md`.
+
 > **Core Principle**: Each increment is a discrete, deployable unit of work that can be completed in 1-2 days. Every increment includes TDD with unit, integration, and E2E tests.
 
 ## Phase 1: UI Foundation & Site Structure (Week 1)
+
+**PRD Alignment**: §§5.1-5.4, 8.1-8.3 (Onboarding Experience & Marketing Surfaces)
 
 ### Increment 001: Project Setup & Design System
 
@@ -91,6 +95,7 @@
 - [ ] Navigation menu shows all sections
 - [ ] Mobile menu works on small screens
 - [ ] Breadcrumbs show correct path
+- [ ] Stakeholder design review sign-off captured for navigation mock
 
 ---
 
@@ -114,6 +119,7 @@
 - [ ] All sections render with mock data
 - [ ] Page is mobile responsive
 - [ ] Meta tags present in page head
+- [ ] Stakeholder design review sign-off captured for landing page mock
 
 ---
 
@@ -143,6 +149,7 @@
 - [ ] All widgets render with mock data
 - [ ] Quick actions are visible but show NotImplemented on click
 - [ ] Responsive grid layout works
+- [ ] Stakeholder design review sign-off captured for dashboard mock
 
 ---
 
@@ -172,6 +179,7 @@
 - [ ] `/characters/:id` shows character details
 - [ ] `/characters/new` shows creation form
 - [ ] Form has all D&D 5e fields
+- [ ] Stakeholder design review sign-off captured for character management mock
 
 ---
 
@@ -200,6 +208,7 @@
 - [ ] `/parties/:id` shows party details with members
 - [ ] `/parties/new` shows creation form
 - [ ] Member management UI present
+- [ ] Stakeholder design review sign-off captured for party management mock
 
 ---
 
@@ -229,6 +238,7 @@
 - [ ] `/monsters/:id` shows full stat block
 - [ ] `/monsters/new` shows creation form
 - [ ] Special abilities section displays
+- [ ] Stakeholder design review sign-off captured for monster management mock
 
 ---
 
@@ -258,6 +268,7 @@
 - [ ] `/encounters/:id` shows details
 - [ ] `/encounters/new` shows builder wizard
 - [ ] CR calculation displays (mock)
+- [ ] Stakeholder design review sign-off captured for encounter builder mock
 
 ---
 
@@ -292,6 +303,7 @@
 - [ ] HP controls present
 - [ ] Status effects show as pills
 - [ ] Lair action prompt at initiative 20
+- [ ] Stakeholder design review sign-off captured for combat tracker mock
 
 ---
 
@@ -321,6 +333,7 @@
 - [ ] `/settings` shows all sections
 - [ ] Forms display but don't submit
 - [ ] All preference options visible
+- [ ] Stakeholder design review sign-off captured for profile/settings mock
 
 ---
 
@@ -349,6 +362,7 @@
 - [ ] `/items/:id` shows item details
 - [ ] `/items/new` shows creation form
 - [ ] Rarity indicators display
+- [ ] Stakeholder design review sign-off captured for item catalog mock
 
 ---
 
@@ -378,10 +392,15 @@
 - [ ] Usage metrics display with visual indicators
 - [ ] Plan comparison table renders
 - [ ] Billing history shows mock data
+- [ ] Stakeholder design review sign-off captured for subscription mock
 
 ---
 
+**Governance Checkpoint (AI Agent)**: Verify Phase 1 UI deliverables against `docs/Product-Requirements.md §§5-8` and ensure design decisions are documented for future increments.
+
 ## Phase 2: Authentication & User Management (Week 2)
+
+**PRD Alignment**: §§4.1, 6.3 (User Management & Security)
 
 ### Increment 013: Clerk Integration & Auth Flow
 
@@ -531,7 +550,11 @@
 
 ---
 
+**Governance Checkpoint (AI Agent)**: Confirm auth + user data flows fulfill `docs/Product-Requirements.md §4.1` and update integration notes in `docs/Tech-Stack.md` if required.
+
 ## Phase 3: Core Entity Management (Week 3-4)
+
+**PRD Alignment**: §§4.2-4.4 (Party, Encounter, and Creature Management)
 
 ### Increment 018: Character Model & API
 
@@ -810,9 +833,95 @@
 
 ---
 
-## Phase 4: Combat Engine Core (Week 5-6)
+**Governance Checkpoint (AI Agent)**: Validate entity domain coverage against `docs/Product-Requirements.md §§4.2-4.4` and confirm API schemas remain aligned with the technical design.
 
-### Increment 030: Encounter Model & API
+## Phase 4: Offline Foundations (Week 5)
+
+**PRD Alignment**: §§4.6, 6.1, 8.3 (Data Persistence & Offline Experience)
+
+### Increment 030: Service Worker Setup
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Service worker registration
+- Cache strategy
+- Offline detection
+- Online/offline indicator
+- Tests: Service worker
+
+**Acceptance Criteria**:
+
+- [ ] Service worker registers in supported browsers
+- [ ] Caching strategy validated against `docs/Tech-Stack.md`
+- [ ] Offline state detection surfaces UI banner
+
+---
+
+### Increment 031: IndexedDB Setup
+
+**Duration**: Day 1
+**Deliverables**:
+
+- IndexedDB wrapper
+- Schema definition
+- CRUD operations
+- Migration support
+- Tests: IndexedDB operations
+
+**Acceptance Criteria**:
+
+- [ ] IndexedDB initializes with migration path
+- [ ] CRUD operations validated with sample data set
+- [ ] Data model matches PRD §4.6 persistence requirements
+
+---
+
+### Increment 032: Offline Combat
+
+**Duration**: Day 2
+**Deliverables**:
+
+- Local combat storage
+- Offline combat creation
+- Local state management
+- Sync queue
+- Tests: Offline combat
+
+**Acceptance Criteria**:
+
+- [ ] Combat experiences operate offline end-to-end
+- [ ] Local state persists across refresh
+- [ ] Sync queue records pending operations
+
+---
+
+### Increment 033: Background Sync
+
+**Duration**: Day 1
+**Deliverables**:
+
+- Sync mechanism
+- Conflict resolution
+- Sync status UI
+- Error handling
+- Tests: Sync system
+
+**Acceptance Criteria**:
+
+- [ ] Online reconciliation merges queued changes
+- [ ] Conflict resolution follows documented policy
+- [ ] Sync status indicator visible to users
+
+---
+
+**Governance Checkpoint (AI Agent)**: Validate offline readiness against `docs/Product-Requirements.md §4.6` and ensure roadmap, PRD, and `docs/Tech-Stack.md` remain synchronized.
+
+## Phase 5: Combat Engine Core (Week 5-6)
+
+**PRD Alignment**: §§4.3-4.5 (Encounter Builder & Combat Tracker foundations)
+
+### Increment 034: Encounter Model & API
 
 **Duration**: Day 2
 **Deliverables**:
@@ -840,7 +949,7 @@
 
 ---
 
-### Increment 031: Encounter Builder Integration
+### Increment 035: Encounter Builder Integration
 
 **Duration**: Day 1
 **Deliverables**:
@@ -860,7 +969,7 @@
 
 ---
 
-### Increment 032: Combat Session Model
+### Increment 036: Combat Session Model
 
 **Duration**: Day 1
 **Deliverables**:
@@ -885,7 +994,7 @@
 
 ---
 
-### Increment 033: Initiative System
+### Increment 037: Initiative System
 
 **Duration**: Day 2
 **Deliverables**:
@@ -912,7 +1021,7 @@
 
 ---
 
-### Increment 034: Combat Tracker Basic Integration
+### Increment 038: Combat Tracker Basic Integration
 
 **Duration**: Day 1
 **Deliverables**:
@@ -933,7 +1042,7 @@
 
 ---
 
-### Increment 035: HP Tracking System
+### Increment 039: HP Tracking System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -960,7 +1069,7 @@
 
 ---
 
-### Increment 036: HP Tracking UI Integration
+### Increment 040: HP Tracking UI Integration
 
 **Duration**: Day 1
 **Deliverables**:
@@ -980,7 +1089,7 @@
 
 ---
 
-### Increment 037: HP History & Undo
+### Increment 041: HP History & Undo
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1005,7 +1114,7 @@
 
 ---
 
-### Increment 038: Status Effects Model
+### Increment 042: Status Effects Model
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1030,7 +1139,7 @@
 
 ---
 
-### Increment 039: Status Effects UI
+### Increment 043: Status Effects UI
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1056,7 +1165,7 @@
 
 ---
 
-### Increment 040: Lair Actions System
+### Increment 044: Lair Actions System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1080,9 +1189,13 @@
 
 ---
 
-## Phase 5: Combat Polish & State (Week 7)
+**Governance Checkpoint (AI Agent)**: Confirm combat engine capabilities align with `docs/Product-Requirements.md §§4.4-4.5` and update state-machine notes in the technical design.
 
-### Increment 041: Combat Session Management
+## Phase 6: Combat Polish & State (Week 7)
+
+**PRD Alignment**: §§4.5, 5.4 (Combat Flow Enhancements & UX)
+
+### Increment 045: Combat Session Management
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1107,7 +1220,7 @@
 
 ---
 
-### Increment 042: Combat Log System
+### Increment 046: Combat Log System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1127,7 +1240,7 @@
 
 ---
 
-### Increment 043: Tier Limit Enforcement
+### Increment 047: Tier Limit Enforcement
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1148,7 +1261,7 @@
 
 ---
 
-### Increment 044: Data Export System
+### Increment 048: Data Export System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1173,7 +1286,7 @@
 
 ---
 
-### Increment 045: Data Import System
+### Increment 049: Data Import System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1197,9 +1310,15 @@
 
 ---
 
-## Phase 6: Monetization (Week 8)
+**Governance Checkpoint (AI Agent)**: Validate combat-release outcomes against `docs/Product-Requirements.md §§4.4-4.5` and confirm telemetry plans reflect Tech-Stack capabilities.
 
-### Increment 046: Stripe Setup & Webhooks
+## Phase 7: Monetization (Week 8)
+
+**PRD Alignment**: §§3, 5.2 (Subscription Strategy & Billing UX)
+
+**Epic Note**: Increments 012 and 050-054 execute as a single monetization epic: mock UI validation → Stripe integration → subscription management → billing portal → trial enablement.
+
+### Increment 050: Stripe Setup & Webhooks
 
 **Duration**: Day 2
 **Deliverables**:
@@ -1223,7 +1342,7 @@
 
 ---
 
-### Increment 047: Subscription Checkout
+### Increment 051: Subscription Checkout
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1248,7 +1367,7 @@
 
 ---
 
-### Increment 048: Subscription Management
+### Increment 052: Subscription Management
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1273,7 +1392,7 @@
 
 ---
 
-### Increment 049: Billing Portal
+### Increment 053: Billing Portal
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1297,7 +1416,7 @@
 
 ---
 
-### Increment 050: Free Trial System
+### Increment 054: Free Trial System
 
 **Duration**: Day 1
 **Deliverables**:
@@ -1317,83 +1436,11 @@
 
 ---
 
-## Phase 7: Offline & Advanced Features (Week 9-10)
+**Governance Checkpoint (AI Agent)**: Confirm monetization flows match PRD §§3.1-3.2 and Stripe configurations in `docs/Tech-Stack.md`.
 
-### Increment 051: Service Worker Setup
+## Phase 8: Advanced Capabilities (Week 9-10)
 
-**Duration**: Day 1
-**Deliverables**:
-
-- Service worker registration
-- Cache strategy
-- Offline detection
-- Online/offline indicator
-- Tests: Service worker
-
-**Acceptance Criteria**:
-
-- [ ] SW registers
-- [ ] Caching works
-- [ ] Offline detected
-
----
-
-### Increment 052: IndexedDB Setup
-
-**Duration**: Day 1
-**Deliverables**:
-
-- IndexedDB wrapper
-- Schema definition
-- CRUD operations
-- Migration support
-- Tests: IndexedDB operations
-
-**Acceptance Criteria**:
-
-- [ ] DB initializes
-- [ ] CRUD works
-- [ ] Migrations run
-
----
-
-### Increment 053: Offline Combat
-
-**Duration**: Day 2
-**Deliverables**:
-
-- Local combat storage
-- Offline combat creation
-- Local state management
-- Sync queue
-- Tests: Offline combat
-
-**Acceptance Criteria**:
-
-- [ ] Combat works offline
-- [ ] State persists locally
-- [ ] Queue tracks changes
-
----
-
-### Increment 054: Background Sync
-
-**Duration**: Day 1
-**Deliverables**:
-
-- Sync mechanism
-- Conflict resolution
-- Sync status UI
-- Error handling
-- Tests: Sync system
-
-**Acceptance Criteria**:
-
-- [ ] Syncs when online
-- [ ] Conflicts resolve
-- [ ] Status shows
-
----
+**PRD Alignment**: §§3.3, 5.3, 12 (Premium Expansion & Future Enhancements)
 
 ### Increment 055: Character Sharing
 
@@ -1517,6 +1564,8 @@
 
 ---
 
+**Governance Checkpoint (AI Agent)**: Audit premium capabilities against PRD §§3.3 & 12 and document follow-on enhancements for the next roadmap revision.
+
 ## Summary
 
 **Total Increments**: 60
@@ -1528,7 +1577,8 @@
 - **End of Week 1**: Complete UI shell (all pages, no functionality)
 - **End of Week 2**: Authentication working, users can sign up/in
 - **End of Week 4**: All entities manageable (characters, monsters, parties, encounters)
-- **End of Week 6**: Combat tracker fully functional (MVP achieved)
+- **End of Week 5**: Offline foundations (service worker, IndexedDB, sync queue) validated against PRD §4.6
+- **End of Week 6**: Combat engine fully functional (MVP achieved)
 - **End of Week 8**: Monetization live
 - **End of Week 10**: Full feature set complete
 

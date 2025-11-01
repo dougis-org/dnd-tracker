@@ -20,6 +20,7 @@ monetize advanced features while providing a robust free tier for new users.
 - **Data Management**: Cloud sync, automated backups, and data persistence
 - **User Management**: Account creation, subscription management, and billing
   integration
+- **Delivery Coordination**: Refer to `docs/Feature-Roadmap.md` for definitive delivery cadence, milestones, and increment sequencing.
 
 ## 3. Subscription Tiers & Monetization Strategy
 
@@ -223,97 +224,7 @@ monetize advanced features while providing a robust free tier for new users.
 
 ## 7. Technology Stack
 
-### 7.1 Core Framework & Runtime
-
-- **Framework**: Next.js 15.5+ with TypeScript and App Router
-- **Runtime**: Node.js 22 LTS with Edge Runtime support
-- **Language**: TypeScript 5.9+ for type safety across frontend and backend
-- **Package Manager**: npm 11.0+ for efficient dependency management
-
-### 7.2 Frontend & UI
-
-- **UI Library**: React 19.0+ with Server Components and Client Components
-- **Styling**: Tailwind CSS 4.0+ with custom design system
-- **Component Library**: shadcn/ui v3.2+ for consistent, accessible components and layout system
-- **UI Primitives**: Radix UI primitives via shadcn/ui for accessibility and customization
-- **Icons**: Lucide React 0.400+ for consistent iconography
-- **Fonts**: Inter via next/font for optimized web fonts
-- **Layout System**: shadcn/ui layout components for responsive design patterns
-
-### 7.3 Backend & Database
-
-- **Database**: MongoDB 8.0+ with Atlas cloud hosting
-- **ODM**: Mongoose 8.5+ for schema modeling and validation
-- **API Layer**: Next.js 15.5+ App Router API routes with edge optimization
-- **Validation**: Zod 4+ for runtime type validation and schema definition
-- **Data Fetching**: Native fetch with Next.js 15.5+ caching strategies
-
-### 7.4 State Management & Data
-
-- **Client State**: Zustand 4.5+ for lightweight state management
-- **Server State**: TanStack Query (React Query) v5.0+ for server state caching
-- **Form Handling**: React Hook Form 7.52+ with Zod validation
-- **Real-time**: Pusher 8.4+ or Socket.IO 4.7+ for live collaboration features
-
-### 7.5 Authentication & Security
-
-- **Authentication**: Clerk 5.0+ for user authentication, session management, and user profiles
-- **User Management**: Clerk Dashboard for user administration and analytics
-- **Social Login**: Clerk-supported OAuth providers (Google, GitHub, Discord)
-- **Session Management**: Clerk automatic session handling with secure token management
-- **Authorization**: Role-based access control (RBAC) with Clerk organizations and roles
-- **Security Headers**: Next.js built-in security headers + Helmet.js 7.1+
-- **Rate Limiting**: Built-in Next.js rate limiting for API routes
-
-### 7.6 Payments & Monetization
-
-- **Payment Processor**: Stripe 16.0+ with Next.js integration
-- **Webhook Handling**: Stripe webhooks via Next.js API routes
-- **Subscription Management**: Stripe Customer Portal integration with Clerk user sync
-- **Tax Handling**: Stripe Tax for global compliance
-
-### 7.7 File Storage & CDN
-
-- **File Storage**: Fly.io Volumes for persistent storage and user uploads
-- **Image Optimization**: Next.js 15 Image component with automatic optimization
-- **CDN**: Fly.io Edge Network for global content delivery
-- **Static Assets**: Next.js static file serving with caching via Fly.io edge locations
-
-### 7.8 Testing & Quality
-
-- **Unit Testing**: Jest 29.7+ + React Testing Library 16.0+
-- **E2E Testing**: Playwright 1.46+ for cross-browser testing
-- **Component Testing**: Storybook 8.2+ for UI component development
-- **Code Quality**: ESLint 9.0+ + Prettier 3.3+ with Next.js recommended configs
-- **Type Checking**: TypeScript 5.9+ strict mode with Next.js integration
-
-### 7.9 Monitoring & Analytics
-
-- **Error Tracking**: Sentry 8.0+ for error monitoring and performance tracking
-- **Analytics**: Fly.io monitoring and third-party analytics for user insights
-- **Performance**: Fly.io Metrics for application performance monitoring
-- **User Analytics**: Clerk Analytics for authentication and user behavior insights
-- **Logging**: Next.js built-in logging with structured JSON output via Fly.io logs
-- **Uptime Monitoring**: Fly.io health checks with custom alerts and monitoring
-
-### 7.10 Development & Deployment
-
-- **Hosting**: Fly.io with automatic deployments and multiple regions
-- **Version Control**: Git with GitHub integration
-- **CI/CD**: GitHub Actions with Fly.io deployment automation
-- **Environment Management**: Fly.io secrets and environment variables with staging/production separation
-- **Database Migrations**: Custom MongoDB migration scripts via API routes
-- **Scaling**: Fly.io auto-scaling based on demand and geographic distribution
-
-### 7.11 Developer Experience
-
-- **Development Server**: Next.js 15.5+ dev server with Fast Refresh and Turbopack
-- **Code Editor**: VS Code with Next.js, TypeScript, and Tailwind CSS extensions
-- **API Documentation**: Swagger/OpenAPI with next-swagger-doc
-- **Database GUI**: MongoDB Compass for development database management
-- **Debugging**: React Developer Tools + Next.js debugging tools + Fly.io logs
-- **UI Development**: shadcn/ui CLI for component generation and management
-- **Deployment**: Fly.io CLI for streamlined deployment and scaling management
+Implementation technologies, version targets, and tooling strategy are documented in `docs/Tech-Stack.md`. The PRD defers to that source for authoritative technical specifications and lifecycle management expectations.
 
 ## 8. User Dashboard & Landing Page Requirements
 
@@ -553,6 +464,8 @@ This must be a data driven (from a testimonials collection) display
 - **Retention Rate**: > 70% users return within 7 days of signup
 
 ## 9. Development Roadmap
+
+Delivery specifics, increments, and cadence are defined in `docs/Feature-Roadmap.md`.
 
 ### 9.1 Phase 1: MVP (Months 1-3)
 

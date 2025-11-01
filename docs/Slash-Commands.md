@@ -1,343 +1,177 @@
-# Slash Commands for D&D Tracker Development
+# Slash Commands for D&D Tracker Delivery
 
-This document describes the custom slash commands available for managing the D&D Tracker development workflow with the spec kit approach.
+This guide documents the slash-command workflow that orchestrates delivery against the 60 one-to-two-day increments defined in `docs/Feature-Roadmap.md`. The roadmap remains the source of truth for sequencing and governance checkpoints; the Product Requirements Document (`docs/Product-Requirements.md`) defines scope, and `docs/Tech-Stack.md` owns version targets. Use this document whenever you need to move the project forward.
 
-## Overview
+## Delivery Flow at a Glance
 
-The D&D Tracker project uses a structured development workflow with slash commands that integrate with the Feature Roadmap. These commands help manage features from initial specification through completion.
+1. **Find the next increment** with `/next-feature`.
+2. **Generate design collateral** with `/speckit.specify`, `/speckit.plan`, and `/speckit.tasks` (automatically chained or sequenced from `/next-feature`).
+3. **Validate requirements quality** with `/speckit.checklist` as needed.
+4. **Analyze spec-plan-task alignment** with `/speckit.analyze` before implementation.
+5. **Execute implementation** with `/speckit.implement`, running quality gates (lint, Codacy CLI per edited file, tests).
+6. **Merge via PR** following CONTRIBUTING guidelines.
+7. **Update the roadmap** with `/feature-complete`.
+8. **Run governance checkpoints** whenever the roadmap calls out `Governance Checkpoint (AI Agent)` for the completed phase.
 
-## Feature Workflow Commands
+Each increment references a roadmap phase; when all increments in a phase are complete, the roadmap will direct an AI agent to perform the governance checklist before beginning the next phase.
 
-### `/next-feature` - Start Next Feature
+## Command Reference
 
-**Purpose**: Automatically find and start the next planned feature from the roadmap.
+### `/next-feature` — Start the Next Increment
 
-**Usage**:
+**Purpose**: Claim the next roadmap increment that is neither complete (✅) nor in progress (🚧), respecting dependencies.
 
-```
-/next-feature
-```
+**Usage**: `/next-feature`
 
-**What it does**:
+**Workflow**:
+1. Parses `docs/Feature-Roadmap.md` for the first eligible increment (e.g., `Increment 021: Character Edit Form`), confirming prerequisite increments and governance checklist states.
+2. Marks the increment as 🚧 in the roadmap and prompts the agent to commit the update so others see the in-progress status.
+3. Creates or reuses the feature directory `specs/NNN-slug/`.
+4. Runs `/speckit.specify` automatically, producing `spec.md` populated with roadmap context, PRD linkage, and acceptance criteria.
+5. Creates (or checks out) the working branch named `NNN-slug` and reminds the agent to review `docs/Tech-Stack.md` for current versions/tooling.
+6. Emits next-step guidance: run `/speckit.plan`, `/speckit.tasks`, `/speckit.analyze`, `/speckit.implement`, and watch for phase governance checkpoints before implementation.
 
-1. Reads `docs/Feature-Roadmap.md` to find the next feature
-2. Selects the first feature that is:
-   - Not marked as complete (✅)
-   - Not marked as "In Progress" (🚧)
-   - Has all dependencies satisfied
-3. Updates the roadmap to mark the feature as "In Progress"
-4. Generates a comprehensive feature description
-5. Automatically runs `/specify` with the feature description
-6. Creates a new branch and spec file
+**Outputs**:
+- Roadmap status update (🚧)
+- `specs/NNN-slug/spec.md`
+- Git branch `NNN-slug`
+- Console reminder covering Tech-Stack review and governance steps
 
-**Output**:
+### `/speckit.specify` — Produce the Specification
 
-```
-✅ Started Feature 003: Character Management System
-- Branch: 003-character-management
-- Spec file: specs/003-character-management/spec.md
-- Roadmap updated with 'In Progress' status
-- Ready for /plan command
-```
+**Purpose**: Convert the roadmap increment into a full specification aligned with the PRD.
 
-**Next Steps After /next-feature**:
+**Usage**: `/speckit.specify [optional additional context]`
 
-1. Run `/plan` to generate design artifacts
-2. Run `/tasks` to generate implementation tasks
-3. Run `/implement` to execute the feature
-4. Create PR and merge when complete
-5. Run `/feature-complete` to update roadmap
+**Outputs**:
+- `specs/NNN-slug/spec.md` containing user stories, functional and non-functional requirements, PRD references, success criteria, and governance notes.
 
-**Parallel Workstreams**: This command supports multiple developers/agents working simultaneously by checking for "In Progress" status before selecting a feature.
+**Notes**: `/next-feature` runs this automatically; re-run manually if you need to refresh the spec after roadmap edits.
 
----
+### `/speckit.plan` — Generate Design Artifacts
 
-### `/feature-complete` - Mark Feature as Complete
+**Purpose**: Elaborate the implementation strategy before task breakdown.
 
-**Purpose**: Update the roadmap when a feature PR is merged.
+**Usage**: `/speckit.plan`
 
-**Usage**:
+**Outputs** (under the current feature directory):
+- `plan.md` (architecture decisions, sequencing)
+- `research.md` (open questions, references)
+- `data-model.md`
+- `contracts/*.yaml` (API/schema contracts)
+- `quickstart.md` (integration/E2E walkthrough)
 
-```
-/feature-complete 003 165
-```
+### `/speckit.tasks` — Produce Ordered Tasks
 
-Where:
+**Purpose**: Translate the plan into dependency-aware tasks with TDD framing.
 
-- `003` = Feature number
-- `165` = PR number that merged the feature
+**Usage**: `/speckit.tasks`
 
-**What it does**:
+**Outputs**:
+- `tasks.md` listing ordered tasks with IDs, dependencies, and quality gates.
 
-1. Verifies the PR is actually merged using `gh pr view`
-2. Extracts merge date and PR details
-3. Updates the feature in Feature-Roadmap.md:
-   - Changes status to "Complete ✅ (Merged via PR #165)"
-   - Adds completion date
-   - Moves feature to "Completed Features" section
-4. Updates progress tracking:
-   - Increments completed feature count
-   - Recalculates percentage complete
-   - Updates "Next Feature" pointer
-   - Checks if phase is complete
-5. Runs markdown linting
-6. Reports summary
+### `/speckit.checklist` — Requirements Quality Checklist (Optional but Recommended)
 
-**Output**:
+**Purpose**: Validate requirements quality for high-risk domains (UX, API, security) before implementation.
 
-```
-✅ Feature 003 marked as complete!
+**Usage**: `/speckit.checklist [focus (e.g., "UX requirements clarity")]`
 
-Updated Feature-Roadmap.md:
-- Feature 003: Character Management System → Complete ✅
-- Merged via PR #165 on 2025-10-25
-- Moved to Completed Features section
-- Progress: 3 of 20 features complete (15%)
-- Phase 2 Status: In Progress (1 of 4 features complete)
-- Next Feature: Feature 004 - Party Management
+**Outputs**:
+- `specs/NNN-slug/checklists/<focus>.md`
 
-Recommended next steps:
-1. Run /next-feature to start Feature 004
-2. Or continue with another feature from Phase 2
-```
+**When to use**:
+- Before `/speckit.implement` on critical increments
+- During governance checkpoints to ensure requirements remain testable
 
-**Error Handling**:
+### `/speckit.analyze` — Cross-Artifact Consistency Review
 
-- PR not merged: "PR #165 is not merged yet. Merge the PR first."
-- Feature not found: "Feature 003 not found in roadmap."
-- Already complete: "Feature 003 is already marked as complete."
+**Purpose**: Ensure `spec.md`, `plan.md`, and `tasks.md` remain aligned and constitution-compliant prior to implementation.
 
----
+**Usage**: `/speckit.analyze`
 
-## Spec Kit Commands
+**Outputs**:
+- Console report highlighting gaps, inconsistencies, or constitution violations. (Read-only; no file edits.)
 
-These are the core spec kit commands that work with `/next-feature`:
+**Run**: After `/speckit.tasks` and before `/speckit.implement` for every increment.
 
-### `/specify` - Create Feature Specification
+### `/speckit.implement` — Execute Tasks with Quality Gates
 
-**Purpose**: Generate spec.md from a feature description.
+**Purpose**: Drive implementation using the task list, enforcing TDD and quality requirements.
 
-**Usage**:
+**Usage**: `/speckit.implement`
 
-```
-/specify [feature description]
-```
+**What it should do**:
+1. Execute each task sequentially, respecting dependencies and any governance notes captured in the roadmap increment.
+2. Reference `docs/Tech-Stack.md` and `plan.md` whenever tooling or version decisions are needed.
+3. For every modified file, run `codacy_cli_analyze` with the file path (per `.github/instructions/codacy.instructions.md`).
+4. Run linting (`npm run lint`, `npm run lint:markdown`) and the project test suites as required.
+5. Capture notes on blockers or scope adjustments for roadmap updates and governance evidence.
 
-Usually called automatically by `/next-feature`, but can be run manually.
+### `/feature-complete` — Close Out an Increment
 
-**Output**: Creates `specs/[feature-number]/spec.md` with user scenarios, requirements, and entities.
+**Purpose**: Mark the increment as complete once its PR merges.
 
----
+**Usage**: `/feature-complete NNN <PR_NUMBER>`
 
-### `/plan` - Generate Design Artifacts
+**Workflow**:
+1. Validates the PR is merged and that any increment-level governance checklist items are satisfied (or records remaining actions).
+2. Updates `docs/Feature-Roadmap.md`:
+   - Marks increment ✅ and annotates with PR number and merge date.
+   - Moves the increment into the "Completed" section if applicable.
+   - Recomputes progress metrics.
+3. Prompts for any governance actions triggered by roadmap checkpoints.
 
-**Purpose**: Create implementation plan and design documents.
+**Outputs**: Updated roadmap with completion details.
 
-**Usage**:
+### Additional Utility Commands
 
-```
-/plan
-```
+| Command | Purpose | Typical Timing |
+|---------|---------|----------------|
+| `/constitution` | Review project constitution and coding standards | Before major refactors or new contributors join |
+| `/clarify` | Collect clarifying Q&A about current work item | Before `/speckit.specify` when requirements are vague |
+| `/plan-ticket` / `/work-ticket` | Alternate workflows for ad-hoc issues | Use only when roadmap instructs |
 
-**Prerequisite**: Must have a spec.md file in current feature directory.
+## Governance Checkpoints
 
-**Output**: Creates:
+Roadmap phases now include explicit `Governance Checkpoint (AI Agent)` entries. When you complete the set of increments that precede a checkpoint:
 
-- `plan.md` - Implementation plan
-- `research.md` - Technical research
-- `data-model.md` - Database schemas
-- `contracts/` - API contracts
-- `quickstart.md` - Integration test scenarios
+1. Prepare evidence: merged PR links, test results, Codacy summaries, updated documentation.
+2. Run `/speckit.analyze` (or rerun if already issued) to capture the latest cross-artifact report.
+3. Use `/speckit.checklist` to produce a governance checklist tailored to the checkpoint focus (e.g., offline readiness, monetization).
+4. Record the outcome directly in the roadmap checkpoint note (edit the checkpoint bullet with results, follow-up actions, and date).
+5. Only proceed to the next phase after the checkpoint note reflects completion and any blocking actions have owners.
 
----
+## Integration with Source Documents
 
-### `/tasks` - Generate Task List
+- **Roadmap**: `docs/Feature-Roadmap.md` (phases, increments, checkpoints)
+- **Scope**: `docs/Product-Requirements.md`
+- **Technology**: `docs/Tech-Stack.md`
+- **Constitution**: `CLAUDE.md` and `.specify/memory/constitution.md`
+- **Quality Automation**: `.github/instructions/codacy.instructions.md`
 
-**Purpose**: Create dependency-ordered task list with TDD approach.
+Always consult the roadmap before running `/next-feature` to confirm phase readiness and dependencies, and update the roadmap immediately after `/feature-complete` or governance reviews.
 
-**Usage**:
+## Frequently Asked Questions
 
-```
-/tasks
-```
+**How do I know which increment to work on?**
+Run `/next-feature`. It will skip increments marked 🚧 or ✅ and respect dependency lists embedded in the roadmap.
 
-**Prerequisite**: Must have plan.md and design artifacts.
+**When do I create a PR?**
+After `/speckit.implement` completes and all quality gates pass, follow CONTRIBUTING.md to create a PR from the feature branch. Include roadmap increment ID and checklist results.
 
-**Output**: Creates `tasks.md` with numbered, ordered tasks following constitutional principles.
+**What if `/next-feature` can’t find an eligible increment?**
+- Check whether a governance checkpoint needs completion.
+- Verify dependencies of upcoming increments are satisfied.
+- If all increments are complete, consult the product owner for roadmap updates.
 
----
+**What should I do if roadmap content changes mid-feature?**
+Re-run `/speckit.specify` to refresh the spec, then `/speckit.plan` and `/speckit.tasks` if scope adjustments are significant. Capture changes in the roadmap notes section.
 
-### `/implement` - Execute Implementation
-
-**Purpose**: Execute the task list with quality checks.
-
-**Usage**:
-
-```
-/implement
-```
-
-**Prerequisite**: Must have tasks.md.
-
-**What it does**: Executes tasks in order with:
-
-- TDD approach (tests first)
-- Quality checks after each file
-- Codacy scans
-- ESLint and markdown linting
-- Test execution
+**Who maintains these commands?**
+- Implementation lives in `.claude/commands/*.md`.
+- Quick references live in `.github/commands/*.md`.
+- This doc is the canonical usage guide (update it whenever workflows evolve).
 
 ---
-
-### `/constitution` - View/Update Constitution
-
-**Purpose**: Review or update project constitution.
-
-**Usage**:
-
-```
-/constitution
-```
-
-Shows the project's development standards and principles.
-
----
-
-## Complete Feature Development Workflow
-
-Here's the complete workflow from start to finish:
-
-```bash
-# 1. Start next feature (automated)
-/next-feature
-# → Roadmap updated to "In Progress"
-# → Branch created: 003-character-management
-# → Spec created: specs/003-character-management/spec.md
-
-# 2. Generate design artifacts
-/plan
-# → Creates plan.md, research.md, data-model.md, contracts/, quickstart.md
-
-# 3. Generate tasks
-/tasks
-# → Creates tasks.md with TDD approach
-
-# 4. Execute implementation
-/implement
-# → Runs through all tasks with quality checks
-
-# 5. Create and merge PR
-gh pr create --title "Issue: #003 Character Management System" --body "CLOSES: #003"
-# → Wait for CI checks and auto-merge
-
-# 6. Mark feature complete
-/feature-complete 003 165
-# → Roadmap updated to "Complete ✅"
-# → Progress tracking updated
-# → Ready for next feature
-```
-
-## Parallel Development Example
-
-Multiple developers or AI agents can work simultaneously:
-
-**Developer 1**:
-
-```bash
-/next-feature
-# Gets: Feature 003 - Character Management
-# Roadmap marked: Feature 003 - In Progress
-```
-
-**Developer 2** (at the same time):
-
-```bash
-/next-feature
-# Gets: Feature 005 - Monster Library (skips 003 since it's In Progress)
-# Roadmap marked: Feature 005 - In Progress
-```
-
-**Developer 1** (finishes first):
-
-```bash
-/feature-complete 003 165
-# Roadmap: Feature 003 → Complete ✅
-# Progress: 3/20 complete (15%)
-```
-
-**Developer 2** (finishes later):
-
-```bash
-/feature-complete 005 167
-# Roadmap: Feature 005 → Complete ✅
-# Progress: 4/20 complete (20%)
-```
-
-## Best Practices
-
-1. **Always use /next-feature**: Don't manually create specs - let the command select the right feature
-2. **Check dependencies**: The command verifies dependencies automatically
-3. **Update roadmap promptly**: Run `/feature-complete` as soon as PR merges
-4. **Follow the workflow**: Use the commands in order: next-feature → plan → tasks → implement → feature-complete
-5. **Don't skip steps**: Each command builds on the previous one's output
-
-## Files Modified by Commands
-
-### `/next-feature`
-
-- **Reads**: `docs/Feature-Roadmap.md`
-- **Writes**: `docs/Feature-Roadmap.md` (updates feature status to "In Progress")
-- **Creates**: New branch, `specs/[number]/spec.md`
-
-### `/feature-complete`
-
-- **Reads**: `docs/Feature-Roadmap.md`, GitHub PR data
-- **Writes**: `docs/Feature-Roadmap.md` (moves feature to completed, updates progress)
-
-### `/specify`
-
-- **Reads**: `.specify/templates/spec-template.md`
-- **Writes**: `specs/[number]/spec.md`
-
-### `/plan`
-
-- **Reads**: `specs/[number]/spec.md`
-- **Writes**: `plan.md`, `research.md`, `data-model.md`, `contracts/*.yaml`, `quickstart.md`
-
-### `/tasks`
-
-- **Reads**: All plan artifacts
-- **Writes**: `tasks.md`
-
-### `/implement`
-
-- **Reads**: `tasks.md`
-- **Writes**: Source files, tests, various implementation artifacts
-
-## Troubleshooting
-
-**"Cannot start Feature X yet. Must complete Feature Y first."**
-
-- Solution: Check the roadmap to see which features are dependencies
-- Complete the blocking features first, or choose a different feature
-
-**"Feature X is already being worked on."**
-
-- Solution: Choose a different feature with `/next-feature` again
-- Or coordinate with the developer working on that feature
-
-**"PR #165 is not merged yet."**
-
-- Solution: Wait for CI checks to pass and PR to auto-merge
-- Or manually merge the PR if needed
-
-**"Feature not found in roadmap."**
-
-- Solution: Check the feature number matches the roadmap
-- Verify `docs/Feature-Roadmap.md` exists and is up to date
-
----
-
-**Last Updated**: 2025-10-21
-**Maintained By**: Development team
-**Related Docs**: `docs/Feature-Roadmap.md`, `.claude/commands/*.md`
+**Last Updated**: 2025-11-01
+**Maintained By**: Development Team

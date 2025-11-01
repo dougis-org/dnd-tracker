@@ -4,6 +4,8 @@
 **Date**: 2025-11-01
 **Status**: Design Phase
 
+This document operationalizes the scope defined in `docs/Product-Requirements.md` and the delivery plan in `docs/Feature-Roadmap.md`. Runtime and dependency lifecycles follow `docs/Tech-Stack.md`.
+
 ## 1. System Architecture Overview
 
 ```mermaid
@@ -120,6 +122,8 @@ sequenceDiagram
     NextApp-->>User: Render page
 ```
 
+Alignment: PRD §4.1 (User Management & Authentication).
+
 ## 4. Combat Session State Machine
 
 ```mermaid
@@ -142,6 +146,8 @@ stateDiagram-v2
     Ending --> Completed: Generate Summary
     Completed --> [*]
 ```
+
+Alignment: PRD §4.5 (Combat Flow Requirements).
 
 ## 5. Data Flow Architecture
 
@@ -237,6 +243,52 @@ class MongoRepository<T> implements IRepository<T> {
   }
 }
 ```
+
+### 6.3 Collaboration Service Extension
+
+Alignment: PRD §§3.3 & 12 (Collaborative Mode & Premium Enhancements).
+
+Responsibilities:
+
+- Manage shared campaign metadata and participant ACLs.
+- Coordinate presence indicators via Pusher channels (`campaign:{id}` topics).
+- Persist collaborative state changes and audit history for premium users.
+- Enforce tier limits defined in `docs/Product-Requirements.md` when sharing resources.
+
+Data Model (MongoDB):
+
+```typescript
+interface CollaborationSession {
+  campaignId: ObjectId
+  ownerUserId: ObjectId
+  sharedWith: Array<{
+    userId: ObjectId
+    role: 'viewer' | 'editor'
+    invitedAt: Date
+    acceptedAt?: Date
+  }>
+  presenceChannel: string
+  lastActivityAt: Date
+  createdAt: Date
+  updatedAt: Date
+}
+```
+
+Service Interface:
+
+```typescript
+interface ICollaborationService {
+  inviteUser(input: InviteUserDTO): Promise<void>
+  revokeAccess(input: RevokeAccessDTO): Promise<void>
+  listCollaborators(campaignId: string): Promise<CollaboratorSummary[]>
+  publishPresence(event: PresenceEvent): Promise<void>
+}
+```
+
+Notes:
+
+- Presence events flow through Pusher; offline fallback queues events in IndexedDB (see Phase 4 roadmap increments 030-033).
+- Authorization checks recurse through Clerk roles and campaign ACL definitions.
 
 ## 7. API Versioning Strategy
 
@@ -531,6 +583,8 @@ gitGraph
 ```
 
 ## 17. Tech Stack Summary
+
+Version governance lives in `docs/Tech-Stack.md`; the table below summarizes the primary layers.
 
 | Layer | Technology | Version | Purpose |
 |-------|------------|---------|---------|

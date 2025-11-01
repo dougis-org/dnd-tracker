@@ -50,3 +50,5 @@ pnpm-debug.log*
 lerna-debug.log*
 
 .playwright-mcp/
+
+.codacy/.codacy-cli-v2/1.0.0-main.361.sha.f961a76/codacy-cli-v2_1.0.0-main.361.sha.f961a76_mingw64_nt-10.0-26200_amd64.tar.gz
