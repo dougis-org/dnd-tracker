@@ -1,0 +1,121 @@
+name: Validate ready-for-auto-merge label
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  pull-requests: write
+  issues: write
+  checks: read
+  contents: read
+
+jobs:
+  validate-ready-label:
+    runs-on: ubuntu-latest
+    if: "github.event.label && github.event.label.name == 'automation/ready-for-auto-merge'"
+    steps:
+      - name: Validate readiness for auto-merge (review threads + checks)
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const labelName = context.payload.label.name;
+            if (labelName !== 'automation/ready-for-auto-merge') {
+              core.info('Label is not target, exiting.');
+              return;
+            }
+
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = pr.number;
+            const headSha = pr.head.sha;
+
+            core.info(`Validating PR #${prNumber} (${headSha}) for ${labelName}`);
+
+            // 1) Check for unresolved review threads using the review threads API (preferred)
+            let threadsResp;
+            try {
+              threadsResp = await github.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/review_threads', { owner, repo, pull_number: prNumber });
+            } catch (err) {
+              core.warning('Review threads API not available or failed: ' + err.message);
+            }
+
+            if (threadsResp && Array.isArray(threadsResp.data)) {
+              const unresolvedThread = threadsResp.data.find(t => t.resolved === false);
+              if (unresolvedThread) {
+                const msg = 'Cannot mark ready: there are unresolved review threads. Please resolve threads or mark them resolved.';
+                core.info(msg);
+                try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: labelName }); } catch (err) { core.warning('Failed to remove label: ' + err.message); }
+                await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body: `:x: ${msg}` });
+                core.setFailed(msg);
+                return;
+              }
+            } else {
+              // Fallback: check for reviews with CHANGES_REQUESTED
+              const reviews = await github.paginate(github.rest.pulls.listReviews, { owner, repo, pull_number: prNumber });
+              const hasChangesRequested = reviews.some(r => r.state && r.state.toUpperCase() === 'CHANGES_REQUESTED');
+              if (hasChangesRequested) {
+                const msg = 'Cannot mark ready: there are one or more reviews with CHANGES_REQUESTED. Please resolve review comments and address requested changes.';
+                core.info(msg);
+                try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: labelName }); } catch (err) { core.warning('Failed to remove label: ' + err.message); }
+                await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body: `:x: ${msg}` });
+                core.setFailed(msg);
+                return;
+              }
+            }
+
+            // 2) Check combined status for the PR head
+            const combined = await github.rest.repos.getCombinedStatusForRef({ owner, repo, ref: headSha });
+            const combinedState = combined.data.state; // 'success', 'failure', 'pending'
+            core.info('Combined status state: ' + combinedState);
+            if (combinedState !== 'success') {
+              const msg = `Cannot mark ready: required status checks are not passing (combined state: ${combinedState}). All required checks must pass before auto-merge.`;
+              try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: labelName }); } catch (err) { core.warning('Failed to remove label: ' + err.message); }
+              await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body: `:x: ${msg}` });
+              core.setFailed(msg);
+              return;
+            }
+
+            // 3) Check GitHub Checks API for any failing or incomplete runs
+            const checks = await github.rest.checks.listForRef({ owner, repo, ref: headSha });
+            const runs = checks.data.check_runs || [];
+            const failingRun = runs.find(r => r.status === 'completed' && !['success','neutral','skipped'].includes(r.conclusion));
+            const incompleteRun = runs.find(r => r.status !== 'completed');
+            if (failingRun) {
+              const msg = `Cannot mark ready: check run '${failingRun.name}' concluded with '${failingRun.conclusion}'. All check runs must succeed.`;
+              try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: labelName }); } catch (err) { core.warning('Failed to remove label: ' + err.message); }
+              await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body: `:x: ${msg}` });
+              core.setFailed(msg);
+              return;
+            }
+            if (incompleteRun) {
+              const msg = `Cannot mark ready: there are incomplete check runs (e.g. '${incompleteRun.name}' status='${incompleteRun.status}'). Please wait for all checks to complete.`;
+              try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: labelName }); } catch (err) { core.warning('Failed to remove label: ' + err.message); }
+              await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body: `:x: ${msg}` });
+              core.setFailed(msg);
+              return;
+            }
+
+            // 4) If PR body mentions deferred work, require explicit human confirmation comment
+            const prBody = pr.body || '';
+            const hasDeferred = /deferred work|deferred:/i.test(prBody);
+            if (hasDeferred) {
+              const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number: prNumber });
+              const hasConfirmation = comments.some(c => /override-deferred-work:/i.test(c.body));
+              if (!hasConfirmation) {
+                const msg = 'Cannot mark ready: PR mentions deferred work and no explicit human confirmation (override-deferred-work) was found.';
+                try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: labelName }); } catch (err) { core.warning('Failed to remove label: ' + err.message); }
+                await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body: `:x: ${msg}
+
+If this deferred work is intentional, a maintainer must confirm it with a comment in the format: ` + "`@maintainer override-deferred-work: I confirm deferred work is acceptable. Reason: <short justification> — <maintainer-username>`" });
+                core.setFailed(msg);
+                return;
+              }
+            }
+
+            // All checks passed
+            const okMsg = ':white_check_mark: PR validated as ready for auto-merge. All review threads resolved, checks passing, and deferred work (if any) confirmed.';
+            await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body: okMsg });
+            core.info(okMsg);

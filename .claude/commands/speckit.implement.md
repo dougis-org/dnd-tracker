@@ -125,6 +125,19 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Provide clear error messages with context for debugging
    - Suggest next steps if implementation cannot proceed
    - **IMPORTANT** For completed tasks, make sure to mark the task off as [X] in the tasks file.
+   - **REQUIRED ENFORCEMENT**: After completing any task (including fixing a comment, addressing a review thread, or finishing a subtask), the agent **must** stage the related file changes, create a focused commit, and push the commit to the remote branch. Recommended guidelines:
+     - Commit message format: follow conventional commits (e.g., `feat(task): complete <TASK-ID> - short description` or `fix(task): address review <TASK-ID> - short desc`).
+     - Use one logical task per commit where possible so review history is clear.
+     - Commands to run (example):
+
+       ```bash
+       git add <files-touched>
+       git commit -m "feat(task): complete TASK-123 - add validation for X"
+       git push origin HEAD
+       ```
+
+     - If multiple related tasks are completed in a single operation, group them in a single commit but ensure the commit message documents all task IDs.
+     - After pushing, update the tasks.md/checklist entries in the same commit or in a follow-up commit so the repo state is consistent.
 
 9. Completion validation:
    - Verify all required tasks are completed
@@ -133,5 +146,22 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Confirm the implementation follows the technical plan and roadmap governance notes
    - Ensure `codacy_cli_analyze` has been run for every modified file (per `.github/instructions/codacy.instructions.md`)
    - Report final status with summary of completed work
+
+   - PR criteria (additional, must be satisfied before opening or marking the PR ready):
+     - PR includes a clear, descriptive title and links the related issue(s)
+     - New or updated tests have been added and instructions to run them are included in the PR body
+     - Local checks pass: `npm run lint`, `npm run lint:markdown`, `npm run type-check`, `npm run test:ci` (as applicable)
+     - Commit history is clean and follows conventional commits
+     - The branch is rebased or merged with the latest `main` to avoid conflicts
+     - All modified files have been pushed to the remote branch (see Step 8 enforcement)
+     - `codacy_cli_analyze` was executed for modified files and any critical issues addressed
+     - No unresolved review threads or changerequest reviews (agents must wait and address them)
+     - All required CI/status checks are passing (these are blockers for merge)
+     - Any deferred work is documented in the PR body and has an explicit human confirmation comment (`@maintainer override-deferred-work: ...`) if present
+     - Any security-sensitive or dependency changes include a note and, if dependencies were added, a trivy scan was requested (`codacy_cli_analyze --tool trivy`) and any findings addressed or documented
+     - Documentation and `.env.example` updated if new environment variables are required
+     - PR description contains a short checklist for reviewers summarizing the above
+
+   - Only after these criteria are satisfied should the PR be marked for auto-merge (or the `automation/ready-for-auto-merge` label be added).
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit.tasks` first to regenerate the task list.
