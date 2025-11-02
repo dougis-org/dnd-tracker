@@ -52,7 +52,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | Feature # | Description | Status | Dependencies | Link |
 | :--- | :--- | :--- | :--- | :--- |
 | F001 | Project Setup & Design System | ✅ Complete | - | [Details](#feature-001-project-setup--design-system) |
-| F002 | Navigation & Not Implemented Page | Planned | Feature 001 | [Details](#feature-002-navigation--not-implemented-page) |
+| F002 | Navigation & Not Implemented Page | In Progress | Feature 001 | [Details](#feature-002-navigation--not-implemented-page) |
 | F003 | Landing Page & Marketing Components | Planned | Feature 001, 002 | [Details](#feature-003-landing-page--marketing-components) |
 | F004 | Dashboard Page | Planned | Feature 001, 002 | [Details](#feature-004-dashboard-page) |
 | F005 | Character Management Pages | Planned | Feature 001, 002 | [Details](#feature-005-character-management-pages) |
@@ -157,6 +157,10 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 ---
 
 ### Feature 002: Navigation & Not Implemented Page
+
+**Status**: In Progress
+**Started**: 2025-11-02
+**Branch**: feature/002-navigation-not-implemented-page
 
 **Depends on**: Feature 001
 **Duration**: Day 1
