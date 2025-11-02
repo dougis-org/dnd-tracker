@@ -1,5 +1,5 @@
-# Base stage with Node.js 25
-FROM node:25-alpine AS base
+# Base stage with Node.js 22 LTS and pnpm
+FROM node:22-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps

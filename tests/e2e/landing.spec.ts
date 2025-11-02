@@ -26,12 +26,11 @@ test.describe('Landing Page', () => {
     // Click theme toggle
     await themeToggle.click();
 
-    // Wait for theme change
-    await page.waitForTimeout(100);
-
-    // Verify theme changed
-    const newClass = await html.getAttribute('class');
-    expect(newClass).not.toBe(initialClass);
+    // Wait for theme change by polling until the class attribute is different
+    await expect(async () => {
+      const newClass = await html.getAttribute('class');
+      expect(newClass).not.toBe(initialClass);
+    }).toPass();
   });
 
   test('should not have console errors', async ({ page }) => {
