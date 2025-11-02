@@ -1,3 +1,49 @@
+# dnd-tracker Development Guidelines
+
+Auto-generated from feature plans. Last updated: 2025-11-02
+
+## Active Technologies
+
+- TypeScript 5.9.2
+- Next.js (App Router 16+)
+- React 19+
+- Tailwind CSS 4.x
+- shadcn/ui
+- Jest (unit tests)
+- Playwright (E2E)
+
+## Project Structure
+
+```
+frontend/
+src/
+  components/
+  lib/
+app/
+specs/
+tests/
+```
+
+## Commands
+
+- Install: `npm install`
+- Dev: `npm run dev`
+- Unit tests: `npm test`
+- E2E (Playwright): `npx playwright test`
+- CI full test: `npm run test:ci`
+
+## Code Style
+
+- TypeScript strict mode enabled
+- Keep files under 450 lines and functions under 50 lines
+- Follow existing ESLint and Prettier configuration
+
+## Recent Changes
+
+- feature/002-navigation-not-implemented-page: Added implementation plan, research, data-model, contracts, and quickstart for navigation skeleton (2025-11-02)
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->
 # DND Tracker Development Guidelines
 
 Auto-generated from feature planning. Last updated: 2025-09-30
