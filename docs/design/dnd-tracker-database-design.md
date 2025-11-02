@@ -851,6 +851,7 @@ db.testimonials.createIndex({ "metadata.approved": 1 })
 ## 3. Data Relationships
 
 ### 3.1 Ownership Hierarchy
+
 ```
 User
 ├── Characters
@@ -865,11 +866,13 @@ User
 ```
 
 ### 3.2 Reference Relationships
+
 - **Soft References**: Store both ID and denormalized data
 - **Hard References**: Store only ID, lookup required
 - **Embedded**: Data stored directly in parent document
 
 ### 3.3 Denormalization Strategy
+
 - Character names in party members
 - Participant stats in encounters
 - Combat stats in combat sessions
@@ -878,16 +881,19 @@ User
 ## 4. Indexes Strategy
 
 ### 4.1 Primary Indexes
+
 - All `_id` fields (automatic)
 - User lookups: `clerkId`, `email`
 - Ownership: `userId` on all collections
 
 ### 4.2 Query Optimization Indexes
+
 - Compound indexes for common queries
 - Sort indexes for list views
 - Text indexes for search functionality
 
 ### 4.3 Performance Indexes
+
 ```javascript
 // Most common query patterns
 db.characters.createIndex({ userId: 1, "metadata.createdAt": -1 })
@@ -898,6 +904,7 @@ db.encounters.createIndex({ userId: 1, "difficulty.calculated": 1 })
 ## 5. Data Migration Strategy
 
 ### 5.1 Schema Versioning
+
 ```javascript
 {
   _id: ObjectId,
@@ -907,6 +914,7 @@ db.encounters.createIndex({ userId: 1, "difficulty.calculated": 1 })
 ```
 
 ### 5.2 Migration Approach
+
 1. **Backward Compatible**: New fields optional
 2. **Lazy Migration**: Update on document access
 3. **Batch Migration**: Background jobs for bulk updates
@@ -915,11 +923,13 @@ db.encounters.createIndex({ userId: 1, "difficulty.calculated": 1 })
 ## 6. Backup & Recovery
 
 ### 6.1 Backup Strategy
+
 - **Continuous**: MongoDB Atlas continuous backup
 - **Daily Snapshots**: Point-in-time recovery
 - **Export**: User data export functionality
 
 ### 6.2 Recovery Procedures
+
 ```bash
 # Point-in-time recovery
 mongorestore --uri="mongodb+srv://..." --time="2025-11-01T10:00:00"
@@ -931,6 +941,7 @@ mongorestore --uri="mongodb+srv://..." --nsInclude="dndtracker.users"
 ## 7. Security Considerations
 
 ### 7.1 Field-Level Encryption
+
 ```javascript
 // Sensitive fields encrypted at rest
 {
@@ -940,6 +951,7 @@ mongorestore --uri="mongodb+srv://..." --nsInclude="dndtracker.users"
 ```
 
 ### 7.2 Access Control
+
 - Database user with minimal permissions
 - Read-only replicas for analytics
 - IP whitelist for production access
@@ -947,11 +959,13 @@ mongorestore --uri="mongodb+srv://..." --nsInclude="dndtracker.users"
 ## 8. Performance Optimizations
 
 ### 8.1 Document Size Limits
+
 - Max document size: 16MB
 - Combat history limited to last 100 actions
 - Embedded arrays capped at reasonable limits
 
 ### 8.2 Query Patterns
+
 ```javascript
 // Efficient pagination
 db.characters.find({ userId: userId })
@@ -967,6 +981,7 @@ db.combatSessions.findOne(
 ```
 
 ### 8.3 Aggregation Pipelines
+
 ```javascript
 // Dashboard statistics
 db.users.aggregate([
@@ -988,14 +1003,17 @@ db.users.aggregate([
 ## 9. Data Retention Policies
 
 ### 9.1 Active Data
+
 - No automatic deletion
 - Soft delete with `deletedAt` timestamp
 
 ### 9.2 Inactive Data
+
 - Combat sessions: Archive after 90 days
 - Unused templates: Flag after 180 days
 
 ### 9.3 User Deletion
+
 - GDPR compliant deletion
 - Cascade delete all user data
 - 30-day recovery window
@@ -1003,12 +1021,14 @@ db.users.aggregate([
 ## 10. Monitoring & Maintenance
 
 ### 10.1 Key Metrics
+
 - Collection sizes
 - Index usage statistics  
 - Query performance
 - Document growth rate
 
 ### 10.2 Maintenance Tasks
+
 ```javascript
 // Regular maintenance
 db.combatSessions.remove({ 

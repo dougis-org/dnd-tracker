@@ -3,6 +3,7 @@
 Auto-generated from feature planning. Last updated: 2025-09-30
 
 ## Active Technologies
+
 - TypeScript 5.9.2 with strict mode enabled, Node.js 25.1.0 + Next.js 16.0.1, React 19.2.0, Tailwind CSS 4.x, shadcn/ui, Mongoose 8.19.1 (001-project-setup-design-system)
 - MongoDB 8.0+ (via Mongoose ODM) for data persistence, IndexedDB for offline capability (future) (001-project-setup-design-system)
 
@@ -62,6 +63,7 @@ tests/
 **Testing**: TDD approach - tests written before implementation
 
 ## Recent Changes
+
 - 001-project-setup-design-system: Added TypeScript 5.9.2 with strict mode enabled, Node.js 25.1.0 + Next.js 16.0.1, React 19.2.0, Tailwind CSS 4.x, shadcn/ui, Mongoose 8.19.1
 
 - 002-when-a-user: Added user registration and profile management backend

@@ -52,7 +52,7 @@
 
 **Goal**: Establish working Next.js application with linting and basic structure
 
-**Independent Test**: Run `npm run dev` and verify app loads at http://localhost:3000, run `npm run lint` and `npm run lint:markdown` successfully
+**Independent Test**: Run `npm run dev` and verify app loads at <http://localhost:3000>, run `npm run lint` and `npm run lint:markdown` successfully
 
 ### Implementation for User Story 1
 
@@ -192,24 +192,28 @@
 ### Within Each User Story
 
 #### User Story 1 (Core Setup)
+
 - Root layout and page before layouts
 - Layouts can be built in parallel
 - npm scripts added incrementally
 - Linting verification last
 
 #### User Story 2 (Design System)
+
 - shadcn/ui init before component installation
 - All UI components can be installed in parallel (T024-T033)
 - ThemeProvider before ThemeToggle
 - Testing after all components installed
 
 #### User Story 3 (Testing)
+
 - Test files created first (should fail)
 - Jest config before running Jest tests
 - Playwright config before running E2E tests
 - Verification that tests pass after config
 
 #### User Story 4 (Deployment)
+
 - Fly.io config independent
 - GitHub Actions workflows can be parallel (T059, T060)
 - CI workflow before CD workflow testing
@@ -223,15 +227,18 @@
 
 **User Story 1**: Tasks T014-T015, T019-T020 can run in parallel
 
-**User Story 2**: 
+**User Story 2**:
+
 - All shadcn/ui component installations (T024-T033) can run in parallel
 - Testing tasks (T040-T041) can run in parallel
 
 **User Story 3**:
+
 - Initial test creation (T042-T043) can run in parallel
 - Final verification (T054, T056) can run sequentially
 
 **User Story 4**:
+
 - GitHub Actions workflows (T059-T060) can run in parallel
 
 **Polish Phase**: Documentation updates (T065-T066, T069) can run in parallel
@@ -299,6 +306,7 @@ With multiple developers:
 **Total Tasks**: 71 tasks across 7 phases
 
 **Task Breakdown by Phase**:
+
 - Setup: 5 tasks
 - Foundational: 8 tasks
 - User Story 1 (Core Setup): 9 tasks
@@ -308,12 +316,14 @@ With multiple developers:
 - Polish: 7 tasks
 
 **Task Breakdown by User Story**:
+
 - User Story 1 (P1): 9 tasks - Core project setup with layouts and linting
 - User Story 2 (P2): 19 tasks - shadcn/ui integration and theme toggle
 - User Story 3 (P3): 15 tasks - Jest and Playwright testing infrastructure
 - User Story 4 (P4): 8 tasks - Fly.io deployment and GitHub Actions CI/CD
 
 **Parallel Opportunities Identified**:
+
 - Setup phase: 4 tasks can run in parallel
 - Foundational phase: 6 tasks can run in parallel
 - User Story 1: 3 tasks can run in parallel
@@ -323,17 +333,20 @@ With multiple developers:
 - Polish phase: 3 tasks can run in parallel
 
 **Independent Test Criteria**:
+
 - US1: `npm run dev` loads app, linting passes
 - US2: Theme toggle switches modes without errors
 - US3: `npm run test:ci` and `npm run test:e2e` pass
 - US4: Deployment succeeds, app loads on Fly.io
 
-**Suggested MVP Scope**: 
+**Suggested MVP Scope**:
+
 - Complete through User Story 1 for absolute minimum (working Next.js app)
 - Recommended MVP: Complete through User Story 2 (includes design system and theme toggle)
 - Full feature: Complete all 4 user stories
 
 **Format Validation**: ✅ All tasks follow checklist format:
+
 - [x] Checkbox present
 - [x] Sequential task IDs (T001-T071)
 - [x] [P] markers for parallelizable tasks

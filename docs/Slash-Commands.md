@@ -24,6 +24,7 @@ Each increment references a roadmap phase; when all increments in a phase are co
 **Usage**: `/next-feature`
 
 **Workflow**:
+
 1. Parses `docs/Feature-Roadmap.md` for the first eligible increment (e.g., `Increment 021: Character Edit Form`), confirming prerequisite increments and governance checklist states.
 2. Marks the increment as 🚧 in the roadmap and prompts the agent to commit the update so others see the in-progress status.
 3. Creates or reuses the feature directory `specs/NNN-slug/`.
@@ -32,6 +33,7 @@ Each increment references a roadmap phase; when all increments in a phase are co
 6. Emits next-step guidance: run `/speckit.plan`, `/speckit.tasks`, `/speckit.analyze`, `/speckit.implement`, and watch for phase governance checkpoints before implementation.
 
 **Outputs**:
+
 - Roadmap status update (🚧)
 - `specs/NNN-slug/spec.md`
 - Git branch `NNN-slug`
@@ -44,6 +46,7 @@ Each increment references a roadmap phase; when all increments in a phase are co
 **Usage**: `/speckit.specify [optional additional context]`
 
 **Outputs**:
+
 - `specs/NNN-slug/spec.md` containing user stories, functional and non-functional requirements, PRD references, success criteria, and governance notes.
 
 **Notes**: `/next-feature` runs this automatically; re-run manually if you need to refresh the spec after roadmap edits.
@@ -55,6 +58,7 @@ Each increment references a roadmap phase; when all increments in a phase are co
 **Usage**: `/speckit.plan`
 
 **Outputs** (under the current feature directory):
+
 - `plan.md` (architecture decisions, sequencing)
 - `research.md` (open questions, references)
 - `data-model.md`
@@ -68,6 +72,7 @@ Each increment references a roadmap phase; when all increments in a phase are co
 **Usage**: `/speckit.tasks`
 
 **Outputs**:
+
 - `tasks.md` listing ordered tasks with IDs, dependencies, and quality gates.
 
 ### `/speckit.checklist` — Requirements Quality Checklist (Optional but Recommended)
@@ -77,9 +82,11 @@ Each increment references a roadmap phase; when all increments in a phase are co
 **Usage**: `/speckit.checklist [focus (e.g., "UX requirements clarity")]`
 
 **Outputs**:
+
 - `specs/NNN-slug/checklists/<focus>.md`
 
 **When to use**:
+
 - Before `/speckit.implement` on critical increments
 - During governance checkpoints to ensure requirements remain testable
 
@@ -90,6 +97,7 @@ Each increment references a roadmap phase; when all increments in a phase are co
 **Usage**: `/speckit.analyze`
 
 **Outputs**:
+
 - Console report highlighting gaps, inconsistencies, or constitution violations. (Read-only; no file edits.)
 
 **Run**: After `/speckit.tasks` and before `/speckit.implement` for every increment.
@@ -101,6 +109,7 @@ Each increment references a roadmap phase; when all increments in a phase are co
 **Usage**: `/speckit.implement`
 
 **What it should do**:
+
 1. Execute each task sequentially, respecting dependencies and any governance notes captured in the roadmap increment.
 2. Reference `docs/Tech-Stack.md` and `plan.md` whenever tooling or version decisions are needed.
 3. For every modified file, run `codacy_cli_analyze` with the file path (per `.github/instructions/codacy.instructions.md`).
@@ -114,6 +123,7 @@ Each increment references a roadmap phase; when all increments in a phase are co
 **Usage**: `/feature-complete NNN <PR_NUMBER>`
 
 **Workflow**:
+
 1. Validates the PR is merged and that any increment-level governance checklist items are satisfied (or records remaining actions).
 2. Updates `docs/Feature-Roadmap.md`:
    - Marks increment ✅ and annotates with PR number and merge date.
@@ -160,6 +170,7 @@ Run `/next-feature`. It will skip increments marked 🚧 or ✅ and respect depe
 After `/speckit.implement` completes and all quality gates pass, follow CONTRIBUTING.md to create a PR from the feature branch. Include roadmap increment ID and checklist results.
 
 **What if `/next-feature` can’t find an eligible increment?**
+
 - Check whether a governance checkpoint needs completion.
 - Verify dependencies of upcoming increments are satisfied.
 - If all increments are complete, consult the product owner for roadmap updates.
@@ -168,6 +179,7 @@ After `/speckit.implement` completes and all quality gates pass, follow CONTRIBU
 Re-run `/speckit.specify` to refresh the spec, then `/speckit.plan` and `/speckit.tasks` if scope adjustments are significant. Capture changes in the roadmap notes section.
 
 **Who maintains these commands?**
+
 - Implementation lives in `.claude/commands/*.md`.
 - Quick references live in `.github/commands/*.md`.
 - This doc is the canonical usage guide (update it whenever workflows evolve).
