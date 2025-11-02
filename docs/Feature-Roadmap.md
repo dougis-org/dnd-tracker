@@ -63,7 +63,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F010 | User Profile & Settings Pages | Planned | Feature 001, 002 | [Details](#feature-010-user-profile--settings-pages) |
 | F011 | Item Catalog Pages | Planned | Feature 001, 002 | [Details](#feature-011-item-catalog-pages) |
 | F012 | Subscription & Billing Pages | Planned | Feature 001, 002 | [Details](#feature-012-subscription--billing-pages) |
-| F013 | Clerk Integration & Auth Flow | Planned | Feature 001 | [Details](#feature-013-clerk-integration--auth-flow) |
+| F013 | Clerk Integration & Auth Flow | Planned | Feature 001, 002, 012 | [Details](#feature-013-clerk-integration--auth-flow) |
 | F014 | MongoDB User Model & Webhook | Planned | Feature 013 | [Details](#feature-014-mongodb-user-model--webhook) |
 | F015 | Profile Setup Wizard | Planned | Feature 014 | [Details](#feature-015-profile-setup-wizard) |
 | F016 | User Dashboard with Real Data | Planned | Feature 004, 014 | [Details](#feature-016-user-dashboard-with-real-data) |
