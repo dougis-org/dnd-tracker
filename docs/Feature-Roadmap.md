@@ -30,7 +30,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 | Feature # | Description | Status | Dependencies | Link |
 | :--- | :--- | :--- | :--- | :--- |
-| F001 | Project Setup & Design System | 🚧 In Progress (branch: 001-project-setup-design-system) | - | [Details](#feature-001-project-setup--design-system) |
+| F001 | Project Setup & Design System | ✅ Complete | - | [Details](#feature-001-project-setup--design-system) |
 | F002 | Navigation & Not Implemented Page | Planned | Feature 001 | [Details](#feature-002-navigation--not-implemented-page) |
 | F003 | Landing Page & Marketing Components | Planned | Feature 001, 002 | [Details](#feature-003-landing-page--marketing-components) |
 | F004 | Dashboard Page | Planned | Feature 001, 002 | [Details](#feature-004-dashboard-page) |
@@ -97,8 +97,10 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ### Feature 001: Project Setup & Design System
 
-**Status**: 🚧 In Progress (Started 2025-11-01)
+**Status**: Complete ✅ (Merged via PR #332)
+**Completed**: 2025-11-02
 **Branch**: 001-project-setup-design-system
+**Spec Location**: `specs/001-project-setup-design-system/`
 
 **Duration**: Day 1
 **Deliverables**:
@@ -126,10 +128,10 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **Acceptance Criteria**:
 
-- [ ] `npm run dev` starts the application
-- [ ] Theme toggle switches between light/dark
-- [ ] All shadcn/ui components render in Storybook
-- [ ] Deploys successfully to Fly.io
+- [x] `npm run dev` starts the application
+- [x] Theme toggle switches between light/dark
+- [x] All shadcn/ui components render in Storybook
+- [x] Deploys successfully to Fly.io
 
 ---
 
