@@ -14,38 +14,34 @@ Start the next feature from the D&D Tracker roadmap. **All contributors must fol
 
 ## Step 1: Find the Next Feature
 
-1. Read `./docs/Feature-Roadmap.md`
-2. Locate the first feature under "## Planned Features (Priority Order)" that is NOT complete (✅) and NOT "In Progress" (🚧)
-3. Extract:
-   - Feature number (e.g., "003")
-   - Feature name (e.g., "Character Management System")
-   - Description, User Value, Scope, Key Entities, API Endpoints, Dependencies
+1. Read `./docs/Feature-Roadmap.md` and parse the `## Feature Summary` table.
+2. Iterate through the table to find the first feature with a `Status` of "Planned".
+3. For the candidate feature, check its `Dependencies` column.
+4. Verify that every dependency listed has a `Status` of "Complete" in the table.
+5. If dependencies are not met, report the blocking features and stop.
+6. If dependencies are met, this is the next feature. Extract its `Feature #` and `Description`.
+7. Use the `Link` from the table to jump to the full feature section and extract detailed information.
 
-## Step 2: Verify Dependencies
+## Step 2: Update Roadmap - Mark as In Progress
 
-1. Check that all dependencies are marked ✅ Complete in the roadmap
-2. If not complete, warn the user which features must finish first
-3. Only proceed if all dependencies are satisfied
+Update `Feature-Roadmap.md` before proceeding:
 
-## Step 3: Update Roadmap - Mark as In Progress
-
-Update Feature-Roadmap.md before proceeding:
-
-1. Find the feature section
-2. Change status to: `**Status**: 🚧 In Progress (Started [TODAY'S DATE])`
-3. Add: `**Branch**: [branch-name-from-step-4]`
-4. Save the roadmap
+1. In the `## Feature Summary` table, find the row for the selected feature and update its `Status` to "In Progress".
+2. In the main body of the document, find the detailed section for the feature.
+3. Change its status to: `**Status**: 🚧 In Progress (Started [TODAY'S DATE])`
+4. Add: `**Branch**: [branch-name-from-step-3]`
+5. Save the roadmap.
 
 This prevents parallel workstreams from starting the same feature.
 
-## Step 4: Commit and Push Roadmap Update
+## Step 3: Commit and Push Roadmap Update
 
 1. Stage the updated file: `git add docs/Feature-Roadmap.md`
 2. Commit with conventional message: `git commit -m "docs: mark feature [NUMBER] as in progress"`
 3. Push to main: `git push origin main`
 4. This ensures all agents immediately see that the feature is being worked on and don't start duplicate work
 
-## Step 5: Generate Feature Description
+## Step 4: Generate Feature Description
 
 Create a feature description including:
 
@@ -78,11 +74,11 @@ Refer to CONTRIBUTING.md for:
 - Database & security best practices
 - Git & PR workflow
 
-## Step 6: Execute /speckit.specify
+## Step 5: Execute /speckit.specify
 
 Run `/speckit.specify` with the feature description. The user ran `/next-feature` to start, so proceed automatically.
 
-## Step 7: Report Completion
+## Step 6: Report Completion
 
 After /speckit.specify completes, report:
 
@@ -136,6 +132,7 @@ Example update:
 - If no planned features remain: "All features in the roadmap are complete! 🎉"
 - If dependencies not met: "Cannot start Feature [NUMBER] yet. Must complete [dependency list] first."
 - If roadmap file not found: "Feature-Roadmap.md not found. Please create the roadmap first."
+- If a feature is found but its dependencies are not met, continue checking the rest of the table for another available feature. If none are found, report the first blocker.
 - If feature already "In Progress": "Feature [NUMBER] is already being worked on. Please choose a different feature or complete the current one first."
 
 ## Parallel Workstream Support

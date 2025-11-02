@@ -9,6 +9,88 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 > **Core Principle**: Each feature is a discrete, deployable unit of work that can be completed in 1-2 days. Every feature includes TDD with unit, integration, and E2E tests.
 
+## Table of Contents
+
+- [Feature Summary](#feature-summary)
+- [Phase 1: UI Foundation & Site Structure (Week 1)](#phase-1-ui-foundation--site-structure-week-1)
+- [Phase 2: Authentication & User Management (Week 2)](#phase-2-authentication--user-management-week-2)
+- [Phase 3: Core Entity Management (Week 3-4)](#phase-3-core-entity-management-week-3-4)
+- [Phase 4: Offline Foundations (Week 5)](#phase-4-offline-foundations-week-5)
+- [Phase 5: Combat Engine Core (Week 5-6)](#phase-5-combat-engine-core-week-5-6)
+- [Phase 6: Combat Polish & State (Week 7)](#phase-6-combat-polish--state-week-7)
+- [Phase 7: Monetization (Week 8)](#phase-7-monetization-week-8)
+- [Phase 8: Advanced Capabilities (Week 9-10)](#phase-8-advanced-capabilities-week-9-10)
+- [Summary](#summary)
+- [Key Milestones](#key-milestones)
+- [Testing Strategy](#testing-strategy)
+- [Deployment Strategy](#deployment-strategy)
+- [Success Criteria](#success-criteria)
+
+## Feature Summary
+
+| Feature # | Description | Status | Dependencies | Link |
+| :--- | :--- | :--- | :--- | :--- |
+| F001 | Project Setup & Design System | Planned | - | [Details](#feature-001-project-setup--design-system) |
+| F002 | Navigation & Not Implemented Page | Planned | Feature 001 | [Details](#feature-002-navigation--not-implemented-page) |
+| F003 | Landing Page & Marketing Components | Planned | Feature 001, 002 | [Details](#feature-003-landing-page--marketing-components) |
+| F004 | Dashboard Page | Planned | Feature 001, 002 | [Details](#feature-004-dashboard-page) |
+| F005 | Character Management Pages | Planned | Feature 001, 002 | [Details](#feature-005-character-management-pages) |
+| F006 | Party Management Pages | Planned | Feature 001, 002 | [Details](#feature-006-party-management-pages) |
+| F007 | Monster/NPC Management Pages | Planned | Feature 001, 002 | [Details](#feature-007-monsternpc-management-pages) |
+| F008 | Encounter Builder Pages | Planned | Feature 001, 002 | [Details](#feature-008-encounter-builder-pages) |
+| F009 | Combat Tracker Page | Planned | Feature 001, 002 | [Details](#feature-009-combat-tracker-page) |
+| F010 | User Profile & Settings Pages | Planned | Feature 001, 002 | [Details](#feature-010-user-profile--settings-pages) |
+| F011 | Item Catalog Pages | Planned | Feature 001, 002 | [Details](#feature-011-item-catalog-pages) |
+| F012 | Subscription & Billing Pages | Planned | Feature 001, 002 | [Details](#feature-012-subscription--billing-pages) |
+| F013 | Clerk Integration & Auth Flow | Planned | Feature 001 | [Details](#feature-013-clerk-integration--auth-flow) |
+| F014 | MongoDB User Model & Webhook | Planned | Feature 013 | [Details](#feature-014-mongodb-user-model--webhook) |
+| F015 | Profile Setup Wizard | Planned | Feature 014 | [Details](#feature-015-profile-setup-wizard) |
+| F016 | User Dashboard with Real Data | Planned | Feature 004, 014 | [Details](#feature-016-user-dashboard-with-real-data) |
+| F017 | Profile Page Functionality | Planned | Feature 010, 014 | [Details](#feature-017-profile-page-functionality) |
+| F018 | Character Model & API | Planned | Feature 014 | [Details](#feature-018-character-model--api) |
+| F019 | Character List Page Integration | Planned | Feature 005, 018 | [Details](#feature-019-character-list-page-integration) |
+| F020 | Character Creation Form | Planned | Feature 019 | [Details](#feature-020-character-creation-form) |
+| F021 | Character Edit Form | Planned | Feature 019 | [Details](#feature-021-character-edit-form) |
+| F022 | Character Templates | Planned | Feature 018 | [Details](#feature-022-character-templates) |
+| F023 | Monster Model & API | Planned | Feature 014 | [Details](#feature-023-monster-model--api) |
+| F024 | Monster List Page Integration | Planned | Feature 007, 023 | [Details](#feature-024-monster-list-page-integration) |
+| F025 | Monster Creation/Edit Forms | Planned | Feature 024 | [Details](#feature-025-monster-creationedit-forms) |
+| F026 | Item Model & API | Planned | Feature 014 | [Details](#feature-026-item-model--api) |
+| F027 | Item Management Pages | Planned | Feature 011, 026 | [Details](#feature-027-item-management-pages) |
+| F028 | Party Model & API | Planned | Feature 014, 018 | [Details](#feature-028-party-model--api) |
+| F029 | Party Management Integration | Planned | Feature 006, 028 | [Details](#feature-029-party-management-integration) |
+| F030 | Service Worker Setup | Planned | Feature 001 | [Details](#feature-030-service-worker-setup) |
+| F031 | IndexedDB Setup | Planned | Feature 030 | [Details](#feature-031-indexeddb-setup) |
+| F032 | Offline Combat | Planned | Feature 031, 036 | [Details](#feature-032-offline-combat) |
+| F033 | Background Sync | Planned | Feature 032 | [Details](#feature-033-background-sync) |
+| F034 | Encounter Model & API | Planned | Feature 014, 028, 023 | [Details](#feature-034-encounter-model--api) |
+| F035 | Encounter Builder Integration | Planned | Feature 008, 034 | [Details](#feature-035-encounter-builder-integration) |
+| F036 | Combat Session Model | Planned | Feature 034 | [Details](#feature-036-combat-session-model) |
+| F037 | Initiative System | Planned | Feature 036 | [Details](#feature-037-initiative-system) |
+| F038 | Combat Tracker Basic Integration | Planned | Feature 009, 037 | [Details](#feature-038-combat-tracker-basic-integration) |
+| F039 | HP Tracking System | Planned | Feature 036 | [Details](#feature-039-hp-tracking-system) |
+| F040 | HP Tracking UI Integration | Planned | Feature 038, 039 | [Details](#feature-040-hp-tracking-ui-integration) |
+| F041 | HP History & Undo | Planned | Feature 039 | [Details](#feature-041-hp-history--undo) |
+| F042 | Status Effects Model | Planned | Feature 036 | [Details](#feature-042-status-effects-model) |
+| F043 | Status Effects UI | Planned | Feature 038, 042 | [Details](#feature-043-status-effects-ui) |
+| F044 | Lair Actions System | Planned | Feature 036 | [Details](#feature-044-lair-actions-system) |
+| F045 | Combat Session Management | Planned | Feature 036 | [Details](#feature-045-combat-session-management) |
+| F046 | Combat Log System | Planned | Feature 036 | [Details](#feature-046-combat-log-system) |
+| F047 | Tier Limit Enforcement | Planned | Feature 014 | [Details](#feature-047-tier-limit-enforcement) |
+| F048 | Data Export System | Planned | Feature 018, 034, 046 | [Details](#feature-048-data-export-system) |
+| F049 | Data Import System | Planned | Feature 018 | [Details](#feature-049-data-import-system) |
+| F050 | Stripe Setup & Webhooks | Planned | Feature 014 | [Details](#feature-050-stripe-setup--webhooks) |
+| F051 | Subscription Checkout | Planned | Feature 050 | [Details](#feature-051-subscription-checkout) |
+| F052 | Subscription Management | Planned | Feature 012, 051 | [Details](#feature-052-subscription-management) |
+| F053 | Billing Portal | Planned | Feature 050 | [Details](#feature-053-billing-portal) |
+| F054 | Free Trial System | Planned | Feature 051 | [Details](#feature-054-free-trial-system) |
+| F055 | Character Sharing | Planned | Feature 018 | [Details](#feature-055-character-sharing) |
+| F056 | Advanced Combat Logging (Paid) | Planned | Feature 046, 047 | [Details](#feature-056-advanced-combat-logging-paid) |
+| F057 | Custom Themes (Paid) | Planned | Feature 001, 047 | [Details](#feature-057-custom-themes-paid) |
+| F058 | Collaborative Mode (Paid) | Planned | Feature 036, 047 | [Details](#feature-058-collaborative-mode-paid) |
+| F059 | Performance Optimization | Planned | All previous features | [Details](#feature-059-performance-optimization) |
+| F060 | Polish & Launch Prep | Planned | All previous features | [Details](#feature-060-polish--launch-prep) |
+
 ## Phase 1: UI Foundation & Site Structure (Week 1)
 
 **PRD Alignment**: §§5.1-5.4, 8.1-8.3 (Onboarding Experience & Marketing Surfaces)
@@ -1476,6 +1558,32 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 ---
 
 **Governance Checkpoint (AI Agent)**: Confirm monetization flows match PRD §§3.1-3.2 and Stripe configurations in `docs/Tech-Stack.md`.
+
+## Phase 6: Combat Polish & State (Week 7)
+
+**PRD Alignment**: §§4.3-4.6 (Combat UX, State Persistence & Edge Cases)
+
+This phase focuses on polishing the combat experience and hardening state management across offline/online transitions. Typical work includes:
+
+- Finalizing HP history, undo/redo UX, and edge case handling
+- Ensuring pause/resume/end-of-combat flows and session summaries are robust
+- Completing status-effects, lair action, and initiative edge-case fixes
+- Expanding E2E coverage for combat and offline sync reconciliation
+
+**Governance Checkpoint (AI Agent)**: Verify combat state persistence and undo/redo behaviors against `docs/Product-Requirements.md §4.6`. Capture regression test results and stakeholder acceptance notes.
+
+## Phase 7: Monetization (Week 8)
+
+**PRD Alignment**: §§3.1-3.2 (Monetization & Billing)
+
+This phase finalizes paid features and billing integration. Work includes:
+
+- Stripe webhook verification and billing portal integration
+- Free-trial flows and subscription lifecycle handling
+- Tiered feature gating and telemetry for paid features
+- UX polish for checkout and subscription management
+
+**Governance Checkpoint (AI Agent)**: Run security and compliance checks on billing endpoints and record results. Ensure `docs/Tech-Stack.md` documents any third-party account configuration and webhook verification steps.
 
 ## Phase 8: Advanced Capabilities (Week 9-10)
 

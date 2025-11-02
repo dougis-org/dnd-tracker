@@ -29,20 +29,15 @@ If no arguments provided, ask the user for both the feature number and PR number
 4. If not merged, STOP and report: "PR #[NUMBER] is not merged yet. Complete and merge the PR first."
 5. Extract the merge date from mergedAt field
 
-## Step 2: Read Current Roadmap
+## Step 2: Update Feature Status in Roadmap
 
-1. Read `./docs/Feature-Roadmap.md`
-2. Find Feature [NUMBER] section
-3. Verify it exists and is marked "In Progress" or planned
-4. Note the current feature number for progress calculation
-
-## Step 3: Update Feature Section
-
-Update the feature's section in the roadmap:
-
-1. Change status to: `**Status**: Complete ✅ (Merged via PR #[NUMBER])`
-2. Add completion date: `**Completed**: [MERGE_DATE]`
-3. Preserve all other details (Description, Deliverables, Dependencies, etc.)
+1. Read `./docs/Feature-Roadmap.md`.
+2. In the `## Feature Summary` table, find the row for the completed feature number.
+3. Update the `Status` for that row to "Complete".
+4. In the main body of the document, find the detailed section for the feature.
+5. Change its status to: `**Status**: Complete ✅ (Merged via PR #[NUMBER])`
+6. Add completion date: `**Completed**: [MERGE_DATE]`
+7. Preserve all other details (Description, Deliverables, Dependencies, etc.).
 
 Example transformation:
 
@@ -63,9 +58,9 @@ AFTER (in Completed Features section):
 ...
 ```
 
-## Step 4: Update Progress Tracking
+## Step 3: Update Progress Tracking
 
-Update the progress tracking section at the bottom of the roadmap:
+Update the progress tracking section at the bottom of the roadmap if it exists:
 
 1. Count completed features in "## Completed Features" section
 2. Calculate percentage: (completed / 20 total features) × 100
@@ -81,14 +76,14 @@ Update these lines:
 **Next Feature**: Feature [NEXT_NUM] - [NEXT_NAME] (Priority, description)
 ```
 
-## Step 5: Commit and Push Changes
+## Step 4: Commit and Push Changes
 
 1. Stage the updated file: `git add docs/Feature-Roadmap.md`
 2. Commit with conventional message: `git commit -m "docs: mark feature [NUMBER] as complete"`
 3. Push to main: `git push origin main`
 4. This ensures all agents are immediately working from the updated roadmap
 
-## Step 6: Save and Report
+## Step 5: Save and Report
 
 1. Verify the updated Feature-Roadmap.md is saved
 2. Run `npm run lint:markdown:fix` to ensure formatting
