@@ -2,14 +2,14 @@
 description: Perform a non-destructive cross-artifact consistency and quality analysis across spec.md, plan.md, and tasks.md after task generation.
 ---
 
-**Primary Command Location**: `.claude/commands/speckit.analyze.prompt.md`
+**Primary Command Location**: `.claude/commands/speckit.analyze.md`
 
 This command is maintained in the Claude Code commands directory. For the complete command implementation, refer to and follow the steps from:
 
-`.claude/commands/speckit.analyze.prompt.md`
+`.claude/commands/speckit.analyze.md`
 
 ## Quick Reference
 
-**Usage**: `/speckit.analyze.prompt`
+**Usage**: `/speckit.analyze`
 
-**For Full Documentation**: See `.claude/commands/speckit.analyze.prompt.md` and `docs/Slash-Commands.md`
+**For Full Documentation**: See `.claude/commands/speckit.analyze.md` and `docs/Slash-Commands.md`

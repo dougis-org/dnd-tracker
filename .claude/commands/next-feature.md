@@ -1,146 +1,49 @@
 ---
-description: Find the next feature to work on from the roadmap and initiate feature specification
+description: Pick the next feature from the roadmap and prepare the repository for specification.
 ---
 
-# Next Feature
+## Overview
 
-Start the next feature from the D&D Tracker roadmap. **All contributors must follow CONTRIBUTING.md standards.**
+This command selects the next feature marked "Planned" in `docs/Feature-Roadmap.md`, changes its status to "In Progress", creates a single feature branch, and returns instructions for the human or automation to run `/speckit.specify`.
 
-## Step 0: Sync with Remote
+## PRECONDITIONS (MANDATORY)
 
-1. Switch to main branch: `git checkout main`
-2. Pull latest changes: `git pull origin main`
-3. This ensures all agents are working from the same roadmap file and prevents conflicts
+1. The agent must be operating in the repository root.
+2. All local changes must be committed or stashed before running this command.
+3. The agent **must** push the updated `docs/Feature-Roadmap.md` to `origin/main` immediately after updating the status to "In Progress" and verify that the push is visible on the remote before doing anything else.
 
-## Step 1: Find the Next Feature
+   Verification commands (agent must run programmatically):
 
-1. Read `./docs/Feature-Roadmap.md` and parse the `## Feature Summary` table.
-2. Iterate through the table to find the first feature with a `Status` of "Planned".
-3. For the candidate feature, check its `Dependencies` column.
-4. Verify that every dependency listed has a `Status` of "Complete" in the table.
-5. If dependencies are not met, report the blocking features and stop.
-6. If dependencies are met, this is the next feature. Extract its `Feature #` and `Description`.
-7. Use the `Link` from the table to jump to the full feature section and extract detailed information.
-
-## Step 2: Update Roadmap - Mark as In Progress
-
-Update `Feature-Roadmap.md` before proceeding:
-
-1. In the `## Feature Summary` table, find the row for the selected feature and update its `Status` to "In Progress".
-2. In the main body of the document, find the detailed section for the feature.
-3. Change its status to: `**Status**: 🚧 In Progress (Started [TODAY'S DATE])`
-4. Add: `**Branch**: [branch-name-from-step-3]`
-5. Save the roadmap.
-
-This prevents parallel workstreams from starting the same feature.
-
-## Step 3: Commit and Push Roadmap Update
-
-1. Stage the updated file: `git add docs/Feature-Roadmap.md`
-2. Commit with conventional message: `git commit -m "docs: mark feature [NUMBER] as in progress"`
-3. Push to main: `git push origin main`
-4. This ensures all agents immediately see that the feature is being worked on and don't start duplicate work
-
-## Step 4: Generate Feature Description
-
-Create a feature description including:
-
-```
-Feature [NUMBER]: [NAME]
-
-[DESCRIPTION]
-
-User Value:
-[USER VALUE]
-
-What to build:
-[Convert SCOPE bullets and acceptance criteria into natural language]
-
-Data needed:
-[Key data models/entities]
-
-API endpoints required:
-[List endpoints with descriptions]
-
-Dependencies:
-[Completed features this builds upon]
+```bash
+# ensure latest remote main
+git fetch origin main
+# display remote roadmap
+git show origin/main:docs/Feature-Roadmap.md | sed -n '1,200p'
+# verify the selected feature line contains "In Progress" and the branch name
+git show origin/main:docs/Feature-Roadmap.md | grep -n "In Progress" || true
 ```
 
-Refer to CONTRIBUTING.md for:
+If the roadmap update is not visible on `origin/main`, abort with `ERROR: roadmap not pushed to origin/main; aborting.`
 
-- Code organization standards
-- Testing & quality requirements (80%+ coverage, max 450 lines/file, max 50 lines/function)
-- TypeScript & component standards
-- Database & security best practices
-- Git & PR workflow
+## BRANCH CREATION RULES (MANDATORY)
 
-## Step 5: Execute /speckit.specify
+1. Create exactly one branch named `feature/[NUMBER]-[short-name]` where [NUMBER] is the roadmap feature number and [short-name] is a concise 2-4 word hyphenated short name.
+2. Push this branch to `origin` and set it as the working branch for subsequent spec and planning actions.
+3. Do NOT create or push any additional branches.
 
-Run `/speckit.specify` with the feature description. The user ran `/next-feature` to start, so proceed automatically.
+## OUTPUT
 
-## Step 6: Report Completion
+Return:
+- BRANCH_NAME: name of the created branch
+- FEATURE_NUMBER: roadmap feature number
+- SHORT_NAME: generated short name (2-4 words)
+- SPEC_TRIGGER: the automation command to call next, e.g. `/speckit.specify FEATURE_NUMBER=$FEATURE_NUMBER BRANCH_NAME=$BRANCH_NAME SHORT_NAME=$SHORT_NAME`
 
-After /speckit.specify completes, report:
+## FAILURE MODES
 
-```
-✅ Started Feature [NUMBER]: [NAME]
-- Branch: [branch-name]
-- Spec file: [spec-file-path]
-- Roadmap updated with 'In Progress' status
-- Ready for /speckit.plan command (remember to review docs/Tech-Stack.md and roadmap governance notes)
+- If the roadmap push is not visible on `origin/main`, abort and do not create any branches.
+- If a branch with the intended BRANCH_NAME already exists on the remote, abort and surface an error: `ERROR: branch already exists on remote: <BRANCH_NAME>`
 
-Next steps:
-1. Run /speckit.plan to generate design artifacts (review docs/Tech-Stack.md for framework versions before making decisions)
-2. Run /speckit.tasks to generate implementation tasks
-3. Run /speckit.analyze to validate spec/plan/tasks alignment and governance notes
-4. Run /speckit.implement to execute the feature with quality gates
-5. When the PR merges, run /feature-complete to update the roadmap and governance checkpoint status
-```
+## NEXT STEPS
 
-## Roadmap Update on Feature Completion
-
-When a feature is fully complete (all tasks done, PR merged), update the roadmap:
-
-1. Find the feature in Feature-Roadmap.md
-2. Change status to: `**Status**: Complete ✅ (Merged via PR #[NUMBER])`
-3. Add completion date: `**Completed**: [MERGE DATE]`
-4. Update the "Current Progress" section:
-   - Increment the completed feature count
-   - Update the percentage
-   - Update "Next Feature" to point to the next planned feature
-5. If this completes a Phase, update Phase status to "✅ Complete"
-
-Example update:
-
-```markdown
-### ✅ Feature 003: Character Management System
-
-**Status**: Complete ✅ (Merged via PR #165)
-**Completed**: 2025-10-25
-**Spec Location**: `specs/003-character-management/`
-...
-
----
-
-**Current Progress**: 3 of 20 features complete (15%) - Week 6 of 42
-**Phase 2 Status**: In Progress (1 of 4 features complete)
-**Next Feature**: Feature 004 - Party Management (P1, Critical Path)
-```
-
-## Error Handling
-
-- If no planned features remain: "All features in the roadmap are complete! 🎉"
-- If dependencies not met: "Cannot start Feature [NUMBER] yet. Must complete [dependency list] first."
-- If roadmap file not found: "Feature-Roadmap.md not found. Please create the roadmap first."
-- If a feature is found but its dependencies are not met, continue checking the rest of the table for another available feature. If none are found, report the first blocker.
-- If feature already "In Progress": "Feature [NUMBER] is already being worked on. Please choose a different feature or complete the current one first."
-
-## Parallel Workstream Support
-
-This command supports concurrent development by:
-
-1. Checking for "In Progress" status—only selects features not yet started
-2. Updating the roadmap immediately—marks feature as "In Progress" before starting work
-3. Providing clear completion tracking via `/feature-complete` to update roadmap when done
-
-This prevents duplication and enables multiple features to be developed concurrently.
+After successfully creating and pushing the single feature branch, the agent should NOT automatically run planning or implementation commands. Instead, return the SPEC_TRIGGER to the user or automation to explicitly call `/speckit.specify` with the required arguments.

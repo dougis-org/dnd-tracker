@@ -2,6 +2,41 @@
 description: Create or update the feature specification from a natural language feature description.
 ---
 
+## Precondition (MANDATORY)
+
+Before running `/speckit.specify` the agent must verify that the selected feature has been marked "In Progress" in `docs/Feature-Roadmap.md` and that this change is already pushed to `origin/main`.
+
+Recommended verification commands (agent must perform these checks programmatically):
+
+```bash
+# ensure we have the latest remote main
+git fetch origin main
+# show remote roadmap and verify feature row contains "In Progress" and the branch name
+git show origin/main:docs/Feature-Roadmap.md | grep -n "Feature [NUMBER]" || true
+# or search for the exact branch line
+git show origin/main:docs/Feature-Roadmap.md | grep "feature/[NUMBER]-" || true
+```
+
+If the roadmap push is not visible on `origin/main`, abort `/speckit.specify` with an explicit error: `ERROR: roadmap not pushed to origin/main; aborting.`
+
+Also require these invocation context values (the caller MUST supply):
+- FEATURE_NUMBER (integer or canonical id)
+- BRANCH_NAME (must equal `feature/[NUMBER]-[short-name]`)
+- SHORT_NAME (2-4 word short-name)
+
+If these are missing or inconsistent, abort and report a clear error.
+
+## Scope Limitation (MANDATORY)
+
+`/speckit.specify` is allowed to create or modify files ONLY inside the feature directory and files returned by the create script (SPEC_FILE, FEATURE_DIR). It MUST NOT:
+
+- Modify `docs/Feature-Roadmap.md` or other roadmap files
+- Modify other features' spec files or directories
+- Push changes to branches other than the provided BRANCH_NAME
+- Create or update any code or infra outside the feature directory
+
+If any step would touch files outside the permitted paths, abort and report the offending file(s).
+
 ## User Input
 
 ```text
@@ -22,11 +57,12 @@ Given that feature description, do this:
    - Use action-noun format when possible (e.g., "add-user-auth", "fix-payment-bug")
    - Preserve technical terms and acronyms (OAuth2, API, JWT, etc.)
    - Keep it concise but descriptive enough to understand the feature at a glance
-   - Examples:
-     - "I want to add user authentication" → "user-auth"
-     - "Implement OAuth2 integration for the API" → "oauth2-api-integration"
-     - "Create a dashboard for analytics" → "analytics-dashboard"
-     - "Fix payment processing timeout bug" → "fix-payment-timeout"
+
+   Examples:
+   - "I want to add user authentication" → "user-auth"
+   - "Implement OAuth2 integration for the API" → "oauth2-api-integration"
+   - "Create a dashboard for analytics" → "analytics-dashboard"
+   - "Fix payment processing timeout bug" → "fix-payment-timeout"
 
 2. Run the script `.specify/scripts/bash/create-new-feature.sh --json "$ARGUMENTS"` from repo root **with the short-name argument** and parse its JSON output for BRANCH_NAME and SPEC_FILE. All file paths must be absolute.
 
@@ -34,10 +70,12 @@ Given that feature description, do this:
 
    - Append the short-name argument to the `.specify/scripts/bash/create-new-feature.sh --json "$ARGUMENTS"` command with the 2-4 word short name you created in step 1
    - Bash: `--short-name "your-generated-short-name"`
-   - PowerShell: `-ShortName "your-generated-short-name"`
-   - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot")
    - You must only ever run this script once
    - The JSON is provided in the terminal as output - always refer to it to get the actual content you're looking for
+
+   **ADDITIONAL CHECK (ENFORCEMENT)**:
+   - After the script returns BRANCH_NAME and SPEC_FILE, ensure that BRANCH_NAME exactly equals the BRANCH_NAME provided by the caller (see Precondition). If they differ, abort and report the mismatch.
+   - Ensure SPEC_FILE and FEATURE_DIR are inside the intended feature path (e.g. `specs/feature-[NUMBER]-short-name/`); if not, abort.
 
 3. Load `.specify/templates/spec-template.md` to understand required sections. Also, review `docs/Feature-Roadmap.md` to understand the feature's context and dependencies, and check `docs/design/` for relevant design documents.
 
@@ -68,6 +106,11 @@ Given that feature description, do this:
     8. Return: SUCCESS (spec ready for planning)
 
 5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
+
+   ENFORCED RULES WHEN WRITING SPEC_FILE:
+   - Only write to the SPEC_FILE and files inside FEATURE_DIR returned by the create script.
+   - Create the spec and checklist files with explicit file permissions matching repo conventions.
+   - Do not alter files outside FEATURE_DIR.
 
 6. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
 
@@ -114,8 +157,7 @@ Given that feature description, do this:
       - For each item, determine if it passes or fails
       - Document specific issues found (quote relevant spec sections)
 
-   c. **Handle Validation Results**:
-
+   c. **Handle Validation Results**n
       - **If all items pass**: Mark checklist complete and proceed to step 6
 
       - **If items fail (excluding [NEEDS CLARIFICATION])**:
@@ -131,20 +173,20 @@ Given that feature description, do this:
 
            ```markdown
            ## Question [N]: [Topic]
-           
+
            **Context**: [Quote relevant spec section]
-           
+
            **What we need to know**: [Specific question from NEEDS CLARIFICATION marker]
-           
+
            **Suggested Answers**:
-           
+
            | Option | Answer | Implications |
            |--------|--------|--------------|
            | A      | [First suggested answer] | [What this means for the feature] |
            | B      | [Second suggested answer] | [What this means for the feature] |
            | C      | [Third suggested answer] | [What this means for the feature] |
            | Custom | Provide your own answer | [Explain how to provide custom input] |
-           
+
            **Your choice**: _[Wait for user response]_
            ```
 
@@ -163,7 +205,7 @@ Given that feature description, do this:
 
 7. Report completion with branch name, spec file path, checklist results, and readiness for the next phase (`/speckit.clarify` or `/speckit.plan`).
 
-**NOTE:** The script creates and checks out the new branch and initializes the spec file before writing.
+**NOTE:** The script creates and checks out the new branch and initializes the spec file before writing. The agent must ensure the branch matches the BRANCH_NAME provided by the caller and push only that branch.
 
 ## General Guidelines
 
@@ -196,14 +238,6 @@ When creating this spec from a user prompt:
    - Feature scope and boundaries (include/exclude specific use cases)
    - User types and permissions (if multiple conflicting interpretations possible)
    - Security/compliance requirements (when legally/financially significant)
-
-**Examples of reasonable defaults** (don't ask about these):
-
-- Data retention: Industry-standard practices for the domain
-- Performance targets: Standard web/mobile app expectations unless specified
-- Error handling: User-friendly messages with appropriate fallbacks
-- Authentication method: Standard session-based or OAuth2 for web apps
-- Integration patterns: RESTful APIs unless specified otherwise
 
 ### Success Criteria Guidelines
 

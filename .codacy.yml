@@ -1,4 +1,7 @@
-exclude_paths:
+exclude:
+  - ".claude/commands/**"
+  - ".github/chatmodes/**"
+  - ".github/prompts/**"
   - "jest.setup.ts"
   - "jest.config.ts"
   - "next.config.js"
