@@ -9,10 +9,15 @@ owner: @doug
 ## Summary
 Set up the Next.js + TypeScript project and establish the design system and developer tooling so subsequent features can be implemented quickly and consistently.
 
+## Definitions
+- **Basic theme**: Light/dark CSS variable switching only (no custom color schemes or advanced theming)
+- **Smoke test**: Automated test that verifies page loads without runtime errors
+- **Basic Fly.io pipeline**: Automated test job + deploy job on merge to main (minimal CI/CD)
+
 ## Scope
 - Next.js 16.0.1 with TypeScript 5.9.2
 - Tailwind CSS 4.x config
-- shadcn/ui components installed and basic theme
+- shadcn/ui components installed and basic theme (light/dark CSS variable switching only)
 - ESLint + Prettier integration
 - markdownlint config
 - Dark/light theme toggle (UI only)
@@ -32,10 +37,10 @@ Set up the Next.js + TypeScript project and establish the design system and deve
 
 ## Deliverables
 - Repo skeleton (Next.js app + TypeScript)
-- `tailwind.config.js` and base styles
+- `tailwind.config.ts` and base styles
 - `src/components/ui/` with shadcn components wired
 - Theme toggle component
-- Layout files under `src/layouts/*`
+- Layout files under `src/components/layouts/`
 - Jest config + example test
 - Playwright config + example e2e
 - CI pipeline config (GitHub Actions or Fly.io steps)
