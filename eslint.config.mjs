@@ -56,7 +56,7 @@ export default [
       'no-var': 'error',
       'object-shorthand': 'error',
       'prefer-template': 'error',
-      'no-undef': 'off', // TypeScript handles this
+      'no-undef': 'error', // Keep enabled to catch global variable typos
     },
   },
 ];

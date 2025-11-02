@@ -1,4 +1,4 @@
-# Base stage with Node.js 25
+# Base stage with Node.js 25 and npm
 FROM node:25-alpine AS base
 
 # Install dependencies only when needed

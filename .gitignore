@@ -41,6 +41,9 @@ Thumbs.db
 dist/
 build/
 
+# TypeScript
+tsconfig.tsbuildinfo
+
 # Logs
 *.log
 npm-debug.log*

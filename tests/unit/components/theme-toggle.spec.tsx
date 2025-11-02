@@ -8,15 +8,10 @@ jest.mock('next-themes', () => ({
 }))
 
 describe('ThemeToggle', () => {
-  beforeEach(() => {
-    // Clear localStorage before each test
-    localStorage.clear()
-  })
-
   it('should render theme toggle button', () => {
     const mockUseTheme = require('next-themes').useTheme
     mockUseTheme.mockReturnValue({
-      theme: 'light',
+      resolvedTheme: 'light',
       setTheme: jest.fn(),
     })
 
@@ -29,7 +24,7 @@ describe('ThemeToggle', () => {
     const setThemeMock = jest.fn()
     const mockUseTheme = require('next-themes').useTheme
     mockUseTheme.mockReturnValue({
-      theme: 'light',
+      resolvedTheme: 'light',
       setTheme: setThemeMock,
     })
 
@@ -46,7 +41,7 @@ describe('ThemeToggle', () => {
     const setThemeMock = jest.fn()
     const mockUseTheme = require('next-themes').useTheme
     mockUseTheme.mockReturnValue({
-      theme: 'dark',
+      resolvedTheme: 'dark',
       setTheme: setThemeMock,
     })
 
@@ -62,7 +57,7 @@ describe('ThemeToggle', () => {
   it('should show appropriate icon for current theme', () => {
     const mockUseTheme = require('next-themes').useTheme
     mockUseTheme.mockReturnValue({
-      theme: 'dark',
+      resolvedTheme: 'dark',
       setTheme: jest.fn(),
     })
 
