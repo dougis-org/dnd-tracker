@@ -33,12 +33,12 @@ const buttonVariants = cva(
 )
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<React.ComponentRef<'button'>>,
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, // eslint-disable-line no-undef -- HTMLButtonElement is a DOM global type
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }
 
-const Button = React.forwardRef<React.ComponentRef<'button'>, ButtonProps>(
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>( // eslint-disable-line no-undef -- HTMLButtonElement is a DOM global type
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button'
     return (
