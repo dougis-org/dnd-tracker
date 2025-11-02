@@ -352,10 +352,12 @@ If you encounter deployment issues:
 This project supports a controlled automation workflow for AI agents and maintainers. These labels and the validation action ensure that no agent forcibly merges to `main` and that PRs are only marked ready for auto-merge when reviews and checks are satisfied.
 
 Labels
+
 - `automation/auto-merge-request` — A request signal an AI agent can add at any time to indicate it would like the PR to be auto-merged when checks pass. This label does NOT mean the PR is ready.
 - `automation/ready-for-auto-merge` — A strict readiness signal. Only add when all conditions below are satisfied. Agents may add this label, but it will be validated by a workflow and removed if checks fail.
 
 Process (agent + maintainer expectations)
+
 1. Cut the PR and include tests and a clear description.
 2. Wait 90 seconds to allow humans and automation to comment.
 3. Address all review threads and comments. If a comment requires deferring work, create a linked issue and document the deferred work in the PR body. The deferred work requires an explicit human confirmation comment in the PR before the PR can be considered ready.
@@ -364,11 +366,13 @@ Process (agent + maintainer expectations)
 6. Only then may the `automation/ready-for-auto-merge` label be added. A GitHub Action will validate review threads, checks, and deferred-work confirmations. If validation fails the action will remove the label and comment explaining why.
 
 Human override
+
 - Only a human maintainer may perform a manual or early merge. To explicitly approve deferred work use the exact comment format:
 
   `@maintainer override-deferred-work: I confirm deferred work is acceptable. Reason: <short justification> — <maintainer-username>`
 
 Notes
+
 - The validation action checks review *threads* (unresolved threads), combined status, and check runs. It provides a final confirmation comment when validation succeeds. The action does not merge PRs — merging is performed only by GitHub auto-merge (when configured) or a human.
 
 ---
