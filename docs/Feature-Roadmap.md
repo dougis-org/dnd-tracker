@@ -30,7 +30,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 | Feature # | Description | Status | Dependencies | Link |
 | :--- | :--- | :--- | :--- | :--- |
-| F001 | Project Setup & Design System | Planned | - | [Details](#feature-001-project-setup--design-system) |
+| F001 | Project Setup & Design System | 🚧 In Progress (branch: 001-project-setup-design-system) | - | [Details](#feature-001-project-setup--design-system) |
 | F002 | Navigation & Not Implemented Page | Planned | Feature 001 | [Details](#feature-002-navigation--not-implemented-page) |
 | F003 | Landing Page & Marketing Components | Planned | Feature 001, 002 | [Details](#feature-003-landing-page--marketing-components) |
 | F004 | Dashboard Page | Planned | Feature 001, 002 | [Details](#feature-004-dashboard-page) |
@@ -96,6 +96,9 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 **PRD Alignment**: §§5.1-5.4, 8.1-8.3 (Onboarding Experience & Marketing Surfaces)
 
 ### Feature 001: Project Setup & Design System
+
+**Status**: 🚧 In Progress (Started 2025-11-01)
+**Branch**: 001-project-setup-design-system
 
 **Duration**: Day 1
 **Deliverables**:
