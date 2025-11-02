@@ -60,10 +60,10 @@ AFTER (in Completed Features section):
 
 ## Step 3: Update Progress Tracking
 
-Update the progress tracking section at the bottom of the roadmap if it exists:
+Update the progress tracking section at the top of the roadmap if it exists:
 
 1. Count completed features in "## Completed Features" section
-2. Calculate percentage: (completed / 20 total features) × 100
+2. Calculate percentage: (completed / total features) × 100
 3. Calculate current week based on timeline
 4. Find next feature: first feature in "## Planned Features" not marked "In Progress"
 5. Check phase completion: if all phase features are complete, mark phase complete
@@ -71,7 +71,7 @@ Update the progress tracking section at the bottom of the roadmap if it exists:
 Update these lines:
 
 ```markdown
-**Current Progress**: [X] of [Y] features complete ([Q]%) - Week [Z] of 42
+**Current Progress**: [X] of [Y] features complete ([Q]%) - Week [Z] of [B]
 **Phase [N] Status**: ✅ Complete (if all phase features done) OR In Progress ([X] of [Y] features complete)
 **Next Feature**: Feature [NEXT_NUM] - [NEXT_NAME] (Priority, description)
 ```
