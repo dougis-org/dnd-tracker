@@ -108,8 +108,7 @@ jobs:
                 const msg = 'Cannot mark ready: PR mentions deferred work and no explicit human confirmation (override-deferred-work) was found.';
                 try { await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: labelName }); } catch (err) { core.warning('Failed to remove label: ' + err.message); }
                 await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body: `:x: ${msg}
-
-If this deferred work is intentional, a maintainer must confirm it with a comment in the format: ` + "`@maintainer override-deferred-work: I confirm deferred work is acceptable. Reason: <short justification> — <maintainer-username>`" });
+                If this deferred work is intentional, a maintainer must confirm it with a comment in the format: ` + "`@maintainer override-deferred-work: I confirm deferred work is acceptable. Reason: <short justification> — <maintainer-username>`" });
                 core.setFailed(msg);
                 return;
               }
