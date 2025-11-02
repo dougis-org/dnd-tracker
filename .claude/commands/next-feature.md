@@ -34,10 +34,12 @@ If the roadmap update is not visible on `origin/main`, abort with `ERROR: roadma
 ## OUTPUT
 
 Return:
+
 - BRANCH_NAME: name of the created branch
 - FEATURE_NUMBER: roadmap feature number
 - SHORT_NAME: generated short name (2-4 words)
-- SPEC_TRIGGER: the automation command to call next, e.g. `/speckit.specify FEATURE_NUMBER=$FEATURE_NUMBER BRANCH_NAME=$BRANCH_NAME SHORT_NAME=$SHORT_NAME`
+- SPEC_TRIGGER: the automation command to call next, e.g. `.claude/commands/speckit.specify.md FEATURE_NUMBER=$FEATURE_NUMBER BRANCH_NAME=$BRANCH_NAME SHORT_NAME=$SHORT_NAME`
+
 
 ## FAILURE MODES
 
@@ -46,4 +48,6 @@ Return:
 
 ## NEXT STEPS
 
-After successfully creating and pushing the single feature branch, the agent should NOT automatically run planning or implementation commands. Instead, return the SPEC_TRIGGER to the user or automation to explicitly call `/speckit.specify` with the required arguments.
+After successfully creating and pushing the single feature branch, the agent should automatically run the first planning command by executing the logic from .claude/commands/speckit.specify.md using the parameters created for SPEC_TRIGGER.
+
+No implementation steps should be taken however.
