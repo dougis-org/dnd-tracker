@@ -2,15 +2,36 @@
 
 **Product**: D&D Encounter Tracker Web App
 **Version**: 2.0 - Agile Incremental Approach
-**Last Updated**: 2025-11-01
-**Status**: Planning Phase
+**Last Updated**: 2025-11-02
+**Status**: In Development
 
 This roadmap is the authoritative plan for delivery cadence and milestones. Scope and expectations remain sourced from `docs/Product-Requirements.md`, while technology selections follow `docs/Tech-Stack.md`.
 
 > **Core Principle**: Each feature is a discrete, deployable unit of work that can be completed in 1-2 days. Every feature includes TDD with unit, integration, and E2E tests.
 
+## Progress Tracking
+
+**Current Progress**: 1 of 60 features complete (1.7%) - Week 1 of 10  
+**Phase 1 Status**: In Progress (1 of 12 features complete)  
+**Next Feature**: Feature 002 - Navigation & Not Implemented Page  
+**Started**: 2025-11-01  
+**Latest Completion**: Feature 001 (2025-11-02 via PR #332)
+
+### Completed Features by Phase
+
+- **Phase 1 (UI Foundation)**: 1/12 complete
+  - ✅ F001: Project Setup & Design System
+- **Phase 2 (Authentication)**: 0/5 complete
+- **Phase 3 (Entity Management)**: 0/12 complete
+- **Phase 4 (Offline)**: 0/4 complete
+- **Phase 5 (Combat Engine)**: 0/9 complete
+- **Phase 6 (Combat Polish)**: 0/6 complete
+- **Phase 7 (Monetization)**: 0/5 complete
+- **Phase 8 (Advanced)**: 0/7 complete
+
 ## Table of Contents
 
+- [Progress Tracking](#progress-tracking)
 - [Feature Summary](#feature-summary)
 - [Phase 1: UI Foundation & Site Structure (Week 1)](#phase-1-ui-foundation--site-structure-week-1)
 - [Phase 2: Authentication & User Management (Week 2)](#phase-2-authentication--user-management-week-2)
