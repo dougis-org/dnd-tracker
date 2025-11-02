@@ -1,0 +1,54 @@
+openapi: 3.0.1
+info:
+  title: D&D Tracker - Navigation (Placeholder API)
+  version: 0.1.0
+  description: Minimal placeholder endpoints for UI routing skeleton (return NotImplemented placeholder schema)
+
+paths:
+  /dashboard:
+    get:
+      summary: Dashboard placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /characters:
+    get:
+      summary: Characters list (placeholder)
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /characters/{id}:
+    get:
+      summary: Character detail (placeholder)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+components:
+  schemas:
+    NotImplemented:
+      type: object
+      properties:
+        message:
+          type: string
+          example: This feature is not implemented yet. Please check back later or file an issue.
