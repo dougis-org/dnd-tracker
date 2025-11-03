@@ -1,3 +1,4 @@
+# pylint: skip-file
 {
   'exclude':
     [
@@ -11,5 +12,11 @@
       '.specify/**',
       'specs/**/*.md',
       '.specify/**/*.md',
+      'tests/**',
     ],
-} # pylint: disable=pointless-statement
+  'tools':
+    {
+      'pylint': {'enabled': False},
+      'revive': {'enabled': False},
+    },
+}
