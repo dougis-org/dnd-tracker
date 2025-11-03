@@ -1,5 +1,4 @@
-```markdown
-# Quickstart: F002 — Navigation & Not Implemented Page
+# Quickstart: F002 - Navigation & Not Implemented Page
 
 Steps to run locally and run tests for this feature:
 
@@ -28,6 +27,7 @@ npm run test:ci -- --grep "navigation-smoke"
 ```
 
 Notes:
+
 - Tests should be written first (TDD). See `specs/002-navigation-not-implemented-page/research.md` for test cases and patterns.
 
 ```

@@ -1,6 +1,5 @@
-```markdown
 ---
-title: F002 — Navigation & Not Implemented Page
+title: F002 - Navigation & Not Implemented Page
 id: F002
 branch: feature/002-navigation-not-implemented-page
 created: 2025-11-02
@@ -9,11 +8,17 @@ owner: @doug
 
 ## Summary
 
-Implement the global navigation, routing skeleton, and a `NotImplementedPage` placeholder used across the app. All configured routes should render the NotImplemented page until the specific feature is implemented. Mobile responsiveness and breadcrumbs must be included.
+Implement the GlobalNav (global navigation component), routing skeleton, and a `NotImplementedPage` placeholder used across the app. All configured routes should render the NotImplemented page until the specific feature is implemented. Mobile responsiveness and breadcrumbs must be included.
+## Clarifications
+
+### Session 2025-11-02
+
+ - Q: Route scope -> A: Generate route stubs for every route listed in `docs/Feature-Roadmap.md` and create a corresponding placeholder `src/app/.../page.tsx` that renders `NotImplementedPage`. This makes the roadmap the single source of truth for routes covered by this feature and prevents scope drift.
+ - Q: Component naming -> A: Use `GlobalNav` as the canonical component name across spec, plan and tasks. Update source files and tests to use `GlobalNav` (aliases allowed via `src/components/navigation/index.ts` if necessary). This reduces naming drift and keeps file names explicit.
 
 ## Scope
 
-- Global navigation component with desktop and mobile variants
+- GlobalNav component (desktop and mobile variants)
 - Route definitions for all primary pages, routed to NotImplementedPage
 - `NotImplementedPage` component with friendly copy and an actionable CTA (report/feedback)
 - Footer component with legal and social links
@@ -32,8 +37,8 @@ Implement the global navigation, routing skeleton, and a `NotImplementedPage` pl
 
 ## Deliverables
 
-- Layout file that includes the global navigation (placed under `src/components/layouts/`)
-- Global navigation component (desktop + mobile variants) under `src/components/navigation/`
+- Layout file that includes the `GlobalNav` component (placed under `src/components/layouts/`)
+- GlobalNav component (desktop + mobile variants) under `src/components/navigation/`
 - NotImplemented placeholder component under `src/components/`
 - Breadcrumb component under `src/components/`
 - Route entries in the app router pointing to NotImplemented for each page listed in the roadmap
@@ -110,6 +115,7 @@ As a user navigating to nested pages, I want to see a breadcrumb trail so I can 
 - **FR-003**: Mobile navigation MUST provide a collapsed menu that reveals the same navigation links as desktop.
 - **FR-004**: Breadcrumbs MUST reflect the current route hierarchy and provide links back to parent segments.
 - **FR-005**: The NotImplemented placeholder MUST include a clear message, an explanation of why the page is unavailable, and a call-to-action to report or request the feature.
+- **FR-006**: The authoritative list of routes for this feature is the entries in `docs/Feature-Roadmap.md`. The implementation MUST create route stubs for each roadmap entry that render the `NotImplementedPage` and include a corresponding task in `tasks.md`.
 
 ## Key Entities
 

@@ -1,5 +1,4 @@
-```markdown
-# Research: F002 — Navigation & Not Implemented Page
+# Research: F002 - Navigation & Not Implemented Page
 
 ## Unknowns / NEEDS CLARIFICATION (extracted from plan)
 
@@ -15,7 +14,7 @@
 - Alternatives considered: Allow exceptions for purely documentation changes. Rejected because navigation touches UI and tests are fast to add.
 
 ### 2) Route-to-label mapping
-- Decision: Use canonical labels derived from the roadmap with minor humanization: `/characters` → "Characters", `/characters/:id` → "Character", `/dashboard` → "Dashboard".
+- Decision: Use canonical labels derived from the roadmap with minor humanization: `/characters` -> "Characters", `/characters/:id` -> "Character", `/dashboard` -> "Dashboard".
 - Rationale: Matches product expectations and keeps breadcrumbs concise.
 - Implementation note: Provide a `routeMeta` table in `src/lib/navigation.ts` mapping path patterns to titles; fallback to capitalized segment.
 
