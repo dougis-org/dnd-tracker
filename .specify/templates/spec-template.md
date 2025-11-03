@@ -5,6 +5,10 @@
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
 
+**Maintainer**: @doug
+**Canonical components (UI)**: GlobalNav
+**Constitution**: This specification must comply with `.specify/memory/constitution.md`. After edits, run the required Codacy analysis for any edited files per repository rules.
+
 ## User Scenarios & Testing *(mandatory)*
 
 <!--

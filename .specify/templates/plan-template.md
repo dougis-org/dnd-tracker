@@ -3,6 +3,8 @@
 **Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
+**Maintainer**: @doug
+
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 
 ## Summary
@@ -32,6 +34,12 @@
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 [Gates determined based on constitution file]
+
+### Post-ratification checklist
+
+- [ ] Confirm `.specify/memory/constitution.md` is referenced in the feature spec
+- [ ] Run Codacy analysis on any edited files (per repo rules)
+- [ ] Update templates if constitution wording changes
 
 ## Project Structure
 

@@ -1,8 +1,8 @@
 # dnd-tracker Constitution
 <!--
 Sync Impact Report
-- Version change: none → 1.0.0
-- Modified principles: (new document) → added:
+- Version change: none -> 1.0.0
+- Modified principles: (new document) -> added:
 
   - Test-First (TDD) (NON-NEGOTIABLE)
   - Quality Gates & Codacy Compliance
@@ -12,11 +12,11 @@ Sync Impact Report
 - Added sections: Governance, Development Workflow (filled from CONTRIBUTING.md)
 - Removed sections: none
 - Templates requiring updates:
-
-  - .specify/templates/plan-template.md ⚠ pending
-  - .specify/templates/spec-template.md ⚠ pending
-  - .specify/templates/tasks-template.md ⚠ pending
-  - .specify/templates/commands/*.md ⚠ pending
+ 
+  - .specify/templates/plan-template.md (pending)
+  - .specify/templates/spec-template.md (pending)
+  - .specify/templates/tasks-template.md (pending)
+  - .specify/templates/commands/*.md (pending)
 - Follow-up TODOs:
 
   - Verify and apply template syncs listed above after constitution changes are accepted.
@@ -27,11 +27,11 @@ Sync Impact Report
 
 ### Test-First (TDD) (NON-NEGOTIABLE)
 
-TDD is mandatory: write failing tests that express the desired behavior before implementing code. Tests define acceptance criteria and must be present in the PR that implements the feature. See `CONTRIBUTING.md` → "Development Process (TDD Required)" and `TESTING.md` for detailed test location, tooling, and coverage expectations.
+TDD is mandatory: write failing tests that express the desired behavior before implementing code. Tests define acceptance criteria and must be present in the PR that implements the feature. See `CONTRIBUTING.md` -> "Development Process (TDD Required)" and `TESTING.md` for detailed test location, tooling, and coverage expectations.
 
 ### Quality Gates & Codacy Compliance
 
-All edits must satisfy the project's quality gates: type-check, ESLint, markdown lint, build, and test-suite passes. Remote Codacy and CI checks are authoritative — fix issues they report before merge. See `CONTRIBUTING.md` → "Pre-PR Checklist" and the Codacy guidance in the repository.
+All edits must satisfy the project's quality gates: type-check, ESLint, markdown lint, build, and test-suite passes. Remote Codacy and CI checks are authoritative — fix issues they report before merge. See `CONTRIBUTING.md` -> "Pre-PR Checklist" and the Codacy guidance in the repository.
 
 ### Branching, PRs & Automation Controls
 
@@ -39,11 +39,11 @@ Follow the repository's branching and PR rules: create a `feature/<issue>-<short
 
 ### Size, Complexity & Duplication Limits
 
-Enforce file/function size and duplication limits: max 450 lines per file, max 50 lines per function, and extract shared logic into `src/lib/` or test utilities. Use Codacy/ESLint to detect complexity and duplication and refactor before PR. See `CONTRIBUTING.md` → "File & Function Size" and "Reducing Complexity & Duplication".
+Enforce file/function size and duplication limits: max 450 lines per file, max 50 lines per function, and extract shared logic into `src/lib/` or test utilities. Use Codacy/ESLint to detect complexity and duplication and refactor before PR. See `CONTRIBUTING.md` -> "File & Function Size" and "Reducing Complexity & Duplication".
 
 ### Security, Secrets & Observability
 
-Protect secrets and validate inputs. Keep secrets out of source control; document required env vars in `.env.example`. After adding dependencies run the Trivy scan as required. Instrument code with structured logs and ensure observability where applicable. See `CONTRIBUTING.md` → "Database & Security" and "Deployment Requirements".
+Protect secrets and validate inputs. Keep secrets out of source control; document required env vars in `.env.example`. After adding dependencies run the Trivy scan as required. Instrument code with structured logs and ensure observability where applicable. See `CONTRIBUTING.md` -> "Database & Security" and "Deployment Requirements".
 
 ## Additional Constraints
 
@@ -75,6 +75,21 @@ Amendment procedure (how to change this constitution):
 2. The PR must include tests/automation or checklist updates required by the change (e.g., template updates, CI adjustments) and must pass the same quality gates as code changes.
 3. At least one maintainer review is required and all CI/Codacy checks must pass. For agent-proposed edits, include `AGENTS.md` references showing adherence to agent obligations.
 4. A maintainer may approve and merge once checks and review threads are resolved. Major governance changes (removals or incompatible redefinitions) SHOULD include an explicit maintainer consensus comment in the PR body.
+
+### Exceptions & Emergency Changes
+
+Temporary exceptions or emergency changes may be required in rare situations. Policy:
+
+- Exceptions must be recorded in the feature's spec (for example under `## Clarifications` or `research.md`) with the rationale, owner, and expiration date.
+- Exceptions may be granted by a maintainer listed in the `Maintainers & Approvers` section below. Exceptions expire automatically after 14 days unless extended by a maintainer via a documented PR.
+- Emergency changes that cannot follow normal PR workflows should be accompanied by a follow-up PR within 48 hours to document and remediate any deviations.
+
+### Maintainers & Approvers
+
+The following individuals or teams are the primary approvers for constitution amendments and emergency exceptions. Update this list as organizational roles change:
+
+- @doug (primary)
+ - @doug (primary)
 
 - Versioning policy:
 
