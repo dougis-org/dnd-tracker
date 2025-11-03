@@ -24,7 +24,7 @@ Purpose: core UI wiring that must be in place before user stories can be impleme
 - [X] T004 Implement `src/components/NotImplementedPage.tsx` with accessible message and CTA (path: `src/components/NotImplementedPage.tsx`)
 - [X] T005 [P] Create `src/components/Footer.tsx` with legal/social links (path: `src/components/Footer.tsx`)
 - [X] T006 Implement `src/components/navigation/GlobalNav.tsx` (desktop variant only) and export it (path: `src/components/navigation/GlobalNav.tsx`)
-- [ ] T007 Implement `src/components/navigation/GlobalNav.mobile.tsx` (mobile/hamburger variant) and export it (path: `src/components/navigation/GlobalNav.mobile.tsx`)
+- [X] T007 Implement `src/components/navigation/GlobalNav.mobile.tsx` (mobile/hamburger variant) and export it (path: `src/components/navigation/GlobalNav.mobile.tsx`)
 - [ ] T008 Implement `src/components/Breadcrumb.tsx` which derives segments from path and maps to labels via `src/lib/navigation.ts` (paths: `src/components/Breadcrumb.tsx`, `src/lib/navigation.ts`)
 - [ ] T009 Wire the GlobalNav and Footer into the app layout by updating `src/app/layout.tsx` to include `<GlobalNav />` in the header and `<Footer />` in the page footer (path: `src/app/layout.tsx`)
 
