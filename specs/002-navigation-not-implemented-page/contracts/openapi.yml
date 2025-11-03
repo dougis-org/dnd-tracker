@@ -5,6 +5,17 @@ info:
   description: Minimal placeholder endpoints for UI routing skeleton (return NotImplemented placeholder schema)
 
 paths:
+  /:
+    get:
+      summary: Landing page placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
   /dashboard:
     get:
       summary: Dashboard placeholder
@@ -27,6 +38,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotImplemented'
 
+  /characters/new:
+    get:
+      summary: Character creation placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
   /characters/{id}:
     get:
       summary: Character detail (placeholder)
@@ -36,6 +58,234 @@ paths:
           required: true
           schema:
             type: string
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /parties:
+    get:
+      summary: Parties list (placeholder)
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /parties/new:
+    get:
+      summary: Party creation placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /parties/{id}:
+    get:
+      summary: Party detail (placeholder)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /encounters:
+    get:
+      summary: Encounters list (placeholder)
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /encounters/new:
+    get:
+      summary: Encounter creation placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /encounters/{id}:
+    get:
+      summary: Encounter detail (placeholder)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /monsters:
+    get:
+      summary: Monsters list (placeholder)
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /monsters/new:
+    get:
+      summary: Monster creation placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /monsters/{id}:
+    get:
+      summary: Monster detail (placeholder)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /items:
+    get:
+      summary: Items list (placeholder)
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /items/new:
+    get:
+      summary: Item creation placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /items/{id}:
+    get:
+      summary: Item detail (placeholder)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /combat:
+    get:
+      summary: Combat landing placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /combat/{sessionId}:
+    get:
+      summary: Combat session placeholder
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /profile:
+    get:
+      summary: Profile placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /settings:
+    get:
+      summary: Settings placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /subscription:
+    get:
+      summary: Subscription placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
+  /pricing:
+    get:
+      summary: Pricing placeholder
       responses:
         '200':
           description: NotImplemented placeholder
