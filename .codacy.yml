@@ -1,8 +1,11 @@
 exclude:
-  - ".claude/commands/**"
-  - ".github/chatmodes/**"
-  - ".github/prompts/**"
-  - "jest.setup.ts"
-  - "jest.config.ts"
-  - "next.config.js"
-  - "/specs/**"
+  - '.claude/commands/**'
+  - '.github/chatmodes/**'
+  - '.github/prompts/**'
+  - 'jest.setup.ts'
+  - 'jest.config.ts'
+  - 'next.config.js'
+  - '/specs/**'
+  - '.specify/**'
+  - 'specs/**/*.md'
+  - '.specify/**/*.md'
