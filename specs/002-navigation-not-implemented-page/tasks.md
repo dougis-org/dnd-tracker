@@ -10,7 +10,7 @@ All tasks are grouped by user story and follow the required checklist format so 
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 Create component directory `src/components/navigation/` and `src/components/layouts/` if missing (paths: `src/components/navigation/`, `src/components/layouts/`)
+- [X] T001 Create component directory `src/components/navigation/` and `src/components/layouts/` if missing (paths: `src/components/navigation/`, `src/components/layouts/`)
 - [ ] T002 Create test directories `tests/unit/` and `tests/e2e/` if missing (paths: `tests/unit/`, `tests/e2e/`)
 - [ ] T003 [P] Add placeholder exports file `src/components/index.ts` that re-exports new components (path: `src/components/index.ts`)
 - [ ] T051 Create `specs/002-navigation-not-implemented-page/contracts/openapi.yml` with roadmap routes as placeholder endpoints (path: `specs/002-navigation-not-implemented-page/contracts/openapi.yml`)
