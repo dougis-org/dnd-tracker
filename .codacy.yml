@@ -1,11 +1,15 @@
-exclude:
-  - '.claude/commands/**'
-  - '.github/chatmodes/**'
-  - '.github/prompts/**'
-  - 'jest.setup.ts'
-  - 'jest.config.ts'
-  - 'next.config.js'
-  - '/specs/**'
-  - '.specify/**'
-  - 'specs/**/*.md'
-  - '.specify/**/*.md'
+{
+  'exclude':
+    [
+      '.claude/commands/**',
+      '.github/chatmodes/**',
+      '.github/prompts/**',
+      'jest.setup.ts',
+      'jest.config.ts',
+      'next.config.js',
+      '/specs/**',
+      '.specify/**',
+      'specs/**/*.md',
+      '.specify/**/*.md',
+    ],
+} # pylint: disable=pointless-statement
