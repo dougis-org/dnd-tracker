@@ -21,7 +21,7 @@ All tasks are grouped by user story and follow the required checklist format so 
 
 Purpose: core UI wiring that must be in place before user stories can be implemented.
 
-- [ ] T004 Implement `src/components/NotImplementedPage.tsx` with accessible message and CTA (path: `src/components/NotImplementedPage.tsx`)
+- [X] T004 Implement `src/components/NotImplementedPage.tsx` with accessible message and CTA (path: `src/components/NotImplementedPage.tsx`)
 - [ ] T005 [P] Create `src/components/Footer.tsx` with legal/social links (path: `src/components/Footer.tsx`)
 - [ ] T006 Implement `src/components/navigation/GlobalNav.tsx` (desktop variant only) and export it (path: `src/components/navigation/GlobalNav.tsx`)
 - [ ] T007 Implement `src/components/navigation/GlobalNav.mobile.tsx` (mobile/hamburger variant) and export it (path: `src/components/navigation/GlobalNav.mobile.tsx`)
