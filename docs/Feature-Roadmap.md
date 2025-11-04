@@ -33,14 +33,14 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 - [Progress Tracking](#progress-tracking)
 - [Feature Summary](#feature-summary)
-- [Phase 1: UI Foundation & Site Structure (Week 1)](#phase-1-ui-foundation--site-structure-week-1)
-- [Phase 2: Authentication & User Management (Week 2)](#phase-2-authentication--user-management-week-2)
-- [Phase 3: Core Entity Management (Week 3-4)](#phase-3-core-entity-management-week-3-4)
-- [Phase 4: Offline Foundations (Week 5)](#phase-4-offline-foundations-week-5)
-- [Phase 5: Combat Engine Core (Week 5-6)](#phase-5-combat-engine-core-week-5-6)
-- [Phase 6: Combat Polish & State (Week 7)](#phase-6-combat-polish--state-week-7)
-- [Phase 7: Monetization (Week 8)](#phase-7-monetization-week-8)
-- [Phase 8: Advanced Capabilities (Week 9-10)](#phase-8-advanced-capabilities-week-9-10)
+- Phase 1: UI Foundation & Site Structure (Week 1) — [Issue #335](https://github.com/dougis-org/dnd-tracker/issues/335)
+- Phase 2: Authentication & User Management (Week 2) — [Issue #336](https://github.com/dougis-org/dnd-tracker/issues/336)
+- Phase 3: Core Entity Management (Week 3-4) — [Issue #337](https://github.com/dougis-org/dnd-tracker/issues/337)
+- Phase 4: Offline Foundations (Week 5) — [Issue #338](https://github.com/dougis-org/dnd-tracker/issues/338)
+- Phase 5: Combat Engine Core (Week 5-6) — [Issue #339](https://github.com/dougis-org/dnd-tracker/issues/339)
+- Phase 6: Combat Polish & State (Week 7) — [Issue #340](https://github.com/dougis-org/dnd-tracker/issues/340)
+- Phase 7: Monetization (Week 8) — [Issue #341](https://github.com/dougis-org/dnd-tracker/issues/341)
+- Phase 8: Advanced Capabilities (Week 9-10) — [Issue #342](https://github.com/dougis-org/dnd-tracker/issues/342)
 - [Summary](#summary)
 - [Key Milestones](#key-milestones)
 - [Testing Strategy](#testing-strategy)
@@ -112,7 +112,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F059 | Performance Optimization | Planned | All previous features | [Details](#feature-059-performance-optimization) |
 | F060 | Polish & Launch Prep | Planned | All previous features | [Details](#feature-060-polish--launch-prep) |
 
-## Phase 1: UI Foundation & Site Structure (Week 1)
+## Phase 1: UI Foundation & Site Structure (Week 1) (Issue #335)
 
 **PRD Alignment**: §§5.1-5.4, 8.1-8.3 (Onboarding Experience & Marketing Surfaces)
 
@@ -521,7 +521,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **Governance Checkpoint (AI Agent)**: Verify Phase 1 UI deliverables against `docs/Product-Requirements.md §§5-8` and ensure design decisions are documented for future features.
 
-## Phase 2: Authentication & User Management (Week 2)
+## Phase 2: Authentication & User Management (Week 2) (Issue #336)
 
 **PRD Alignment**: §§4.1, 6.3 (User Management & Security)
 
@@ -680,7 +680,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **Governance Checkpoint (AI Agent)**: Confirm auth + user data flows fulfill `docs/Product-Requirements.md §4.1` and update integration notes in `docs/Tech-Stack.md` if required.
 
-## Phase 3: Core Entity Management (Week 3-4)
+## Phase 3: Core Entity Management (Week 3-4) (Issue #337)
 
 **PRD Alignment**: §§4.2-4.4 (Party, Encounter, and Creature Management)
 
@@ -975,7 +975,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **Governance Checkpoint (AI Agent)**: Validate entity domain coverage against `docs/Product-Requirements.md §§4.2-4.4` and confirm API schemas remain aligned with the technical design.
 
-## Phase 4: Offline Foundations (Week 5)
+## Phase 4: Offline Foundations (Week 5) (Issue #338)
 
 **PRD Alignment**: §§4.6, 6.1, 8.3 (Data Persistence & Offline Experience)
 
@@ -1061,7 +1061,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **Governance Checkpoint (AI Agent)**: Validate offline readiness against `docs/Product-Requirements.md §4.6` and ensure roadmap, PRD, and `docs/Tech-Stack.md` remain synchronized.
 
-## Phase 5: Combat Engine Core (Week 5-6)
+## Phase 5: Combat Engine Core (Week 5-6) (Issue #339)
 
 **PRD Alignment**: §§4.3-4.5 (Encounter Builder & Combat Tracker foundations)
 
@@ -1589,7 +1589,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **Governance Checkpoint (AI Agent)**: Confirm monetization flows match PRD §§3.1-3.2 and Stripe configurations in `docs/Tech-Stack.md`.
 
-## Phase 6: Combat Polish & State (Week 7)
+## Phase 6: Combat Polish & State (Week 7) (Issue #340)
 
 **PRD Alignment**: §§4.3-4.6 (Combat UX, State Persistence & Edge Cases)
 
@@ -1602,7 +1602,7 @@ This phase focuses on polishing the combat experience and hardening state manage
 
 **Governance Checkpoint (AI Agent)**: Verify combat state persistence and undo/redo behaviors against `docs/Product-Requirements.md §4.6`. Capture regression test results and stakeholder acceptance notes.
 
-## Phase 7: Monetization (Week 8)
+## Phase 7: Monetization (Week 8) (Issue #341)
 
 **PRD Alignment**: §§3.1-3.2 (Monetization & Billing)
 
@@ -1615,7 +1615,7 @@ This phase finalizes paid features and billing integration. Work includes:
 
 **Governance Checkpoint (AI Agent)**: Run security and compliance checks on billing endpoints and record results. Ensure `docs/Tech-Stack.md` documents any third-party account configuration and webhook verification steps.
 
-## Phase 8: Advanced Capabilities (Week 9-10)
+## Phase 8: Advanced Capabilities (Week 9-10) (Issue #342)
 
 **PRD Alignment**: §§3.3, 5.3, 12 (Premium Expansion & Future Enhancements)
 
