@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -19,7 +20,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(inter.className, 'bg-background text-foreground antialiased')}>
+      <body
+        className={cn(inter.className, 'bg-background text-foreground antialiased')}
+        style={{ '--primary-nav-height': '4.5rem' } as CSSProperties}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -33,7 +37,7 @@ export default function RootLayout({
             Skip to main content
           </a>
           <div className="flex min-h-screen flex-col">
-            <header className="relative z-[70] border-b bg-background">
+            <header className="relative z-40 border-b bg-background">
               <div className="container flex items-center justify-between gap-4 py-4">
                 <GlobalNav />
                 <GlobalNavMobile />
