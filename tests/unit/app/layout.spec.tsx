@@ -55,6 +55,8 @@ describe('RootLayout', () => {
   it('renders navigation components in the header', () => {
     renderLayout()
 
+    const banner = screen.getByRole('banner')
+    expect(banner).toHaveClass('z-[70]')
     expect(screen.getByRole('navigation', { name: /primary/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /toggle navigation menu/i })).toBeInTheDocument()
   })

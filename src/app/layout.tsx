@@ -33,7 +33,7 @@ export default function RootLayout({
             Skip to main content
           </a>
           <div className="flex min-h-screen flex-col">
-            <header className="relative z-10 border-b bg-background">
+            <header className="relative z-[70] border-b bg-background">
               <div className="container flex items-center justify-between gap-4 py-4">
                 <GlobalNav />
                 <GlobalNavMobile />

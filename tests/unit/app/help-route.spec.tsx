@@ -4,7 +4,7 @@ import HelpPage from '@/app/help/page'
 import { buildBreadcrumbSegments } from '@/lib/navigation'
 
 type AnchorHref = string | { pathname: string }
-type AnchorProps = PropsWithChildren<ComponentPropsWithoutRef<'a'> & { href: AnchorHref }>
+type AnchorProps = PropsWithChildren<Omit<ComponentPropsWithoutRef<'a'>, 'href'> & { href: AnchorHref }>
 
 jest.mock('next/link', () => ({
   __esModule: true,
