@@ -9,31 +9,32 @@ owner: @doug
 ## Summary
 
 Implement the GlobalNav (global navigation component), routing skeleton, and a `NotImplementedPage` placeholder used across the app. All configured routes should render the NotImplemented page until the specific feature is implemented. Mobile responsiveness and breadcrumbs must be included.
+
 ## Clarifications
 
 ### Session 2025-11-02
 
- - Q: Route scope -> A: Generate route stubs for every route listed in `docs/Feature-Roadmap.md` and create a corresponding placeholder `src/app/.../page.tsx` that renders `NotImplementedPage`. This makes the roadmap the single source of truth for routes covered by this feature and prevents scope drift.
- - Q: Component naming -> A: Use `GlobalNav` as the canonical component name across spec, plan and tasks. Update source files and tests to use `GlobalNav` (aliases allowed via `src/components/navigation/index.ts` if necessary). This reduces naming drift and keeps file names explicit.
+- Q: Route scope -> A: Generate route stubs for every route listed in `docs/Feature-Roadmap.md` and create a corresponding placeholder `src/app/.../page.tsx` that renders `NotImplementedPage`. This makes the roadmap the single source of truth for routes covered by this feature and prevents scope drift.
+- Q: Component naming -> A: Use `GlobalNav` as the canonical component name across spec, plan and tasks. Update source files and tests to use `GlobalNav` (aliases allowed via `src/components/navigation/index.ts` if necessary). This reduces naming drift and keeps file names explicit.
 
 ## Scope
 
-- GlobalNav component (desktop and mobile variants)
-- Route definitions for all primary pages, routed to NotImplementedPage
+- GlobalNav component (desktop and mobile variants) with desktop left/right grouping and mobile ordering defined in the plan
+- Route definitions for all primary pages, routed to NotImplementedPage, including newly added `/help`
 - `NotImplementedPage` component with friendly copy and an actionable CTA (report/feedback)
 - Footer component with legal and social links
-- Breadcrumb component that reflects the current path
+- Breadcrumb component that reflects the current path, including the Help route
 - Unit tests for components and route rendering; Playwright smoke test for navigation
 
 ## Acceptance Criteria (must be testable)
 
-- [ ] All routes listed in the roadmap render `NotImplementedPage`
-- [ ] Navigation menu lists all sections and is keyboard accessible
-- [ ] Mobile hamburger menu opens/closes and shows all navigation links
-- [ ] Breadcrumb displays correct path segments for nested routes
+- [ ] All routes listed in the roadmap plus `/help` render `NotImplementedPage`
+- [ ] Desktop navigation renders the specified left/right grouping with `Dashboard`, `Collections`, `Combat` on the left and `User`, `Pricing`, `Help` on the right, while remaining keyboard accessible
+- [ ] Mobile hamburger menu opens/closes and shows all navigation links in the order Dashboard, Collections, Combat, User, Pricing, Help
+- [ ] Breadcrumb displays correct path segments for nested routes, including the Help route when visited
 - [ ] `NotImplementedPage` includes a clear message and a link to file an issue or contact support
 - [ ] Unit tests for Navigation and Breadcrumb pass
-- [ ] A cross-browser smoke test can open the mobile menu and navigate to `/dashboard`
+- [ ] A cross-browser smoke test can open the mobile menu and navigate to `/dashboard` and `/help`
 
 ## Deliverables
 
@@ -110,12 +111,12 @@ As a user navigating to nested pages, I want to see a breadcrumb trail so I can 
 
 ## Functional Requirements
 
-- **FR-001**: All routes listed in the roadmap MUST render a NotImplemented placeholder page when visited.
-- **FR-002**: The global navigation MUST list all top-level sections included in the roadmap and allow users to navigate to those routes.
-- **FR-003**: Mobile navigation MUST provide a collapsed menu that reveals the same navigation links as desktop.
-- **FR-004**: Breadcrumbs MUST reflect the current route hierarchy and provide links back to parent segments.
+- **FR-001**: All routes listed in the roadmap plus `/help` MUST render a NotImplemented placeholder page when visited.
+- **FR-002**: The global navigation MUST render the specified top-level groupings: `Dashboard`, `Collections`, `Combat` on the left and `User`, `Pricing`, `Help` on the right, with keyboard-accessible links to each route.
+- **FR-003**: Mobile navigation MUST provide a collapsed menu that reveals the same navigation links as desktop in the order Dashboard, Collections, Combat, User, Pricing, Help.
+- **FR-004**: Breadcrumbs MUST reflect the current route hierarchy (including `/help`) and provide links back to parent segments.
 - **FR-005**: The NotImplemented placeholder MUST include a clear message, an explanation of why the page is unavailable, and a call-to-action to report or request the feature.
-- **FR-006**: The authoritative list of routes for this feature is the entries in `docs/Feature-Roadmap.md`. The implementation MUST create route stubs for each roadmap entry that render the `NotImplementedPage` and include a corresponding task in `tasks.md`.
+- **FR-006**: The authoritative list of routes for this feature is the entries in `docs/Feature-Roadmap.md` plus `/help`. The implementation MUST create route stubs for each listed entry that render the `NotImplementedPage` and include a corresponding task in `tasks.md`.
 
 ## Key Entities
 
@@ -124,14 +125,13 @@ As a user navigating to nested pages, I want to see a breadcrumb trail so I can 
 ## Success Criteria *(mandatory)*
 
 - **SC-001**: A user can reach any top-level route from the navigation within two interactions (click/tap) and see the NotImplemented placeholder.
-- **SC-002**: 100% of routes listed in the roadmap render the NotImplemented placeholder when visited in an automated smoke test.
-- **SC-003**: Navigation is operable by keyboard (tab/enter) for all primary links.
-- **SC-004**: Breadcrumbs accurately reflect the path for at least 90% of tested nested routes in automated checks.
+- **SC-002**: 100% of routes listed in the roadmap plus `/help` render the NotImplemented placeholder when visited in an automated smoke test.
+- **SC-003**: Navigation is operable by keyboard (tab/enter) for all primary links in both desktop grouping and mobile ordering.
+- **SC-004**: Breadcrumbs accurately reflect the path for at least 90% of tested nested routes in automated checks, including the Help route.
 
 ## Dependencies
 
 - Depends on: Feature 001 (Project Setup & Design System) for base layouts and design tokens.
-
 
 ```
 

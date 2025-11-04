@@ -294,6 +294,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotImplemented'
 
+  /help:
+    get:
+      summary: Help placeholder
+      responses:
+        '200':
+          description: NotImplemented placeholder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotImplemented'
+
 components:
   schemas:
     NotImplemented:

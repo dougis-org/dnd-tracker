@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { Breadcrumb, Footer, GlobalNav, GlobalNavMobile } from '@/components'
 import { ThemeProvider } from '@/components/theme/theme-provider'
+import { cn } from '@/lib/utils'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,14 +19,34 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={cn(inter.className, 'bg-background text-foreground antialiased')}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-1/2 focus:-translate-x-1/2 focus:translate-y-4 rounded-md bg-primary px-4 py-2 text-primary-foreground"
+          >
+            Skip to main content
+          </a>
+          <div className="flex min-h-screen flex-col">
+            <header className="relative z-10 border-b bg-background">
+              <div className="container flex items-center justify-between gap-4 py-4">
+                <GlobalNav />
+                <GlobalNavMobile />
+              </div>
+              <div className="container py-2">
+                <Breadcrumb />
+              </div>
+            </header>
+            <main id="main-content" className="container relative z-0 flex-1 py-8">
+              {children}
+            </main>
+            <Footer />
+          </div>
         </ThemeProvider>
       </body>
     </html>

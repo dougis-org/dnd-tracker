@@ -198,6 +198,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 /combat/:sessionId
 /profile
 /settings
+/help
 /subscription
 /pricing
 ```

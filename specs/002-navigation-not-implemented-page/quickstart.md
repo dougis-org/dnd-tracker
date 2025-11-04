@@ -8,19 +8,19 @@ Steps to run locally and run tests for this feature:
 npm install
 ```
 
-2. Start dev server
+1. Start dev server
 
 ```bash
 npm run dev
 ```
 
-3. Run unit tests (Jest)
+1. Run unit tests (Jest)
 
 ```bash
 npm test -- tests/unit/components/navigation.test.tsx
 ```
 
-4. Run Playwright smoke test (in CI use test:ci runner)
+1. Run Playwright smoke test (in CI use test:ci runner)
 
 ```bash
 npm run test:ci -- --grep "navigation-smoke"

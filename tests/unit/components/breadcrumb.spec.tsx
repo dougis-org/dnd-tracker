@@ -27,15 +27,12 @@ describe('Breadcrumb', () => {
     expect(within(navigation).getByText('Character 123')).toBeInTheDocument()
     expect(within(navigation).queryByRole('link', { name: 'Character 123' })).toBeNull()
   })
-  it('renders single home crumb for root path', () => {
+  it('returns null when only the home segment is present', () => {
     mockUsePathname.mockReturnValue('/')
 
     render(<Breadcrumb />)
 
-    const navigation = screen.getByRole('navigation', { name: /breadcrumb/i })
-    expect(within(navigation).getByText('Home')).toBeInTheDocument()
-    expect(within(navigation).queryByRole('link', { name: 'Home' })).toBeNull()
-    expect(within(navigation).queryAllByRole('listitem')).toHaveLength(1)
+    expect(screen.queryByRole('navigation', { name: /breadcrumb/i })).toBeNull()
   })
 
   it('applies custom className when provided', () => {

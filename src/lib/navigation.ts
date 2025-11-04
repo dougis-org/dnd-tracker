@@ -1,21 +1,60 @@
+export type NavigationAlignment = 'left' | 'right'
+
 export interface NavigationItem {
   label: string
-  href: string
+  href?: string
+  alignment?: NavigationAlignment
+  mobileOrder?: number
   children?: NavigationItem[]
 }
 
 export const NAVIGATION_ITEMS: NavigationItem[] = [
-  { label: 'Dashboard', href: '/dashboard' },
-  { label: 'Characters', href: '/characters' },
-  { label: 'Parties', href: '/parties' },
-  { label: 'Encounters', href: '/encounters' },
-  { label: 'Monsters', href: '/monsters' },
-  { label: 'Items', href: '/items' },
-  { label: 'Combat', href: '/combat' },
-  { label: 'Profile', href: '/profile' },
-  { label: 'Settings', href: '/settings' },
-  { label: 'Subscription', href: '/subscription' },
-  { label: 'Pricing', href: '/pricing' },
+  {
+    label: 'Dashboard',
+    href: '/dashboard',
+    alignment: 'left',
+    mobileOrder: 1,
+  },
+  {
+    label: 'Collections',
+    alignment: 'left',
+    mobileOrder: 2,
+    children: [
+      { label: 'Characters', href: '/characters' },
+      { label: 'Parties', href: '/parties' },
+      { label: 'Encounters', href: '/encounters' },
+      { label: 'Monsters', href: '/monsters' },
+      { label: 'Items', href: '/items' },
+    ],
+  },
+  {
+    label: 'Combat',
+    href: '/combat',
+    alignment: 'left',
+    mobileOrder: 3,
+  },
+  {
+    label: 'User',
+    alignment: 'right',
+    mobileOrder: 4,
+    children: [
+      { label: 'Profile', href: '/profile' },
+      { label: 'Settings', href: '/settings' },
+      { label: 'Subscription', href: '/subscription' },
+    ],
+  },
+  {
+    label: 'Pricing',
+    href: '/pricing',
+    alignment: 'right',
+    mobileOrder: 5,
+  },
+  {
+    label: 'Help',
+    href: '/help',
+    alignment: 'right',
+    mobileOrder: 6,
+  },
 ]
 
 export interface RouteDefinition {
@@ -80,6 +119,7 @@ export const ROUTE_DEFINITIONS: RouteDefinition[] = [
   { path: '/settings', label: 'Settings' },
   { path: '/subscription', label: 'Subscription' },
   { path: '/pricing', label: 'Pricing' },
+  { path: '/help', label: 'Help' },
 ]
 
 export interface BreadcrumbSegment {
@@ -141,7 +181,7 @@ function matchRoute(pathname: string): MatchedRoute | null {
     }
 
     if (matched) {
-      return { definition: definition, params }
+      return { definition, params }
     }
   }
 

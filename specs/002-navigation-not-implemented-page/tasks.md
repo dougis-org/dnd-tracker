@@ -57,6 +57,28 @@ Purpose: Create routing skeleton files for every roadmap entry so each route ren
 - [ ] T048 Create route `src/app/settings/page.tsx` that renders `<NotImplementedPage />`
 - [ ] T049 Create route `src/app/subscription/page.tsx` that renders `<NotImplementedPage />`
 - [ ] T050 Create route `src/app/pricing/page.tsx` that renders `<NotImplementedPage />`
+- [ ] T100 Create route `src/app/help/page.tsx` that renders `<NotImplementedPage />`
+
+## Phase 2b: Navigation Refinement & Help Route Addendum (Plan Update Response)
+
+Purpose: Align navigation structure, tests, and documentation with the refined menu layout from `docs/plan/issues/333-plan.md`.
+
+### Tests (TDD-first)
+
+- [x] T101 Add unit tests in `tests/unit/lib/navigation.spec.ts` (or extend existing layout spec) to assert grouped navigation data and inclusion of the Help entry (path: `tests/unit/lib/navigation.spec.ts`)
+- [x] T102 Update `tests/unit/components/navigation/GlobalNav.spec.tsx` to verify left/right group rendering, "User" label, and Help link visibility (path: `tests/unit/components/navigation/GlobalNav.spec.tsx`)
+- [x] T103 Update `tests/unit/components/navigation/GlobalNav.mobile.spec.tsx` to ensure mobile ordering: Dashboard → Collections → Combat → User → Pricing → Help with nested children preserved (path: `tests/unit/components/navigation/GlobalNav.mobile.spec.tsx`)
+- [x] T104 Extend `tests/unit/app/layout.spec.tsx` (or add new spec) to confirm `/help` route renders `NotImplementedPage` and breadcrumb segments include Help (path: `tests/unit/app/layout.spec.tsx`)
+- [x] T111 Extend Playwright smoke coverage in `tests/e2e/navigation.spec.ts` to navigate to `/help` and assert NotImplemented content (path: `tests/e2e/navigation.spec.ts`)
+
+### Implementation
+
+- [x] T105 Update `src/lib/navigation.ts` to introduce grouped navigation metadata, include Help route definitions, and keep breadcrumb mappings consistent (path: `src/lib/navigation.ts`)
+- [x] T106 Refactor `src/components/navigation/GlobalNav.tsx` to render grouped left/right clusters using the "User" text label and accessible submenu triggers (path: `src/components/navigation/GlobalNav.tsx`)
+- [x] T107 Update `src/components/navigation/GlobalNav.mobile.tsx` to flatten grouped data into the specified mobile ordering while preserving accessibility (path: `src/components/navigation/GlobalNav.mobile.tsx`)
+- [x] T108 Ensure breadcrumbs surface Help correctly by updating relevant helpers/tests (paths: `src/lib/navigation.ts`, `src/components/Breadcrumb.tsx`)
+- [x] T109 Update documentation artifacts, including `specs/002-navigation-not-implemented-page/contracts/openapi.yml`, `specs/002-navigation-not-implemented-page/spec.md`, and any nav description in `docs/Feature-Roadmap.md` to reflect the Help route and grouping (paths: listed)
+- [x] T110 Run linting (`npm run lint`, `npm run lint:markdown:fix`) and targeted test suites (`npm run test -- navigation`, `npm run test:ci:parallel`) capturing evidence for the PR (no code path)
 
 ## Phase 3: User Story 1 - Navigate to Dashboard (Priority: P1) 🎯 MVP
 
@@ -71,7 +93,7 @@ Independent Test: Unit test for link presence + Playwright smoke test for naviga
 
 ### Implementation — US1
 
-- [ ] T012 [US1] Add route file `src/app/dashboard/page.tsx` that renders `<NotImplementedPage />` (path: `src/app/dashboard/page.tsx`)
+- [ ] T012 [US1] Verify the `/dashboard` stub created in Phase 2a (T029) renders `NotImplementedPage` and is reachable via navigation flows (no new file)
 - [ ] T013 [US1] Ensure `src/components/navigation/GlobalNav.tsx` contains a link to `/dashboard` (path: `src/components/navigation/GlobalNav.tsx`)
 - [ ] T014 [US1] Run unit tests and make `tests/unit/global-nav.spec.tsx` pass (command: `pnpm test -w tests/unit/global-nav.spec.tsx` - document for developer) (no code path)
 
@@ -90,7 +112,7 @@ Independent Test: Playwright mobile viewport test and unit test for mobile nav b
 
 ### Implementation — US2
 
-- [ ] T017 [US2] Add route file `src/app/characters/page.tsx` that renders `<NotImplementedPage />` (path: `src/app/characters/page.tsx`)
+- [ ] T017 [US2] Confirm the `/characters` stub from Phase 2a (T030) renders `NotImplementedPage` and remains wired into navigation flows (no new file)
 - [ ] T018 [US2] Implement hamburger toggle behavior in `src/components/navigation/GlobalNav.mobile.tsx` and ensure links navigate to their routes (path: `src/components/navigation/GlobalNav.mobile.tsx`)
 - [ ] T019 [US2] Run unit tests and make `tests/unit/global-nav.mobile.spec.tsx` pass (no code path)
 
@@ -112,7 +134,7 @@ Independent Test: Unit test for Breadcrumb rendering and link behavior.
 
 ### Implementation — US3
 
-- [ ] T021 [US3] Add route file `src/app/characters/[id]/page.tsx` that renders `<NotImplementedPage />` (path: `src/app/characters/[id]/page.tsx`)
+- [ ] T021 [US3] Confirm the `/characters/[id]` stub from Phase 2a (T032) renders `NotImplementedPage` and exposes breadcrumb metadata (no new file)
 - [ ] T022 [US3] Ensure `src/components/Breadcrumb.tsx` maps route segments to labels using `src/lib/navigation.ts` and that parent segments are links (paths: `src/components/Breadcrumb.tsx`, `src/lib/navigation.ts`)
 - [ ] T023 [US3] Run unit tests and make `tests/unit/breadcrumb.spec.tsx` pass (no code path)
 
@@ -120,7 +142,7 @@ Independent Test: Unit test for Breadcrumb rendering and link behavior.
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T024 [P] Update docs/Feature-Roadmap.md to reflect implemented placeholder routes and navigation (path: `docs/Feature-Roadmap.md`)
+- [x] T024 [P] Update docs/Feature-Roadmap.md to reflect implemented placeholder routes and navigation (path: `docs/Feature-Roadmap.md`)
 - [ ] T025 [P] Accessibility audit: add axe checks or manual checklist in `tests/unit/accessibility.md` (path: `tests/unit/accessibility.md`)
 - [ ] T026 [P] Add Storybook/visual snapshot (optional) for `GlobalNav` and `Breadcrumb` components (paths: `.storybook/`, `stories/`) - only if project uses Storybook
 - [ ] T027 Release checklist: create PR, include test results and accessibility notes (no code path)
@@ -136,8 +158,9 @@ Independent Test: Unit test for Breadcrumb rendering and link behavior.
 
 ## Summary Metrics
 
-- Total tasks: 52
+- Total tasks: 63
 - Tasks by story: US1: 5 (T010-T014), US2: 5 (T015-T019), US3: 4 (T020-T023)
+- Additional plan-addendum tasks: T100-T110 focus on navigation refinement and Help route integration
 - Parallelizable tasks identified (marked [P]): T003, T005, T006, T007, T015, T016, T020, T024, T025, T026
 - Suggested MVP: Complete Phase 1 + Phase 2 + Phase 3 (T001-T014)
 

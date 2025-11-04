@@ -13,6 +13,10 @@ export function Breadcrumb({ className }: BreadcrumbProps) {
   const pathname = usePathname()
   const segments = buildBreadcrumbSegments(pathname)
 
+  if (segments.length <= 1) {
+    return null
+  }
+
   return (
     <nav
       aria-label="Breadcrumb"
@@ -29,7 +33,7 @@ export function Breadcrumb({ className }: BreadcrumbProps) {
               {segment.href ? (
                 <Link
                   className="transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  href={segment.href}
+                  href={{ pathname: segment.href }}
                 >
                   {segment.label}
                 </Link>

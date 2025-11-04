@@ -2,7 +2,7 @@
 
 /* eslint-disable no-undef -- DOM globals (HTMLElement, requestAnimationFrame, etc.) are provided by the browser */
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
@@ -13,12 +13,16 @@ import { cn } from '@/lib/utils'
 
 const PANEL_ID = 'mobile-navigation-panel'
 
-function isCurrent(pathname: string, item: NavigationItem) {
-  if (item.href === '/') {
+function isCurrent(pathname: string, href?: string) {
+  if (!href) {
+    return false
+  }
+
+  if (href === '/') {
     return pathname === '/'
   }
 
-  return pathname === item.href || pathname.startsWith(`${item.href}/`)
+  return pathname === href || pathname.startsWith(`${href}/`)
 }
 
 function useFocusTrap(enabled: boolean, container: React.RefObject<HTMLDivElement | null>) {
@@ -106,9 +110,16 @@ interface MobileNavPanelProps {
   pathname: string
   onClose: () => void
   panelRef: React.RefObject<HTMLDivElement | null>
+  items: NavigationItem[]
 }
 
-function MobileNavPanel({ open, pathname, onClose, panelRef }: MobileNavPanelProps) {
+function MobileNavPanel({ open, pathname, onClose, panelRef, items }: MobileNavPanelProps) {
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    setExpanded({})
+  }, [pathname])
+
   if (!open) {
     return null
   }
@@ -135,11 +146,76 @@ function MobileNavPanel({ open, pathname, onClose, panelRef }: MobileNavPanelPro
           </Button>
         </div>
         <nav aria-label="Primary mobile" className="flex-1 overflow-y-auto">
-          <ul className="space-y-2">
-            {NAVIGATION_ITEMS.map((item) => {
-              const active = isCurrent(pathname, item)
+          <ul aria-label="Primary mobile navigation" className="space-y-2">
+            {items.map((item) => {
+              const key = item.href ?? item.label
+              const children = item.children ?? []
+              const anyChildActive = children.some((child) => isCurrent(pathname, child.href))
+              const active = isCurrent(pathname, item.href) || anyChildActive
+
+              if (children.length > 0) {
+                const isExpanded = Boolean(expanded[item.label])
+                const submenuId = `${item.label.toLowerCase().replace(/\s+/g, '-')}-submenu`
+
+                const toggleSubmenu = () => {
+                  setExpanded((state) => ({ ...state, [item.label]: !isExpanded }))
+                }
+
+                return (
+                  <li key={item.label}>
+                    <button
+                      type="button"
+                      aria-expanded={isExpanded}
+                      aria-controls={submenuId}
+                      aria-label={`Toggle ${item.label} submenu`}
+                      className={cn(
+                        'flex w-full items-center justify-between rounded-md px-3 py-2 text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                        active
+                          ? 'bg-primary text-primary-foreground shadow'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                      onClick={toggleSubmenu}
+                    >
+                      {item.label}
+                    </button>
+                    {isExpanded ? (
+                      <ul id={submenuId} aria-label={`${item.label} submenu`} className="mt-1 space-y-1 pl-4">
+                        {children.map((child) => {
+                          if (!child.href) {
+                            return null
+                          }
+
+                          const childActive = isCurrent(pathname, child.href)
+
+                          return (
+                            <li key={child.href}>
+                              <Link
+                                href={child.href as Route}
+                                className={cn(
+                                  'block rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                                  childActive
+                                    ? 'bg-muted/80 text-foreground'
+                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                                )}
+                                onClick={onClose}
+                              >
+                                {child.label}
+                              </Link>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    ) : null}
+                  </li>
+                )
+              }
+
+              if (!item.href) {
+                return null
+              }
+
               return (
-                <li key={item.href}>
+                <li key={key}>
                   <Link
                     href={item.href as Route}
                     className={cn(
@@ -149,6 +225,7 @@ function MobileNavPanel({ open, pathname, onClose, panelRef }: MobileNavPanelPro
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     )}
                     aria-current={active ? 'page' : undefined}
+                    onClick={onClose}
                   >
                     {item.label}
                   </Link>
@@ -168,6 +245,11 @@ export function GlobalNavMobile() {
   const panelRef = useRef<HTMLDivElement | null>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const previousPathRef = useRef(pathname)
+  const orderedTopLevel = useMemo(() => {
+    return NAVIGATION_ITEMS.filter((item) => item.alignment)
+      .slice()
+      .sort((a, b) => (a.mobileOrder ?? 0) - (b.mobileOrder ?? 0))
+  }, [])
 
   const closeMenu = useCallback(() => {
     setOpen(false)
@@ -208,6 +290,7 @@ export function GlobalNavMobile() {
         pathname={pathname}
         onClose={closeMenu}
         panelRef={panelRef}
+        items={orderedTopLevel}
       />
     </div>
   )

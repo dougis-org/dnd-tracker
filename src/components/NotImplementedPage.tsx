@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import type { LinkProps } from 'next/link'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -32,6 +33,10 @@ export interface NotImplementedPageProps {
   className?: string
 }
 
+function toInternalHref(path: string): LinkProps<string>['href'] {
+  return { pathname: path }
+}
+
 export function NotImplementedPage({
   featureName,
   description,
@@ -43,8 +48,10 @@ export function NotImplementedPage({
   const resolvedDescription = description ?? DEFAULT_DESCRIPTION
   const resolvedCtaLabel = ctaLabel ?? DEFAULT_CTA_LABEL
   const resolvedCtaHref = ctaHref ?? DEFAULT_CTA_URL
+  const isExternalCta = resolvedCtaHref.startsWith('http')
 
-  return ( // role=status ensures assistive tech announces updates when the page renders
+  // role="status" ensures assistive tech announces updates when the page renders
+  return (
     <section
       role="status"
       aria-live="polite"
@@ -67,12 +74,16 @@ export function NotImplementedPage({
 
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Button asChild>
-          <Link href={resolvedCtaHref} target="_blank" rel="noreferrer noopener">
-            {resolvedCtaLabel}
-          </Link>
+          {isExternalCta ? (
+            <a href={resolvedCtaHref} target="_blank" rel="noreferrer noopener">
+              {resolvedCtaLabel}
+            </a>
+          ) : (
+            <Link href={toInternalHref(resolvedCtaHref)}>{resolvedCtaLabel}</Link>
+          )}
         </Button>
         <Button asChild variant="ghost">
-          <Link href="/">Return to home</Link>
+          <Link href={toInternalHref('/')}>Return to home</Link>
         </Button>
       </div>
     </section>

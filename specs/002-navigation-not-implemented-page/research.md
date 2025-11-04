@@ -9,16 +9,19 @@
 ## Research Tasks & Findings
 
 ### 1) Constitution gating (decision)
+
 - Decision: For Phase 1, require Test-First rule enforcement: unit tests + one Playwright smoke test must pass in CI for merge. Document this as a proposed constitution amendment in the plan and request ratification.
 - Rationale: Keeps parity with project standards (TDD-first) and avoids incomplete UI merges.
 - Alternatives considered: Allow exceptions for purely documentation changes. Rejected because navigation touches UI and tests are fast to add.
 
 ### 2) Route-to-label mapping
+
 - Decision: Use canonical labels derived from the roadmap with minor humanization: `/characters` -> "Characters", `/characters/:id` -> "Character", `/dashboard` -> "Dashboard".
 - Rationale: Matches product expectations and keeps breadcrumbs concise.
 - Implementation note: Provide a `routeMeta` table in `src/lib/navigation.ts` mapping path patterns to titles; fallback to capitalized segment.
 
 ### 3) Breadcrumb truncation
+
 - Decision: Truncate long segments at ~24 chars with tooltip showing full text. Use CSS ellipsis + title attribute for tooltip. For accessibility, ensure tooltip content is available to screen readers (aria-describedby).
 - Rationale: Preserves readable UI on small screens while retaining full path information.
 
