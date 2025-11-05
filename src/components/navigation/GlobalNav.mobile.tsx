@@ -239,18 +239,19 @@ function MobileNavItem({
 }: MobileNavItemProps) {
   const hasChildren = (item.children ?? []).length > 0
 
-  if (!hasChildren || !item.href) {
-    if (hasChildren) {
-      return (
-        <MobileNavItemButton
-          item={item as NavigationItem & { children: NavigationItem[] }}
-          expanded={expanded}
-          onToggleSubmenu={onToggleSubmenu}
-          pathname={pathname}
-          onNavigate={onNavigate}
-        />
-      )
-    }
+  if (hasChildren) {
+    return (
+      <MobileNavItemButton
+        item={item as NavigationItem & { children: NavigationItem[] }}
+        expanded={expanded}
+        onToggleSubmenu={onToggleSubmenu}
+        pathname={pathname}
+        onNavigate={onNavigate}
+      />
+    )
+  }
+
+  if (!item.href) {
     return null
   }
 
