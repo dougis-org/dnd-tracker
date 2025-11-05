@@ -2,6 +2,6 @@
 
 import { NotImplementedPage } from '@/components/NotImplementedPage';
 
-export default function Home() {
+export default function ItemDetailPage() {
   return <NotImplementedPage />;
 }

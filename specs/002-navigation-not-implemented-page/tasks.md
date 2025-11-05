@@ -34,30 +34,30 @@ Purpose: core UI wiring that must be in place before user stories can be impleme
 
 Purpose: Create routing skeleton files for every roadmap entry so each route renders `NotImplementedPage` per FR-006.
 
-- [ ] T028 Create route `src/app/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T029 Create route `src/app/dashboard/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T030 Create route `src/app/characters/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T031 Create route `src/app/characters/new/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T032 Create route `src/app/characters/[id]/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T033 Create route `src/app/parties/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T034 Create route `src/app/parties/new/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T035 Create route `src/app/parties/[id]/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T036 Create route `src/app/encounters/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T037 Create route `src/app/encounters/new/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T038 Create route `src/app/encounters/[id]/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T039 Create route `src/app/monsters/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T040 Create route `src/app/monsters/new/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T041 Create route `src/app/monsters/[id]/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T042 Create route `src/app/items/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T043 Create route `src/app/items/new/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T044 Create route `src/app/items/[id]/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T045 Create route `src/app/combat/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T046 Create route `src/app/combat/[sessionId]/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T047 Create route `src/app/profile/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T048 Create route `src/app/settings/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T049 Create route `src/app/subscription/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T050 Create route `src/app/pricing/page.tsx` that renders `<NotImplementedPage />`
-- [ ] T100 Create route `src/app/help/page.tsx` that renders `<NotImplementedPage />`
+- [x] T028 Create route `src/app/page.tsx` that renders `<NotImplementedPage />`
+- [x] T029 Create route `src/app/dashboard/page.tsx` that renders `<NotImplementedPage />`
+- [x] T030 Create route `src/app/characters/page.tsx` that renders `<NotImplementedPage />`
+- [x] T031 Create route `src/app/characters/new/page.tsx` that renders `<NotImplementedPage />`
+- [x] T032 Create route `src/app/characters/[id]/page.tsx` that renders `<NotImplementedPage />`
+- [x] T033 Create route `src/app/parties/page.tsx` that renders `<NotImplementedPage />`
+- [x] T034 Create route `src/app/parties/new/page.tsx` that renders `<NotImplementedPage />`
+- [x] T035 Create route `src/app/parties/[id]/page.tsx` that renders `<NotImplementedPage />`
+- [x] T036 Create route `src/app/encounters/page.tsx` that renders `<NotImplementedPage />`
+- [x] T037 Create route `src/app/encounters/new/page.tsx` that renders `<NotImplementedPage />`
+- [x] T038 Create route `src/app/encounters/[id]/page.tsx` that renders `<NotImplementedPage />`
+- [x] T039 Create route `src/app/monsters/page.tsx` that renders `<NotImplementedPage />`
+- [x] T040 Create route `src/app/monsters/new/page.tsx` that renders `<NotImplementedPage />`
+- [x] T041 Create route `src/app/monsters/[id]/page.tsx` that renders `<NotImplementedPage />`
+- [x] T042 Create route `src/app/items/page.tsx` that renders `<NotImplementedPage />`
+- [x] T043 Create route `src/app/items/new/page.tsx` that renders `<NotImplementedPage />`
+- [x] T044 Create route `src/app/items/[id]/page.tsx` that renders `<NotImplementedPage />`
+- [x] T045 Create route `src/app/combat/page.tsx` that renders `<NotImplementedPage />`
+- [x] T046 Create route `src/app/combat/[sessionId]/page.tsx` that renders `<NotImplementedPage />`
+- [x] T047 Create route `src/app/profile/page.tsx` that renders `<NotImplementedPage />`
+- [x] T048 Create route `src/app/settings/page.tsx` that renders `<NotImplementedPage />`
+- [x] T049 Create route `src/app/subscription/page.tsx` that renders `<NotImplementedPage />`
+- [x] T050 Create route `src/app/pricing/page.tsx` that renders `<NotImplementedPage />`
+- [x] T100 Create route `src/app/help/page.tsx` that renders `<NotImplementedPage />`
 
 ## Phase 2b: Navigation Refinement & Help Route Addendum (Plan Update Response)
 
