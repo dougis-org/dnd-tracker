@@ -151,7 +151,7 @@ function MobileSubmenu({
 interface MobileNavItemProps {
   item: NavigationItem
   expanded: Record<string, boolean>
-  onToggleSubmenu: (label: string) => void
+  onToggleSubmenu: (_label: string) => void
   pathname: string
   onNavigate: () => void
 }
@@ -193,7 +193,7 @@ function MobileNavItemButton({
 }: {
   item: NavigationItem & { children: NavigationItem[] }
   expanded: Record<string, boolean>
-  onToggleSubmenu: (label: string) => void
+  onToggleSubmenu: (_label: string) => void
   pathname: string
   onNavigate: () => void
 }) {
