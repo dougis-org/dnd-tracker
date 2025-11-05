@@ -66,37 +66,31 @@ You **MUST** consider the user input before proceeding (if not empty).
      ```
 
    - Check if Dockerfile* exists or Docker in plan.md → create/verify .dockerignore
-   - Check if .eslintrc*or eslint.config.* exists → create/verify .eslintignore
+   - Check if .eslintrc* or eslint.config.* exists → create/verify .eslintignore
    - Check if .prettierrc* exists → create/verify .prettierignore
    - Check if .npmrc or package.json exists → create/verify .npmignore (if publishing)
    - Check if terraform files (*.tf) exist → create/verify .terraformignore
    - Check if .helmignore needed (helm charts present) → create/verify .helmignore
 
-   **If ignore file already exists**: Verify it contains essential patterns, append missing critical patterns only
+   **If ignore file already exists**: Verify essential patterns present, append missing critical patterns only
    **If ignore file missing**: Create with full pattern set for detected technology
 
    **Common Patterns by Technology** (from plan.md tech stack):
-   - **Node.js/JavaScript/TypeScript**: `node_modules/`, `dist/`, `build/`, `*.log`, `.env*`
-   - **Python**: `__pycache__/`, `*.pyc`, `.venv/`, `venv/`, `dist/`, `*.egg-info/`
-   - **Java**: `target/`, `*.class`, `*.jar`, `.gradle/`, `build/`
-   - **C#/.NET**: `bin/`, `obj/`, `*.user`, `*.suo`, `packages/`
-   - **Go**: `*.exe`, `*.test`, `vendor/`, `*.out`
-   - **Ruby**: `.bundle/`, `log/`, `tmp/`, `*.gem`, `vendor/bundle/`
-   - **PHP**: `vendor/`, `*.log`, `*.cache`, `*.env`
-   - **Rust**: `target/`, `debug/`, `release/`, `*.rs.bk`, `*.rlib`, `*.prof*`, `.idea/`, `*.log`, `.env*`
-   - **Kotlin**: `build/`, `out/`, `.gradle/`, `.idea/`, `*.class`, `*.jar`, `*.iml`, `*.log`, `.env*`
-   - **C++**: `build/`, `bin/`, `obj/`, `out/`, `*.o`, `*.so`, `*.a`, `*.exe`, `*.dll`, `.idea/`, `*.log`, `.env*`
-   - **C**: `build/`, `bin/`, `obj/`, `out/`, `*.o`, `*.a`, `*.so`, `*.exe`, `Makefile`, `config.log`, `.idea/`, `*.log`, `.env*`
-   - **Swift**: `.build/`, `DerivedData/`, `*.swiftpm/`, `Packages/`
-   - **R**: `.Rproj.user/`, `.Rhistory`, `.RData`, `.Ruserdata`, `*.Rproj`, `packrat/`, `renv/`
-   - **Universal**: `.DS_Store`, `Thumbs.db`, `*.tmp`, `*.swp`, `.vscode/`, `.idea/`
+   | Technology | Patterns |
+   |---|---|
+   | Node.js/JS/TS | `node_modules/`, `dist/`, `build/`, `*.log`, `.env*` |
+   | Python | `__pycache__/`, `*.pyc`, `.venv/`, `venv/`, `dist/`, `*.egg-info/` |
+   | Java | `target/`, `*.class`, `*.jar`, `.gradle/`, `build/` |
+   | C#/.NET | `bin/`, `obj/`, `*.user`, `*.suo`, `packages/` |
+   | Go | `*.exe`, `*.test`, `vendor/`, `*.out` |
+   | Ruby | `.bundle/`, `log/`, `tmp/`, `*.gem`, `vendor/bundle/` |
+   | PHP | `vendor/`, `*.log`, `*.cache`, `*.env` |
+   | Rust/Kotlin/C++/C | `target/`/`build/`, `*.o`, `.idea/`, `*.log`, `.env*` |
+   | Swift | `.build/`, `DerivedData/`, `*.swiftpm/`, `Packages/` |
+   | R | `.Rproj.user/`, `.Rhistory`, `.RData`, `*.Rproj` |
+   | Universal | `.DS_Store`, `Thumbs.db`, `*.tmp`, `*.swp`, `.vscode/` |
 
-   **Tool-Specific Patterns**:
-   - **Docker**: `node_modules/`, `.git/`, `Dockerfile*`, `.dockerignore`, `*.log*`, `.env*`, `coverage/`
-   - **ESLint**: `node_modules/`, `dist/`, `build/`, `coverage/`, `*.min.js`
-   - **Prettier**: `node_modules/`, `dist/`, `build/`, `coverage/`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`
-   - **Terraform**: `.terraform/`, `*.tfstate*`, `*.tfvars`, `.terraform.lock.hcl`
-   - **Kubernetes/k8s**: `*.secret.yaml`, `secrets/`, `.kube/`, `kubeconfig*`, `*.key`, `*.crt`
+   **Tool-Specific Patterns**: Docker (`coverage/`), ESLint/Prettier (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`), Terraform (`.terraform/`, `*.tfstate*`, `*.tfvars`), Kubernetes (`*.secret.yaml`, `secrets/`, `kubeconfig*`)
 
 5. Parse tasks.md structure and extract:
    - **Task phases**: Setup, Tests, Core, Integration, Polish
@@ -124,44 +118,41 @@ You **MUST** consider the user input before proceeding (if not empty).
    - For parallel tasks [P], continue with successful tasks, report failed ones
    - Provide clear error messages with context for debugging
    - Suggest next steps if implementation cannot proceed
-   - **IMPORTANT** For completed tasks, make sure to mark the task off as [X] in the tasks file.
-   - **REQUIRED ENFORCEMENT**: After completing any task (including fixing a comment, addressing a review thread, or finishing a subtask), the agent **must** stage the related file changes, create a focused commit, and push the commit to the remote branch. Recommended guidelines:
-     - Commit message format: follow conventional commits (e.g., `feat(task): complete <TASK-ID> - short description` or `fix(task): address review <TASK-ID> - short desc`).
-     - Use one logical task per commit where possible so review history is clear.
-     - Commands to run (example):
+   - **IMPORTANT** For completed tasks, mark as [X] in tasks.md
+   - **REQUIRED ENFORCEMENT**: After completing each task, commit and push changes:
+     - Format: `git add <files>; git commit -m "feat(task): complete <ID> - description"; git push origin HEAD`
+     - Use conventional commits: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`
+     - Group related tasks in single commit but document all task IDs
+     - Keep commit history clean and reviewable
 
-       ```bash
-       git add <files-touched>
-       git commit -m "feat(task): complete TASK-123 - add validation for X"
-       git push origin HEAD
-       ```
+9. Pre-PR Validation & Preparation:
+   - Verify all tasks completed and features match specification
+   - Validate tests pass and coverage meets requirements (80%+ on touched code)
+   - Confirm implementation follows technical plan and roadmap governance
+   - Ensure `codacy_cli_analyze` run on every modified file (per `.github/instructions/codacy.instructions.md`)
+   - **Final PR checklist** before submission:
+     - ✓ Title: clear, descriptive, matches conventional commits, links issue
+     - ✓ Tests: added/updated, instructions in PR body, passing locally
+     - ✓ Checks: `npm run lint`, `npm run lint:markdown`, `npm run type-check`, `npm run test:ci` all pass
+     - ✓ Commits: clean, conventional format, one logical task per commit
+     - ✓ Branch: rebased/merged with latest `main`, all files pushed to remote
+     - ✓ Codacy: analyzed, critical issues addressed
+     - ✓ Security: trivy scan done if dependencies added; no secrets in code
+     - ✓ Docs: `.env.example`, README, JSDoc updated if needed
+     - ✓ PR body: includes requirements satisfied, testing notes, reviewer checklist, `Closes #XXXX`
 
-     - If multiple related tasks are completed in a single operation, group them in a single commit but ensure the commit message documents all task IDs.
-     - After pushing, update the tasks.md/checklist entries in the same commit or in a follow-up commit so the repo state is consistent.
+10. Pull Request Submission & Monitoring:
+    - **Create PR** using GitHub CLI with clear title and complete body:
+      ```bash
+      gh pr create --title "feat: description" --body "Requirements satisfied, Testing notes, Closes #XXXX" --head feature-branch --base main
+      ```
+    - **CRITICAL**: Include `Closes #XXXX` to auto-close issue on merge
+    - **Monitor**: Wait for all automated checks (CI, Codacy, status checks) → fix any failures immediately → do NOT consider feature complete until all checks pass
+    - **Review**: Address reviewer feedback promptly; enable auto-merge only after ALL checks pass and NO changes requested
 
-9. Completion validation:
-   - Verify all required tasks are completed
-   - Check that implemented features match the original specification
-   - Validate that tests pass and coverage meets requirements
-   - Confirm the implementation follows the technical plan and roadmap governance notes
-   - Ensure `codacy_cli_analyze` has been run for every modified file (per `.github/instructions/codacy.instructions.md`)
-   - Report final status with summary of completed work
-
-   - PR criteria (additional, must be satisfied before opening or marking the PR ready):
-     - PR includes a clear, descriptive title and links the related issue(s)
-     - New or updated tests have been added and instructions to run them are included in the PR body
-     - Local checks pass: `npm run lint`, `npm run lint:markdown`, `npm run type-check`, `npm run test:ci` (as applicable)
-     - Commit history is clean and follows conventional commits
-     - The branch is rebased or merged with the latest `main` to avoid conflicts
-     - All modified files have been pushed to the remote branch (see Step 8 enforcement)
-     - `codacy_cli_analyze` was executed for modified files and any critical issues addressed
-     - No unresolved review threads or changerequest reviews (agents must wait and address them)
-     - All required CI/status checks are passing (these are blockers for merge)
-     - Any deferred work is documented in the PR body and has an explicit human confirmation comment (`@maintainer override-deferred-work: ...`) if present
-     - Any security-sensitive or dependency changes include a note and, if dependencies were added, a trivy scan was requested (`codacy_cli_analyze --tool trivy`) and any findings addressed or documented
-     - Documentation and `.env.example` updated if new environment variables are required
-     - PR description contains a short checklist for reviewers summarizing the above
-
-   - Only after these criteria are satisfied should the PR be marked for auto-merge (or the `automation/ready-for-auto-merge` label be added).
+11. **FINAL: Feature Completion**:
+    - **The feature is NOT complete until PR is MERGED into main**
+    - **Post-merge**: Pull latest, delete feature branch, remove `in-progress` label, verify all tasks marked [X]
+    - **Report**: All requirements met, tests passing on `main`, feature deployable
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit.tasks` first to regenerate the task list.
