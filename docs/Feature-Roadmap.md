@@ -53,63 +53,63 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | Feature # | Description | Status | Dependencies | GitHub Issue | Milestone |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | F001 | Project Setup & Design System | ✅ Complete | - | N/A (Closed) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F002 | Navigation & Not Implemented Page | ✅ Complete | Feature 001 | [#333](https://github.com/dougis-org/dnd-tracker/issues/333) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F003 | Landing Page & Marketing Components | Planned | Feature 001, 002 | [#357](https://github.com/dougis-org/dnd-tracker/issues/357) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F004 | Dashboard Page | Planned | Feature 001, 002 | [#358](https://github.com/dougis-org/dnd-tracker/issues/358) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F005 | Character Management Pages | Planned | Feature 001, 002 | [#359](https://github.com/dougis-org/dnd-tracker/issues/359) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F006 | Party Management Pages | Planned | Feature 001, 002 | [#360](https://github.com/dougis-org/dnd-tracker/issues/360) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F007 | Monster/NPC Management Pages | Planned | Feature 001, 002 | [#361](https://github.com/dougis-org/dnd-tracker/issues/361) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F008 | Encounter Builder Pages | Planned | Feature 001, 002 | [#362](https://github.com/dougis-org/dnd-tracker/issues/362) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F009 | Combat Tracker Page | Planned | Feature 001, 002 | [#363](https://github.com/dougis-org/dnd-tracker/issues/363) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F010 | User Profile & Settings Pages | Planned | Feature 001, 002 | [#364](https://github.com/dougis-org/dnd-tracker/issues/364) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F011 | Item Catalog Pages | Planned | Feature 001, 002 | [#365](https://github.com/dougis-org/dnd-tracker/issues/365) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F012 | Subscription & Billing Pages | Planned | Feature 001, 002 | [#366](https://github.com/dougis-org/dnd-tracker/issues/366) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F013 | Clerk Integration & Auth Flow | Planned | Feature 001, 002, 012 | [#367](https://github.com/dougis-org/dnd-tracker/issues/367) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F014 | MongoDB User Model & Webhook | Planned | Feature 013 | [#368](https://github.com/dougis-org/dnd-tracker/issues/368) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F015 | Profile Setup Wizard | Planned | Feature 014 | [#369](https://github.com/dougis-org/dnd-tracker/issues/369) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F016 | User Dashboard with Real Data | Planned | Feature 004, 014 | [#370](https://github.com/dougis-org/dnd-tracker/issues/370) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F017 | Profile Page Functionality | Planned | Feature 010, 014 | [#371](https://github.com/dougis-org/dnd-tracker/issues/371) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F018 | Character Model & API | Planned | Feature 014 | [#372](https://github.com/dougis-org/dnd-tracker/issues/372) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F019 | Character List Page Integration | Planned | Feature 005, 018 | [#373](https://github.com/dougis-org/dnd-tracker/issues/373) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F020 | Character Creation Form | Planned | Feature 019 | [#374](https://github.com/dougis-org/dnd-tracker/issues/374) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F021 | Character Edit Form | Planned | Feature 019 | [#375](https://github.com/dougis-org/dnd-tracker/issues/375) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F022 | Character Templates | Planned | Feature 018 | [#376](https://github.com/dougis-org/dnd-tracker/issues/376) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F023 | Monster Model & API | Planned | Feature 014 | [#377](https://github.com/dougis-org/dnd-tracker/issues/377) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F024 | Monster List Page Integration | Planned | Feature 007, 023 | [#378](https://github.com/dougis-org/dnd-tracker/issues/378) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F025 | Monster Creation/Edit Forms | Planned | Feature 024 | [#379](https://github.com/dougis-org/dnd-tracker/issues/379) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F026 | Item Model & API | Planned | Feature 014 | [#380](https://github.com/dougis-org/dnd-tracker/issues/380) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F027 | Item Management Pages | Planned | Feature 011, 026 | [#381](https://github.com/dougis-org/dnd-tracker/issues/381) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F028 | Party Model & API | Planned | Feature 014, 018 | [#382](https://github.com/dougis-org/dnd-tracker/issues/382) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F029 | Party Management Integration | Planned | Feature 006, 028 | [#383](https://github.com/dougis-org/dnd-tracker/issues/383) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F030 | Service Worker Setup | Planned | Feature 001 | [#384](https://github.com/dougis-org/dnd-tracker/issues/384) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
-| F031 | IndexedDB Setup | Planned | Feature 030 | [#385](https://github.com/dougis-org/dnd-tracker/issues/385) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
-| F032 | Offline Combat | Planned | Feature 031, 036 | [#386](https://github.com/dougis-org/dnd-tracker/issues/386) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
-| F033 | Background Sync | Planned | Feature 032 | [#387](https://github.com/dougis-org/dnd-tracker/issues/387) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
-| F034 | Encounter Model & API | Planned | Feature 014, 028, 023 | [#388](https://github.com/dougis-org/dnd-tracker/issues/388) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F035 | Encounter Builder Integration | Planned | Feature 008, 034 | [#389](https://github.com/dougis-org/dnd-tracker/issues/389) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F036 | Combat Session Model | Planned | Feature 034 | [#390](https://github.com/dougis-org/dnd-tracker/issues/390) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F037 | Initiative System | Planned | Feature 036 | [#391](https://github.com/dougis-org/dnd-tracker/issues/391) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F038 | Combat Tracker Basic Integration | Planned | Feature 009, 037 | [#392](https://github.com/dougis-org/dnd-tracker/issues/392) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F039 | HP Tracking System | Planned | Feature 036 | [#393](https://github.com/dougis-org/dnd-tracker/issues/393) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F040 | HP Tracking UI Integration | Planned | Feature 038, 039 | [#394](https://github.com/dougis-org/dnd-tracker/issues/394) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F041 | HP History & Undo | Planned | Feature 039 | [#395](https://github.com/dougis-org/dnd-tracker/issues/395) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F042 | Status Effects Model | Planned | Feature 036 | [#396](https://github.com/dougis-org/dnd-tracker/issues/396) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F043 | Status Effects UI | Planned | Feature 038, 042 | [#397](https://github.com/dougis-org/dnd-tracker/issues/397) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
-| F044 | Lair Actions System | Planned | Feature 036 | [#398](https://github.com/dougis-org/dnd-tracker/issues/398) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
-| F045 | Combat Session Management | Planned | Feature 036 | [#399](https://github.com/dougis-org/dnd-tracker/issues/399) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
-| F046 | Combat Log System | Planned | Feature 036 | [#400](https://github.com/dougis-org/dnd-tracker/issues/400) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
-| F047 | Tier Limit Enforcement | Planned | Feature 014 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F048 | Data Export System | Planned | Feature 018, 034, 046 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F049 | Data Import System | Planned | Feature 018 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F050 | Stripe Setup & Webhooks | Planned | Feature 014 | [#401](https://github.com/dougis-org/dnd-tracker/issues/401) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F051 | Subscription Checkout | Planned | Feature 050 | [#402](https://github.com/dougis-org/dnd-tracker/issues/402) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F052 | Subscription Management | Planned | Feature 012, 051 | [#403](https://github.com/dougis-org/dnd-tracker/issues/403) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F053 | Billing Portal | Planned | Feature 050 | [#404](https://github.com/dougis-org/dnd-tracker/issues/404) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F054 | Free Trial System | Planned | Feature 051 | [#405](https://github.com/dougis-org/dnd-tracker/issues/405) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F055 | Character Sharing | Planned | Feature 018 | [#407](https://github.com/dougis-org/dnd-tracker/issues/407) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
-| F056 | Advanced Combat Logging (Paid) | Planned | Feature 046, 047 | [#408](https://github.com/dougis-org/dnd-tracker/issues/408) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
-| F057 | Custom Themes (Paid) | Planned | Feature 001, 047 | [#409](https://github.com/dougis-org/dnd-tracker/issues/409) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
-| F058 | Collaborative Mode (Paid) | Planned | Feature 036, 047 | [#410](https://github.com/dougis-org/dnd-tracker/issues/410) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
+| F002 | Navigation & Not Implemented Page | ✅ Complete | F001 | [#333](https://github.com/dougis-org/dnd-tracker/issues/333) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
+| F003 | Landing Page & Marketing Components | Planned | F001, F002 | [#357](https://github.com/dougis-org/dnd-tracker/issues/357) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F004 | Dashboard Page | Planned | F001, F002 | [#358](https://github.com/dougis-org/dnd-tracker/issues/358) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F005 | Character Management Pages | Planned | F001, F002 | [#359](https://github.com/dougis-org/dnd-tracker/issues/359) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F006 | Party Management Pages | Planned | F001, F002 | [#360](https://github.com/dougis-org/dnd-tracker/issues/360) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
+| F007 | Monster/NPC Management Pages | Planned | F001, F002 | [#361](https://github.com/dougis-org/dnd-tracker/issues/361) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
+| F008 | Encounter Builder Pages | Planned | F001, F002 | [#362](https://github.com/dougis-org/dnd-tracker/issues/362) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
+| F009 | Combat Tracker Page | Planned | F001, F002 | [#363](https://github.com/dougis-org/dnd-tracker/issues/363) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
+| F010 | User Profile & Settings Pages | Planned | F001, F002 | [#364](https://github.com/dougis-org/dnd-tracker/issues/364) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
+| F011 | Item Catalog Pages | Planned | F001, F002 | [#365](https://github.com/dougis-org/dnd-tracker/issues/365) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
+| F012 | Subscription & Billing Pages | Planned | F001, F002 | [#366](https://github.com/dougis-org/dnd-tracker/issues/366) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
+| F013 | Clerk Integration & Auth Flow | Planned | F001, F002, F012 | [#367](https://github.com/dougis-org/dnd-tracker/issues/367) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F014 | MongoDB User Model & Webhook | Planned | F013 | [#368](https://github.com/dougis-org/dnd-tracker/issues/368) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F015 | Profile Setup Wizard | Planned | F014 | [#369](https://github.com/dougis-org/dnd-tracker/issues/369) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F016 | User Dashboard with Real Data | Planned | F004, F014 | [#370](https://github.com/dougis-org/dnd-tracker/issues/370) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F017 | Profile Page Functionality | Planned | F010, F014 | [#371](https://github.com/dougis-org/dnd-tracker/issues/371) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F018 | Character Model & API | Planned | F014 | [#372](https://github.com/dougis-org/dnd-tracker/issues/372) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F019 | Character List Page Integration | Planned | F005, F018 | [#373](https://github.com/dougis-org/dnd-tracker/issues/373) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F020 | Character Creation Form | Planned | F019 | [#374](https://github.com/dougis-org/dnd-tracker/issues/374) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F021 | Character Edit Form | Planned | F019 | [#375](https://github.com/dougis-org/dnd-tracker/issues/375) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F022 | Character Templates | Planned | F018 | [#376](https://github.com/dougis-org/dnd-tracker/issues/376) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F023 | Monster Model & API | Planned | F014 | [#377](https://github.com/dougis-org/dnd-tracker/issues/377) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F024 | Monster List Page Integration | Planned | F007, F023 | [#378](https://github.com/dougis-org/dnd-tracker/issues/378) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F025 | Monster Creation/Edit Forms | Planned | F024 | [#379](https://github.com/dougis-org/dnd-tracker/issues/379) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F026 | Item Model & API | Planned | F014 | [#380](https://github.com/dougis-org/dnd-tracker/issues/380) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F027 | Item Management Pages | Planned | F011, F026 | [#381](https://github.com/dougis-org/dnd-tracker/issues/381) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F028 | Party Model & API | Planned | F014, F018 | [#382](https://github.com/dougis-org/dnd-tracker/issues/382) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F029 | Party Management Integration | Planned | F006, F028 | [#383](https://github.com/dougis-org/dnd-tracker/issues/383) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F030 | Service Worker Setup | Planned | F001 | [#384](https://github.com/dougis-org/dnd-tracker/issues/384) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F031 | IndexedDB Setup | Planned | F030 | [#385](https://github.com/dougis-org/dnd-tracker/issues/385) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F032 | Offline Combat | Planned | F031, F036 | [#386](https://github.com/dougis-org/dnd-tracker/issues/386) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F033 | Background Sync | Planned | F032 | [#387](https://github.com/dougis-org/dnd-tracker/issues/387) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F034 | Encounter Model & API | Planned | F014, F028, F023 | [#388](https://github.com/dougis-org/dnd-tracker/issues/388) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F035 | Encounter Builder Integration | Planned | F008, F034 | [#389](https://github.com/dougis-org/dnd-tracker/issues/389) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F036 | Combat Session Model | Planned | F034 | [#390](https://github.com/dougis-org/dnd-tracker/issues/390) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F037 | Initiative System | Planned | F036 | [#391](https://github.com/dougis-org/dnd-tracker/issues/391) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F038 | Combat Tracker Basic Integration | Planned | F009, F037 | [#392](https://github.com/dougis-org/dnd-tracker/issues/392) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F039 | HP Tracking System | Planned | F036 | [#393](https://github.com/dougis-org/dnd-tracker/issues/393) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F040 | HP Tracking UI Integration | Planned | F038, F039 | [#394](https://github.com/dougis-org/dnd-tracker/issues/394) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F041 | HP History & Undo | Planned | F039 | [#395](https://github.com/dougis-org/dnd-tracker/issues/395) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F042 | Status Effects Model | Planned | F036 | [#396](https://github.com/dougis-org/dnd-tracker/issues/396) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F043 | Status Effects UI | Planned | F038, F042 | [#397](https://github.com/dougis-org/dnd-tracker/issues/397) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
+| F044 | Lair Actions System | Planned | F036 | [#398](https://github.com/dougis-org/dnd-tracker/issues/398) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
+| F045 | Combat Session Management | Planned | F036 | [#399](https://github.com/dougis-org/dnd-tracker/issues/399) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
+| F046 | Combat Log System | Planned | F036 | [#400](https://github.com/dougis-org/dnd-tracker/issues/400) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
+| F047 | Tier Limit Enforcement | Planned | F014 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F048 | Data Export System | Planned | F018, F034, F046 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/issues/383) |
+| F049 | Data Import System | Planned | F018 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F050 | Stripe Setup & Webhooks | Planned | F014 | [#401](https://github.com/dougis-org/dnd-tracker/issues/401) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F051 | Subscription Checkout | Planned | F050 | [#402](https://github.com/dougis-org/dnd-tracker/issues/402) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F052 | Subscription Management | Planned | F012, F051 | [#403](https://github.com/dougis-org/dnd-tracker/issues/403) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F053 | Billing Portal | Planned | F050 | [#404](https://github.com/dougis-org/dnd-tracker/issues/404) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F054 | Free Trial System | Planned | F051 | [#405](https://github.com/dougis-org/dnd-tracker/issues/405) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F055 | Character Sharing | Planned | F018 | [#407](https://github.com/dougis-org/dnd-tracker/issues/407) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
+| F056 | Advanced Combat Logging (Paid) | Planned | F046, F047 | [#408](https://github.com/dougis-org/dnd-tracker/issues/408) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
+| F057 | Custom Themes (Paid) | Planned | F001, F047 | [#409](https://github.com/dougis-org/dnd-tracker/issues/409) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
+| F058 | Collaborative Mode (Paid) | Planned | F036, F047 | [#410](https://github.com/dougis-org/dnd-tracker/issues/410) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
 | F059 | Performance Optimization | Planned | All previous features | [#411](https://github.com/dougis-org/dnd-tracker/issues/411) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
 | F060 | Polish & Launch Prep | Planned | All previous features | [#412](https://github.com/dougis-org/dnd-tracker/issues/412) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
 
