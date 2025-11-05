@@ -9,10 +9,6 @@
 - path: string (required) — route path (e.g., `/characters`, `/characters/:id`)
 - children: NavigationItem[] (optional)
 - order: number (optional) — controls display order
-- label: string (required) - human readable label for the nav item
-- path: string (required) - route path (e.g., `/characters`, `/characters/:id`)
-- children: NavigationItem[] (optional)
-- order: number (optional) - controls display order
 
 Validation rules:
 

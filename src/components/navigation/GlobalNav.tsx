@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, useId } from 'react'
 import type { ComponentRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { ChevronDown } from 'lucide-react'
 import { NAVIGATION_ITEMS, type NavigationItem } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
 
@@ -126,8 +127,8 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
         onClick={toggleMenu}
       >
         {item.label}
-        <span className="ml-1 text-xs" aria-hidden>
-          v
+        <span className="ml-1" aria-hidden>
+          <ChevronDown className="h-4 w-4" />
         </span>
       </button>
 
