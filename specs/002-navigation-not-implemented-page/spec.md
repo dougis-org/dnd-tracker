@@ -51,7 +51,8 @@ Implement the GlobalNav (global navigation component), routing skeleton, and a `
 1. Add unit tests for Navigation and Breadcrumbs (failing)
 2. Implement `NotImplementedPage` and navigation components to satisfy tests
 3. Add a Playwright smoke test that verifies route responds with NotImplementedPage
-4. Run test:ci and fix any lint/type issues
+4. Add a Playwright assertion that the Collections dropdown overlay retains the expected high-opacity background so menu content remains legible when layered over breadcrumbs
+5. Run test:ci and fix any lint/type issues
 
 ## Design considerations (non-technical)
 
@@ -59,6 +60,7 @@ Implement the GlobalNav (global navigation component), routing skeleton, and a `
 - Keep navigation clear and visually scannable on desktop and mobile.
 - Ensure accessibility best-practices (keyboard navigation, focus states, readable labels).
 - Breadcrumbs should present a clear path hierarchy and be readable on small screens.
+- Dropdown overlays must maintain at least a 95% opaque background (or equivalent token) to avoid visual blending with underlying breadcrumbs while menus are open.
 
 ## Links
 
