@@ -50,10 +50,40 @@ This command selects the next eligible feature marked "Planned" in `docs/Feature
    - If user says "no" or "wait", stop and ask what they prefer
    - If user says "yes" or "proceed", continue to step 4
 
-4. **Update Roadmap Status**:
-   - Change the selected feature's Status from "Planned" to "In Progress"
+4. **Update Roadmap Status** (CRITICAL - TWO PLACES):
+   
+   **PART A: Update the Feature Summary Table** (top of roadmap):
+   - Find the row for Feature [NUMBER] in the "Feature Summary" table
+   - Change the Status cell from "Planned" to "In Progress"
+   - Keep all other columns unchanged
+   
+   **PART B: Update the Feature Detail Section** (body of roadmap):
+   - Find the "### Feature [NUMBER]: [Title]" section matching the selected feature
+   - Update the Status line: Change from "**Status**: Planned" to "**Status**: In Progress"
+   - Add the Branch line: `**Branch**: [BRANCH_NAME]`
+   - Add the Spec Location line: `**Spec Location**: specs/[FEATURE_NUMBER]-[short-name]/`
+   
+   **Example - Before**:
+   ```
+   ### Feature 003: Landing Page & Marketing Components
+   
+   **Depends on**: Feature 001, Feature 002
+   **Duration**: Day 2
+   ```
+   
+   **Example - After**:
+   ```
+   ### Feature 003: Landing Page & Marketing Components
+   
+   **Status**: In Progress
+   **Branch**: feature/003-landing-page
+   **Spec Location**: specs/003-landing-page/
+   **Depends on**: Feature 001, Feature 002
+   **Duration**: Day 2
+   ```
+   
    - Save `docs/Feature-Roadmap.md`
-   - Stage and commit: `git add docs/Feature-Roadmap.md && git commit -m "docs: mark feature #[NUMBER] as In Progress"`
+   - Stage and commit both changes: `git add docs/Feature-Roadmap.md && git commit -m "docs: mark feature #[NUMBER] as In Progress with branch [BRANCH_NAME]"`
 
 5. **Push Roadmap Update** (MANDATORY):
    - Push to origin/main: `git push origin HEAD:main`
