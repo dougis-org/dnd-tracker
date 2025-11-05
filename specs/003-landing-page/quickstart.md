@@ -8,7 +8,7 @@ How to run locally (dev):
 npm run dev
 ```
 
-2. Open http://localhost:3000/ to view the landing page in development.
+2. Open <http://localhost:3000/> to view the landing page in development.
 
 Testing:
 
@@ -21,4 +21,5 @@ npm run test:e2e
 ```
 
 Notes:
+
 - The landing page uses only mock data; no API is called.
