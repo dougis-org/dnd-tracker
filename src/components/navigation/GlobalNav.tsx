@@ -8,6 +8,10 @@ import { ChevronDown } from 'lucide-react'
 import { NAVIGATION_ITEMS, type NavigationItem } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
 
+const LINK_CLASS = 'inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+const ACTIVE_CLASS = 'bg-primary text-primary-foreground shadow'
+const INACTIVE_CLASS = 'text-muted-foreground hover:bg-muted hover:text-foreground'
+
 function toLink(href: string) {
   return { pathname: href } as const
 }
@@ -23,6 +27,11 @@ function isCurrent(pathname: string | null, href?: string) {
 
   return pathname === href || pathname.startsWith(`${href}/`)
 }
+
+function getLinkClassName(active: boolean): string {
+  return cn(LINK_CLASS, active ? ACTIVE_CLASS : INACTIVE_CLASS)
+}
+
 interface DesktopNavLinkProps {
   item: NavigationItem
   pathname: string | null
@@ -40,16 +49,14 @@ function DesktopNavLink({ item, pathname }: DesktopNavLinkProps) {
       <Link
         href={toLink(item.href)}
         aria-current={active ? 'page' : undefined}
-        className={cn(
-          'inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-          active ? 'bg-primary text-primary-foreground shadow' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-        )}
+        className={getLinkClassName(active)}
       >
         {item.label}
       </Link>
     </li>
   )
 }
+
 interface DesktopNavMenuProps {
   item: NavigationItem
   pathname: string | null
@@ -63,6 +70,7 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
 
   const active = (item.children ?? []).some((child) => isCurrent(pathname, child.href))
 
+  // Handle click outside
   useEffect(() => {
     if (!open) {
       return undefined
@@ -79,12 +87,12 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
     }
 
     document.addEventListener('pointerdown', handlePointerDown)
-
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown)
     }
   }, [open])
 
+  // Handle Escape key
   useEffect(() => {
     if (!open) {
       return undefined
@@ -98,19 +106,15 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
     }
 
     document.addEventListener('keydown', handleKeyDown)
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
   }, [open])
 
+  // Close menu on path change
   useEffect(() => {
     setOpen(false)
   }, [pathname])
-
-  const toggleMenu = () => {
-    setOpen((value) => !value)
-  }
 
   return (
     <li className="relative">
@@ -120,11 +124,8 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={menuId}
-        className={cn(
-          'inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-          active ? 'bg-primary text-primary-foreground shadow' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-        )}
-        onClick={toggleMenu}
+        className={getLinkClassName(active)}
+        onClick={() => setOpen((v) => !v)}
       >
         {item.label}
         <span className="ml-1" aria-hidden>
@@ -154,10 +155,10 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
                   role="menuitem"
                   aria-current={childActive ? 'page' : undefined}
                   className={cn(
-                    'flex w-full items-center rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                    LINK_CLASS,
                     childActive
                       ? 'bg-muted/80 text-foreground'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      : INACTIVE_CLASS
                   )}
                   onClick={() => setOpen(false)}
                 >
@@ -171,44 +172,40 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
     </li>
   )
 }
-export function GlobalNav() {
-  const pathname = usePathname()
 
-  const orderedTopLevel = useMemo(() => {
-    return NAVIGATION_ITEMS.filter((item) => item.alignment)
+function useNavClusters(items: NavigationItem[]) {
+  return useMemo(() => {
+    const ordered = items
+      .filter((item) => item.alignment)
       .slice()
       .sort((a, b) => (a.mobileOrder ?? 0) - (b.mobileOrder ?? 0))
-  }, [])
 
-  const leftCluster = useMemo(
-    () => orderedTopLevel.filter((item) => item.alignment === 'left'),
-    [orderedTopLevel]
-  )
-  const rightCluster = useMemo(
-    () => orderedTopLevel.filter((item) => item.alignment === 'right'),
-    [orderedTopLevel]
-  )
+    return {
+      left: ordered.filter((item) => item.alignment === 'left'),
+      right: ordered.filter((item) => item.alignment === 'right'),
+    }
+  }, [items])
+}
+
+export function GlobalNav() {
+  const pathname = usePathname()
+  const clusters = useNavClusters(NAVIGATION_ITEMS)
+
+  const renderNavItem = (item: NavigationItem) =>
+    item.children ? (
+      <DesktopNavMenu key={item.label} item={item} pathname={pathname} />
+    ) : (
+      <DesktopNavLink key={item.label} item={item} pathname={pathname} />
+    )
 
   return (
     <nav aria-label="Primary" className="hidden md:flex">
       <div className="flex w-full items-center justify-between gap-6">
         <ul aria-label="Primary navigation left cluster" className="flex items-center gap-2">
-          {leftCluster.map((item) =>
-            item.children ? (
-              <DesktopNavMenu key={item.label} item={item} pathname={pathname} />
-            ) : (
-              <DesktopNavLink key={item.label} item={item} pathname={pathname} />
-            )
-          )}
+          {clusters.left.map(renderNavItem)}
         </ul>
         <ul aria-label="Primary navigation right cluster" className="ml-auto flex items-center gap-2">
-          {rightCluster.map((item) =>
-            item.children ? (
-              <DesktopNavMenu key={item.label} item={item} pathname={pathname} />
-            ) : (
-              <DesktopNavLink key={item.label} item={item} pathname={pathname} />
-            )
-          )}
+          {clusters.right.map(renderNavItem)}
         </ul>
       </div>
     </nav>

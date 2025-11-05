@@ -152,6 +152,14 @@ function splitPath(pathname: string): string[] {
   return normalized.slice(1).split('/')
 }
 
+function extractParamName(segment: string): string {
+  return segment.slice(1, -1)
+}
+
+function isDynamicSegment(segment: string): boolean {
+  return segment.startsWith('[') && segment.endsWith(']')
+}
+
 function matchSegments(
   defSegments: string[],
   pathSegments: string[]
@@ -166,8 +174,8 @@ function matchSegments(
     const current = defSegments[index]
     const actual = pathSegments[index]
 
-    if (current.startsWith('[') && current.endsWith(']')) {
-      const paramName = current.slice(1, -1)
+    if (isDynamicSegment(current)) {
+      const paramName = extractParamName(current)
       params[paramName] = decodeURIComponent(actual)
       continue
     }
@@ -202,8 +210,8 @@ function buildConcretePath(pattern: string, params: Record<string, string>): str
   }
 
   const resolved = segments.map((segment) => {
-    if (segment.startsWith('[') && segment.endsWith(']')) {
-      const paramName = segment.slice(1, -1)
+    if (isDynamicSegment(segment)) {
+      const paramName = extractParamName(segment)
       return params[paramName] ?? segment
     }
     return segment
@@ -212,15 +220,22 @@ function buildConcretePath(pattern: string, params: Record<string, string>): str
   return `/${resolved.join('/')}`
 }
 
-function resolveLabel(definition: RouteDefinition, params: Record<string, string>): string {
+function extractLastDynamicParam(
+  definition: RouteDefinition,
+  params: Record<string, string>
+): string | undefined {
   const dynamicSegments = definition.path.match(/\[(.*?)\]/g) ?? []
   if (dynamicSegments.length === 0) {
-    return definition.label
+    return undefined
   }
 
   const lastDynamic = dynamicSegments[dynamicSegments.length - 1]
-  const paramName = lastDynamic.slice(1, -1)
-  const paramValue = params[paramName]
+  const paramName = extractParamName(lastDynamic)
+  return params[paramName]
+}
+
+function resolveLabel(definition: RouteDefinition, params: Record<string, string>): string {
+  const paramValue = extractLastDynamicParam(definition, params)
 
   if (paramValue) {
     return definition.dynamicLabel ? `${definition.dynamicLabel} ${paramValue}` : paramValue
@@ -252,16 +267,9 @@ function fallbackBreadcrumb(pathname: string): BreadcrumbSegment[] {
   return crumbs
 }
 
-export function buildBreadcrumbSegments(pathname: string): BreadcrumbSegment[] {
-  const normalized = normalizePath(pathname)
-  const matched = matchRoute(normalized)
-
-  if (!matched) {
-    return fallbackBreadcrumb(normalized)
-  }
-
+function buildBreadcrumbStack(route: MatchedRoute): MatchedRoute[] {
   const stack: MatchedRoute[] = []
-  let cursor: MatchedRoute | null = matched
+  let cursor: MatchedRoute | null = route
 
   while (true) {
     stack.unshift(cursor)
@@ -285,10 +293,19 @@ export function buildBreadcrumbSegments(pathname: string): BreadcrumbSegment[] {
     }
   }
 
+  return stack
+}
+
+function ensureHomeFirst(stack: MatchedRoute[]): void {
   if (stack[0]?.definition.path !== '/') {
     stack.unshift({ definition: ROUTE_DEFINITIONS[0], params: {} })
   }
+}
 
+function stackToBreadcrumbs(
+  stack: MatchedRoute[],
+  normalized: string
+): BreadcrumbSegment[] {
   return stack.map((entry, index) => {
     const resolvedLabel = entry.definition.path === '/'
       ? 'Home'
@@ -301,4 +318,18 @@ export function buildBreadcrumbSegments(pathname: string): BreadcrumbSegment[] {
       href: href === normalized ? undefined : href,
     }
   })
+}
+
+
+export function buildBreadcrumbSegments(pathname: string): BreadcrumbSegment[] {
+  const normalized = normalizePath(pathname)
+  const matched = matchRoute(normalized)
+
+  if (!matched) {
+    return fallbackBreadcrumb(normalized)
+  }
+
+  const stack = buildBreadcrumbStack(matched)
+  ensureHomeFirst(stack)
+  return stackToBreadcrumbs(stack, normalized)
 }
