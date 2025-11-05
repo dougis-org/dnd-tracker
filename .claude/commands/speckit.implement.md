@@ -139,15 +139,13 @@ You **MUST** consider the user input before proceeding (if not empty).
      - If multiple related tasks are completed in a single operation, group them in a single commit but ensure the commit message documents all task IDs.
      - After pushing, update the tasks.md/checklist entries in the same commit or in a follow-up commit so the repo state is consistent.
 
-9. Completion validation:
+9. Pre-PR Validation & Preparation:
    - Verify all required tasks are completed
    - Check that implemented features match the original specification
    - Validate that tests pass and coverage meets requirements
    - Confirm the implementation follows the technical plan and roadmap governance notes
    - Ensure `codacy_cli_analyze` has been run for every modified file (per `.github/instructions/codacy.instructions.md`)
-   - Report final status with summary of completed work
-
-   - PR criteria (additional, must be satisfied before opening or marking the PR ready):
+   - Perform final checklist before submitting PR:
      - PR includes a clear, descriptive title and links the related issue(s)
      - New or updated tests have been added and instructions to run them are included in the PR body
      - Local checks pass: `npm run lint`, `npm run lint:markdown`, `npm run type-check`, `npm run test:ci` (as applicable)
@@ -155,13 +153,50 @@ You **MUST** consider the user input before proceeding (if not empty).
      - The branch is rebased or merged with the latest `main` to avoid conflicts
      - All modified files have been pushed to the remote branch (see Step 8 enforcement)
      - `codacy_cli_analyze` was executed for modified files and any critical issues addressed
-     - No unresolved review threads or changerequest reviews (agents must wait and address them)
-     - All required CI/status checks are passing (these are blockers for merge)
      - Any deferred work is documented in the PR body and has an explicit human confirmation comment (`@maintainer override-deferred-work: ...`) if present
      - Any security-sensitive or dependency changes include a note and, if dependencies were added, a trivy scan was requested (`codacy_cli_analyze --tool trivy`) and any findings addressed or documented
      - Documentation and `.env.example` updated if new environment variables are required
      - PR description contains a short checklist for reviewers summarizing the above
 
-   - Only after these criteria are satisfied should the PR be marked for auto-merge (or the `automation/ready-for-auto-merge` label be added).
+10. Pull Request Submission & Monitoring:
+    - **Create and submit the PR** using GitHub CLI:
+      ```bash
+      gh pr create \
+        --title "[TYPE]: [descriptive title matching conventional commits]" \
+        --body "[PR description with requirements satisfied, testing notes, and reviewer checklist]" \
+        --head [feature-branch-name] \
+        --base main
+      ```
+    - **Example**:
+      ```bash
+      gh pr create \
+        --title "feat: add user authentication system" \
+        --body "Implements issue #42. Tests added and passing. Coverage: 85%. All checks green locally." \
+        --head feature/42-auth-system \
+        --base main
+      ```
+    - **Monitor PR status**:
+      - Wait for all automated checks to complete (CI, Codacy, status checks)
+      - Address any failed checks immediately—fix issues and push updates
+      - Do NOT consider the feature complete until all checks pass
+      - Review feedback from reviewers and address concerns promptly
+    - **Enable auto-merge** (if applicable to your workflow):
+      - Only after ALL checks pass and NO review changes are requested
+      - Use the `automation/ready-for-auto-merge` label OR enable auto-squash merge through GitHub UI
+      - Ensure the PR merges successfully to `main`
+
+11. **FINAL: Feature Completion**:
+    - **The feature is NOT complete until the PR is MERGED into main**
+    - Verify:
+      - PR has been merged successfully to `main`
+      - Branch can be safely deleted (will offer auto-cleanup)
+      - Remote branch reflects the merged state
+      - Related issue is automatically closed (GitHub issue linking) or manually closed if needed
+    - **Post-merge checklist**:
+      - Remove `in-progress` label from the GitHub issue if not auto-removed
+      - Pull latest `main` locally to confirm merge: `git pull origin main`
+      - Delete feature branch locally: `git branch -d [feature-branch-name]`
+      - Verify all tasks in tasks.md are marked `[X]` as completed
+    - **Report final status**: All requirements met, tests passing on `main`, feature live and deployable
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit.tasks` first to regenerate the task list.
