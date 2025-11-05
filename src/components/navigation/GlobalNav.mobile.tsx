@@ -156,7 +156,13 @@ interface MobileNavItemProps {
   onNavigate: () => void
 }
 
-function MobileNavItemLink({ item, pathname, onNavigate }: Omit<MobileNavItemProps, 'expanded' | 'onToggleSubmenu'>) {
+interface MobileNavItemLinkProps {
+  item: NavigationItem
+  pathname: string
+  onNavigate: () => void
+}
+
+function MobileNavItemLink({ item, pathname, onNavigate }: MobileNavItemLinkProps) {
   const active = isCurrent(pathname, item.href)
 
   return (
@@ -184,11 +190,16 @@ function MobileNavItemButton({
   onToggleSubmenu,
   pathname,
   onNavigate,
-}: Omit<MobileNavItemProps, 'item'> & { item: NavigationItem & { children: NavigationItem[] } }) {
-  const children = item.children
+}: {
+  item: NavigationItem & { children: NavigationItem[] }
+  expanded: Record<string, boolean>
+  onToggleSubmenu: (label: string) => void
+  pathname: string
+  onNavigate: () => void
+}) {
   const isExpanded = Boolean(expanded[item.label])
   const submenuId = `${item.label.toLowerCase().replace(/\s+/g, '-')}-submenu`
-  const anyChildActive = children.some((child) => isCurrent(pathname, child.href))
+  const anyChildActive = item.children.some((child) => isCurrent(pathname, child.href))
   const active = isCurrent(pathname, item.href) || anyChildActive
 
   return (
@@ -211,7 +222,7 @@ function MobileNavItemButton({
       <MobileSubmenu
         label={item.label}
         isExpanded={isExpanded}
-        children={children}
+        children={item.children}
         pathname={pathname}
         onNavigate={onNavigate}
       />
@@ -228,19 +239,18 @@ function MobileNavItem({
 }: MobileNavItemProps) {
   const hasChildren = (item.children ?? []).length > 0
 
-  if (hasChildren) {
-    return (
-      <MobileNavItemButton
-        item={item as NavigationItem & { children: NavigationItem[] }}
-        expanded={expanded}
-        onToggleSubmenu={onToggleSubmenu}
-        pathname={pathname}
-        onNavigate={onNavigate}
-      />
-    )
-  }
-
-  if (!item.href) {
+  if (!hasChildren || !item.href) {
+    if (hasChildren) {
+      return (
+        <MobileNavItemButton
+          item={item as NavigationItem & { children: NavigationItem[] }}
+          expanded={expanded}
+          onToggleSubmenu={onToggleSubmenu}
+          pathname={pathname}
+          onNavigate={onNavigate}
+        />
+      )
+    }
     return null
   }
 

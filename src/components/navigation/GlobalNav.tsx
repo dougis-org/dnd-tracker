@@ -1,7 +1,8 @@
 'use client'
 
+/* eslint-disable no-undef -- DOM globals provided by browser */
+
 import { useEffect, useMemo, useRef, useState, useId } from 'react'
-import type { ComponentRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronDown } from 'lucide-react'
