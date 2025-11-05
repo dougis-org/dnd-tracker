@@ -6,6 +6,14 @@ description: Pick the next feature from the roadmap and prepare the repository f
 
 This command selects the next eligible feature marked "Planned" in `docs/Feature-Roadmap.md`, confirms with the user, changes its status to "In Progress", creates a single feature branch, and returns instructions to run `/speckit.specify`.
 
+## PRECONDITIONS (MANDATORY)
+
+1. **Prepare the working directory**:
+   - Stash any uncommitted work on current branch: `git stash`
+   - Checkout main: `git checkout main`
+   - Pull latest from remote: `git pull origin main`
+   - This ensures agent is working with the latest roadmap
+
 ## EXECUTION WORKFLOW
 
 1. **Read Feature Roadmap Table**:
