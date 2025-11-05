@@ -163,15 +163,27 @@ You **MUST** consider the user input before proceeding (if not empty).
       ```bash
       gh pr create \
         --title "[TYPE]: [descriptive title matching conventional commits]" \
-        --body "[PR description with requirements satisfied, testing notes, and reviewer checklist]" \
+        --body "[PR description with requirements satisfied, testing notes, reviewer checklist, and 'Closes #XXXX']" \
         --head [feature-branch-name] \
         --base main
       ```
+    - **CRITICAL**: Include `Closes #XXXX` in the PR body to auto-close the related GitHub issue when PR is merged
     - **Example**:
       ```bash
       gh pr create \
         --title "feat: add user authentication system" \
-        --body "Implements issue #42. Tests added and passing. Coverage: 85%. All checks green locally." \
+        --body "Implements user authentication system.
+
+## Requirements Satisfied
+- [req 1]
+- [req 2]
+
+## Testing
+- All tests passing: ✓
+- Coverage: 85%
+
+## Closes
+Closes #42" \
         --head feature/42-auth-system \
         --base main
       ```
