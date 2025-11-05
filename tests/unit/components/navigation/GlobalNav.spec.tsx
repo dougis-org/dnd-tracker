@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, within, waitFor } from '@testing-library/react'
 import type { ComponentPropsWithoutRef, PropsWithChildren } from 'react'
 import { GlobalNav } from '@/components/navigation/GlobalNav'
 
@@ -63,5 +63,42 @@ describe('GlobalNav', () => {
       'Monsters',
       'Items',
     ])
+  })
+
+  it('closes menu when Escape key is pressed', async () => {
+    const user = userEvent.setup()
+    render(<GlobalNav />)
+
+    const nav = screen.getByRole('navigation', { name: /primary/i })
+    const collectionsTrigger = within(nav).getByRole('button', { name: 'Collections' })
+
+    await user.click(collectionsTrigger)
+
+    expect(screen.getByRole('menu', { name: /collections submenu/i })).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+
+    await waitFor(() => {
+      expect(screen.queryByRole('menu', { name: /collections submenu/i })).not.toBeInTheDocument()
+    })
+  })
+
+  it('closes menu when clicking outside', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<GlobalNav />)
+
+    const nav = screen.getByRole('navigation', { name: /primary/i })
+    const collectionsTrigger = within(nav).getByRole('button', { name: 'Collections' })
+
+    await user.click(collectionsTrigger)
+
+    expect(screen.getByRole('menu', { name: /collections submenu/i })).toBeInTheDocument()
+
+    // Click outside the menu
+    await user.click(container)
+
+    await waitFor(() => {
+      expect(screen.queryByRole('menu', { name: /collections submenu/i })).not.toBeInTheDocument()
+    })
   })
 })
