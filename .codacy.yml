@@ -10,6 +10,8 @@ exclude:
   - specs/**/*.md
   - .specify/**/*.md
   - tests/**
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
 tools:
   pylint:
     enabled: false
