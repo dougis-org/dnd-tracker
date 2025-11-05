@@ -4,50 +4,62 @@ description: Pick the next feature from the roadmap and prepare the repository f
 
 ## Overview
 
-This command selects the next feature marked "Planned" in `docs/Feature-Roadmap.md`, changes its status to "In Progress", creates a single feature branch, and returns instructions for the human or automation to run `/speckit.specify`.
+This command selects the next eligible feature marked "Planned" in `docs/Feature-Roadmap.md`, confirms with the user, changes its status to "In Progress", creates a single feature branch, and returns instructions to run `/speckit.specify`.
 
-## PRECONDITIONS (MANDATORY)
+## EXECUTION WORKFLOW
 
-1. The agent must be operating in the repository root.
-2. All local changes must be committed or stashed before running this command.
-3. The agent **must** push the updated `docs/Feature-Roadmap.md` to `origin/main` immediately after updating the status to "In Progress" and verify that the push is visible on the remote before doing anything else.
+1. **Read Feature Roadmap Table**:
+   - Open `docs/Feature-Roadmap.md`
+   - Scan the feature table from top to bottom
+   - Identify rows where Status = "Planned"
 
-   Verification commands (agent must run programmatically):
+2. **Check Dependencies** (CRITICAL):
+   - For each "Planned" feature found, read its Dependencies column
+   - Verify ALL listed dependencies have Status = "Complete" or "Shipped"
+   - If any dependency is not complete, skip this feature and continue scanning
+   - The first "Planned" feature with ALL dependencies satisfied is the candidate
 
-```bash
-# ensure latest remote main
-git fetch origin main
-# display remote roadmap
-git show origin/main:docs/Feature-Roadmap.md | sed -n '1,200p'
-# verify the selected feature line contains "In Progress" and the branch name
-git show origin/main:docs/Feature-Roadmap.md | grep -n "In Progress" || true
-```
+3. **Present Feature for Confirmation**:
+   - Extract from candidate row:
+     - FEATURE_NUMBER (roadmap feature #)
+     - Feature description/title
+     - Generate BRANCH_NAME: `feature/[NUMBER]-[short-name]` (2-4 word hyphenated name)
+   - Display to user:
+     ```
+     Selected next feature:
+     
+     Feature #[NUMBER]: [Title]
+     Description: [feature description from roadmap]
+     Branch: [BRANCH_NAME]
+     
+     Proceed? (yes/no)
+     ```
+   - Wait for user confirmation
+   - If user says "no" or "wait", stop and ask what they prefer
+   - If user says "yes" or "proceed", continue to step 4
 
-If the roadmap update is not visible on `origin/main`, abort with `ERROR: roadmap not pushed to origin/main; aborting.`
+4. **Update Roadmap Status**:
+   - Change the selected feature's Status from "Planned" to "In Progress"
+   - Save `docs/Feature-Roadmap.md`
+   - Stage and commit: `git add docs/Feature-Roadmap.md && git commit -m "docs: mark feature #[NUMBER] as In Progress"`
 
-## BRANCH CREATION RULES (MANDATORY)
+5. **Push Roadmap Update** (MANDATORY):
+   - Push to origin/main: `git push origin HEAD:main`
+   - Verify push succeeded by running:
+     ```bash
+     git fetch origin main
+     git show origin/main:docs/Feature-Roadmap.md | grep -n "In Progress" | grep "\[NUMBER\]" || true
+     ```
+   - If the update is NOT visible on `origin/main`, abort with: `ERROR: roadmap not pushed to origin/main; aborting.`
 
-1. Create exactly one branch named `feature/[NUMBER]-[short-name]` where [NUMBER] is the roadmap feature number and [short-name] is a concise 2-4 word hyphenated short name.
-2. Push this branch to `origin` and set it as the working branch for subsequent spec and planning actions.
-3. Do NOT create or push any additional branches.
+6. **Create Feature Branch** (MANDATORY RULES):
+   - Branch name format: `feature/[NUMBER]-[short-name]`
+   - Create and push: `git checkout -b [BRANCH_NAME] && git push -u origin [BRANCH_NAME]`
+   - Do NOT create additional branches
+   - If branch already exists on remote, abort: `ERROR: branch already exists on remote: [BRANCH_NAME]`
 
-## OUTPUT
-
-Return:
-
-- BRANCH_NAME: name of the created branch
-- FEATURE_NUMBER: roadmap feature number
-- SHORT_NAME: generated short name (2-4 words)
-- SPEC_TRIGGER: the automation command to call next, e.g. `.claude/commands/speckit.specify.md FEATURE_NUMBER=$FEATURE_NUMBER BRANCH_NAME=$BRANCH_NAME SHORT_NAME=$SHORT_NAME`
-
-
-## FAILURE MODES
-
-- If the roadmap push is not visible on `origin/main`, abort and do not create any branches.
-- If a branch with the intended BRANCH_NAME already exists on the remote, abort and surface an error: `ERROR: branch already exists on remote: <BRANCH_NAME>`
-
-## NEXT STEPS
-
-After successfully creating and pushing the single feature branch, the agent should automatically run the first planning command by executing the logic from .claude/commands/speckit.specify.md using the parameters created for SPEC_TRIGGER.
-
-No implementation steps should be taken however.
+7. **Return Output**:
+   - BRANCH_NAME: the created feature branch name
+   - FEATURE_NUMBER: roadmap feature number
+   - SHORT_NAME: the hyphenated short name used in branch
+   - Next command to run: `.claude/commands/speckit.specify.md FEATURE_NUMBER=$FEATURE_NUMBER BRANCH_NAME=$BRANCH_NAME SHORT_NAME=$SHORT_NAME`
