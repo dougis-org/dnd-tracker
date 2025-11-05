@@ -62,19 +62,14 @@ interface DesktopNavMenuProps {
   pathname: string | null
 }
 
-function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
-  const [open, setOpen] = useState(false)
-  const triggerRef = useRef<ComponentRef<'button'> | null>(null)
-  const menuRef = useRef<ComponentRef<'ul'> | null>(null)
-  const menuId = useId()
-
-  const active = (item.children ?? []).some((child) => isCurrent(pathname, child.href))
-
-  // Handle click outside
+function useClickOutsideClose(
+  open: boolean,
+  menuRef: React.RefObject<HTMLUListElement | null>,
+  triggerRef: React.RefObject<HTMLButtonElement | null>,
+  onClose: () => void
+) {
   useEffect(() => {
-    if (!open) {
-      return undefined
-    }
+    if (!open) return undefined
 
     const handlePointerDown = (event: globalThis.PointerEvent) => {
       if (
@@ -83,24 +78,23 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
       ) {
         return
       }
-      setOpen(false)
+      onClose()
     }
 
     document.addEventListener('pointerdown', handlePointerDown)
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown)
     }
-  }, [open])
+  }, [open, onClose, menuRef, triggerRef])
+}
 
-  // Handle Escape key
+function useEscapeKeyClose(open: boolean, triggerRef: React.RefObject<HTMLButtonElement | null>, onClose: () => void) {
   useEffect(() => {
-    if (!open) {
-      return undefined
-    }
+    if (!open) return undefined
 
     const handleKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setOpen(false)
+        onClose()
         window.requestAnimationFrame(() => triggerRef.current?.focus())
       }
     }
@@ -109,7 +103,20 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [open])
+  }, [open, onClose, triggerRef])
+}
+
+function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
+  const [open, setOpen] = useState(false)
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
+  const menuRef = useRef<HTMLUListElement | null>(null)
+  const menuId = useId()
+
+  const active = (item.children ?? []).some((child) => isCurrent(pathname, child.href))
+  const closeMenu = () => setOpen(false)
+
+  useClickOutsideClose(open, menuRef, triggerRef, closeMenu)
+  useEscapeKeyClose(open, triggerRef, closeMenu)
 
   // Close menu on path change
   useEffect(() => {

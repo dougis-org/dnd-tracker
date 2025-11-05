@@ -2,6 +2,11 @@ exclude:
   - .claude/commands/**
   - .github/chatmodes/**
   - .github/prompts/**
+  - .next/**
+  - .next/build/**
+  - .next/dev/**
+  - .next/static/**
+  - coverage/**
   - jest.setup.ts
   - jest.config.ts
   - next.config.js
@@ -9,9 +14,6 @@ exclude:
   - .specify/**
   - specs/**/*.md
   - .specify/**/*.md
-  - tests/**
-  - '**/*.spec.ts'
-  - '**/*.spec.tsx'
 tools:
   pylint:
     enabled: false

@@ -37,21 +37,21 @@ function useFocusTrap(enabled: boolean, container: React.RefObject<HTMLDivElemen
     const first = focusables[0]
     const last = focusables[focusables.length - 1]
 
+    const handleTabKey = (event: KeyboardEvent) => {
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last?.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first?.focus()
+      }
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Tab' || focusables.length === 0) {
         return
       }
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last?.focus()
-        return
-      }
-
-      if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first?.focus()
-      }
+      handleTabKey(event)
     }
 
     container.current.addEventListener('keydown', handleKeyDown)
@@ -156,53 +156,8 @@ interface MobileNavItemProps {
   onNavigate: () => void
 }
 
-function MobileNavItem({
-  item,
-  expanded,
-  onToggleSubmenu,
-  pathname,
-  onNavigate,
-}: MobileNavItemProps) {
-  const children = item.children ?? []
-  const hasChildren = children.length > 0
-  const anyChildActive = children.some((child) => isCurrent(pathname, child.href))
-  const active = isCurrent(pathname, item.href) || anyChildActive
-
-  if (hasChildren) {
-    const isExpanded = Boolean(expanded[item.label])
-    const submenuId = `${item.label.toLowerCase().replace(/\s+/g, '-')}-submenu`
-
-    return (
-      <li>
-        <button
-          type="button"
-          aria-expanded={isExpanded}
-          aria-controls={submenuId}
-          aria-label={`Toggle ${item.label} submenu`}
-          className={cn(
-            'flex w-full items-center justify-between rounded-md px-3 py-2 text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-            active
-              ? 'bg-primary text-primary-foreground shadow'
-              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-          )}
-          onClick={() => onToggleSubmenu(item.label)}
-        >
-          {item.label}
-        </button>
-        <MobileSubmenu
-          label={item.label}
-          isExpanded={isExpanded}
-          children={children}
-          pathname={pathname}
-          onNavigate={onNavigate}
-        />
-      </li>
-    )
-  }
-
-  if (!item.href) {
-    return null
-  }
+function MobileNavItemLink({ item, pathname, onNavigate }: Omit<MobileNavItemProps, 'expanded' | 'onToggleSubmenu'>) {
+  const active = isCurrent(pathname, item.href)
 
   return (
     <li>
@@ -221,6 +176,75 @@ function MobileNavItem({
       </Link>
     </li>
   )
+}
+
+function MobileNavItemButton({
+  item,
+  expanded,
+  onToggleSubmenu,
+  pathname,
+  onNavigate,
+}: Omit<MobileNavItemProps, 'item'> & { item: NavigationItem & { children: NavigationItem[] } }) {
+  const children = item.children
+  const isExpanded = Boolean(expanded[item.label])
+  const submenuId = `${item.label.toLowerCase().replace(/\s+/g, '-')}-submenu`
+  const anyChildActive = children.some((child) => isCurrent(pathname, child.href))
+  const active = isCurrent(pathname, item.href) || anyChildActive
+
+  return (
+    <li>
+      <button
+        type="button"
+        aria-expanded={isExpanded}
+        aria-controls={submenuId}
+        aria-label={`Toggle ${item.label} submenu`}
+        className={cn(
+          'flex w-full items-center justify-between rounded-md px-3 py-2 text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+          active
+            ? 'bg-primary text-primary-foreground shadow'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+        )}
+        onClick={() => onToggleSubmenu(item.label)}
+      >
+        {item.label}
+      </button>
+      <MobileSubmenu
+        label={item.label}
+        isExpanded={isExpanded}
+        children={children}
+        pathname={pathname}
+        onNavigate={onNavigate}
+      />
+    </li>
+  )
+}
+
+function MobileNavItem({
+  item,
+  expanded,
+  onToggleSubmenu,
+  pathname,
+  onNavigate,
+}: MobileNavItemProps) {
+  const hasChildren = (item.children ?? []).length > 0
+
+  if (hasChildren) {
+    return (
+      <MobileNavItemButton
+        item={item as NavigationItem & { children: NavigationItem[] }}
+        expanded={expanded}
+        onToggleSubmenu={onToggleSubmenu}
+        pathname={pathname}
+        onNavigate={onNavigate}
+      />
+    )
+  }
+
+  if (!item.href) {
+    return null
+  }
+
+  return <MobileNavItemLink item={item} pathname={pathname} onNavigate={onNavigate} />
 }
 
 interface MobileNavPanelProps {
