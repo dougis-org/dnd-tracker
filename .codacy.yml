@@ -1,11 +1,21 @@
 exclude:
-  - '.claude/commands/**'
-  - '.github/chatmodes/**'
-  - '.github/prompts/**'
-  - 'jest.setup.ts'
-  - 'jest.config.ts'
-  - 'next.config.js'
-  - '/specs/**'
-  - '.specify/**'
-  - 'specs/**/*.md'
-  - '.specify/**/*.md'
+  - .claude/commands/**
+  - .github/chatmodes/**
+  - .github/prompts/**
+  - .next/**
+  - .next/build/**
+  - .next/dev/**
+  - .next/static/**
+  - coverage/**
+  - jest.setup.ts
+  - jest.config.ts
+  - next.config.js
+  - /specs/**
+  - .specify/**
+  - specs/**/*.md
+  - .specify/**/*.md
+tools:
+  pylint:
+    enabled: false
+  revive:
+    enabled: false

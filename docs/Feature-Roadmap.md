@@ -13,7 +13,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **Current Progress**: 1 of 60 features complete (1.7%) - Week 1 of 10  
 **Phase 1 Status**: In Progress (1 of 12 features complete)  
-**Next Feature**: Feature 002 - Navigation & Not Implemented Page  
+**Next Feature**: Feature 003 - Landing Page & Marketing Components  
 **Started**: 2025-11-01  
 **Latest Completion**: Feature 001 (2025-11-02 via PR #332)
 
@@ -200,6 +200,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 /combat/:sessionId
 /profile
 /settings
+/help
 /subscription
 /pricing
 ```

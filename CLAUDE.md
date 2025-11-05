@@ -44,11 +44,11 @@ tests/
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
-# DND Tracker Development Guidelines
+# DND Tracker Development Guidelines (Legacy)
 
 Auto-generated from feature planning. Last updated: 2025-09-30
 
-## Active Technologies
+## Active Technologies (Legacy)
 
 - TypeScript 5.9.2 with strict mode enabled, Node.js 25.1.0 + Next.js 16.0.1, React 19.2.0, Tailwind CSS 4.x, shadcn/ui, Mongoose 8.19.1 (001-project-setup-design-system)
 - MongoDB 8.0+ (via Mongoose ODM) for data persistence, IndexedDB for offline capability (future) (001-project-setup-design-system)
@@ -61,7 +61,7 @@ Auto-generated from feature planning. Last updated: 2025-09-30
 **Testing**: Jest 29.7+ + React Testing Library 16.0+ (unit), Playwright 1.46+ (E2E)
 **Validation**: Zod 4+ for runtime type checking and API contract enforcement
 
-## Project Structure
+## Project Structure (Legacy)
 
 ```
 src/
@@ -92,7 +92,7 @@ tests/
 └── unit/              # Jest unit tests
 ```
 
-## Commands
+## Commands (Legacy)
 
 **Development**: `npm run dev` (Next.js with Fast Refresh + Turbopack)
 **Testing**: `npm run test` (Jest), `npm run test:e2e` (Playwright)
@@ -100,7 +100,7 @@ tests/
 **Linting**: `npm run lint:fix` (ESLint + Prettier)
 **Type Check**: `npm run type-check` (TypeScript strict mode)
 
-## Code Style
+## Code Style (Legacy)
 
 **TypeScript**: Strict mode enforced, no `any` types without justification
 **Components**: Functional components with hooks, maximum 50 lines per function
@@ -108,7 +108,7 @@ tests/
 **Database**: Mongoose schemas with validation, MongoDB aggregation for complex queries
 **Testing**: TDD approach - tests written before implementation
 
-## Recent Changes
+## Recent Changes (Legacy)
 
 - 001-project-setup-design-system: Added TypeScript 5.9.2 with strict mode enabled, Node.js 25.1.0 + Next.js 16.0.1, React 19.2.0, Tailwind CSS 4.x, shadcn/ui, Mongoose 8.19.1
 
