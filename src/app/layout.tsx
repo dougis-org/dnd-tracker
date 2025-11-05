@@ -38,11 +38,11 @@ export default function RootLayout({
           </a>
           <div className="flex min-h-screen flex-col">
             <header className="relative z-40 border-b bg-background">
-              <div className="container flex items-center justify-between gap-4 py-4">
+              <div className="container relative z-50 flex items-center justify-between gap-4 py-4">
                 <GlobalNav />
                 <GlobalNavMobile />
               </div>
-              <div className="container py-2">
+              <div className="container relative z-30 py-2">
                 <Breadcrumb />
               </div>
             </header>
