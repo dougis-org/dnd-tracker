@@ -10,6 +10,7 @@ This command selects the next eligible feature marked "Planned" in `docs/Feature
 
 1. **Prepare the working directory**:
    - Stash any uncommitted work on current branch: `git stash`
+     - Only run the stash if you have unsaved work
    - Checkout main: `git checkout main`
    - Pull latest from remote: `git pull origin main`
    - This ensures agent is working with the latest roadmap
