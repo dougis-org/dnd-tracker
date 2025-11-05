@@ -1,22 +1,17 @@
-# pylint: skip-file
-{
-  'exclude':
-    [
-      '.claude/commands/**',
-      '.github/chatmodes/**',
-      '.github/prompts/**',
-      'jest.setup.ts',
-      'jest.config.ts',
-      'next.config.js',
-      '/specs/**',
-      '.specify/**',
-      'specs/**/*.md',
-      '.specify/**/*.md',
-      'tests/**',
-    ],
-  'tools':
-    {
-      'pylint': {'enabled': False},
-      'revive': {'enabled': False},
-    },
-}
+exclude:
+  - .claude/commands/**
+  - .github/chatmodes/**
+  - .github/prompts/**
+  - jest.setup.ts
+  - jest.config.ts
+  - next.config.js
+  - /specs/**
+  - .specify/**
+  - specs/**/*.md
+  - .specify/**/*.md
+  - tests/**
+tools:
+  pylint:
+    enabled: false
+  revive:
+    enabled: false

@@ -37,6 +37,10 @@ function toInternalHref(path: string): LinkProps<string>['href'] {
   return { pathname: path }
 }
 
+function getWithDefault<T>(value: T | undefined, defaultValue: T): T {
+  return value ?? defaultValue
+}
+
 export function NotImplementedPage({
   featureName,
   description,
@@ -44,10 +48,10 @@ export function NotImplementedPage({
   ctaLabel,
   className,
 }: NotImplementedPageProps) {
-  const resolvedFeature = featureName ?? DEFAULT_FEATURE_NAME
-  const resolvedDescription = description ?? DEFAULT_DESCRIPTION
-  const resolvedCtaLabel = ctaLabel ?? DEFAULT_CTA_LABEL
-  const resolvedCtaHref = ctaHref ?? DEFAULT_CTA_URL
+  const resolvedFeature = getWithDefault(featureName, DEFAULT_FEATURE_NAME)
+  const resolvedDescription = getWithDefault(description, DEFAULT_DESCRIPTION)
+  const resolvedCtaLabel = getWithDefault(ctaLabel, DEFAULT_CTA_LABEL)
+  const resolvedCtaHref = getWithDefault(ctaHref, DEFAULT_CTA_URL)
   const isExternalCta = resolvedCtaHref.startsWith('http')
 
   // role="status" ensures assistive tech announces updates when the page renders

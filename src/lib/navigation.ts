@@ -152,35 +152,42 @@ function splitPath(pathname: string): string[] {
   return normalized.slice(1).split('/')
 }
 
+function matchSegments(
+  defSegments: string[],
+  pathSegments: string[]
+): Record<string, string> | null {
+  if (defSegments.length !== pathSegments.length) {
+    return null
+  }
+
+  const params: Record<string, string> = {}
+
+  for (let index = 0; index < defSegments.length; index += 1) {
+    const current = defSegments[index]
+    const actual = pathSegments[index]
+
+    if (current.startsWith('[') && current.endsWith(']')) {
+      const paramName = current.slice(1, -1)
+      params[paramName] = decodeURIComponent(actual)
+      continue
+    }
+
+    if (current !== actual) {
+      return null
+    }
+  }
+
+  return params
+}
+
 function matchRoute(pathname: string): MatchedRoute | null {
   const pathSegments = splitPath(pathname)
 
   for (const definition of ROUTE_DEFINITIONS) {
     const defSegments = splitPath(definition.path)
-    if (defSegments.length !== pathSegments.length) {
-      continue
-    }
+    const params = matchSegments(defSegments, pathSegments)
 
-    const params: Record<string, string> = {}
-    let matched = true
-
-    for (let index = 0; index < defSegments.length; index += 1) {
-      const current = defSegments[index]
-      const actual = pathSegments[index]
-
-      if (current.startsWith('[') && current.endsWith(']')) {
-        const paramName = current.slice(1, -1)
-        params[paramName] = decodeURIComponent(actual)
-        continue
-      }
-
-      if (current !== actual) {
-        matched = false
-        break
-      }
-    }
-
-    if (matched) {
+    if (params !== null) {
       return { definition, params }
     }
   }
@@ -256,7 +263,7 @@ export function buildBreadcrumbSegments(pathname: string): BreadcrumbSegment[] {
   const stack: MatchedRoute[] = []
   let cursor: MatchedRoute | null = matched
 
-  while (cursor) {
+  while (true) {
     stack.unshift(cursor)
     const parentPath = cursor.definition.parent
     if (!parentPath) {
