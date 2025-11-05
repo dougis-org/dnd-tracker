@@ -70,4 +70,4 @@ This command selects the next eligible feature marked "Planned" in `docs/Feature
    - BRANCH_NAME: the created feature branch name
    - FEATURE_NUMBER: roadmap feature number
    - SHORT_NAME: the hyphenated short name used in branch
-   - Next command to run: `.claude/commands/speckit.specify.md FEATURE_NUMBER=$FEATURE_NUMBER BRANCH_NAME=$BRANCH_NAME SHORT_NAME=$SHORT_NAME`
+   - Next command to run: `/speckit.specify.md FEATURE_NUMBER=$FEATURE_NUMBER BRANCH_NAME=$BRANCH_NAME SHORT_NAME=$SHORT_NAME`
