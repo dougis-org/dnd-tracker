@@ -33,15 +33,18 @@ This command selects the next eligible feature marked "Planned" in `docs/Feature
      - Feature description/title
      - Generate BRANCH_NAME: `feature/[NUMBER]-[short-name]` (2-4 word hyphenated name)
    - Display to user:
+
      ```
      Selected next feature:
      
      Feature #[NUMBER]: [Title]
      Description: [feature description from roadmap]
      Branch: [BRANCH_NAME]
+     Short Name: [short-name]
      
      Proceed? (yes/no)
      ```
+
    - Wait for user confirmation
    - If user says "no" or "wait", stop and ask what they prefer
    - If user says "yes" or "proceed", continue to step 4
@@ -71,3 +74,16 @@ This command selects the next eligible feature marked "Planned" in `docs/Feature
    - FEATURE_NUMBER: roadmap feature number
    - SHORT_NAME: the hyphenated short name used in branch
    - Next command to run: `/speckit.specify.md FEATURE_NUMBER=$FEATURE_NUMBER BRANCH_NAME=$BRANCH_NAME SHORT_NAME=$SHORT_NAME`
+
+   - Display to user:
+
+     ```
+     Feature #[NUMBER]: [Title]
+     Description: [feature description from roadmap]
+     Branch: [BRANCH_NAME]
+     Short Name: [SHORT_NAME]
+     
+     Please now run
+     /speckit.specify FEATURE_NUMBER=[FEATURE_NUMBER] BRANCH_NAME=[BRANCH_NAME] SHORT_NAME=[SHORT_NAME]
+     ```
+
