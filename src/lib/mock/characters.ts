@@ -1,0 +1,61 @@
+import { Character } from '../../../types/character';
+
+export const seedCharacters: Character[] = [
+  {
+    id: 'char-1',
+    name: 'Aelith Swiftwind',
+    className: 'Rogue',
+    race: 'Half-Elf',
+    level: 3,
+    hitPoints: { current: 18, max: 18 },
+    armorClass: 14,
+    abilities: { str: 10, dex: 16, con: 12, int: 13, wis: 11, cha: 14 },
+    equipment: ['Shortsword', 'Dagger', 'Leather Armor'],
+  },
+  {
+    id: 'char-2',
+    name: 'Borin Stonehelm',
+    className: 'Fighter',
+    race: 'Dwarf',
+    level: 5,
+    hitPoints: { current: 42, max: 42 },
+    armorClass: 18,
+    abilities: { str: 16, dex: 12, con: 16, int: 10, wis: 11, cha: 9 },
+    equipment: ['Warhammer', 'Chain Mail', 'Shield'],
+  },
+  {
+    id: 'char-3',
+    name: 'Lirael Moonwhisper',
+    className: 'Wizard',
+    race: 'Human',
+    level: 4,
+    hitPoints: { current: 20, max: 20 },
+    armorClass: 12,
+    abilities: { str: 8, dex: 14, con: 12, int: 17, wis: 13, cha: 10 },
+    equipment: ['Spellbook', 'Wand'],
+  },
+  {
+    id: 'char-4',
+    name: 'Thalia Brightsong',
+    className: 'Cleric',
+    race: 'Human',
+    level: 4,
+    hitPoints: { current: 28, max: 28 },
+    armorClass: 16,
+    abilities: { str: 10, dex: 12, con: 14, int: 11, wis: 16, cha: 13 },
+    equipment: ['Mace', 'Chain Mail', 'Holy Symbol'],
+  },
+  {
+    id: 'char-5',
+    name: 'Fenris Shadowpaw',
+    className: 'Ranger',
+    race: 'Halfling',
+    level: 3,
+    hitPoints: { current: 24, max: 24 },
+    armorClass: 15,
+    abilities: { str: 12, dex: 15, con: 14, int: 10, wis: 13, cha: 11 },
+    equipment: ['Longbow', 'Shortsword', 'Studded Leather'],
+  },
+];
+
+export default seedCharacters;
