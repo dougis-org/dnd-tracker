@@ -1,0 +1,14 @@
+# Ignore files for Prettier formatting
+node_modules/
+.next/
+dist/
+build/
+coverage/
+test-results/
+playwright-report/
+.env
+.env.*
+.vscode/
+.idea/
+*.log
+.DS_Store
