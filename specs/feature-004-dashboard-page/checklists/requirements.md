@@ -29,7 +29,6 @@
 - [x] Feature meets measurable outcomes defined in Success Criteria
 - [x] No implementation details leak into specification
 
- 
 ## Note
 
 - Marked the 'User scenarios cover primary flows' checklist item complete per request.
@@ -40,4 +39,3 @@
 - Remaining work: implementer must add component-level tests and a minimal E2E happy path using mock data.
 
 Items marked incomplete require spec updates before `/speckit.clarify` or `/speckit.plan`.
-
