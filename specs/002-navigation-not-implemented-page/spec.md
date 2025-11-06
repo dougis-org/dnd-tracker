@@ -17,6 +17,10 @@ Implement the GlobalNav (global navigation component), routing skeleton, and a `
 - Q: Route scope -> A: Generate route stubs for every route listed in `docs/Feature-Roadmap.md` and create a corresponding placeholder `src/app/.../page.tsx` that renders `NotImplementedPage`. This makes the roadmap the single source of truth for routes covered by this feature and prevents scope drift.
 - Q: Component naming -> A: Use `GlobalNav` as the canonical component name across spec, plan and tasks. Update source files and tests to use `GlobalNav` (aliases allowed via `src/components/navigation/index.ts` if necessary). This reduces naming drift and keeps file names explicit.
 
+### Collections mapping
+
+- Note: The spec and plan sometimes refer to a "Collections" navigation label. "Collections" is an umbrella/grouping label in the desktop navigation and is NOT a single route by default. For implementation and testing purposes map "Collections" to the following concrete routes: `/items`, `/monsters`, `/parties`, `/characters`. If a distinct `/collections` route is desired, update the spec/tasks explicitly and add a route stub and tasks for it.
+
 ## Scope
 
 - GlobalNav component (desktop and mobile variants) with desktop left/right grouping and mobile ordering defined in the plan
@@ -148,6 +152,19 @@ As a user navigating to nested pages, I want to see a breadcrumb trail so I can 
 - Deeply nested routes should show a breadcrumb trail up to the root.
 - Extremely long route segments should be truncated in breadcrumbs with a tooltip showing full path.
 - If navigation data fails to load, a minimal fallback list of top-level links should still be shown.
+
+### Breadcrumb truncation rule (implementation)
+
+- For consistent behavior across the app, truncate any breadcrumb segment longer than 24 characters to 21 visible characters plus an ellipsis (e.g. `Very-long-segment-name...`). Hover/focus must reveal a tooltip containing the full segment text. This rule will be implemented by task `T052` in `tasks.md`.
+
+### Constitution audit (TDD-first validation)
+
+- The project constitution requires TDD-first (tests before implementation). The current task history shows several foundational components marked complete while some user-story test tasks remain unchecked. To comply with the constitution we require an audit. Add a short audit record to the spec that documents whether tests were authored and failing before implementation, or record an approved exception.
+
+- Audit steps (required before further feature work):
+	1. Review PR #406 (or the feature branch history) to confirm test-first ordering for this feature. Document findings in this spec under `## Constitution audit`.
+	2. If tests-first was not followed, create failing tests that express the expected behavior (preserve PR ordering) and request a maintainer-approved exception or rework as necessary.
+	3. Record maintainer approval/comments in this spec (owner: @doug).
 
 ## Deliverables (files created/updated)
 

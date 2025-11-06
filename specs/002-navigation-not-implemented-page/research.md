@@ -1,3 +1,79 @@
+---
+title: Research - Navigation & Not Implemented Page (Phase 0)
+generated: 2025-11-05
+---
+
+## Summary
+
+This document collects Phase 0 research decisions and remaining research tasks for Feature F002 (Navigation & Not Implemented Page). It consolidates technical choices derived from the repository's canonical docs and enumerates open questions (NEEDS CLARIFICATION) that require short research tasks before Phase 1 design can proceed.
+
+## Decisions (derived from repo docs)
+
+- Decision: Runtime & Framework
+  - Chosen: Node.js 25.1.0, Next.js 16.0+ (App Router), TypeScript 5.9.2
+  - Source: `docs/Tech-Stack.md`
+  - Rationale: Feature implementations rely on the established project stack; aligning with repo versions avoids compatibility issues.
+  - Alternatives considered: Use LTS Node.js (e.g., 24.x) for broader compatibility; rejected because repo explicitly documents Node 25.1.0.
+
+- Decision: UI stack
+  - Chosen: React 19.2.0, Tailwind CSS 4.x, shadcn/ui for components
+  - Source: `docs/Tech-Stack.md`
+
+- Decision: Storage & Data
+  - Chosen: MongoDB (8.0+) with Mongoose (8.19.1) for data models where applicable
+  - Source: `docs/Tech-Stack.md` and `docs/design/dnd-tracker-database-design.md`
+
+- Decision: Testing
+  - Chosen: Jest for unit tests; Playwright for E2E/smoke tests per project standards
+  - Source: `docs/Tech-Stack.md` and feature spec `spec.md` test plan
+
+- Decision: Auth & Third-party
+  - Chosen integrations: Clerk for auth, Stripe for billing (if applicable later)
+  - Source: `docs/Tech-Stack.md`
+
+## Unresolved / NEEDS CLARIFICATION (from `plan.md` Technical Context)
+
+These items were left as placeholders (`NEEDS CLARIFICATION`) in the implementation plan template and require quick research or decisions:
+
+1. Performance Goals — measurable targets (e.g., p95 navigation load time, bundle size targets)
+2. Constraints — specific runtime constraints (p95 latency target, memory/cpu limits for Fly.io), offline support expectations for navigation components
+3. Scale/Scope — expected concurrent users, dataset sizes for route lists or nav items
+4. Project Type field confirmation — although Tech-Stack implies a web app, explicitly confirm 'web (Next.js)'
+
+## Research Tasks (Phase 0)
+
+For each unresolved item above, create a short research task (owner: @doug by default unless assigned):
+
+- Research-1: "Research performance goals for navigation UX" — Identify acceptable p95 page load and interaction times for primary nav flows (desktop/mobile), and target bundle sizes for First Contentful Paint under 2s on 3G emulation.
+
+- Research-2: "Enumerate runtime constraints and Fly.io limits" — Determine acceptable CPU/memory, container size, and p95 API latency targets for Next.js frontends on Fly.io for the dashboard. Record conservative defaults to use for design decisions.
+
+- Research-3: "Confirm scale expectations" — Ask stakeholders or product (or infer from roadmap) expected concurrent users or active sessions for Dashboard in early phases (to size caches & prefetching strategy).
+
+- Research-4: "Project type confirmation" — Confirm that the project type is 'web application (Next.js app router)'; derive any mobile/PWA constraints from Product Roadmap.
+
+- Research-5: "Accessibility checklist for navigation" — Collect best-practice checklist items (keyboard nav, focus management, aria attributes) to incorporate into component contracts and tests.
+
+- Research-6: "Breadcrumb UX edge-cases" — Decide truncation rules and tooltip behavior for long segments; confirm tooltip approach across small screens.
+
+## Consolidated Findings (initial)
+
+- Many technical context fields are already specified in `docs/Tech-Stack.md` and design docs. Those fields will be used when generating Phase 1 artifacts.
+- Remaining unknowns are operational/performance/scale related and do not block creating component contracts, but they should be resolved before finalizing performance-related acceptance criteria.
+
+## Next Steps / Verification
+
+1. Complete the Research tasks above (deliverable: `specs/002-navigation-not-implemented-page/research.md` updated with findings).
+2. Confirm that all `NEEDS CLARIFICATION` entries in `specs/002-navigation-not-implemented-page/plan.md` are either filled or have a linked research task.
+3. When Research tasks are completed, mark Phase 0 done and proceed to Phase 1: produce `data-model.md`, `/contracts/*`, and `quickstart.md` as per IMPL_PLAN.
+
+## Appendices
+
+- Source references:
+  - `docs/Tech-Stack.md`
+  - `docs/Feature-Roadmap.md`
+  - `docs/design/dnd-tracker-technical-design.md`
+  - `specs/002-navigation-not-implemented-page/spec.md`
 # Research: F002 - Navigation & Not Implemented Page
 
 ## Unknowns / NEEDS CLARIFICATION (extracted from plan)
