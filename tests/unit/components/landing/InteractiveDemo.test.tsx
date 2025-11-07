@@ -17,7 +17,7 @@ describe('InteractiveDemo', () => {
 
   it('shows combat demo by default', () => {
     render(<InteractiveDemo />);
-    expect(screen.getByText('Combat Tracking')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Combat Tracking/i, level: 3 })).toBeInTheDocument();
     expect(screen.getByText(/Round 1/i)).toBeInTheDocument();
     expect(screen.getByText(/Initiative order/i)).toBeInTheDocument();
   });
@@ -29,7 +29,7 @@ describe('InteractiveDemo', () => {
     const characterButton = screen.getByRole('button', { name: /Character Stats/i });
     await user.click(characterButton);
 
-    expect(screen.getByText('Character Stats')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Character Stats/i, level: 3 })).toBeInTheDocument();
     expect(screen.getByText(/HP/)).toBeInTheDocument();
     expect(screen.getByText(/AC/)).toBeInTheDocument();
     expect(screen.getByText(/Speed/)).toBeInTheDocument();
@@ -41,11 +41,11 @@ describe('InteractiveDemo', () => {
 
     // Switch to character view
     await user.click(screen.getByRole('button', { name: /Character Stats/i }));
-    expect(screen.getByText('Character Stats')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Character Stats/i, level: 3 })).toBeInTheDocument();
 
     // Switch back to combat view
     await user.click(screen.getByRole('button', { name: /Combat Tracking/i }));
-    expect(screen.getByText('Combat Tracking')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Combat Tracking/i, level: 3 })).toBeInTheDocument();
     expect(screen.getByText(/Round 1/i)).toBeInTheDocument();
   });
 
