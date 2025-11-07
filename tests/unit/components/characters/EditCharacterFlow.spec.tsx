@@ -11,7 +11,9 @@ function Harness() {
   const [char, setChar] = useState<Character | null>(null);
 
   useEffect(() => {
-    // add a character programmatically
+    // Prevent re-running effect by checking if already set
+    if (char !== null) return;
+
     const toAdd: PartialCharacter = {
       name: 'Editable Hero',
       className: 'Rogue',
@@ -25,7 +27,7 @@ function Harness() {
     };
     const created = store.add(toAdd);
     setChar(created);
-  }, [store]);
+  }, [char, store]);
 
   const handleSaved = (c: Character) => {
     // show a temporary element we can assert

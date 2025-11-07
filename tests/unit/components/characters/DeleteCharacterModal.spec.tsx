@@ -10,6 +10,9 @@ function Harness() {
   const [id, setId] = useState<string | null>(null);
 
   useEffect(() => {
+    // Prevent re-running effect by checking if already set
+    if (id !== null) return;
+
     const toAdd: PartialCharacter = {
       name: 'To Delete',
       className: 'Barbarian',
@@ -23,7 +26,7 @@ function Harness() {
     };
     const created = store.add(toAdd);
     setId(created.id);
-  }, [store]);
+  }, [id, store]);
 
   if (!id) return <div>loading</div>;
   return <DeleteCharacterModal id={id} />;

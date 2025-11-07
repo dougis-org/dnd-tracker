@@ -10,23 +10,42 @@ import { CharacterProvider, useCharacterStore } from '@/lib/characterStore';
 import type { Character } from '../../types/character';
 import mockCharacters from '@/lib/mock/characters';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 
-// Extract detail harness
+// Extract detail harness - initialize store in useEffect
 function CharacterDetailHarness({ characterId }: { characterId: string }) {
   const store = useCharacterStore();
-  if (store.state.characters.length === 0) store.init();
+  const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    if (store.state.characters.length === 0) {
+      store.init();
+    }
+    setInitialized(true);
+  }, [store]);
+
+  if (!initialized) return null;
   return <CharacterDetail id={characterId} />;
 }
 
-// Extract form harness
+// Extract form harness - initialize store in useEffect
 function CharacterFormHarness() {
   const [created, setCreated] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const store = useCharacterStore();
+
+  useEffect(() => {
+    if (store.state.characters.length === 0) {
+      store.init();
+    }
+    setInitialized(true);
+  }, [store]);
+
+  if (!initialized) return null;
 
   if (created) {
     const newChar = store.state.characters.find((c: Character) => c.name === 'Integration Test Character');
