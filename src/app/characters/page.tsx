@@ -13,10 +13,4 @@ export default function Page() {
     </main>
   );
 }
-'use client';
 
-import { NotImplementedPage } from '@/components/NotImplementedPage';
-
-export default function CharactersPage() {
-  return <NotImplementedPage />;
-}

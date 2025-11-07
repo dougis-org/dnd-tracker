@@ -129,7 +129,7 @@ export default function CharacterForm({ onCreated, initial = null, onSaved }: Pr
       </div>
 
   {error && <div role="alert">{error}</div>}
-  {created && <div role="status">{initial && (initial as any).id ? 'Character updated' : 'Character created'}</div>}
+  {created && <div role="status">{initial?.id ? 'Character updated' : 'Character created'}</div>}
 
       <button type="submit">Create character</button>
     </form>
