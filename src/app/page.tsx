@@ -1,8 +1,13 @@
-import { lazy, Suspense } from 'react';
+'use client';
+
+import dynamic from 'next/dynamic';
 import { NotImplementedPage } from '@/components/NotImplementedPage';
 
-// Dynamic import of landing page
-const LandingPage = lazy(() => import('@/app/(landing)/page'));
+// Dynamic import of landing page with ssr disabled
+const LandingPage = dynamic(() => import('@/app/(landing)/page'), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center min-h-screen">Loading...</div>,
+});
 
 export default function Home() {
   // Guard: only show landing page in development (NODE_ENV !== 'production')
@@ -10,11 +15,7 @@ export default function Home() {
   const featureLandingEnabled = process.env.NEXT_PUBLIC_FEATURE_LANDING === 'true';
 
   if (!isProduction && featureLandingEnabled) {
-    return (
-      <Suspense fallback={<div>Loading...</div>}>
-        <LandingPage />
-      </Suspense>
-    );
+    return <LandingPage />;
   }
 
   return <NotImplementedPage />;

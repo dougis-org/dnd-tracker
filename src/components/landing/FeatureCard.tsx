@@ -1,4 +1,4 @@
-import { LucideIcon, LayoutGrid, Users, Zap, Target, BookOpen, Wifi } from 'lucide-react';
+import { LucideIcon, Users, Zap, Swords, UsersRound, MapPin, Package } from 'lucide-react';
 
 interface FeatureCardProps {
   id: string;
@@ -9,12 +9,12 @@ interface FeatureCardProps {
 
 // Icon mapping for string icon names to Lucide components
 const iconMap: { [key: string]: LucideIcon } = {
-  LayoutGrid,
-  Users,
-  Zap,
-  Target,
-  BookOpen,
-  Wifi,
+  users: Users,
+  zap: Zap,
+  swords: Swords,
+  'users-round': UsersRound,
+  'map-pin': MapPin,
+  package: Package,
 };
 
 /**
