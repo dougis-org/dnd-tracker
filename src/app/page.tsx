@@ -1,6 +1,8 @@
-'use client';
-
+import { lazy, Suspense } from 'react';
 import { NotImplementedPage } from '@/components/NotImplementedPage';
+
+// Dynamic import of landing page
+const LandingPage = lazy(() => import('@/app/(landing)/page'));
 
 export default function Home() {
   // Guard: only show landing page in development (NODE_ENV !== 'production')
@@ -8,9 +10,11 @@ export default function Home() {
   const featureLandingEnabled = process.env.NEXT_PUBLIC_FEATURE_LANDING === 'true';
 
   if (!isProduction && featureLandingEnabled) {
-    // Dynamically import landing page to avoid build issues in production
-    const LandingPage = require('@/app/(landing)/page').default;
-    return <LandingPage />;
+    return (
+      <Suspense fallback={<div>Loading...</div>}>
+        <LandingPage />
+      </Suspense>
+    );
   }
 
   return <NotImplementedPage />;

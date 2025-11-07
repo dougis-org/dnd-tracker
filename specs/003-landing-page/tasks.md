@@ -41,8 +41,8 @@ Independent test criteria: Components render with provided mock data, SEO tags p
     - blocks: T009
 
 - [X] T010 [US1] Implement landing page composition at `/home/doug/ai-dev-2/dnd-tracker/src/app/(landing)/page.tsx` that imports components (`Hero`, `FeatureCard`, `CallToAction`) and `SeoTags` and reads mock data from `/home/doug/ai-dev-2/dnd-tracker/src/app/(landing)/data/*.json`.
-- [ ] T011 [P] [US1] Complete unit tests for `Hero` and `FeatureCard` (render, snapshot, ARIA) at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/hero.test.tsx` and `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/featurecard.test.tsx`.
-- [ ] T012 [US1] Ensure `SeoTags` is used by landing page and implement default values at `/home/doug/ai-dev-2/dnd-tracker/src/components/SeoTags.tsx` (validate props and server component usage).
+- [X] T011 [P] [US1] Complete unit tests for `Hero` and `FeatureCard` (render, snapshot, ARIA) at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/hero.test.tsx` and `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/featurecard.test.tsx`.
+- [X] T012 [US1] Ensure `SeoTags` is used by landing page and implement default values at `/home/doug/ai-dev-2/dnd-tracker/src/components/SeoTags.tsx` (validate props and server component usage).
 
 ### User Story US2 (P2) — Interactive demo (mock), pricing table, testimonials
 
@@ -50,21 +50,21 @@ Story goal: Add interactive demo mock, pricing tiers and testimonials section wi
 
 Independent test criteria: Each component renders data from fixtures and can be tested in isolation (unit tests). Data files live in `/src/app/(landing)/data` and `/tests/fixtures/landing`.
 
-- [ ] T013 [P] [US2] Create `InteractiveDemo` component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/InteractiveDemo.tsx` (mock UI-only demo, no backend calls).
-- [ ] T014 [P] [US2] Create `PricingTable` component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/PricingTable.tsx` (reads pricing tiers from mock data).
-- [ ] T015 [P] [US2] Create `Testimonials` component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/Testimonials.tsx` (carousel or stacked list reading from mock data).
+- [X] T013 [P] [US2] Create `InteractiveDemo` component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/InteractiveDemo.tsx` (mock UI-only demo, no backend calls).
+- [X] T014 [P] [US2] Create `PricingTable` component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/PricingTable.tsx` (reads pricing tiers from mock data).
+- [X] T015 [P] [US2] Create `Testimonials` component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/Testimonials.tsx` (carousel or stacked list reading from mock data).
 
   **TDD enforcement — write failing unit tests first for US2 components**
 
-  - [ ] T013a [US2] Add a failing unit test for `InteractiveDemo` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/interactive.test.tsx` (test must fail initially).
+  - [X] T013a [US2] Add a failing unit test for `InteractiveDemo` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/interactive.test.tsx` (test must fail initially).
     - blocks: T013
-  - [ ] T014a [US2] Add a failing unit test for `PricingTable` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/pricing.test.tsx` (test must fail initially).
+  - [X] T014a [US2] Add a failing unit test for `PricingTable` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/pricing.test.tsx` (test must fail initially).
     - blocks: T014
-  - [ ] T015a [US2] Add a failing unit test for `Testimonials` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/testimonials.test.tsx` (test must fail initially).
+  - [X] T015a [US2] Add a failing unit test for `Testimonials` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/testimonials.test.tsx` (test must fail initially).
     - blocks: T015
 
-- [ ] T016 [US2] Wire demo/pricing/testimonials into `/home/doug/ai-dev-2/dnd-tracker/src/app/(landing)/page.tsx` and ensure layout/responsive rules hold.
-- [ ] T017 [P] [US2] Add/complete unit tests for `InteractiveDemo`, `PricingTable`, and `Testimonials` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/interactive.test.tsx`, `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/pricing.test.tsx`, `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/testimonials.test.tsx`.
+- [X] T016 [US2] Wire demo/pricing/testimonials into `/home/doug/ai-dev-2/dnd-tracker/src/app/(landing)/page.tsx` and ensure layout/responsive rules hold.
+- [X] T017 [P] [US2] Add/complete unit tests for `InteractiveDemo`, `PricingTable`, and `Testimonials` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/interactive.test.tsx`, `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/pricing.test.tsx`, `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/testimonials.test.tsx`.
 
 ### User Story US3 (P1) — End-to-end rendering, responsiveness and accessibility checks
 

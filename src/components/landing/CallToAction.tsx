@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Route } from 'next';
 
 interface CallToActionProps {
   primaryText: string;
@@ -23,7 +24,7 @@ export function CallToAction({
     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
       {/* Primary CTA Button */}
       <Link
-        href={primaryHref}
+        href={primaryHref as Route}
         className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors inline-block"
       >
         {primaryText}
@@ -31,7 +32,7 @@ export function CallToAction({
 
       {/* Secondary CTA Button */}
       <Link
-        href={secondaryHref}
+        href={secondaryHref as Route}
         className="px-8 py-3 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold rounded-lg transition-colors inline-block"
       >
         {secondaryText}
