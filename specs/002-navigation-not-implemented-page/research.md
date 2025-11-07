@@ -74,7 +74,8 @@ For each unresolved item above, create a short research task (owner: @doug by de
   - `docs/Feature-Roadmap.md`
   - `docs/design/dnd-tracker-technical-design.md`
   - `specs/002-navigation-not-implemented-page/spec.md`
-# Research: F002 - Navigation & Not Implemented Page
+
+## Research: F002 - Navigation & Not Implemented Page
 
 ## Unknowns / NEEDS CLARIFICATION (extracted from plan)
 

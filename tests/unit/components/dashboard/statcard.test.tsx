@@ -10,7 +10,7 @@ describe('StatCard', () => {
   })
 
   it('shows empty state when value is null', () => {
-    render(<StatCard label="Encounters" value={null as any} />)
+    render(<StatCard label="Encounters" value={null} />)
 
     expect(screen.getByText('Encounters')).toBeInTheDocument()
     expect(screen.getByText(/no data/i)).toBeInTheDocument()

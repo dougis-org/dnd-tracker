@@ -162,9 +162,9 @@ As a user navigating to nested pages, I want to see a breadcrumb trail so I can 
 - The project constitution requires TDD-first (tests before implementation). The current task history shows several foundational components marked complete while some user-story test tasks remain unchecked. To comply with the constitution we require an audit. Add a short audit record to the spec that documents whether tests were authored and failing before implementation, or record an approved exception.
 
 - Audit steps (required before further feature work):
-	1. Review PR #406 (or the feature branch history) to confirm test-first ordering for this feature. Document findings in this spec under `## Constitution audit`.
-	2. If tests-first was not followed, create failing tests that express the expected behavior (preserve PR ordering) and request a maintainer-approved exception or rework as necessary.
-	3. Record maintainer approval/comments in this spec (owner: @doug).
+  1. Review PR #406 (or the feature branch history) to confirm test-first ordering for this feature. Document findings in this spec under `## Constitution audit`.
+  2. If tests-first was not followed, create failing tests that express the expected behavior (preserve PR ordering) and request a maintainer-approved exception or rework as necessary.
+  3. Record maintainer approval/comments in this spec (owner: @doug).
 
 ## Deliverables (files created/updated)
 
