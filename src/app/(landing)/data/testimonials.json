@@ -1,0 +1,34 @@
+[
+  {
+    "id": "testimonial-1",
+    "author": "Sarah Martinez",
+    "title": "Dungeon Master",
+    "imageUrl": null,
+    "text": "DND Tracker transformed how I manage my campaigns. Combat tracking is intuitive and saves hours of prep time.",
+    "rating": 5
+  },
+  {
+    "id": "testimonial-2",
+    "author": "James Chen",
+    "title": "Tabletop RPG Enthusiast",
+    "imageUrl": null,
+    "text": "Finally, a tool that understands D&D. The party management features are exactly what our group needed.",
+    "rating": 5
+  },
+  {
+    "id": "testimonial-3",
+    "author": "Elena Rodriguez",
+    "title": "Campaign Organizer",
+    "imageUrl": null,
+    "text": "The monster library alone is worth it. No more flipping through books during combat.",
+    "rating": 5
+  },
+  {
+    "id": "testimonial-4",
+    "author": "Marcus Thompson",
+    "title": "Player & DM",
+    "imageUrl": null,
+    "text": "Sleek interface, powerful features. This is the tool every tabletop gamer should know about.",
+    "rating": 5
+  }
+]
