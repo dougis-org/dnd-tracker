@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { CharacterProvider, useCharacterStore } from '../../../lib/characterStore';
-import CharacterForm from '../../../components/characters/CharacterForm';
-import { Character } from '../../../../types/character';
+import { CharacterProvider, useCharacterStore } from '@/lib/characterStore';
+import CharacterForm from '@/components/characters/CharacterForm';
+import type { Character } from '../../../../../types/character';
 
 function EditInner({ id }: { id: string }) {
   const store = useCharacterStore();

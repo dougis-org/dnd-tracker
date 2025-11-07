@@ -5,10 +5,11 @@ import { useCharacterStore } from '../../lib/characterStore';
 
 type Props = {
   id: string;
+  characterName?: string; // optional for display in confirm dialog
   onDeleted?: () => void; // optional callback for navigation after delete
 };
 
-export default function DeleteCharacterModal({ id, onDeleted }: Props) {
+export default function DeleteCharacterModal({ id, characterName, onDeleted }: Props) {
   const store = useCharacterStore();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleted, setDeleted] = useState(false);
