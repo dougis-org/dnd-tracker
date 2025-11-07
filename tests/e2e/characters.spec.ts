@@ -42,8 +42,8 @@ test.describe('Character Management E2E', () => {
     const firstCharLink = page.locator('a[href*="/characters/"]').first();
     await firstCharLink.click();
 
-    // Should be on detail page
-    await expect(page.url()).toMatch(/\/characters\/[a-f0-9]+/);
+    // Should be on detail page (mock data uses format like char-1, char-2, etc.)
+    await expect(page.url()).toMatch(/\/characters\/char-\d+/);
 
     // Should see character details
     await expect(page.locator('body')).toContainText(/HP:|AC:/i);
@@ -53,21 +53,21 @@ test.describe('Character Management E2E', () => {
     // Start at list
     await page.goto('/characters');
 
-    // Navigate to new
-    await page.click('text=Create New Character');
+    // Navigate to new - use actual text from page
+    await page.click('text=Create a character');
 
     await expect(page).toHaveURL('/characters/new');
 
-    // Fill form
-    await page.fill('input[name="name"]', 'E2E Test Character');
-    await page.fill('input[name="className"]', 'Paladin');
-    await page.fill('input[name="race"]', 'Human');
+    // Fill form - select inputs by label text since they don't have name attributes
+    await page.fill('label:has-text("Name") + input', 'E2E Test Character');
+    await page.fill('label:has-text("Class") + input', 'Paladin');
+    await page.fill('label:has-text("Race") + input', 'Human');
 
     // Submit
-    await page.click('button:has-text("Create")');
+    await page.click('button:has-text("Create character")');
 
-    // Should navigate back to detail page
-    await page.waitForURL(/\/characters\/[a-f0-9]+/, { timeout: 5000 });
+    // Should navigate to detail page with format char-N
+    await page.waitForURL(/\/characters\/char-\d+/, { timeout: 5000 });
 
     // Should see the new character
     await expect(page.locator('body')).toContainText('E2E Test Character');

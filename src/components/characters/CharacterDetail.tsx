@@ -4,11 +4,12 @@ import { useCharacterStore } from '../../lib/characterStore';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import DeleteCharacterModal from './DeleteCharacterModal';
+import type { Character } from '../../../types/character';
 
 export default function CharacterDetail({ id }: { id: string }) {
   const store = useCharacterStore();
   const router = useRouter();
-  const character = store.state.characters.find((c) => c.id === id);
+  const character = store.state.characters.find((c: Character) => c.id === id);
 
   if (!character) {
     return (
@@ -42,7 +43,7 @@ export default function CharacterDetail({ id }: { id: string }) {
       <section className="mt-4">
         <h3 className="font-semibold">Equipment</h3>
         <ul>
-          {(character.equipment || []).map((e, i) => (
+          {(character.equipment || []).map((e: string, i: number) => (
             <li key={i}>{e}</li>
           ))}
         </ul>

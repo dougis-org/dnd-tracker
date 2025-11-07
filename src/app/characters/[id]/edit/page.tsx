@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { CharacterProvider, useCharacterStore } from '@/lib/characterStore';
 import CharacterForm from '@/components/characters/CharacterForm';
@@ -8,8 +8,16 @@ import type { Character } from '../../../../../types/character';
 
 function EditInner({ id }: { id: string }) {
   const store = useCharacterStore();
-  const character = store.state.characters.find((c: Character) => c.id === id) as Character | undefined;
   const router = useRouter();
+
+  useEffect(() => {
+    // Initialize store if empty (direct navigation/page refresh)
+    if (store.state.characters.length === 0) {
+      store.init();
+    }
+  }, [store]);
+
+  const character = store.state.characters.find((c: Character) => c.id === id);
 
   const handleSaved = (c: Character) => {
     // navigate back to detail page

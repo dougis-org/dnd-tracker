@@ -1,4 +1,3 @@
-```markdown
 # Feature Specification: Character Management Pages
 
 **Feature Branch**: `feature/005-character-management-pages`
@@ -135,7 +134,7 @@ As a player, I want to remove a character from my roster with a confirmation ste
 
 - This feature implements UI-only mock behavior for listing, viewing, creating, editing, and deleting characters; no persistent API calls are required for the initial iteration.
 - Authorization and multi-user concerns are out of scope; assume a single user context for UI mocks.
--- Form field lists are broadly aligned with D&D 5e conventions; required fields for the MVP are: name, class, race, level, HP, AC, and abilities (STR–CHA). Other fields remain optional.
+- Form field lists are broadly aligned with D&D 5e conventions; required fields for the MVP are: name, class, race, level, HP, AC, and abilities (STR–CHA). Other fields remain optional.
 
 ## Test Plan (brief)
 
@@ -146,5 +145,3 @@ As a player, I want to remove a character from my roster with a confirmation ste
 ---
 
 **Spec Ready For**: Planning (/speckit.plan) pending clarifications in NEEDS CLARIFICATION markers above.
-
-```

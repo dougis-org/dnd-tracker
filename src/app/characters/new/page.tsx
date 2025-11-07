@@ -9,13 +9,9 @@ import { Character } from '../../../../types/character';
 export default function NewCharacterPage() {
   const router = useRouter();
 
-  const handleCreated = (c: Character | { id?: string } | null) => {
+  const handleCreated = (c: Character) => {
     // navigate to the new character detail page
-    if (c && c.id) {
-      router.push(`/characters/${c.id}`);
-    } else {
-      router.push('/characters');
-    }
+    router.push(`/characters/${c.id}`);
   };
 
   return (
