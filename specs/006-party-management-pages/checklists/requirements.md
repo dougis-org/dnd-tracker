@@ -14,7 +14,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -32,55 +32,18 @@
 
 ## Outstanding Issues
 
-### Clarifications Needed (2 total)
+### Clarifications Resolved ✅
 
-The following [NEEDS CLARIFICATION] markers exist in the specification and require user input:
+**Question 1: Party Creation Redirect Behavior** - RESOLVED  
+**Decision**: Option C - Show a toast/modal with a link to the detail page  
+**Rationale**: Provides flexibility; user can choose to view detail page or dismiss and stay on list
 
-**Question 1: Party Creation Redirect Behavior**
-
-**Context**: User Story 3 - Create a New Party
-
-**What we need to know**: After a user successfully creates a new party, should they be redirected to:
-- (A) The detail page of the newly created party so they can immediately view/manage it?
-- (B) The party list page so they can see the new party in context with their other parties?
-
-**Suggested Answers**:
-
-| Option | Answer | Implications |
-|--------|--------|--------------|
-| A | Redirect to `/parties/:newPartyId` (detail page) | User immediately sees the party they created with full details; requires fetching/creating the new party in the list first |
-| B | Redirect to `/parties` (list page) | User sees the new party in their list; requires less immediate loading but requires scrolling/searching to find the new party |
-| C | Show a toast/modal with a link to the detail page | User can choose their next action; provides flexibility but adds UI complexity |
-| Custom | Provide your own answer | Specify the redirect behavior you prefer |
-
-**Your choice**: _[Awaiting user response]_
-
----
-
-**Question 2: Role Assignment During Member Addition**
-
-**Context**: User Story 5 - Manage Party Members
-
-**What we need to know**: When adding a new member to a party, should role assignment be:
-- (A) Required - User must select a role (Tank/Healer/DPS/Other) before confirming the member addition?
-- (B) Optional - Role selection appears but can be skipped, and a default role (Other) is assigned if not specified?
-- (C) Post-Add - Role is assigned AFTER the member is added, in a separate step?
-
-**Suggested Answers**:
-
-| Option | Answer | Implications |
-|--------|--------|--------------|
-| A | Required role selection before adding | Ensures all members have roles immediately; more steps for user; better data integrity |
-| B | Optional with default role | Faster member addition workflow; users can assign roles later if needed; potential incomplete party composition data |
-| C | Separate role assignment step | Simplest addition flow; role assignment happens independently; requires additional user action |
-| Custom | Provide your own answer | Specify how role assignment should work during member addition |
-
-**Your choice**: _[Awaiting user response]_
-
----
+**Question 2: Role Assignment During Member Addition** - RESOLVED  
+**Decision**: Option C - Separate step after adding; roles are optional  
+**Rationale**: Simplest member addition workflow; role assignment is optional and independent; users can assign roles later
 
 ## Notes
 
-- Specification has 2 [NEEDS CLARIFICATION] markers requiring user feedback
-- All other content quality and completeness criteria pass
-- Ready to proceed to planning after clarifications are resolved
+- All [NEEDS CLARIFICATION] markers have been resolved
+- All content quality and completeness criteria pass
+- Specification is ready to proceed to planning phase

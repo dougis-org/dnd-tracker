@@ -55,7 +55,7 @@ A Dungeon Master wants to create a new party by selecting characters from their 
 
 1. **Given** the user clicks "Create New Party" on `/parties`, **When** navigating to `/parties/new`, **Then** a form displays with fields for party name and member selection
 2. **Given** the user is on the party creation form, **When** they fill in the party name and select characters, **Then** the form validates that a party name is provided and at least one member is selected
-3. **Given** the user completes the party creation form, **When** they submit it, **Then** a success message displays and the user is redirected to the party detail page showing the new party [NEEDS CLARIFICATION: should form redirect to detail page or list page?]
+3. **Given** the user completes the party creation form, **When** they submit it, **Then** a success toast/modal displays with the new party name and provides a link to view the detail page; user can dismiss the toast to stay on the list or click the link to navigate to the detail page
 
 ---
 
@@ -86,9 +86,9 @@ A Dungeon Master wants to add or remove characters from a party and assign/modif
 **Acceptance Scenarios**:
 
 1. **Given** a party exists and the user is viewing its detail page, **When** they click "Add Member", **Then** a modal or form displays showing available characters that can be added
-2. **Given** the user has selected a character to add, **When** they confirm, **Then** the character is added to the party and a role selector appears [NEEDS CLARIFICATION: should role assignment be required or optional during member addition?]
+2. **Given** the user has selected a character to add, **When** they confirm, **Then** the character is added to the party immediately with a "Unassigned" or "Other" role; a success message displays
 3. **Given** a member is in a party, **When** the user clicks the remove button next to the member, **Then** a confirmation dialog appears; upon confirmation, the member is removed from the party
-4. **Given** a member is in a party, **When** the user selects or modifies the member's role, **Then** the role updates immediately and persists
+4. **Given** a member is in a party, **When** the user selects or modifies the member's role from the member list, **Then** the role updates immediately and persists
 
 ---
 
@@ -125,12 +125,12 @@ A Dungeon Master wants to remove a party they no longer use to keep their party 
 - **FR-003**: System MUST display detailed party information on `/parties/:id` including party name, full member list with character details (name, class, level, AC, HP), and party composition stats
 - **FR-004**: System MUST display party action buttons (Edit, Add Member, Delete) on the party detail page
 - **FR-005**: System MUST provide a party creation form at `/parties/new` with fields for party name and member selection UI
-- **FR-006**: System MUST allow users to select one or more characters when creating a new party, with validation requiring at least one member and a non-empty party name
+- **FR-006**: System MUST allow users to select one or more characters when creating a new party, with validation requiring at least one member and a non-empty party name; upon successful creation, a success toast/modal displays with the party name and a link to the detail page
 - **FR-007**: System MUST allow users to edit party name and member list via an edit form accessible from the party detail page
-- **FR-008**: System MUST provide add/remove member functionality with immediate visual feedback (member appears/disappears from list)
-- **FR-009**: System MUST display role assignment UI for each party member with role options (Tank, Healer, DPS, Other)
+- **FR-008**: System MUST provide add/remove member functionality with members added immediately to the party with a default "Other" role; role can be updated independently after adding
+- **FR-009**: System MUST display role assignment UI for each party member with role options (Tank, Healer, DPS, Other) that can be changed at any time
 - **FR-010**: System MUST allow users to delete a party with a confirmation dialog to prevent accidental deletion
-- **FR-011**: System MUST display party composition statistics (e.g., "1 Tank, 1 Healer, 2 DPS") based on assigned member roles
+- **FR-011**: System MUST display party composition statistics (e.g., "1 Tank, 1 Healer, 2 DPS, 1 Other") based on assigned member roles; update statistics in real-time as roles change
 - **FR-012**: System MUST provide visual feedback (loading states, success/error messages) for all party operations (create, update, delete, add member, remove member)
 - **FR-013**: System MUST be fully responsive and mobile-friendly, supporting party management on devices of all sizes
 - **FR-014**: System MUST display mock data (2 sample parties with 4-5 members each) when the system is first loaded to demonstrate functionality
