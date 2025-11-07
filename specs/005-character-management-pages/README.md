@@ -158,11 +158,27 @@ npm run format
 
 ### Dependency Scanning
 
-After adding dependencies:
+After adding or updating dependencies, run npm audit:
 
 ```bash
 npm audit
 ```
+
+For vulnerability scanning with Trivy (via Codacy CLI):
+
+```bash
+# Scan with Trivy for security vulnerabilities
+codacy_cli_analyze --rootPath /home/doug/dev/dnd-tracker --tool trivy
+
+# If vulnerabilities found, review and update packages
+npm audit fix
+```
+
+**When to run security checks:**
+
+- After `npm install` or adding new packages
+- Before creating pull requests
+- After dependency updates (Dependabot, manual)
 
 ### Static Analysis
 
@@ -174,8 +190,14 @@ Codacy analysis runs automatically on:
 Manual local analysis (if Codacy CLI installed):
 
 ```bash
-codacy analyze --directory /path/to/repo
+# Analyze all files
+codacy_cli_analyze --rootPath /home/doug/dev/dnd-tracker
+
+# Analyze specific file after edits
+codacy_cli_analyze --rootPath /home/doug/dev/dnd-tracker --file src/components/characters/CharacterForm.tsx
 ```
+
+**Best practice:** Run Codacy analysis after every file edit to catch issues early.
 
 ## File Structure
 
