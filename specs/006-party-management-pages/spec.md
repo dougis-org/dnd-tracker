@@ -2,179 +2,176 @@
 
 **Feature Branch**: `feature/006-party-management-pages`  
 **Created**: 2025-11-06  
-**Status**: Draft  
-**Input**: User description: "Create UI pages for party management including party list, detail view, creation/edit forms, member management, and party composition stats."
+**Status**: Active  
+**Feature Number**: F006
 
-**Maintainer**: @doug  
-**Canonical components (UI)**: GlobalNav  
+**Maintainer**: @doug
+**Canonical components (UI)**: PartyCard, PartyList, PartyForm
 **Constitution**: This specification must comply with `.specify/memory/constitution.md`. After edits, run the required Codacy analysis for any edited files per repository rules.
 
-## User Scenarios & Testing
+## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Browse Party Library (Priority: P1)
+### User Story 1 - View All Parties (Priority: P1)
 
-A Dungeon Master wants to see all their saved parties at a glance to quickly select which party to use for an upcoming encounter.
+A DM needs to see a comprehensive list of all parties they've created, with quick visual preview of party composition (members, roles, level range) to manage their campaigns effectively.
 
-**Why this priority**: This is the foundational feature that enables all other party management workflows. Without the ability to browse and select parties, users cannot proceed to detail view or management operations.
+**Why this priority**: Core primary use case - DMs need to manage multiple parties. This is the main entry point for party management.
 
-**Independent Test**: Can be fully tested by viewing the party list page and verifying it displays all mock parties with basic information, and delivers the value of providing party discovery.
+**Independent Test**: Can be fully tested by navigating to `/parties` and verifying the list renders with mock data. Delivers value immediately: users can see their parties at a glance.
 
 **Acceptance Scenarios**:
 
-1. **Given** the user navigates to `/parties`, **When** the page loads, **Then** a list of all parties displays with party name, member count, and composition summary
-2. **Given** there are no parties in the system, **When** the user navigates to `/parties`, **Then** an empty state displays with a call-to-action to create a new party
-3. **Given** the party list exists, **When** the user views the list, **Then** each party card shows the party name, number of members, and a quick visual preview of party composition (roles/classes)
+1. **Given** user is authenticated, **When** user navigates to `/parties`, **Then** page displays list of all parties with cards
+2. **Given** parties exist, **When** viewing `/parties`, **Then** each party card shows: party name, member count, and member role distribution (tank/healer/DPS counts)
+3. **Given** multiple parties exist, **When** viewing the list, **Then** parties are displayed in a responsive grid that adapts to screen size (1-3 columns based on viewport)
+4. **Given** user is on `/parties`, **When** user clicks on a party card, **Then** user navigates to `/parties/:id` detail page
 
 ---
 
-### User Story 2 - View Party Details (Priority: P1)
+### User Story 2 - View Party Details & Composition (Priority: P1)
 
-A Dungeon Master wants to see all members of a specific party with their details (class, level, AC, HP) to understand the party composition and capabilities.
+A DM needs to see detailed information about a specific party including all members, their stats, and roles to manage combat encounters and track party composition.
 
-**Why this priority**: Viewing party details is critical for encounter preparation. DMs need to know party composition to balance encounters appropriately and understand player capabilities.
+**Why this priority**: Essential for campaign management - users need to understand party composition to build balanced encounters.
 
-**Independent Test**: Can be fully tested by navigating to a party detail page and verifying all member information displays correctly, delivering the value of understanding party capability.
+**Independent Test**: Can be fully tested by navigating to `/parties/:id` with mock data. Delivers value: users understand their party's capabilities and limitations.
 
 **Acceptance Scenarios**:
 
-1. **Given** a party exists with multiple members, **When** the user clicks on a party card or navigates to `/parties/:id`, **Then** the detail page displays the party name, member list with full character details (name, class, level, AC, HP)
-2. **Given** the user is viewing a party detail, **When** the page loads, **Then** party composition stats display (e.g., "1 Tank, 1 Healer, 1 DPS", class distribution)
-3. **Given** a party exists, **When** the user views the detail page, **Then** action buttons display for managing the party (edit, add member, delete)
+1. **Given** a party exists, **When** user navigates to `/parties/:id`, **Then** page displays party name, description, and full member list
+2. **Given** viewing party detail page, **When** page loads, **Then** display each member as a card showing: name, class, race, level, AC, HP (with visual bars)
+3. **Given** members are displayed, **When** viewing member cards, **Then** each shows role badge (tank/healer/DPS) with appropriate color coding
+4. **Given** party detail page, **When** user views member list, **Then** a summary section at top shows: total members, average level, party tier, and role distribution visually
+5. **Given** party detail page, **When** user clicks on a member card, **Then** user can see full member details in expanded view
 
 ---
 
-### User Story 3 - Create a New Party (Priority: P2)
+### User Story 3 - Create New Party (Priority: P1)
 
-A Dungeon Master wants to create a new party by selecting characters from their character library and assigning roles to them.
+A DM needs to create a new party with members to start tracking a new campaign or adventure group.
 
-**Why this priority**: Creation is essential but secondary to browsing and viewing existing parties. Users will browse parties before creating new ones in typical workflows.
+**Why this priority**: Critical user flow - without ability to create parties, the feature is unusable.
 
-**Independent Test**: Can be fully tested by completing the party creation form and verifying the new party appears in the list, delivering the value of ability to organize characters into parties.
+**Independent Test**: Can be fully tested by navigating to `/parties/new`, filling form with mock data, and verifying form submission UI is present. Delivers value: UI is ready for future backend integration.
 
 **Acceptance Scenarios**:
 
-1. **Given** the user clicks "Create New Party" on `/parties`, **When** navigating to `/parties/new`, **Then** a form displays with fields for party name and member selection
-2. **Given** the user is on the party creation form, **When** they fill in the party name and select characters, **Then** the form validates that a party name is provided and at least one member is selected
-3. **Given** the user completes the party creation form, **When** they submit it, **Then** a success toast/modal displays with the new party name and provides a link to view the detail page; user can dismiss the toast to stay on the list or click the link to navigate to the detail page
+1. **Given** user navigates to `/parties/new`, **When** page loads, **Then** creation form displays with fields: party name, description, campaign setting
+2. **Given** on creation form, **When** user sees form, **Then** form includes section for adding members with "Add Member" button
+3. **Given** in member section, **When** user clicks "Add Member", **Then** member form appears with fields: character selection (mock dropdown), role (tank/healer/DPS dropdown)
+4. **Given** form is filled out, **When** user clicks submit button, **Then** form shows "Not Implemented" message (or submits to mock endpoint)
+5. **Given** user navigates away from `/parties/new`, **When** unsaved changes exist, **Then** warning dialog may appear (optional UX polish)
 
 ---
 
 ### User Story 4 - Edit Party Details (Priority: P2)
 
-A Dungeon Master wants to modify party information (name, members, member roles) to keep parties organized and reflect changes in campaign composition.
+A DM needs to update party information (name, description) and manage members to keep party data current.
 
-**Why this priority**: While important for ongoing management, editing is secondary to creation in the typical user workflow. Users create parties first, then edit infrequently.
+**Why this priority**: Important for ongoing campaign management but less critical than viewing and creating. Users with existing parties will need this eventually.
 
-**Independent Test**: Can be fully tested by opening a party edit form, making changes, and verifying the changes persist, delivering the value of flexibility in party management.
+**Independent Test**: Can be fully tested by navigating to `/parties/:id/edit` and verifying form displays current data. Delivers value: users can see edit form with all fields pre-populated.
 
 **Acceptance Scenarios**:
 
-1. **Given** a party exists, **When** the user clicks the edit button on the party detail page, **Then** a form loads with current party information (name, members, roles)
-2. **Given** the user is on the edit form, **When** they modify the party name or member list, **Then** changes are reflected in real-time in a preview section
-3. **Given** the user makes changes, **When** they click save, **Then** the changes persist and the user sees a success message
+1. **Given** party detail page, **When** user clicks Edit button, **Then** user navigates to `/parties/:id/edit` page
+2. **Given** on edit form, **When** page loads, **Then** form pre-populates with current party data (name, description, existing members)
+3. **Given** user modifies party data, **When** user clicks "Save Changes", **Then** form shows "Not Implemented" message or submits (mock)
+4. **Given** user wants to add members during edit, **When** user clicks "Add Member", **Then** member form appears (same as create flow)
+5. **Given** user has existing members, **When** viewing member list on edit page, **Then** each member has a "Remove" button for member management
 
 ---
 
-### User Story 5 - Manage Party Members (Priority: P2)
+### User Story 5 - Delete Party with Confirmation (Priority: P2)
 
-A Dungeon Master wants to add or remove characters from a party and assign/modify member roles (tank, healer, DPS) to reflect their party's composition.
+A DM needs to delete parties that are no longer used to keep their party list clean and organized.
 
-**Why this priority**: Member management is important but not essential for the MVP. Users can create parties with initial members, but more sophisticated member role management can follow in later iterations.
+**Why this priority**: Important for data management but non-critical - doesn't prevent core workflows.
 
-**Independent Test**: Can be fully tested by adding a member to a party, removing a member, and updating roles, delivering the value of maintaining accurate party composition.
+**Independent Test**: Can be fully tested by viewing party detail/list and verifying delete button appears and triggers confirmation modal. Delivers value: users can see delete action is available.
 
 **Acceptance Scenarios**:
 
-1. **Given** a party exists and the user is viewing its detail page, **When** they click "Add Member", **Then** a modal or form displays showing available characters that can be added
-2. **Given** the user has selected a character to add, **When** they confirm, **Then** the character is added to the party immediately with a "Unassigned" or "Other" role; a success message displays
-3. **Given** a member is in a party, **When** the user clicks the remove button next to the member, **Then** a confirmation dialog appears; upon confirmation, the member is removed from the party
-4. **Given** a member is in a party, **When** the user selects or modifies the member's role from the member list, **Then** the role updates immediately and persists
+1. **Given** party detail page, **When** user clicks Delete button, **Then** confirmation modal appears asking "Are you sure?"
+2. **Given** confirmation modal is open, **When** user clicks "Cancel", **Then** modal closes without deleting
+3. **Given** confirmation modal is open, **When** user clicks "Confirm Delete", **Then** form shows "Not Implemented" message or deletes (mock)
+4. **Given** party list view, **When** party is viewed, **Then** delete action is available (via Edit or Delete button)
 
 ---
 
-### User Story 6 - Delete a Party (Priority: P3)
+### User Story 6 - Member Management UI (Priority: P2)
 
-A Dungeon Master wants to remove a party they no longer use to keep their party list clean and organized.
+A DM needs to add, remove, and organize members within a party to manage party composition flexibly.
 
-**Why this priority**: Party deletion is a cleanup feature that adds value but is not required for basic functionality. Users can have archived parties without blocking their workflows.
+**Why this priority**: Supports core party management but can be implemented initially with limited functionality (add/remove UI only).
 
-**Independent Test**: Can be fully tested by clicking delete on a party, confirming the action, and verifying the party is removed from the list, delivering the value of keeping the party library organized.
+**Independent Test**: Can be fully tested by verifying add/remove member form fields and buttons appear on creation and edit forms.
 
 **Acceptance Scenarios**:
 
-1. **Given** a party exists, **When** the user clicks the delete button on the party detail page, **Then** a confirmation dialog appears asking if they want to delete the party
-2. **Given** the user confirms deletion, **When** they click the delete confirmation button, **Then** the party is removed from the system and the user is redirected to the party list
-3. **Given** a party has been deleted, **When** the user views the party list, **Then** the deleted party no longer appears in the list
+1. **Given** party creation or edit form, **When** user clicks "Add Member", **Then** member input form appears with fields: character name (text), class (dropdown), race (dropdown), level (number)
+2. **Given** member form is displayed, **When** user selects a class, **Then** appropriate class icon or label updates visually
+3. **Given** member added to list, **When** user views the member preview, **Then** member card shows name, class, level, and role selector
+4. **Given** member in list, **When** user clicks role selector, **Then** dropdown options appear: Tank, Healer, DPS, Support (with descriptions)
+5. **Given** member is added, **When** user clicks "Remove" next to member, **Then** member is removed from form (visual feedback)
+6. **Given** user has added multiple members, **When** user submits form, **Then** all members are included in submission
 
 ---
 
 ### Edge Cases
 
-- What happens when a user tries to create a party with a duplicate name? (Allow duplicates with different IDs; name is not unique)
-- How does the system handle a party with no members? (Should be prevented; minimum 1 member required)
-- What if a character that was in a party is deleted from the character library? (Character remains in party with a "missing" state; party management can remove it)
-- How does the system handle party name length limits? (Clear validation message if name exceeds limit)
-- What if the user tries to add a character that's already in the party? (Prevent duplicate member additions with a clear message)
+- What happens when user tries to delete a party used in encounters? (Show warning: "This party is used in X encounters")
+- How does system handle large parties (10+ members)? (Scrollable list, paginated if needed for performance)
+- What if user navigates to `/parties/:id` for non-existent party? (Show "Party not found" error or redirect to `/parties`)
+- What if user adds duplicate members to same party? (Either prevent or show warning)
+- How does system handle member without assigned role? (Default to unassigned or show visual indicator)
 
-## Requirements
+## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: System MUST display a list of all parties belonging to the current user on `/parties` with party name, member count, and composition preview
-- **FR-002**: System MUST provide an empty state on `/parties` when no parties exist with a clear call-to-action to create a new party
-- **FR-003**: System MUST display detailed party information on `/parties/:id` including party name, full member list with character details (name, class, level, AC, HP), and party composition stats
-- **FR-004**: System MUST display party action buttons (Edit, Add Member, Delete) on the party detail page
-- **FR-005**: System MUST provide a party creation form at `/parties/new` with fields for party name and member selection UI
-- **FR-006**: System MUST allow users to select one or more characters when creating a new party, with validation requiring at least one member and a non-empty party name; upon successful creation, a success toast/modal displays with the party name and a link to the detail page
-- **FR-007**: System MUST allow users to edit party name and member list via an edit form accessible from the party detail page
-- **FR-008**: System MUST provide add/remove member functionality with members added immediately to the party with a default "Other" role; role can be updated independently after adding
-- **FR-009**: System MUST display role assignment UI for each party member with role options (Tank, Healer, DPS, Other) that can be changed at any time
-- **FR-010**: System MUST allow users to delete a party with a confirmation dialog to prevent accidental deletion
-- **FR-011**: System MUST display party composition statistics (e.g., "1 Tank, 1 Healer, 2 DPS, 1 Other") based on assigned member roles; update statistics in real-time as roles change
-- **FR-012**: System MUST provide visual feedback (loading states, success/error messages) for all party operations (create, update, delete, add member, remove member)
-- **FR-013**: System MUST be fully responsive and mobile-friendly, supporting party management on devices of all sizes
-- **FR-014**: System MUST display mock data (2 sample parties with 4-5 members each) when the system is first loaded to demonstrate functionality
+- **FR-001**: System MUST display party list page at `/parties` showing all parties with summary cards
+- **FR-002**: System MUST display party detail page at `/parties/:id` showing full party composition with member details
+- **FR-003**: System MUST display party creation form at `/parties/new` with fields for party name, description, campaign setting, and member management
+- **FR-004**: System MUST display party edit form at `/parties/:id/edit` with pre-populated data and member management
+- **FR-005**: System MUST display delete confirmation modal when user requests party deletion
+- **FR-006**: System MUST render member cards on detail/edit pages with: name, class, race, level, AC, HP, role badge, and visual indicators
+- **FR-007**: System MUST display role selector (Tank/Healer/DPS/Support) for each member with color-coded badges
+- **FR-008**: System MUST show party composition summary: member count, average level, party tier, role distribution chart/counts
+- **FR-009**: System MUST display responsive grid layout for party list (1-3 columns based on viewport)
+- **FR-010**: System MUST implement member add/remove UI with form validation
 
 ### Key Entities
 
-- **Party**: A collection of characters representing a group of player characters. Attributes: id, name, members[], owner_id, created_at, updated_at. Relationships: owns many Members
-- **PartyMember**: A character within a party with an assigned role. Attributes: id, party_id, character_id, role (Tank/Healer/DPS/Other), order. Relationships: belongs to Party, references Character
-- **Character**: Represents a player character (simplified reference). Attributes: id, name, class, level, ac, max_hp, current_hp. Relationships: can be member of many Parties
+- **Party**: Represents a group of adventurers. Attributes: ID, name, description, campaign setting, created date, updated date, member array
+- **PartyMember**: Represents an individual party member. Attributes: character ID/name, class, race, level, AC, HP, role (tank/healer/dps), position in party
+- **Role**: Enum representing party roles - Tank, Healer, DPS, Support
 
-## Success Criteria
+### Mock Data Requirements
+
+- **Party 1**: "The Grovewalkers" - 4 members (1 tank, 1 healer, 2 DPS)
+  - Theron (Paladin, Half-Orc, Lvl 5, AC 18, HP 52, Tank)
+  - Elara (Cleric, Half-Elf, Lvl 5, AC 17, HP 38, Healer)
+  - Kess (Rogue, Halfling, Lvl 5, AC 15, HP 28, DPS)
+  - Bron (Barbarian, Dwarf, Lvl 4, AC 14, HP 45, DPS)
+- **Party 2**: "Moonlit Syndicate" - 5 members (1 tank, 1 healer, 2 DPS, 1 support)
+  - Astra (Warlock, Tiefling, Lvl 6, AC 15, HP 30, DPS)
+  - Malachai (Wizard, High Elf, Lvl 6, AC 12, HP 25, Support)
+  - Torvin (Fighter, Dwarf, Lvl 6, AC 18, HP 62, Tank)
+  - Silas (Bard, Human, Lvl 5, AC 14, HP 32, Support/DPS)
+  - Nyx (Ranger, Wood Elf, Lvl 6, AC 15, HP 45, DPS)
+
+## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
-- **SC-001**: Party list page loads in under 1 second and displays all parties without lag
-- **SC-002**: Users can create a party with a name and one or more members in fewer than 5 interactions (clicks/form submissions)
-- **SC-003**: Party detail page displays all member information (name, class, level, AC, HP) completely and accurately
-- **SC-004**: Party composition stats are calculated and displayed correctly (e.g., role distribution matches assigned roles)
-- **SC-005**: All party management operations (create, edit, delete, add/remove members) provide immediate visual feedback within 500ms
-- **SC-006**: Add/remove member operations do not require page refresh to reflect changes
-- **SC-007**: Delete operations require explicit confirmation to prevent accidental deletion
-- **SC-008**: Party pages remain fully functional and usable on mobile devices (screens as small as 320px width)
-- **SC-009**: All acceptance scenarios from User Stories pass automated testing
-- **SC-010**: Feature meets or exceeds 80% test coverage for new components and utilities
-
-## Assumptions
-
-1. **Mock Data Persistence**: Mock parties and characters persist during the session but are not stored long-term (feature is UI-only in this phase)
-2. **Character Library Available**: Feature 005 (Character Management Pages) or equivalent character data structure is available for party member selection
-3. **No Real Persistence**: This feature creates/displays UI only; no API integration or database persistence occurs (planned for Phase 3: Feature 018/028)
-4. **User Authentication**: Feature assumes users are authenticated (Feature 013 or equivalent provides auth context)
-5. **Design System Available**: Feature 001 and Feature 002 design system and navigation are available for consistent styling and navigation
-6. **Role Options Fixed**: Party member roles are limited to predefined set (Tank, Healer, DPS, Other) and cannot be customized
-7. **Party Ownership**: Each party belongs to the logged-in user; no multi-user or collaborative party management in this phase
-
-## Constraints
-
-- **UI-Only Phase**: Feature operates with mock data and no backend persistence (database integration occurs in later phases)
-- **No Real-Time Sync**: Changes do not sync across browser tabs or devices
-- **Single-User**: Party management is single-user only; no sharing or collaborative features
-- **Storage Limit**: Mock data is limited to session storage; closing browser or clearing storage loses data
-- **No Validation Against Live Data**: Form validation does not check against real database; only client-side validation
-
-## Timeline
-
-- **Duration**: 1 day
-- **Type**: UI-Only Feature (Mock Data, No Backend Integration)
+- **SC-001**: All party management pages render without errors and match design specifications
+- **SC-002**: Party list displays 2+ mock parties with correct card layouts and composition summaries
+- **SC-003**: Party detail page displays full member list with correct stats, roles, and visual indicators
+- **SC-004**: Creation and edit forms display all required fields and member management UI
+- **SC-005**: Responsive design works correctly at mobile (375px), tablet (768px), and desktop (1920px) breakpoints
+- **SC-006**: All components have 80%+ test coverage with unit and integration tests
+- **SC-007**: Form validation UI shows appropriate error states for invalid inputs
+- **SC-008**: Member role selector displays all role options with proper styling and indicators
+- **SC-009**: Delete confirmation modal appears when user attempts to delete party
+- **SC-010**: All ESLint, TypeScript type-checking, and Codacy quality gates pass
