@@ -1,11 +1,13 @@
 # Implementation Plan: Character Management Pages
 
 Based on `specs/005-character-management-pages/spec.md` (feature/005-character-management-pages).
+
 # Implementation Plan: Character Management Pages
 
 Based on `specs/005-character-management-pages/spec.md` (feature/005-character-management-pages).
 
 ## Purpose
+
 Provide a TDD-first, UI-only implementation for characters: list, detail, create/edit forms, delete modal with Undo, and search/filters. All behavior is client-side with mock data.
 
 ```markdown
@@ -43,6 +45,7 @@ export type Character = {
 ```
 
 ## Files to Add (summary)
+
 - `src/lib/mock/characters.ts` — seed data (≥5 characters).
 - `types/character.ts` — TypeScript type implementing the canonical shape.
 - `specs/005-character-management-pages/data-model.md` — canonical data model documentation.
@@ -51,11 +54,13 @@ export type Character = {
 - Page wiring under `src/app/characters` (`page.tsx`, `[id]/page.tsx`, `new/page.tsx`).
 
 ## Tests to Add
+
 - Unit tests for store and components (Jest/React Testing Library): store, CharacterCard, CharacterList (search/filter), CharacterForm (validation), DeleteCharacterModal.
 - Integration tests for page flows (list→detail→edit; create→list; delete→list).
 - E2E (Playwright) for basic navigation and flows.
 
 ## Implementation Phases (TDD-first)
+
 1. Write failing tests for `characterStore` (list, getById, create, update, delete, undo).
 2. Implement `characterStore` to satisfy tests.
 3. Write tests for `CharacterCard` and `CharacterList` (search/filter) and implement components.
@@ -65,22 +70,26 @@ export type Character = {
 7. Integration and E2E tests and polish.
 
 ## UX Notes
+
 - Search: partial, case-insensitive substring match.
 - Filters: class dropdown and level range input; combinable.
 - Empty state: CTA linking to `/characters/new`.
 - Undo: show transient toast for ~5s with "Undo"; restore removed item if clicked.
 
 ## Acceptance Criteria (mapped)
+
 - List renders ≥5 mock characters.
 - Search behaves as partial, case-insensitive filter (perceived instant — use a small smoke perf check if exact numbers matter).
 - Create/Edit validate required fields: name, className, race, level (1–20), HP >= 0, AC numeric.
 - Delete requires confirm modal and offers Undo.
 
 ## Next Steps
+
 1. Create `specs/005-character-management-pages/data-model.md` and `types/character.ts` (canonical data).
 2. Create `src/lib/mock/characters.ts` and `src/lib/characterStore.ts` (TDD: tests + implementation).
 3. Implement `CharacterCard`, `CharacterList`, `CharacterDetail`, `CharacterForm`, `DeleteCharacterModal`, and pages.
 
 If you'd like, I can now create the canonical data-model and update the tasks file to reflect these clarifications.
+
 ```
       armorClass: number;

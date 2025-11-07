@@ -9,7 +9,7 @@ type Props = {
   onDeleted?: () => void; // optional callback for navigation after delete
 };
 
-export default function DeleteCharacterModal({ id, characterName, onDeleted }: Props) {
+export default function DeleteCharacterModal({ id, characterName: _characterName, onDeleted }: Props) {
   const store = useCharacterStore();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleted, setDeleted] = useState(false);
