@@ -12,9 +12,16 @@ const PERF_BUDGET_MS = 200;
  * Mock character generator for performance testing
  */
 function generateMockCharacters(count: number): Character[] {
-  const classes = ['Fighter', 'Wizard', 'Rogue', 'Cleric', 'Barbarian', 'Ranger'];
+  const classes = [
+    'Fighter',
+    'Wizard',
+    'Rogue',
+    'Cleric',
+    'Barbarian',
+    'Ranger',
+  ];
   const races = ['Human', 'Elf', 'Dwarf', 'Halfling', 'Dragonborn', 'Tiefling'];
-  
+
   return Array.from({ length: count }, (_, i) => ({
     id: `perf-char-${i}`,
     name: `Character ${i}`,
@@ -49,11 +56,11 @@ describe('Character Filter Performance', () => {
   it('should filter 100 characters within budget', () => {
     const characters = generateMockCharacters(100);
     const start = Date.now();
-    
+
     const result = filterCharacters(characters, 'character 5', 'All');
-    
+
     const duration = Date.now() - start;
-    
+
     expect(result.length).toBeGreaterThan(0);
     expect(duration).toBeLessThan(PERF_BUDGET_MS);
   });
@@ -61,11 +68,11 @@ describe('Character Filter Performance', () => {
   it('should filter by class within budget', () => {
     const characters = generateMockCharacters(100);
     const start = Date.now();
-    
+
     const result = filterCharacters(characters, '', 'Fighter');
-    
+
     const duration = Date.now() - start;
-    
+
     expect(result.length).toBeGreaterThan(0);
     expect(duration).toBeLessThan(PERF_BUDGET_MS);
   });
@@ -73,11 +80,11 @@ describe('Character Filter Performance', () => {
   it('should filter by search and class within budget', () => {
     const characters = generateMockCharacters(100);
     const start = Date.now();
-    
+
     const result = filterCharacters(characters, 'character', 'Wizard');
-    
+
     const duration = Date.now() - start;
-    
+
     expect(result.length).toBeGreaterThan(0);
     expect(duration).toBeLessThan(PERF_BUDGET_MS);
   });
@@ -85,11 +92,11 @@ describe('Character Filter Performance', () => {
   it('should handle large datasets (500 characters) within budget', () => {
     const characters = generateMockCharacters(500);
     const start = Date.now();
-    
+
     const result = filterCharacters(characters, 'character 42', 'All');
-    
+
     const duration = Date.now() - start;
-    
+
     expect(result.length).toBeGreaterThan(0);
     expect(duration).toBeLessThan(PERF_BUDGET_MS);
   });
