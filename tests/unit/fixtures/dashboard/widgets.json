@@ -1,0 +1,15 @@
+{
+    "widgets": [
+        {
+            "id": "active_parties",
+            "label": "Active Parties",
+            "value": 3,
+            "detailUrl": "/parties"
+        },
+        {
+            "id": "encounters",
+            "label": "Encounters",
+            "value": 1200
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+# Ignore files and directories for ESLint
+node_modules/
+.next/
+dist/
+build/
+coverage/
+test-results/
+playwright-report/
+.playwright-mcp/
+.env
+.env.*
+.vscode/
+.idea/
+*.log
+.DS_Store
