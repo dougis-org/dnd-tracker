@@ -5,49 +5,59 @@ import { useCharacterStore } from '../../lib/characterStore';
 
 type Props = {
   id: string;
-  characterName?: string; // optional for display in confirm dialog
-  onDeleted?: () => void; // optional callback for navigation after delete
+  characterName?: string;
+  onDeleted?: () => void;
 };
 
-export default function DeleteCharacterModal({ id, characterName: _characterName, onDeleted }: Props) {
+// Custom hook to manage undo timer
+function useUndoTimer() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const timerRef = useRef<any>(null);
+
+  const setTimer = (callback: () => void, delay: number) => {
+    timerRef.current = globalThis.setTimeout(callback, delay);
+  };
+
+  const clearTimer = () => {
+    if (timerRef.current) {
+      globalThis.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => clearTimer();
+  }, []);
+
+  return { setTimer, clearTimer };
+}
+
+export default function DeleteCharacterModal({
+  id,
+  characterName: _characterName,
+  onDeleted,
+}: Props) {
   const store = useCharacterStore();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [restored, setRestored] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const timerRef = useRef<any>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        globalThis.clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
+  const { setTimer, clearTimer } = useUndoTimer();
 
   const handleConfirm = () => {
-    // perform delete
     store.remove(id);
     setDeleted(true);
-    // call optional navigation callback
     if (onDeleted) onDeleted();
 
-    // keep a timer to clear the undo after 5s
-    timerRef.current = globalThis.setTimeout(() => {
+    setTimer(() => {
       setDeleted(false);
-      timerRef.current = null;
     }, 5000);
   };
 
   const handleUndo = () => {
     store.undo();
-    if (timerRef.current) {
-      globalThis.clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
+    clearTimer();
     setDeleted(false);
     setRestored(true);
-    // hide restored message shortly
     globalThis.setTimeout(() => setRestored(false), 1500);
   };
 

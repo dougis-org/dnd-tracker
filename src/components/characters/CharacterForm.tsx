@@ -6,23 +6,84 @@ import { PartialCharacter, Character } from '../../../types/character';
 
 type Props = {
   onCreated?: (c: Character) => void;
-  // optional initial values to support edit flow
   initial?: PartialCharacter | Character | null;
-  // callback when an existing character is updated
   onSaved?: (c: Character) => void;
 };
 
+const DEFAULT_ABILITIES = {
+  str: 10,
+  dex: 10,
+  con: 10,
+  int: 10,
+  wis: 10,
+  cha: 10,
+};
+
+function getInitialState(initial: PartialCharacter | Character | null | undefined) {
+  if (!initial) {
+    return {
+      name: '',
+      className: '',
+      race: '',
+      level: 1,
+      hp: 1,
+      ac: 10,
+      abilitiesStr: '',
+    };
+  }
+
+  const hp = typeof initial.hitPoints === 'number'
+    ? initial.hitPoints
+    : initial.hitPoints?.current ?? 1;
+
+  return {
+    name: initial.name ?? '',
+    className: initial.className ?? '',
+    race: initial.race ?? '',
+    level: initial.level ?? 1,
+    hp,
+    ac: initial.armorClass ?? 10,
+    abilitiesStr: '',
+  };
+}
+
+function buildPartialCharacter(
+  name: string,
+  className: string,
+  race: string,
+  level: number,
+  hp: number,
+  ac: number,
+  initial?: PartialCharacter | Character | null
+): PartialCharacter {
+  return {
+    name: name.trim(),
+    className: className.trim() || 'Commoner',
+    race: race.trim() || 'Human',
+    level: parseInt(String(level), 10) || 1,
+    hitPoints: { current: parseInt(String(hp), 10) || 1, max: parseInt(String(hp), 10) || 1 },
+    armorClass: parseInt(String(ac), 10) || 10,
+    abilities: (initial && 'abilities' in initial && initial.abilities) ? initial.abilities : DEFAULT_ABILITIES,
+    equipment: (initial && 'equipment' in initial && initial.equipment) ? initial.equipment : [],
+    notes: (initial && 'notes' in initial && initial.notes) ? initial.notes : '',
+  };
+}
+
+function isEditMode(initial: PartialCharacter | Character | null | undefined): initial is Character {
+  return !!(initial && 'id' in initial && typeof initial.id === 'string');
+}
+
 export default function CharacterForm({ onCreated, initial = null, onSaved }: Props) {
   const store = useCharacterStore();
+  const initialState = getInitialState(initial);
 
-  const [name, setName] = useState(initial?.name ?? '');
-  const [className, setClassName] = useState(initial?.className ?? '');
-  const [race, setRace] = useState(initial?.race ?? '');
-  const [level, setLevel] = useState(initial?.level ?? 1);
-  const [hp, setHp] = useState(initial && typeof initial.hitPoints !== 'undefined' ? (typeof initial.hitPoints === 'number' ? initial.hitPoints : initial.hitPoints.current) : 1);
-  const [ac, setAc] = useState(initial?.armorClass ?? 10);
-  // abilities will map to the typed abilities object; keep as simple string inputs for now and parse into numbers
-  const [abilitiesStr, setAbilitiesStr] = useState('');
+  const [name, setName] = useState(initialState.name);
+  const [className, setClassName] = useState(initialState.className);
+  const [race, setRace] = useState(initialState.race);
+  const [level, setLevel] = useState(initialState.level);
+  const [hp, setHp] = useState(initialState.hp);
+  const [ac, setAc] = useState(initialState.ac);
+  const [abilitiesStr, setAbilitiesStr] = useState(initialState.abilitiesStr);
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState(false);
 
@@ -40,41 +101,24 @@ export default function CharacterForm({ onCreated, initial = null, onSaved }: Pr
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
     if (!name.trim()) {
       setError('Name is required');
       return;
     }
-    const partial: PartialCharacter = {
-      name: name.trim(),
-      className: className.trim() || 'Commoner',
-      race: race.trim() || 'Human',
-      level: parseInt(String(level), 10) || 1,
-      hitPoints: { current: parseInt(String(hp), 10) || 1, max: parseInt(String(hp), 10) || 1 },
-      armorClass: parseInt(String(ac), 10) || 10,
-      abilities: initial && 'abilities' in initial && initial.abilities ? initial.abilities : {
-        str: 10,
-        dex: 10,
-        con: 10,
-        int: 10,
-        wis: 10,
-        cha: 10,
-      },
-      equipment: initial && 'equipment' in initial && initial.equipment ? initial.equipment : [],
-      notes: initial && 'notes' in initial && initial.notes ? initial.notes : '',
-    };
 
     try {
-      // If editing (initial provided with id), perform update
-      if (initial && 'id' in initial && typeof initial.id === 'string') {
+      const partial = buildPartialCharacter(name, className, race, level, hp, ac, initial);
+
+      if (isEditMode(initial)) {
         const updated: Character = {
           ...(initial as Character),
           ...partial,
-          id: initial.id as string,
+          id: initial.id,
         } as Character;
         store.update(updated);
         setCreated(true);
         if (onSaved) onSaved(updated);
-        // hide success after a short time
         globalThis.setTimeout(() => setCreated(false), 1500);
         return;
       }
@@ -82,9 +126,7 @@ export default function CharacterForm({ onCreated, initial = null, onSaved }: Pr
       const createdChar = store.add(partial);
       setCreated(true);
       if (onCreated) onCreated(createdChar);
-      // clear form so user sees it's done
       resetForm();
-      // hide success after a short time
       globalThis.setTimeout(() => setCreated(false), 1500);
     } catch (_err) {
       setError('Failed to create/update character');
@@ -124,12 +166,12 @@ export default function CharacterForm({ onCreated, initial = null, onSaved }: Pr
       </div>
 
       <div>
-  <label htmlFor="abilities">Abilities (optional text)</label>
-  <textarea id="abilities" aria-label="Abilities" value={abilitiesStr} onChange={(e) => setAbilitiesStr(e.target.value)} />
+        <label htmlFor="abilities">Abilities (optional text)</label>
+        <textarea id="abilities" aria-label="Abilities" value={abilitiesStr} onChange={(e) => setAbilitiesStr(e.target.value)} />
       </div>
 
-  {error && <div role="alert">{error}</div>}
-  {created && <div role="status">{initial?.id ? 'Character updated' : 'Character created'}</div>}
+      {error && <div role="alert">{error}</div>}
+      {created && <div role="status">{isEditMode(initial) ? 'Character updated' : 'Character created'}</div>}
 
       <button type="submit">Create character</button>
     </form>

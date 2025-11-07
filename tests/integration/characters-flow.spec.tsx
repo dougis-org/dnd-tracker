@@ -16,6 +16,26 @@ jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 
+// Extract detail harness
+function CharacterDetailHarness({ characterId }: { characterId: string }) {
+  const store = useCharacterStore();
+  if (store.state.characters.length === 0) store.init();
+  return <CharacterDetail id={characterId} />;
+}
+
+// Extract form harness
+function CharacterFormHarness() {
+  const [created, setCreated] = useState(false);
+  const store = useCharacterStore();
+
+  if (created) {
+    const newChar = store.state.characters.find((c: Character) => c.name === 'Integration Test Character');
+    return <div data-testid="success">{newChar?.name}</div>;
+  }
+
+  return <CharacterForm onCreated={() => setCreated(true)} />;
+}
+
 describe('Character Management Integration', () => {
   const mockPush = jest.fn();
 
@@ -31,7 +51,6 @@ describe('Character Management Integration', () => {
       </CharacterProvider>
     );
 
-    // Verify seed characters are visible
     const firstCharacter = mockCharacters[0];
     expect(screen.getByText(firstCharacter.name)).toBeInTheDocument();
   });
@@ -39,16 +58,9 @@ describe('Character Management Integration', () => {
   it('CharacterDetail shows character when valid ID provided', () => {
     const firstCharacter = mockCharacters[0];
 
-    // Harness to init store first
-    const TestHarness = () => {
-      const store = useCharacterStore();
-      if (store.state.characters.length === 0) store.init();
-      return <CharacterDetail id={firstCharacter.id} />;
-    };
-
     render(
       <CharacterProvider>
-        <TestHarness />
+        <CharacterDetailHarness characterId={firstCharacter.id} />
       </CharacterProvider>
     );
 
@@ -57,33 +69,18 @@ describe('Character Management Integration', () => {
   });
 
   it('CharacterForm can create a new character', async () => {
-    const TestHarness = () => {
-      const [created, setCreated] = useState(false);
-      const store = useCharacterStore();
-
-      if (created) {
-        const newChar = store.state.characters.find((c: Character) => c.name === 'Integration Test Character');
-        return <div data-testid="success">{newChar?.name}</div>;
-      }
-
-      return <CharacterForm onCreated={() => setCreated(true)} />;
-    };
-
     render(
       <CharacterProvider>
-        <TestHarness />
+        <CharacterFormHarness />
       </CharacterProvider>
     );
 
-    // Fill form
     const nameInput = screen.getByLabelText(/Name/i);
     fireEvent.change(nameInput, { target: { value: 'Integration Test Character' } });
 
-    // Submit
     const submitButton = screen.getByRole('button', { name: /Create/i });
     fireEvent.click(submitButton);
 
-    // Wait for success
     await waitFor(() => {
       expect(screen.getByTestId('success')).toHaveTextContent('Integration Test Character');
     });
