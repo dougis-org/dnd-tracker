@@ -1,4 +1,3 @@
-```markdown
 # Feature Specification: Feature 003 — Landing Page & Marketing Components
 
 **Feature Branch**: `feature/003-landing-page`
