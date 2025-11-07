@@ -113,13 +113,13 @@ description: "Task list for Character Management Pages"
 
 ### Tests
 
-- [ ] T027 [P] [US5] Add unit test `tests/unit/components/characters/DeleteCharacterModal.spec.tsx` for confirm/undo behavior
+- [x] T027 [P] [US5] Add unit test `tests/unit/components/characters/DeleteCharacterModal.spec.tsx` for confirm/undo behavior
 
 ### Implementation
 
-- [ ] T028 [US5] Implement `src/components/characters/DeleteCharacterModal.tsx` (confirm modal UI)
-- [ ] T029 [US5] Implement Undo support in `src/lib/characterStore.ts` and add UI toast at `src/components/characters/DeleteCharacterModal.tsx` (or reuse existing toast component)
-- [ ] T030 [US5] Ensure delete navigates to `/characters` after successful confirm and removal
+- [x] T028 [US5] Implement `src/components/characters/DeleteCharacterModal.tsx` (confirm modal UI)
+- [x] T029 [US5] Implement Undo support in `src/lib/characterStore.ts` and add UI toast at `src/components/characters/DeleteCharacterModal.tsx` (or reuse existing toast component)
+- [x] T030 [US5] Ensure delete navigates to `/characters` after successful confirm and removal
 
 ---
 
