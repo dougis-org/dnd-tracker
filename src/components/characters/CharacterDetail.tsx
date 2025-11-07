@@ -2,9 +2,12 @@
 import React from 'react';
 import { useCharacterStore } from '../../lib/characterStore';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import DeleteCharacterModal from './DeleteCharacterModal';
 
 export default function CharacterDetail({ id }: { id: string }) {
   const store = useCharacterStore();
+  const router = useRouter();
   const character = store.state.characters.find((c) => c.id === id);
 
   if (!character) {
@@ -48,7 +51,11 @@ export default function CharacterDetail({ id }: { id: string }) {
       <div className="mt-4">
         <Link href={`/characters/${id}/edit`}>Edit</Link>
         <span className="mx-2">|</span>
-        <Link href="/characters">Delete</Link>
+        <DeleteCharacterModal
+          id={id}
+          characterName={character.name}
+          onDeleted={() => router.push('/characters')}
+        />
       </div>
     </article>
   );
