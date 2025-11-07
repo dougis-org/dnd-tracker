@@ -2,29 +2,19 @@
 
 Based on `specs/005-character-management-pages/spec.md` (feature/005-character-management-pages).
 
-# Implementation Plan: Character Management Pages
-
-Based on `specs/005-character-management-pages/spec.md` (feature/005-character-management-pages).
-
 ## Purpose
 
-Provide a TDD-first, UI-only implementation for characters: list, detail, create/edit forms, delete modal with Undo, and search/filters. All behavior is client-side with mock data.
-
-```markdown
-# Implementation Plan: Character Management Pages
-
-Based on `specs/005-character-management-pages/spec.md` (feature/005-character-management-pages).
-
-## Purpose
 Provide a TDD-first, UI-only implementation for characters: list, detail, create/edit forms, delete modal with Undo, and search/filters. All behavior is client-side with mock data.
 
 ## Contract
+
 - Inputs: a client-side mock character store (an array of Character objects).
 - Outputs: UI pages and components that read and write the mock store in-memory.
 - Error modes: invalid id → friendly empty state linking back to `/characters`; invalid form input → inline validation blocks submission.
 - Success criteria: pages render, tests pass, and flows match the acceptance criteria in the spec.
 
 ## Canonical Data Shape (TypeScript)
+
 The canonical shape for the feature is defined in `specs/005-character-management-pages/data-model.md` and implemented in `types/character.ts` (see tasks). The primary property name for a character's D&D class is `className` in code (this file maps the spec term "class" → `className`).
 
 Example TypeScript shape (for reference):
@@ -88,8 +78,3 @@ export type Character = {
 1. Create `specs/005-character-management-pages/data-model.md` and `types/character.ts` (canonical data).
 2. Create `src/lib/mock/characters.ts` and `src/lib/characterStore.ts` (TDD: tests + implementation).
 3. Implement `CharacterCard`, `CharacterList`, `CharacterDetail`, `CharacterForm`, `DeleteCharacterModal`, and pages.
-
-If you'd like, I can now create the canonical data-model and update the tasks file to reflect these clarifications.
-
-```
-      armorClass: number;

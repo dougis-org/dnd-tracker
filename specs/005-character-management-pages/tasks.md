@@ -58,11 +58,11 @@ description: "Task list for Character Management Pages"
 
 **Independent Test**: Visit `/characters/:id` and verify stat block renders (HP, AC, abilities, equipment, class, race, level).
 
-### Tests
+### Tests (US2)
 
 - [x] T016 [P] [US2] Add unit test `tests/unit/components/characters/CharacterDetail.spec.tsx` for detail rendering and invalid-id empty state
 
-### Implementation
+### Implementation (US2)
 
 - [ ] T017 [US2] Implement `src/components/characters/CharacterDetail.tsx` (stat block UI, Edit/Delete buttons)
 - [ ] T018 [US2] Add page `src/app/characters/[id]/page.tsx` wiring `CharacterDetail` and handling invalid id empty state (link back to `/characters`)
@@ -76,11 +76,11 @@ description: "Task list for Character Management Pages"
 
 **Independent Test**: Visit `/characters/new` and verify form fields exist and required validation prevents submission when empty.
 
-### Tests
+### Tests (US3)
 
 - [x] T020 [P] [US3] Add unit test `tests/unit/components/characters/CharacterForm.spec.tsx` for validation rules and submit behavior (UI-only)
 
-### Implementation
+### Implementation (US3)
 
 - [x] T021 [US3] Implement `src/components/characters/CharacterForm.tsx` (create/edit form with name, class, race, level, HP, AC, abilities; validates required fields)
 - [x] T022 [US3] Add page `src/app/characters/new/page.tsx` that mounts `CharacterForm` for creation and uses `characterStore` to add new item (mock behavior)
@@ -94,11 +94,11 @@ description: "Task list for Character Management Pages"
 
 **Independent Test**: From `/characters/:id` open Edit, modify fields, Save, and observe updated values in UI (mock behavior).
 
-### Tests
+### Tests (US4)
 
 - [ ] T024 [P] [US4] Add unit test `tests/unit/components/characters/EditCharacterFlow.spec.tsx` for prefilling and save behavior
 
-### Implementation
+### Implementation (US4)
 
 - [x] T025 [US4] Wire Edit button in `src/components/characters/CharacterDetail.tsx` to open `CharacterForm` prefilled (reuse `src/components/characters/CharacterForm.tsx`)
 - [x] T026 [US4] Implement update flow in `src/lib/characterStore.ts` (update action) and ensure components react to store changes
@@ -115,7 +115,7 @@ description: "Task list for Character Management Pages"
 
 - [x] T027 [P] [US5] Add unit test `tests/unit/components/characters/DeleteCharacterModal.spec.tsx` for confirm/undo behavior
 
-### Implementation
+### Implementation (US5)
 
 - [x] T028 [US5] Implement `src/components/characters/DeleteCharacterModal.tsx` (confirm modal UI)
 - [x] T029 [US5] Implement Undo support in `src/lib/characterStore.ts` and add UI toast at `src/components/characters/DeleteCharacterModal.tsx` (or reuse existing toast component)
