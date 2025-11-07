@@ -2,39 +2,40 @@
   {
     "id": "tier-free",
     "name": "Free",
-    "priceMonthly": "$0/mo",
+    "priceMonthly": "$0",
     "features": [
-      "Up to 3 campaigns",
-      "Basic character sheets",
-      "Combat tracker",
+      "Up to 2 characters",
+      "Basic combat tracking",
+      "Monster library access",
       "Community support"
     ]
   },
   {
     "id": "tier-pro",
     "name": "Pro",
-    "priceMonthly": "$9/mo",
+    "priceMonthly": "$9.99",
     "features": [
-      "Unlimited campaigns",
-      "Advanced character sheets",
-      "Combat tracker with advanced features",
-      "Encounter builder",
-      "Priority support",
-      "Cloud backup"
+      "Unlimited characters",
+      "Advanced combat tracking",
+      "Full monster library",
+      "Party management",
+      "Email support",
+      "Cloud sync",
+      "Export encounters"
     ]
   },
   {
-    "id": "tier-dm-elite",
-    "name": "DM Elite",
-    "priceMonthly": "$19/mo",
+    "id": "tier-ultimate",
+    "name": "Ultimate",
+    "priceMonthly": "$19.99",
     "features": [
       "Everything in Pro",
-      "Advanced monster customization",
-      "Campaign sharing",
-      "Custom themes",
+      "AI-powered encounter generator",
+      "Advanced analytics",
+      "Priority support",
+      "Custom campaigns",
       "API access",
-      "1-on-1 support",
-      "Early access to new features"
+      "Advanced reporting"
     ]
   }
 ]

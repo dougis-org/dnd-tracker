@@ -1,38 +1,38 @@
 [
   {
     "id": "feature-1",
-    "title": "Campaign Management",
-    "description": "Organize and manage multiple campaigns with rich world-building tools and campaign-specific settings.",
-    "icon": "LayoutGrid"
+    "title": "Character Management",
+    "description": "Create, customize, and manage your D&D characters with detailed attributes, skills, and progression tracking.",
+    "icon": "users"
   },
   {
     "id": "feature-2",
-    "title": "Character Sheets",
-    "description": "Create detailed character sheets with automatic calculations, equipment tracking, and spell management.",
-    "icon": "Users"
+    "title": "Combat Tracking",
+    "description": "Real-time initiative tracking, round management, and combat state organization for seamless gameplay.",
+    "icon": "swords"
   },
   {
     "id": "feature-3",
-    "title": "Combat Tracker",
-    "description": "Real-time combat tracking with initiative, turn order, health management, and action economy.",
-    "icon": "Zap"
+    "title": "Party Management",
+    "description": "Organize your party members, manage relationships, and track group statistics and dynamics.",
+    "icon": "users-round"
   },
   {
     "id": "feature-4",
-    "title": "Encounter Builder",
-    "description": "Build and balance encounters with monster stat blocks, treasure generation, and difficulty calculations.",
-    "icon": "Target"
+    "title": "Encounter Planning",
+    "description": "Design and prepare encounters with monster selection, difficulty balancing, and encounter notes.",
+    "icon": "map-pin"
   },
   {
     "id": "feature-5",
-    "title": "Monster Reference",
-    "description": "Access comprehensive monster stat blocks, search filters, and easy creature management.",
-    "icon": "BookOpen"
+    "title": "Item & Inventory Tracking",
+    "description": "Manage character inventories, track items, gold, and equipment across your entire party.",
+    "icon": "package"
   },
   {
     "id": "feature-6",
-    "title": "Offline Capability",
-    "description": "Play and manage sessions offline with automatic sync when back online.",
-    "icon": "Wifi"
+    "title": "Monster Library",
+    "description": "Access an extensive library of creatures with stats, abilities, and quick reference cards.",
+    "icon": "zap"
   }
 ]
