@@ -27,20 +27,20 @@ Story goal: Provide an accessible, responsive hero, feature showcase and CTA tha
 
 Independent test criteria: Components render with provided mock data, SEO tags present in head, layout adapts at viewports: 375px, 768px, 1024px.
 
-- [ ] T007 [P] [US1] Create `Hero` component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/Hero.tsx` (accepts props for headline, subhead, CTAs and image).
-- [ ] T008 [P] [US1] Create `FeatureCard` component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/FeatureCard.tsx` (title, description, icon).
-- [ ] T009 [P] [US1] Create `CallToAction` small component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/CallToAction.tsx` (primary and secondary CTA buttons).
+- [X] T007 [P] [US1] Create `Hero` component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/Hero.tsx` (accepts props for headline, subhead, CTAs and image).
+- [X] T008 [P] [US1] Create `FeatureCard` component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/FeatureCard.tsx` (title, description, icon).
+- [X] T009 [P] [US1] Create `CallToAction` small component at `/home/doug/ai-dev-2/dnd-tracker/src/components/landing/CallToAction.tsx` (primary and secondary CTA buttons).
 
   **TDD enforcement — write failing unit tests first (blocking before implementation of each component)**
 
-  - [ ] T007a [US1] Add a failing unit test for `Hero` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/hero.test.tsx` that asserts expected props and minimal render (test must fail initially).
+  - [X] T007a [US1] Add a failing unit test for `Hero` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/hero.test.tsx` that asserts expected props and minimal render (test must fail initially).
     - blocks: T007
-  - [ ] T008a [US1] Add a failing unit test for `FeatureCard` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/featurecard.test.tsx` that asserts expected content/ARIA (test must fail initially).
+  - [X] T008a [US1] Add a failing unit test for `FeatureCard` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/featurecard.test.tsx` that asserts expected content/ARIA (test must fail initially).
     - blocks: T008
-  - [ ] T009a [US1] Add a failing unit test for `CallToAction` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/cta.test.tsx` that asserts button presence and accessible names (test must fail initially).
+  - [X] T009a [US1] Add a failing unit test for `CallToAction` at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/cta.test.tsx` that asserts button presence and accessible names (test must fail initially).
     - blocks: T009
 
-- [ ] T010 [US1] Implement landing page composition at `/home/doug/ai-dev-2/dnd-tracker/src/app/(landing)/page.tsx` that imports components (`Hero`, `FeatureCard`, `CallToAction`) and `SeoTags` and reads mock data from `/home/doug/ai-dev-2/dnd-tracker/src/app/(landing)/data/*.json`.
+- [X] T010 [US1] Implement landing page composition at `/home/doug/ai-dev-2/dnd-tracker/src/app/(landing)/page.tsx` that imports components (`Hero`, `FeatureCard`, `CallToAction`) and `SeoTags` and reads mock data from `/home/doug/ai-dev-2/dnd-tracker/src/app/(landing)/data/*.json`.
 - [ ] T011 [P] [US1] Complete unit tests for `Hero` and `FeatureCard` (render, snapshot, ARIA) at `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/hero.test.tsx` and `/home/doug/ai-dev-2/dnd-tracker/tests/unit/components/landing/featurecard.test.tsx`.
 - [ ] T012 [US1] Ensure `SeoTags` is used by landing page and implement default values at `/home/doug/ai-dev-2/dnd-tracker/src/components/SeoTags.tsx` (validate props and server component usage).
 

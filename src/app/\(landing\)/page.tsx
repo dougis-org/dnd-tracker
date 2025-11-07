@@ -3,6 +3,9 @@ import { SeoTags } from '@/components/SeoTags';
 import { Hero } from '@/components/landing/Hero';
 import { FeatureCard } from '@/components/landing/FeatureCard';
 import { CallToAction } from '@/components/landing/CallToAction';
+import { InteractiveDemo } from '@/components/landing/InteractiveDemo';
+import { Testimonials } from '@/components/landing/Testimonials';
+import { PricingTable } from '@/components/landing/PricingTable';
 import featuresData from './data/features.json';
 import testimonialsData from './data/testimonials.json';
 import pricingData from './data/pricing.json';
@@ -63,97 +66,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      {testimonialsData.length > 0 && (
-        <section
-          role="region"
-          aria-label="Testimonials"
-          className="w-full py-16 md:py-24 bg-slate-50"
-        >
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-                Loved by Dungeon Masters
-              </h2>
-            </div>
+      {/* Interactive Demo Section */}
+      <InteractiveDemo />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {testimonialsData.map((testimonial) => (
-                <div
-                  key={testimonial.id}
-                  className="p-6 bg-white rounded-lg shadow-sm border border-slate-200"
-                >
-                  <div className="flex gap-2 mb-4">
-                    {Array.from({ length: testimonial.rating || 5 }).map(
-                      (_, i) => (
-                        <span key={i} className="text-yellow-400">
-                          ★
-                        </span>
-                      )
-                    )}
-                  </div>
-                  <p className="text-slate-700 mb-4">"{testimonial.text}"</p>
-                  <div className="font-semibold text-slate-900">
-                    {testimonial.author}
-                  </div>
-                  {testimonial.title && (
-                    <div className="text-sm text-slate-600">
-                      {testimonial.title}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Testimonials Section */}
+      <Testimonials data={testimonialsData} />
 
       {/* Pricing Section */}
-      {pricingData.length > 0 && (
-        <section
-          role="region"
-          aria-label="Pricing"
-          className="w-full py-16 md:py-24 bg-white"
-        >
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-                Simple, Transparent Pricing
-              </h2>
-              <p className="text-lg text-slate-600">
-                Choose the plan that fits your needs
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {pricingData.map((tier) => (
-                <div
-                  key={tier.id}
-                  className="p-8 rounded-lg border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all"
-                >
-                  <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                    {tier.name}
-                  </h3>
-                  <p className="text-3xl font-bold text-blue-600 mb-6">
-                    {tier.priceMonthly}
-                  </p>
-                  <ul className="space-y-3 mb-8">
-                    {tier.features.map((feature, i) => (
-                      <li key={i} className="text-slate-700 flex items-center gap-2">
-                        <span className="text-blue-600">✓</span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <button className="w-full px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
-                    Get Started
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      <PricingTable data={pricingData} />
 
       {/* Final CTA */}
       <section className="w-full py-16 md:py-24 bg-linear-to-b from-slate-900 to-slate-800">
