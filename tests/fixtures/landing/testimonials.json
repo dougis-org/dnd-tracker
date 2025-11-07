@@ -1,0 +1,34 @@
+[
+  {
+    "id": "testimonial-1",
+    "author": "Sarah Mitchell",
+    "title": "Dungeon Master",
+    "imageUrl": null,
+    "text": "This tool has transformed how I run campaigns. Session prep is now lightning fast, and my players love the interactive features.",
+    "rating": 5
+  },
+  {
+    "id": "testimonial-2",
+    "author": "James Chen",
+    "title": "Game Master",
+    "imageUrl": null,
+    "text": "The combat tracker is an absolute game-changer. No more fumbling with spreadsheets during combat rounds.",
+    "rating": 5
+  },
+  {
+    "id": "testimonial-3",
+    "author": "Emma Rodriguez",
+    "title": "D&D Player",
+    "imageUrl": null,
+    "text": "Our entire gaming group switched to this platform. It's intuitive, feature-rich, and the offline support is clutch.",
+    "rating": 5
+  },
+  {
+    "id": "testimonial-4",
+    "author": "Marcus Johnson",
+    "title": "Campaign Organizer",
+    "imageUrl": null,
+    "text": "Finally, a tool built specifically for D&D that doesn't feel like a spreadsheet. Highly recommend for any DM.",
+    "rating": 5
+  }
+]

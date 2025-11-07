@@ -1,0 +1,21 @@
+[
+    {
+        "id": "tier-free",
+        "name": "Free",
+        "priceMonthly": "$0/mo",
+        "features": [
+            "Up to 2 characters",
+            "Basic session export"
+        ]
+    },
+    {
+        "id": "tier-pro",
+        "name": "Pro",
+        "priceMonthly": "$9/mo",
+        "features": [
+            "Unlimited characters",
+            "Advanced session tools",
+            "Priority support"
+        ]
+    }
+]

@@ -1,0 +1,18 @@
+[
+    {
+        "id": "t1",
+        "author": "Elena M.",
+        "title": "Dungeon Master",
+        "imageUrl": null,
+        "text": "This tracker made running encounters so much easier — my sessions are smoother and faster.",
+        "rating": 5
+    },
+    {
+        "id": "t2",
+        "author": "Rafael T.",
+        "title": "Player",
+        "imageUrl": null,
+        "text": "The character management UI is clean and fast — especially useful between sessions.",
+        "rating": 4
+    }
+]

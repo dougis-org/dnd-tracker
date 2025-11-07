@@ -1,0 +1,14 @@
+[
+    {
+        "id": "feature-1",
+        "title": "Track sessions and encounters",
+        "description": "Record combat sessions, track initiative, and manage monster stats in real time.",
+        "icon": "sparkles"
+    },
+    {
+        "id": "feature-2",
+        "title": "Manage characters & parties",
+        "description": "Create and manage characters, inventory, and party organization with ease.",
+        "icon": "user-group"
+    }
+]

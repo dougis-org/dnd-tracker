@@ -1,0 +1,40 @@
+[
+  {
+    "id": "tier-free",
+    "name": "Free",
+    "priceMonthly": "$0/mo",
+    "features": [
+      "Up to 3 campaigns",
+      "Basic character sheets",
+      "Combat tracker",
+      "Community support"
+    ]
+  },
+  {
+    "id": "tier-pro",
+    "name": "Pro",
+    "priceMonthly": "$9/mo",
+    "features": [
+      "Unlimited campaigns",
+      "Advanced character sheets",
+      "Combat tracker with advanced features",
+      "Encounter builder",
+      "Priority support",
+      "Cloud backup"
+    ]
+  },
+  {
+    "id": "tier-dm-elite",
+    "name": "DM Elite",
+    "priceMonthly": "$19/mo",
+    "features": [
+      "Everything in Pro",
+      "Advanced monster customization",
+      "Campaign sharing",
+      "Custom themes",
+      "API access",
+      "1-on-1 support",
+      "Early access to new features"
+    ]
+  }
+]

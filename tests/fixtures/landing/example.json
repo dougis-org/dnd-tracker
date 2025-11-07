@@ -1,0 +1,29 @@
+{
+    "hero": {
+        "title": "DnD Tracker — Build your adventure",
+        "subtitle": "Create sessions, manage characters, and run encounters",
+        "cta": "Get started"
+    },
+    "features": [
+        {
+            "title": "Characters",
+            "description": "Manage player characters"
+        },
+        {
+            "title": "Encounters",
+            "description": "Track combat and initiative"
+        }
+    ],
+    "pricing": {
+        "tiers": [
+            {
+                "name": "Free",
+                "price": "$0"
+            },
+            {
+                "name": "Pro",
+                "price": "$9/mo"
+            }
+        ]
+    }
+}

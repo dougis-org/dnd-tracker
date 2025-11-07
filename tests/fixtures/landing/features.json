@@ -1,0 +1,38 @@
+[
+  {
+    "id": "feature-1",
+    "title": "Campaign Management",
+    "description": "Organize and manage multiple campaigns with rich world-building tools and campaign-specific settings.",
+    "icon": "LayoutGrid"
+  },
+  {
+    "id": "feature-2",
+    "title": "Character Sheets",
+    "description": "Create detailed character sheets with automatic calculations, equipment tracking, and spell management.",
+    "icon": "Users"
+  },
+  {
+    "id": "feature-3",
+    "title": "Combat Tracker",
+    "description": "Real-time combat tracking with initiative, turn order, health management, and action economy.",
+    "icon": "Zap"
+  },
+  {
+    "id": "feature-4",
+    "title": "Encounter Builder",
+    "description": "Build and balance encounters with monster stat blocks, treasure generation, and difficulty calculations.",
+    "icon": "Target"
+  },
+  {
+    "id": "feature-5",
+    "title": "Monster Reference",
+    "description": "Access comprehensive monster stat blocks, search filters, and easy creature management.",
+    "icon": "BookOpen"
+  },
+  {
+    "id": "feature-6",
+    "title": "Offline Capability",
+    "description": "Play and manage sessions offline with automatic sync when back online.",
+    "icon": "Wifi"
+  }
+]
