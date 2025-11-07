@@ -18,21 +18,27 @@ type Action =
 
 const initialState: State = { characters: [], history: [] };
 
+// Helper to update state with history tracking
+function withHistory(state: State, newCharacters: Character[]): State {
+  return {
+    characters: newCharacters,
+    history: [...state.history, state.characters],
+  };
+}
+
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'init':
       return { ...state, characters: action.payload };
-    case 'add': {
-      const next = [...state.characters, action.payload];
-      return { characters: next, history: [...state.history, state.characters] };
-    }
+    case 'add':
+      return withHistory(state, [...state.characters, action.payload]);
     case 'update': {
       const updated = state.characters.map((c) => (c.id === action.payload.id ? action.payload : c));
-      return { characters: updated, history: [...state.history, state.characters] };
+      return withHistory(state, updated);
     }
     case 'delete': {
       const filtered = state.characters.filter((c) => c.id !== action.payload);
-      return { characters: filtered, history: [...state.history, state.characters] };
+      return withHistory(state, filtered);
     }
     case 'undo': {
       const last = state.history[state.history.length - 1];

@@ -48,9 +48,9 @@ export default function CharacterForm({ onCreated, initial = null, onSaved }: Pr
       name: name.trim(),
       className: className.trim() || 'Commoner',
       race: race.trim() || 'Human',
-      level: Number(level) || 1,
-      hitPoints: { current: Number(hp) || 1, max: Number(hp) || 1 },
-      armorClass: Number(ac) || 10,
+      level: parseInt(String(level), 10) || 1,
+      hitPoints: { current: parseInt(String(hp), 10) || 1, max: parseInt(String(hp), 10) || 1 },
+      armorClass: parseInt(String(ac), 10) || 10,
       abilities: initial && 'abilities' in initial && initial.abilities ? initial.abilities : {
         str: 10,
         dex: 10,
