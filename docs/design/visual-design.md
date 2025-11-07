@@ -2,11 +2,23 @@
 
 **Version**: 1.0.0  
 **Last Updated**: 2025-11-07  
-**Status**: Foundation (locked for consistency across all features)
+**Status**: Foundation (locked for consistency across all features)  
+**Tailwind CSS**: v4 (with modern `bg-linear-to-*` gradient syntax)
 
 ## Purpose
 
 This document defines visual design standards, component variants, color systems, and layout patterns for all D&D Tracker features (F001-F060). All features must comply with these standards to ensure visual consistency and optimal user experience.
+
+---
+
+## Important: Tailwind CSS v4 Syntax
+
+This project uses **Tailwind CSS v4**, which introduced new gradient class syntax:
+
+- **Old (v3)**: `bg-gradient-to-b from-slate-50 to-white` ❌
+- **New (v4)**: `bg-linear-to-b from-slate-50 to-white` ✅
+
+All gradient utilities use the `bg-linear-to-*` prefix. This is the correct, standard syntax for this project.
 
 ---
 
@@ -351,7 +363,265 @@ className="flex gap-3 justify-end mt-6"
 
 ---
 
-## 6. Party Management UI (F006 Specific)
+## 6. Landing Page & Marketing UI
+
+Landing page components showcase D&D Tracker features to potential users. These follow the core design system with marketing-specific patterns.
+
+### 6.1 Hero Section
+
+**Hero Component Layout**:
+
+```
+Hero Section (Full Width)
+├─ Background: bg-linear-to-b from-slate-50 to-white
+├─ Content Column (Mobile: Full, MD+: 50%)
+│  ├─ H1 Headline: text-4xl md:text-5xl font-bold text-slate-900
+│  ├─ Subheading: text-lg md:text-xl text-slate-600
+│  └─ CTA Button: Primary button (see 5.2)
+└─ Image Column (Hidden Mobile, MD+: 50%)
+   └─ Image: rounded-lg shadow-lg
+```
+
+**Tailwind Classes**:
+```tsx
+<section className="w-full py-12 md:py-24 bg-linear-to-b from-slate-50 to-white">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+    {/* Content */}
+    <div>
+      <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+        {headline}
+      </h1>
+      <p className="text-lg md:text-xl text-slate-600 mb-8">
+        {subhead}
+      </p>
+      <Link className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">
+        {ctaText}
+      </Link>
+    </div>
+    {/* Image */}
+    <div className="hidden md:flex justify-center">
+      <Image src={imageUrl} alt={imageAlt} className="rounded-lg shadow-lg" />
+    </div>
+  </div>
+</section>
+```
+
+**Responsive Behavior**:
+- Mobile: Single column, full-width text
+- MD+: Two-column with image on right
+- Text remains left-aligned, image centered
+
+### 6.2 Feature Showcase Section
+
+**Feature Grid Layout**:
+
+```
+Features Section (White Background)
+├─ Section Title: text-3xl md:text-4xl font-bold text-center
+├─ Subtitle: text-lg text-slate-600 text-center
+└─ Grid (1 col mobile, 2 cols tablet, 3 cols desktop)
+   └─ FeatureCard (repeating)
+      ├─ Icon: 8x8px, text-blue-600
+      ├─ Title: text-xl font-semibold
+      └─ Description: text-slate-600
+```
+
+**FeatureCard Styling**:
+```tsx
+className="p-6 rounded-lg border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all bg-white"
+```
+
+**Responsive Grid**:
+- Mobile: `grid-cols-1`
+- Tablet: `grid-cols-2`
+- Desktop: `grid-cols-3`
+- Gap: `gap-8` (32px)
+
+### 6.3 Testimonials Section
+
+**Section Layout**:
+
+```
+Testimonials Section (Slate-50 Background)
+├─ Section Title: text-3xl md:text-4xl font-bold
+├─ Subtitle: text-lg text-slate-600
+└─ Grid (1 col mobile, 2 cols desktop)
+   └─ TestimonialCard (repeating)
+      ├─ Star Rating: yellow-400 (★)
+      ├─ Quote Text: text-slate-700
+      ├─ Author Name: font-semibold text-slate-900
+      └─ Author Title: text-sm text-slate-600 (optional)
+```
+
+**TestimonialCard Styling**:
+```tsx
+className="p-6 bg-white rounded-lg shadow-sm border border-slate-200"
+```
+
+**Background**: `bg-slate-50` for section contrast
+
+### 6.4 Interactive Demo Section
+
+**Section Layout**:
+
+```
+Interactive Demo Section (White Background)
+├─ Section Title: text-3xl md:text-4xl font-bold text-center
+├─ Subtitle: text-lg text-slate-600 text-center
+├─ Toggle Buttons (Horizontal Center)
+│  ├─ Active Button: bg-blue-600 text-white
+│  └─ Inactive Button: bg-slate-200 text-slate-900 hover:bg-slate-300
+└─ Demo Container: bg-slate-50, rounded-lg, p-8 md:p-12, border-slate-200
+   └─ Demo Content (toggles based on button state)
+```
+
+**Button Styling**:
+```tsx
+// Active
+className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg transition-colors"
+
+// Inactive
+className="px-6 py-2 bg-slate-200 text-slate-900 font-semibold rounded-lg hover:bg-slate-300 transition-colors"
+```
+
+**Demo Container**:
+```tsx
+className="bg-slate-50 rounded-lg p-8 md:p-12 border border-slate-200"
+```
+
+### 6.5 Pricing Section
+
+**Section Layout**:
+
+```
+Pricing Section (White Background)
+├─ Section Title: text-3xl md:text-4xl font-bold text-center
+├─ Subtitle: text-lg text-slate-600 text-center
+└─ Grid (1 col mobile, 2 cols tablet, 3 cols desktop)
+   └─ PricingCard (repeating)
+      ├─ Plan Name: text-2xl font-bold text-slate-900
+      ├─ Price: text-3xl font-bold text-blue-600
+      ├─ Features List: text-slate-700 with ✓ checkmark (text-blue-600)
+      └─ CTA Button: Primary button (width: 100%)
+```
+
+**PricingCard Styling**:
+```tsx
+className="p-8 rounded-lg border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all"
+```
+
+**Feature List Item**:
+```tsx
+className="text-slate-700 flex items-center gap-2"
+// With checkmark: <span className="text-blue-600">✓</span>
+```
+
+### 6.6 Call-to-Action (Final CTA)
+
+**CTA Section Layout**:
+
+```
+Final CTA Section (Dark Gradient Background)
+├─ Background: bg-linear-to-b from-slate-900 to-slate-800
+├─ Content (Center Aligned)
+│  ├─ Headline: text-3xl md:text-4xl font-bold text-white
+│  ├─ Subheading: text-xl text-slate-300
+│  └─ CTA Group: Flex gap-4
+│     ├─ Primary: Primary button with white text
+│     └─ Secondary: Secondary/link button
+```
+
+**Background Gradient**:
+```tsx
+className="bg-linear-to-b from-slate-900 to-slate-800"
+```
+
+**Text Colors**:
+- Headline: `text-white`
+- Subheading: `text-slate-300`
+
+**Button Styling** (in dark context):
+```tsx
+// Primary (over dark background)
+className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg"
+
+// Secondary (text/link style)
+className="px-8 py-3 border border-slate-400 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors"
+```
+
+---
+
+## 6. Landing Page & Marketing UI (F003)
+
+Landing page components showcase D&D Tracker features to potential users. These follow the core design system with marketing-specific patterns.
+
+### 6.1 Hero Section
+
+**Responsive Layout**:
+- Mobile: Single column, full-width content
+- Desktop (md+): Two columns with 50/50 split
+
+**Styling Classes**:
+- Section: `w-full py-12 md:py-24 bg-linear-to-b from-slate-50 to-white`
+- Headline (H1): `text-4xl md:text-5xl font-bold text-slate-900 mb-4`
+- Subheading: `text-lg md:text-xl text-slate-600 mb-8`
+- CTA Button: Primary button (see section 5.2)
+- Image: `rounded-lg shadow-lg` (hidden on mobile, centered on desktop)
+
+### 6.2 Feature Showcase
+
+**Grid Layout**:
+- Mobile: 1 column
+- Tablet: 2 columns
+- Desktop: 3 columns
+- Gap: `gap-8` (32px)
+
+**FeatureCard Styling**: `p-6 rounded-lg border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all bg-white`
+
+### 6.3 Interactive Demo Section
+
+**Pattern**: Toggleable content with button state management
+
+**Button States**:
+- Active: `px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg transition-colors`
+- Inactive: `px-6 py-2 bg-slate-200 text-slate-900 hover:bg-slate-300 font-semibold rounded-lg transition-colors`
+
+**Demo Container**: `bg-slate-50 rounded-lg p-8 md:p-12 border border-slate-200`
+
+### 6.4 Testimonials Section
+
+**Background**: `bg-slate-50` for contrast
+
+**Grid**: 1 column mobile, 2 columns desktop with `gap-8`
+
+**Card Styling**: `p-6 bg-white rounded-lg shadow-sm border border-slate-200`
+
+**Star Rating**: `text-yellow-400` (★ character)
+
+### 6.5 Pricing Section
+
+**Grid**: 1 column mobile, 2 columns tablet, 3 columns desktop with `gap-8`
+
+**Pricing Card**:
+- Container: `p-8 rounded-lg border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all`
+- Plan Name: `text-2xl font-bold text-slate-900`
+- Price: `text-3xl font-bold text-blue-600`
+- Features: `space-y-3` with checkmarks (`text-blue-600 ✓`)
+- Button: Full-width primary button
+
+### 6.6 Final CTA Section
+
+**Background**: `bg-linear-to-b from-slate-900 to-slate-800`
+
+**Text**:
+- Headline: `text-3xl md:text-4xl font-bold text-white`
+- Subheading: `text-xl text-slate-300`
+
+**Button Group**: Primary + Secondary button with gap-4
+
+---
+
+## 7. Party Management UI (F006 Specific)
 
 ### 6.1 Party Card Layout
 
