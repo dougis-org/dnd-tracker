@@ -40,6 +40,7 @@ tests/
 
 ## Recent Changes
 
+- 002-navigation-not-implemented-page: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - feature/002-navigation-not-implemented-page: Added implementation plan, research, data-model, contracts, and quickstart for navigation skeleton (2025-11-02)
 
 <!-- MANUAL ADDITIONS START -->

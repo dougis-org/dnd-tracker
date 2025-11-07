@@ -80,6 +80,14 @@ Purpose: Align navigation structure, tests, and documentation with the refined m
 - [x] T109 Update documentation artifacts, including `specs/002-navigation-not-implemented-page/contracts/openapi.yml`, `specs/002-navigation-not-implemented-page/spec.md`, and any nav description in `docs/Feature-Roadmap.md` to reflect the Help route and grouping (paths: listed)
 - [x] T110 Run linting (`npm run lint`, `npm run lint:markdown:fix`) and targeted test suites (`npm run test -- navigation`, `npm run test:ci:parallel`) capturing evidence for the PR (no code path)
 
+### Additional cross-cutting remediation tasks (added per spec analysis)
+
+- [ ] T112 Add unit test `tests/unit/styles/overlay-token.spec.ts` to verify a design token exists and enforces dropdown overlay opacity (95% or equivalent token) and fail the test if token missing (path: `tests/unit/styles/overlay-token.spec.ts`)
+- [ ] T113 Add accessibility checks using axe: integrate `tests/unit/accessibility/axe.navigation.spec.ts` (or extend `tests/unit/accessibility.md`) to assert keyboard focus, semantic roles, and that dropdown overlay contrast meets the spec (path: `tests/unit/accessibility/axe.navigation.spec.ts`)
+- [ ] T114 Add a traceability table task: update `tasks.md` with a small table mapping roadmap routes to task IDs (path: `specs/002-navigation-not-implemented-page/tasks.md`) to aid audits and reviewers
+- [ ] T115 Constitution audit: add a short audit record under `specs/002-navigation-not-implemented-page/spec.md` documenting whether tests were authored and failing before the implementation (document findings and maintainer approval). Implement as a tracked task and attach PR references (path: `specs/002-navigation-not-implemented-page/spec.md`)
+- [ ] T116 Clarify "Collections" mapping in `tasks.md` and `src/lib/navigation.ts` (ensure navigation data explicitly maps Collections → `/items`, `/monsters`, `/parties`, `/characters`) (path: `src/lib/navigation.ts`, `specs/002-navigation-not-implemented-page/tasks.md`)
+
 ## Phase 3: User Story 1 - Navigate to Dashboard (Priority: P1) 🎯 MVP
 
 Goal: From any page the user can click the Dashboard link and see the NotImplemented placeholder for `/dashboard`.
@@ -158,7 +166,7 @@ Independent Test: Unit test for Breadcrumb rendering and link behavior.
 
 ## Summary Metrics
 
-- Total tasks: 63
+- Total tasks: 64
 - Tasks by story: US1: 5 (T010-T014), US2: 5 (T015-T019), US3: 4 (T020-T023)
 - Additional plan-addendum tasks: T100-T110 focus on navigation refinement and Help route integration
 - Parallelizable tasks identified (marked [P]): T003, T005, T006, T007, T015, T016, T020, T024, T025, T026

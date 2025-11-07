@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: Dashboard API (mock)
+  version: 1.0.0
+  description: API contract for dashboard data used by the UI mock. Phase 1 uses mocked responses; backend integration can implement these endpoints later.
+
+paths:
+  /api/v1/dashboard:
+    get:
+      summary: Get dashboard data (mock)
+      description: Returns widgets, recent activity, and summary items for the dashboard. In Phase 1 this endpoint is mocked.
+      responses:
+        '200':
+          description: Dashboard payload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  widgets:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        label:
+                          type: string
+                        value:
+                          oneOf:
+                            - type: number
+                            - type: string
+                        delta:
+                          type: number
+                        sparkline:
+                          type: array
+                          items:
+                            type: number
+                        link:
+                          type: string
+                  recentActivity:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        type:
+                          type: string
+                        timestamp:
+                          type: string
+                          format: date-time
+                        description:
+                          type: string
+                        targetUrl:
+                          type: string
+                  parties:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        displayName:
+                          type: string
+                        memberCount:
+                          type: integer
+                        lastActiveAt:
+                          type: string
+                          format: date-time
+                required: [widgets, recentActivity]
