@@ -127,11 +127,11 @@ description: "Task list for Character Management Pages"
 
 - [x] T031 [P] Add integration tests for page flows: `tests/integration/characters-flow.spec.tsx` (list, detail, create flows with shared CharacterProvider)
 - [x] T032 Add Playwright E2E test `tests/e2e/characters.spec.ts` covering basic navigation to `/characters`, `/characters/new`, `/characters/:id`
-- [ ] T033 [P] Add documentation updates in `specs/005-character-management-pages/README.md` describing how to run the feature locally and run tests
-- [ ] T034 [P] Accessibility and responsive polish: review `src/components/characters/*` for mobile layout and ARIA attributes
+- [x] T033 [P] Add documentation updates in `specs/005-character-management-pages/README.md` describing how to run the feature locally and run tests
+- [x] T034 [P] Accessibility and responsive polish: review `src/components/characters/*` for mobile layout and ARIA attributes
 - [x] T035 Run lint/format and ensure no TypeScript `any` types introduced in `src/components/characters/*` and `src/lib/characterStore.tsx` (completed - all passing)
-- [ ] T036 [P] Add security check task to run Trivy/Codacy scan when dependencies are added; document required command in `specs/005-character-management-pages/README.md`
-- [ ] T037 [P] [US1] Add perf-smoke unit test `tests/unit/perf/characters-filter-smoke.spec.ts` to assert client-side filter completes within a small budget (e.g., 200ms) on a dev machine (configurable)
+- [x] T036 [P] Add security check task to run Trivy/Codacy scan when dependencies are added; document required command in `specs/005-character-management-pages/README.md`
+- [x] T037 [P] [US1] Add perf-smoke unit test `tests/unit/perf/characters-filter-smoke.spec.ts` to assert client-side filter completes within a small budget (e.g., 200ms) on a dev machine (configurable)
 
 ---
 
