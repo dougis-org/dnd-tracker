@@ -5,6 +5,9 @@
  * Accepts pricing tier data as a prop.
  */
 
+import Link from 'next/link';
+import type { Route } from 'next';
+
 interface PricingTier {
   id: string;
   name: string;
@@ -56,9 +59,12 @@ export function PricingTable({ data }: PricingTableProps) {
                   </li>
                 ))}
               </ul>
-              <button className="w-full px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+              <Link
+                href={`/sign-up?tier=${tier.id}` as Route}
+                className="block w-full px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors text-center"
+              >
                 Get Started
-              </button>
+              </Link>
             </div>
           ))}
         </div>

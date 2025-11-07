@@ -39,6 +39,8 @@ export function Testimonials({ data }: TestimonialsProps) {
           {data.map((testimonial) => (
             <div
               key={testimonial.id}
+              data-testid={`testimonial-${testimonial.id}`}
+              role="article"
               className="p-6 bg-white rounded-lg shadow-sm border border-slate-200"
             >
               <div className="flex gap-2 mb-4">

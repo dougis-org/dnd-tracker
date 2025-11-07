@@ -55,11 +55,11 @@ test.describe('Landing Page Accessibility (T020)', () => {
   test('should have accessible buttons and links', async ({ page }) => {
     await page.goto('/');
 
-    // Check that all buttons and links have accessible names
+    // Check that ALL buttons have accessible names
     const buttons = page.locator('button');
     const buttonCount = await buttons.count();
 
-    for (let i = 0; i < Math.min(buttonCount, 5); i++) {
+    for (let i = 0; i < buttonCount; i++) {
       const button = buttons.nth(i);
       const accessibleName = await button.getAttribute('aria-label');
       const text = await button.textContent();
@@ -68,11 +68,11 @@ test.describe('Landing Page Accessibility (T020)', () => {
       expect(accessibleName || text).toBeTruthy();
     }
 
-    // Check links
+    // Check ALL links
     const links = page.locator('a');
     const linkCount = await links.count();
 
-    for (let i = 0; i < Math.min(linkCount, 5); i++) {
+    for (let i = 0; i < linkCount; i++) {
       const link = links.nth(i);
       const text = await link.textContent();
 
@@ -116,8 +116,8 @@ test.describe('Landing Page Accessibility (T020)', () => {
         (v: AxeResults['violations'][0]) => v.impact === 'critical'
       );
       if (criticals.length > 0) {
-        console.warn(
-          `Color contrast issues (non-critical): ${criticals.length} found`
+        throw new Error(
+          `Found ${criticals.length} critical color contrast violations`
         );
       }
     }

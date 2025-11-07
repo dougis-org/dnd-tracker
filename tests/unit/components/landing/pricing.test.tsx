@@ -34,8 +34,8 @@ describe('PricingTable Component', () => {
 
   it('renders CTA buttons for each tier', () => {
     render(<PricingTable data={pricingData} />);
-    const buttons = screen.getAllByRole('button', { name: /get started/i });
-    expect(buttons).toHaveLength(pricingData.length);
+    const links = screen.getAllByRole('link', { name: /get started/i });
+    expect(links).toHaveLength(pricingData.length);
   });
 
   it('has accessible semantic structure', () => {

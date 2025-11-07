@@ -45,9 +45,13 @@ describe('Testimonials Component', () => {
 
   it('renders star ratings', () => {
     render(<Testimonials data={testimonialsData} />);
-    testimonialsData.forEach((_testimonial) => {
-      const stars = screen.getAllByText(/★/, { selector: '*' });
-      expect(stars.length).toBeGreaterThan(0);
+    // Verify each testimonial has the correct number of stars
+    testimonialsData.forEach((testimonial) => {
+      const card = screen.getByTestId(`testimonial-${testimonial.id}`);
+      const starCount = Array.from(card.querySelectorAll('span')).filter(
+        (span) => span.textContent === '★'
+      ).length;
+      expect(starCount).toBe(testimonial.rating || 5);
     });
   });
 

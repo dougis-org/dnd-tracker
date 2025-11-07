@@ -41,13 +41,7 @@ Notes:
 
 - These shapes live as fixtures under `tests/fixtures/landing/` and as mock data under `src/app/(landing)/data` for local rendering.
 
-These shapes live as fixtures under `tests/fixtures/landing/` and as mock data under `src/app/(landing)/data` for local rendering.
-
-# Data Model Notes — Feature 003
-
-This feature uses only mock/static data for UI rendering. No database changes required.
-
-Suggested mock shapes (TypeScript interfaces for tests/fixtures):
+## TypeScript Interfaces
 
 ```ts
 interface FeatureCard {

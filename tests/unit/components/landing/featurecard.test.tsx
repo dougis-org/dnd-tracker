@@ -34,6 +34,6 @@ describe('FeatureCard Component', () => {
   it('applies correct ARIA labels for screen readers', () => {
     render(<FeatureCard {...defaultProps} />);
     const card = screen.getByRole('article');
-    expect(card).toHaveAttribute('aria-label');
+    expect(card).toHaveAttribute('aria-label', defaultProps.title);
   });
 });

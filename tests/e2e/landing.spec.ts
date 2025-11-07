@@ -13,7 +13,7 @@ test.describe('Landing Page (T018)', () => {
     await expect(page).toHaveTitle(/D&D Tracker/i);
 
     // Check hero section
-    const heroSection = page.locator('section[aria-label="Hero section"]');
+    const heroSection = page.locator('section[aria-label="Hero"]');
     await expect(heroSection).toBeVisible();
 
     // Check features section
@@ -67,7 +67,7 @@ test.describe('Landing Page (T018)', () => {
   test('should render hero with text and CTA (T018)', async ({ page }) => {
     await page.goto('/');
 
-    const hero = page.locator('section[aria-label="Hero section"]');
+    const hero = page.locator('section[aria-label="Hero"]');
 
     // Check headline
     const headline = hero.locator('h1');
