@@ -125,8 +125,8 @@ description: "Task list for Character Management Pages"
 
 ## Phase 8: Integration, E2E & Polish (Cross-cutting Concerns)
 
-- [ ] T031 [P] Add integration tests for page flows: `tests/integration/characters-flow.spec.ts` (list → detail → edit; create → list; delete → list)
-- [ ] T032 Add Playwright E2E test `tests/e2e/characters.spec.ts` covering basic navigation to `/characters`, `/characters/new`, `/characters/:id`
+- [x] T031 [P] Add integration tests for page flows: `tests/integration/characters-flow.spec.tsx` (list, detail, create flows with shared CharacterProvider)
+- [x] T032 Add Playwright E2E test `tests/e2e/characters.spec.ts` covering basic navigation to `/characters`, `/characters/new`, `/characters/:id`
 - [ ] T033 [P] Add documentation updates in `specs/005-character-management-pages/README.md` describing how to run the feature locally and run tests
 - [ ] T034 [P] Accessibility and responsive polish: review `src/components/characters/*` for mobile layout and ARIA attributes
 - [ ] T035 Run lint/format and ensure no TypeScript `any` types introduced in `src/components/characters/*` and `src/lib/characterStore.ts`
