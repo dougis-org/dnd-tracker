@@ -14,7 +14,8 @@ export default function DeleteCharacterModal({ id, characterName: _characterName
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [restored, setRestored] = useState(false);
-  const timerRef = useRef<number | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const timerRef = useRef<any>(null);
 
   useEffect(() => {
     return () => {
@@ -32,7 +33,7 @@ export default function DeleteCharacterModal({ id, characterName: _characterName
     if (onDeleted) onDeleted();
 
     // keep a timer to clear the undo after 5s
-    timerRef.current = window.setTimeout(() => {
+    timerRef.current = globalThis.setTimeout(() => {
       setDeleted(false);
       timerRef.current = null;
     }, 5000);
@@ -47,7 +48,7 @@ export default function DeleteCharacterModal({ id, characterName: _characterName
     setDeleted(false);
     setRestored(true);
     // hide restored message shortly
-    window.setTimeout(() => setRestored(false), 1500);
+    globalThis.setTimeout(() => setRestored(false), 1500);
   };
 
   return (

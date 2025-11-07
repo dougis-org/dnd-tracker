@@ -71,6 +71,10 @@ export const CharacterProvider = ({ children }: { children: ReactNode }) => {
     state,
     init: () => dispatch({ type: 'init', payload: seedCharacters }),
     add: (partial: PartialCharacter) => {
+      // Validate required fields
+      if (!partial.name || !partial.className || partial.level === undefined) {
+        throw new Error('Missing required Character fields: name, className, or level');
+      }
       const newChar: Character = {
         ...(partial as Character),
         id: (partial.id as string) ?? new ObjectId().toHexString(),

@@ -1,2 +1,2 @@
-export { default as characterStore } from './characterStore';
+export { CharacterProvider, useCharacterStore } from './characterStore';
 export * from './mock/characters';

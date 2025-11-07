@@ -7,6 +7,7 @@ import CharacterList from '@/components/characters/CharacterList';
 import CharacterDetail from '@/components/characters/CharacterDetail';
 import CharacterForm from '@/components/characters/CharacterForm';
 import { CharacterProvider, useCharacterStore } from '@/lib/characterStore';
+import type { Character } from '../../types/character';
 import mockCharacters from '@/lib/mock/characters';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -61,7 +62,7 @@ describe('Character Management Integration', () => {
       const store = useCharacterStore();
 
       if (created) {
-        const newChar = store.state.characters.find(c => c.name === 'Integration Test Character');
+        const newChar = store.state.characters.find((c: Character) => c.name === 'Integration Test Character');
         return <div data-testid="success">{newChar?.name}</div>;
       }
 
