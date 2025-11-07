@@ -3,30 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import CharacterCard from './CharacterCard';
 import { useCharacterStore, CharacterProvider } from '../../lib/characterStore';
 import type { Character } from '../../../types/character';
-
-// Extract filter logic
-function filterCharacters(
-  characters: Character[],
-  query: string,
-  classFilter: string
-): Character[] {
-  const q = query.trim().toLowerCase();
-
-  return characters.filter((c: Character) => {
-    if (classFilter && c.className !== classFilter) return false;
-    if (!q) return true;
-    return (
-      c.name.toLowerCase().includes(q) ||
-      c.className.toLowerCase().includes(q) ||
-      c.race.toLowerCase().includes(q)
-    );
-  });
-}
-
-// Extract unique class names
-function getUniqueClasses(characters: Character[]): string[] {
-  return [...new Set(characters.map((c: Character) => c.className))];
-}
+import { filterCharacters, getUniqueClasses } from './characterListUtils';
 
 function InnerList() {
   const store = useCharacterStore();
