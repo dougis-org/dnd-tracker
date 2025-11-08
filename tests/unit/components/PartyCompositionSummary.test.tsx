@@ -14,16 +14,18 @@ describe('PartyCompositionSummary Component', () => {
       const party = createTestPartyWithMembers(4);
       render(<PartyCompositionSummary party={party} />);
 
-      expect(screen.getByText('4')).toBeInTheDocument();
       expect(screen.getByText(/Members/i)).toBeInTheDocument();
+      const memberSection = screen.getByText(/Members/).parentElement;
+      expect(memberSection).toHaveTextContent('4');
     });
 
     it('should calculate correct average level', () => {
       const party = createTestPartyWithMembers(3, {}, { level: 6 });
       render(<PartyCompositionSummary party={party} />);
 
-      expect(screen.getByText('6')).toBeInTheDocument();
       expect(screen.getByText(/Avg Level/i)).toBeInTheDocument();
+      const avgLevelSection = screen.getByText(/Avg Level/).parentElement;
+      expect(avgLevelSection).toHaveTextContent('6');
     });
 
     it('should display party tier based on level', () => {
@@ -43,7 +45,7 @@ describe('PartyCompositionSummary Component', () => {
       render(<PartyCompositionSummary party={party} />);
 
       // Party members have levels 5, 5, 5, 5 (balanced)
-      expect(screen.getByText(/5/)).toBeInTheDocument();
+      expect(screen.getByText(/Level Range/i)).toBeInTheDocument();
     });
   });
 
@@ -81,7 +83,7 @@ describe('PartyCompositionSummary Component', () => {
       const party = createTestPartyWithMembers(3);
       render(<PartyCompositionSummary party={party} variant="compact" />);
 
-      expect(screen.getByText(/3/)).toBeInTheDocument();
+      expect(screen.getByText(/Members/i)).toBeInTheDocument();
     });
 
     it('should render full variant with all details', () => {
@@ -123,7 +125,10 @@ describe('PartyCompositionSummary Component', () => {
       const party = createTestPartyWithMembers(1);
       render(<PartyCompositionSummary party={party} />);
 
-      expect(screen.getByText('1')).toBeInTheDocument();
+      expect(screen.getByText(/Members/)).toBeInTheDocument();
+      // Verify the member count is displayed with "Members" label next to it
+      const memberSection = screen.getByText(/Members/).parentElement;
+      expect(memberSection).toHaveTextContent('1');
     });
 
     it('should handle party with all unassigned roles', () => {

@@ -43,8 +43,8 @@ jest.mock('@/components/parties/MemberForm', () => {
   };
 });
 
-jest.mock('@/components/parties/DeleteConfirmModal', () => {
-  return function MockDeleteConfirmModal({
+jest.mock('@/components/parties/DeleteConfirmModal', () => ({
+  DeleteConfirmModal: function MockDeleteConfirmModal({
     isOpen,
     onClose,
     onConfirm,
@@ -63,8 +63,8 @@ jest.mock('@/components/parties/DeleteConfirmModal', () => {
         <button onClick={onConfirm}>Confirm</button>
       </div>
     );
-  };
-});
+  },
+}));
 
 describe('PartyForm Component', () => {
   const mockOnSubmit = jest.fn();

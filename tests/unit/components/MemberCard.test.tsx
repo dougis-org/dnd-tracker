@@ -127,11 +127,12 @@ describe('MemberCard Component', () => {
 
     it('should have accessible buttons in edit variant', () => {
       const member = createTestMember();
+      const handleRemove = jest.fn();
 
-      render(<MemberCard member={member} variant="edit" />);
+      render(<MemberCard member={member} variant="edit" onRemove={handleRemove} />);
 
       const removeButton = screen.getByRole('button', { name: /remove/i });
-      expect(removeButton.parentElement).toHaveAttribute('aria-label');
+      expect(removeButton).toHaveAttribute('aria-label');
     });
 
     it('should be keyboard navigable', async () => {

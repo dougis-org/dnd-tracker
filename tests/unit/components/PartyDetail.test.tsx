@@ -1,13 +1,14 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import PartyDetail, { PartyDetailProps } from '@/components/parties/PartyDetail';
+import PartyDetail from '@/components/parties/PartyDetail';
+import type { PartyDetailProps } from '@/components/parties/PartyDetail';
 import { createTestParty, createTestMember } from '../../../tests/test-helpers/partyFactories';
 import { Party, PartyMember } from '@/types/party';
 
 // Mock child components
-jest.mock('@/components/parties/PartyCompositionSummary', () => {
-  return function MockPartyCompositionSummary({
+jest.mock('@/components/parties/PartyCompositionSummary', () => ({
+  PartyCompositionSummary: function MockPartyCompositionSummary({
     party,
     variant,
   }: {
@@ -19,31 +20,31 @@ jest.mock('@/components/parties/PartyCompositionSummary', () => {
         Composition {variant} - {party?.name}
       </div>
     );
-  };
-});
+  },
+}));
 
-jest.mock('@/components/parties/MemberCard', () => {
-  return function MockMemberCard({
+jest.mock('@/components/parties/MemberCard', () => ({
+  MemberCard: function MockMemberCard({
     member,
     onEdit,
-    onDelete,
+    onRemove,
   }: {
     member: PartyMember;
-    onEdit: (id: string) => void;
-    onDelete: (id: string) => void;
+    onEdit?: (id: string) => void;
+    onRemove?: (id: string) => void;
   }) {
     return (
       <div data-testid="member-card">
         <span>{member?.characterName}</span>
-        <button onClick={() => onEdit(member.id)}>Edit</button>
-        <button onClick={() => onDelete(member.id)}>Delete</button>
+        {onEdit && <button onClick={() => onEdit(member.id)}>Edit</button>}
+        {onRemove && <button onClick={() => onRemove(member.id)}>Delete</button>}
       </div>
     );
-  };
-});
+  },
+}));
 
-jest.mock('@/components/parties/DeleteConfirmModal', () => {
-  return function MockDeleteConfirmModal({
+jest.mock('@/components/parties/DeleteConfirmModal', () => ({
+  DeleteConfirmModal: function MockDeleteConfirmModal({
     isOpen,
     onClose,
     onConfirm,
@@ -62,8 +63,8 @@ jest.mock('@/components/parties/DeleteConfirmModal', () => {
         <button onClick={onConfirm}>Confirm</button>
       </div>
     );
-  };
-});
+  },
+}));
 
 describe('PartyDetail Component', () => {
   const mockOnEditMember = jest.fn();
