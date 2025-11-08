@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PartyMember, DnDClass, DnDRace, PartyRole } from '@/types/party';
+import { PartyMember, DnDClass, DnDRace } from '@/types/party';
 import { RoleSelector } from './RoleSelector';
 import {
   validateMemberForm,

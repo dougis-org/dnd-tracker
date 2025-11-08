@@ -3,24 +3,30 @@
  * Extracted to reduce PartyForm component complexity
  */
 
-import { PartyMember } from '@/types/party';
+import { PartyMember, DnDClass, DnDRace } from '@/types/party';
 
 // Default values for member fields
 const DEFAULTS = {
   PARTY_ID: '',
-  CLASS: 'Fighter',
-  RACE: 'Human',
+  CLASS: 'Fighter' as DnDClass,
+  RACE: 'Human' as DnDRace,
   LEVEL: 1,
   AC: 10,
   HP: 10,
   POSITION: 0,
-};
+} as const;
 
 /**
  * Generate a unique ID for a new member
  */
 function generateMemberId(): string {
-  return crypto.randomUUID?.() || `member-${Date.now()}`;
+  if (typeof window === 'undefined') {
+    // Server-side: use Node.js crypto
+    const { randomUUID } = require('crypto');
+    return randomUUID();
+  }
+  // Client-side: use Web Crypto API
+  return (globalThis.crypto?.randomUUID?.() || `member-${Date.now()}`);
 }
 
 /**
