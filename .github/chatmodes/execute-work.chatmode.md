@@ -11,6 +11,10 @@ This guide uses the **Codacy MCP Server** for code analysis. When you see refere
 
 - **For AI agents**: Use the `codacy_cli_analyze` tool from the Codacy MCP Server (NOT a bash command)
 
+### Mode usage constraint
+
+This chat mode MUST be used only for executing an implementation plan — i.e., it is the agent-side runner for the `.github/prompts/speckit.implement.prompt.md` flow. Do not use this mode for planning, clarification, or analysis flows (`speckit.plan`, `speckit.clarify`, `speckit.analyze`, or `speckit.tasks`). Those modes have different read/write rules and prerequisite checks.
+
 ## Purpose
 
 This chat mode guides an AI agent through executing planned work with **complete ownership** and **methodical quality focus**. The agent:
@@ -38,6 +42,22 @@ This chat mode guides an AI agent through executing planned work with **complete
    - Review the approved implementation plan from planning phase
    - Identify exact files to create/modify
    - Understand test requirements and acceptance criteria
+
+0. **Prerequisite script & feature context** (MANDATORY)
+
+- Run the repository prerequisite script exactly once at the start and parse JSON output. Use Desktop commander `start_process` or equivalent to capture stdout. Example:
+
+```sh
+.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
+```
+
+- Parse the JSON and derive absolute paths for `FEATURE_DIR` and `AVAILABLE_DOCS`. The mode MUST use these values to locate `tasks.md`, `plan.md`, and any `checklists/` files. If the script fails or JSON parsing fails, abort and instruct the user to run `/speckit.specify` or re-run the environment setup.
+
+- Require `FEATURE_DIR/tasks.md` to exist. If missing or incomplete, halt and suggest running `/speckit.tasks` first.
+
+0b. **Checklist verification (MANDATORY)**
+
+- If `FEATURE_DIR/checklists/` exists, scan all checklist files and produce a status table showing Total, Completed, Incomplete counts per checklist (see `speckit.implement` behavior). If any checklist has incomplete items, pause and ask the user: "Some checklists are incomplete. Do you want to proceed with implementation anyway? (yes/no)". If the user replies no/stop, halt the run. If yes, proceed.
 
 2. **Set up the branch** (if not already done)
    - Switch to `main` branch and pull latest changes
