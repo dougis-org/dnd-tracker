@@ -18,7 +18,6 @@ export function getInitialState(initial: PartialCharacter | Character | null | u
       level: 1,
       hp: 1,
       ac: 10,
-      abilitiesStr: '',
     };
   }
 
@@ -33,7 +32,6 @@ export function getInitialState(initial: PartialCharacter | Character | null | u
     level: initial.level ?? 1,
     hp,
     ac: initial.armorClass ?? 10,
-    abilitiesStr: '',
   };
 }
 

@@ -25,7 +25,6 @@ export default function CharacterForm({ onCreated, initial = null, onSaved }: Pr
   const [level, setLevel] = useState(initialState.level);
   const [hp, setHp] = useState(initialState.hp);
   const [ac, setAc] = useState(initialState.ac);
-  const [abilitiesStr, setAbilitiesStr] = useState(initialState.abilitiesStr);
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState(false);
 
@@ -36,7 +35,6 @@ export default function CharacterForm({ onCreated, initial = null, onSaved }: Pr
     setLevel(1);
     setHp(1);
     setAc(10);
-    setAbilitiesStr('');
     setError(null);
   }
 
@@ -79,37 +77,32 @@ export default function CharacterForm({ onCreated, initial = null, onSaved }: Pr
     <form onSubmit={handleSubmit} aria-label="character-form">
       <div>
         <label htmlFor="name">Name</label>
-        <input id="name" aria-label="Name" value={name} onChange={(e) => setName(e.target.value)} />
+        <input id="name" value={name} onChange={(e) => setName(e.target.value)} />
       </div>
 
       <div>
         <label htmlFor="class">Class</label>
-        <input id="class" aria-label="Class" value={className} onChange={(e) => setClassName(e.target.value)} />
+        <input id="class" value={className} onChange={(e) => setClassName(e.target.value)} />
       </div>
 
       <div>
         <label htmlFor="race">Race</label>
-        <input id="race" aria-label="Race" value={race} onChange={(e) => setRace(e.target.value)} />
+        <input id="race" value={race} onChange={(e) => setRace(e.target.value)} />
       </div>
 
       <div>
         <label htmlFor="level">Level</label>
-        <input id="level" aria-label="Level" type="number" value={level} onChange={(e) => setLevel(Number(e.target.value))} />
+        <input id="level" type="number" value={level} onChange={(e) => setLevel(Number(e.target.value))} />
       </div>
 
       <div>
         <label htmlFor="hp">HP</label>
-        <input id="hp" aria-label="HP" type="number" value={hp} onChange={(e) => setHp(Number(e.target.value))} />
+        <input id="hp" type="number" value={hp} onChange={(e) => setHp(Number(e.target.value))} />
       </div>
 
       <div>
         <label htmlFor="ac">AC</label>
-        <input id="ac" aria-label="AC" type="number" value={ac} onChange={(e) => setAc(Number(e.target.value))} />
-      </div>
-
-      <div>
-        <label htmlFor="abilities">Abilities (optional text)</label>
-        <textarea id="abilities" aria-label="Abilities" value={abilitiesStr} onChange={(e) => setAbilitiesStr(e.target.value)} />
+        <input id="ac" type="number" value={ac} onChange={(e) => setAc(Number(e.target.value))} />
       </div>
 
       {error && <div role="alert">{error}</div>}
