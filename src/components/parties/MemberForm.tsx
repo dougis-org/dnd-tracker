@@ -1,6 +1,13 @@
-import React, { useState } from 'react';
-import { PartyMember, DnDClass, DnDRace, PartyRole } from '@/types/party';
+import React, { useState, useEffect } from 'react';
+import { PartyMember, DnDClass, DnDRace } from '@/types/party';
 import { RoleSelector } from './RoleSelector';
+import {
+  validateMemberForm,
+  MemberFormErrors,
+  createDefaultFormData,
+  hasErrors,
+  FormData,
+} from '@/lib/utils/memberFormHelpers';
 
 const CLASS_OPTIONS: DnDClass[] = [
   'Barbarian',
@@ -35,77 +42,29 @@ export interface MemberFormProps {
   onCancel: () => void;
 }
 
-interface FormData {
-  characterName: string;
-  class: DnDClass | '';
-  race: DnDRace | '';
-  level: number;
-  ac: number;
-  hp: number;
-  role: PartyRole | undefined;
-}
-
-interface Errors {
-  characterName?: string;
-  class?: string;
-  race?: string;
-  level?: string;
-  ac?: string;
-  hp?: string;
-}
-
 export function MemberForm({ member, onSubmit, onCancel }: MemberFormProps): React.ReactElement {
-  const [formData, setFormData] = useState<FormData>({
-    characterName: member?.characterName || '',
-    class: member?.class || '',
-    race: member?.race || '',
-    level: member?.level || 1,
-    ac: member?.ac || 10,
-    hp: member?.hp || 8,
-    role: member?.role,
-  });
+  const [formData, setFormData] = useState<FormData>(() => 
+    createDefaultFormData(member)
+  );
+  const [errors, setErrors] = useState<MemberFormErrors>({});
 
-  const [errors, setErrors] = useState<Errors>({});
-
-  const validateForm = (): boolean => {
-    const newErrors: Errors = {};
-
-    if (!formData.characterName.trim()) {
-      newErrors.characterName = 'Character name is required';
-    }
-
-    if (!formData.class) {
-      newErrors.class = 'Class is required';
-    }
-
-    if (!formData.race) {
-      newErrors.race = 'Race is required';
-    }
-
-    if (formData.level < 1 || formData.level > 20) {
-      newErrors.level = 'Level must be between 1 and 20';
-    }
-
-    if (formData.ac < 1 || formData.ac > 30) {
-      newErrors.ac = 'AC must be between 1 and 30';
-    }
-
-    if (formData.hp <= 0) {
-      newErrors.hp = 'HP must be greater than 0';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  // Reinitialize form when member prop changes (e.g., switching between editing different members)
+  useEffect(() => {
+    setFormData(createDefaultFormData(member));
+    setErrors({});
+  }, [member?.id]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (validateForm()) {
+    const validationErrors = validateMemberForm(formData);
+    setErrors(validationErrors);
+
+    if (!hasErrors(validationErrors)) {
       onSubmit({
         characterName: formData.characterName,
-        class: formData.class as DnDClass,
-        race: formData.race as DnDRace,
+        class: formData.class,
+        race: formData.race,
         level: formData.level,
         ac: formData.ac,
         hp: formData.hp,
@@ -115,15 +74,7 @@ export function MemberForm({ member, onSubmit, onCancel }: MemberFormProps): Rea
   };
 
   const handleReset = () => {
-    setFormData({
-      characterName: member?.characterName || '',
-      class: member?.class || '',
-      race: member?.race || '',
-      level: member?.level || 1,
-      ac: member?.ac || 10,
-      hp: member?.hp || 8,
-      role: member?.role,
-    });
+    setFormData(createDefaultFormData(member));
     setErrors({});
   };
 
