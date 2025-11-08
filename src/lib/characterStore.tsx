@@ -88,10 +88,10 @@ export const CharacterProvider = ({ children }: { children: ReactNode }) => {
     clear: () => dispatch({ type: 'clear' }),
   };
 
-  return React.createElement(
-    CharacterContext.Provider,
-    { value: store },
-    children
+  return (
+    <CharacterContext.Provider value={store}>
+      {children}
+    </CharacterContext.Provider>
   );
 };
 

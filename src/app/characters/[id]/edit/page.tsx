@@ -17,7 +17,7 @@ function EditInner({ id }: { id: string }) {
     }
   }, [store]);
 
-  const character = store.state.characters.find((c: Character) => c.id === id);
+  const character = store.state.characters.find((c) => c.id === id);
 
   const handleSaved = (c: Character) => {
     // navigate back to detail page

@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useCharacterStore } from '../../lib/characterStore';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,6 +9,14 @@ import type { Character } from '../../../types/character';
 export default function CharacterDetail({ id }: { id: string }) {
   const store = useCharacterStore();
   const router = useRouter();
+
+  useEffect(() => {
+    // Initialize store if empty (direct navigation/page refresh)
+    if (store.state.characters.length === 0) {
+      store.init();
+    }
+  }, [store]);
+
   const character = store.state.characters.find((c: Character) => c.id === id);
 
   if (!character) {
