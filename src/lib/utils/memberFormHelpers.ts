@@ -38,20 +38,20 @@ const DEFAULTS = {
  * Validate character name field
  */
 function validateCharacterName(name: string): string | undefined {
-  return !name.trim() ? 'Character name is required' : undefined;
+  return name.trim() ? undefined : 'Character name is required';
 }
 
 /**
  * Validate class field
  */
-function validateClass(cls: DnDClass): string | undefined {
+function validateClass(cls: DnDClass | string): string | undefined {
   return !cls ? 'Class is required' : undefined;
 }
 
 /**
  * Validate race field
  */
-function validateRace(race: DnDRace): string | undefined {
+function validateRace(race: DnDRace | string): string | undefined {
   return !race ? 'Race is required' : undefined;
 }
 
@@ -105,14 +105,28 @@ export function hasErrors(errors: MemberFormErrors): boolean {
 }
 
 export function createDefaultFormData(member?: PartyMember): FormData {
+  if (!member) {
+    // For new members, start with empty class/race to force selection
+    return {
+      characterName: DEFAULTS.CHARACTER_NAME,
+      class: '' as DnDClass,
+      race: '' as DnDRace,
+      level: DEFAULTS.LEVEL,
+      ac: DEFAULTS.AC,
+      hp: DEFAULTS.HP,
+      role: undefined,
+    };
+  }
+
+  // For existing members, use their current values
   return {
-    characterName: member?.characterName || DEFAULTS.CHARACTER_NAME,
-    class: member?.class || DEFAULTS.CLASS,
-    race: member?.race || DEFAULTS.RACE,
-    level: member?.level || DEFAULTS.LEVEL,
-    ac: member?.ac || DEFAULTS.AC,
-    hp: member?.hp || DEFAULTS.HP,
-    role: member?.role,
+    characterName: member.characterName || DEFAULTS.CHARACTER_NAME,
+    class: member.class,
+    race: member.race,
+    level: member.level || DEFAULTS.LEVEL,
+    ac: member.ac || DEFAULTS.AC,
+    hp: member.hp || DEFAULTS.HP,
+    role: member.role,
   };
 }
 

@@ -26,7 +26,7 @@ function generateMemberId(): string {
     return randomUUID();
   }
   // Client-side: use Web Crypto API
-  return (globalThis.crypto?.randomUUID?.() || `member-${Date.now()}`);
+  return globalThis.crypto?.randomUUID?.() || `member-${Date.now()}`;
 }
 
 /**
@@ -39,7 +39,9 @@ function getMemberField<T>(value: T | undefined, defaultValue: T): T {
 /**
  * Creates a complete party member object from partial data
  */
-export function createFullMember(memberData: Partial<PartyMember>): PartyMember {
+export function createFullMember(
+  memberData: Partial<PartyMember>
+): PartyMember {
   const id = memberData.id || generateMemberId();
 
   return {
@@ -62,7 +64,7 @@ export function createFullMember(memberData: Partial<PartyMember>): PartyMember 
 export function updateOrAddMember(
   members: PartyMember[],
   memberData: Partial<PartyMember>,
-  editingMemberId: string | null,
+  editingMemberId: string | null
 ): PartyMember[] {
   const fullMember = createFullMember(memberData);
 
@@ -76,14 +78,20 @@ export function updateOrAddMember(
 /**
  * Removes a member from the members list
  */
-export function removeMember(members: PartyMember[], memberId: string): PartyMember[] {
+export function removeMember(
+  members: PartyMember[],
+  memberId: string
+): PartyMember[] {
   return members.filter((m) => m.id !== memberId);
 }
 
 /**
  * Finds a member by ID
  */
-export function findMemberById(members: PartyMember[], memberId: string | null): PartyMember | undefined {
+export function findMemberById(
+  members: PartyMember[],
+  memberId: string | null
+): PartyMember | undefined {
   if (!memberId) return undefined;
   return members.find((m) => m.id === memberId);
 }
