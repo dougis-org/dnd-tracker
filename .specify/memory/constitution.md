@@ -1,50 +1,87 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+
+- Version change: template -> 1.0.0
+- Modified principles: (new) Quality & Ownership; Test-First (TDD); Simplicity & Composability; Observability & Security; Versioning & Governance
+- Added sections: Additional Constraints; Development Workflow & Quality Gates
+- Removed sections: none
+- Templates reviewed: .specify/templates/plan-template.md ✅, .specify/templates/spec-template.md ✅, .specify/templates/tasks-template.md ✅
+- Follow-up TODOs: RATIFICATION_DATE left as TODO; ensure maintainer @doug confirms ratification date and responsible approvers.
+-->
+
+# dnd-tracker Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Quality & Ownership (NON-NEGOTIABLE)
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+All contributors MUST prioritize correctness, maintainability, and code clarity over speed. Code is considered incomplete until:
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Rationale: The project enforces high engineering standards (see `CONTRIBUTING.md`) and relies on shared ownership to reduce regressions.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### Test-First (TDD) (NON-NEGOTIABLE)
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Tests MUST be written before implementation for new behavior. The TDD cycle (Red → Green → Refactor) is required for feature work and bug fixes where tests are practical. Requirements:
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+
+
+
+Rationale: TDD yields safer refactors, clearer acceptance criteria, and measurable progress.
+
+### Simplicity & Composability
+
+Design decisions MUST prefer small, focused modules and components. Files SHOULD stay under 450 lines and functions under 50 lines. Code SHOULD be composition-friendly and avoid premature generalization.
+
+
+
+Rationale: Small, composable units reduce cognitive load, simplify testing, and enable parallel work.
+
+### Observability & Security
+
+All runtime-facing code MUST include structured logging, meaningful error messages, and, where applicable, telemetry hooks. Security controls MUST be applied consistently:
+
+
+
+
+Rationale: Observability accelerates debugging; consistent security practices reduce production risk.
+
+### Versioning & Governance
+
+The constitution uses semantic versioning for governance changes. Changes to the constitution itself MUST follow this policy:
+
+
+Amendments MUST be proposed via a documented PR that includes:
+
+
+
+
+Rationale: Governance must be traceable, auditable, and reversible.
+
+## Additional Constraints
+
+This project follows the constraints and stack conventions listed in `CONTRIBUTING.md` and `docs/Tech-Stack.md`.
+
+
+## Development Workflow & Quality Gates
+
+The project's development workflow and quality gates are normative and supersede ad-hoc practices. Key gates that MUST be satisfied before merging:
+
+
+Branching and PR expectations:
+
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+Constitution amendments follow the Versioning & Governance rules above. The amendment procedure is:
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+1. Open a PR that updates `.specify/memory/constitution.md` with a clear rationale and a Sync Impact Report.
+2. Include a migration/operational checklist if the change impacts runtime behavior, CI, or developer workflows.
+3. Obtain at least one maintainer approval. The maintainer must comment with explicit approval (e.g., `@doug approve-governance-change`).
+4. After merge, update `CONSTITUTION_VERSION` and `LAST_AMENDED_DATE` in the file and reference the change in release notes.
+
+Compliance: All PRs that touch code or repo workflows MUST reference this constitution and demonstrate compliance in the PR checklist. Failure to comply may block review and merge.
+
+**Version**: 1.0.0 | **Ratified**: 2025-11-08 | **Last Amended**: 2025-11-08
