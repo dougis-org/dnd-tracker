@@ -57,27 +57,44 @@ Given that feature description, do this:
    - Use action-noun format when possible (e.g., "add-user-auth", "fix-payment-bug")
    - Preserve technical terms and acronyms (OAuth2, API, JWT, etc.)
    - Keep it concise but descriptive enough to understand the feature at a glance
+   - Examples:
+     - "I want to add user authentication" → "user-auth"
+     - "Implement OAuth2 integration for the API" → "oauth2-api-integration"
+     - "Create a dashboard for analytics" → "analytics-dashboard"
+     - "Fix payment processing timeout bug" → "fix-payment-timeout"
 
-   Examples:
-   - "I want to add user authentication" → "user-auth"
-   - "Implement OAuth2 integration for the API" → "oauth2-api-integration"
-   - "Create a dashboard for analytics" → "analytics-dashboard"
-   - "Fix payment processing timeout bug" → "fix-payment-timeout"
-
-2. Run the script `.specify/scripts/bash/create-new-feature.sh --json "$ARGUMENTS"` from repo root **with the short-name argument** and parse its JSON output for BRANCH_NAME and SPEC_FILE. All file paths must be absolute.
-
+2. **Check for existing branches before creating new one**:
+   
+   a. First, fetch all remote branches to ensure we have the latest information:
+      ```bash
+      git fetch --all --prune
+      ```
+   
+   b. Find the highest feature number across all sources for the short-name:
+      - Remote branches: `git ls-remote --heads origin | grep -E 'refs/heads/[0-9]+-<short-name>$'`
+      - Local branches: `git branch | grep -E '^[* ]*[0-9]+-<short-name>$'`
+      - Specs directories: Check for directories matching `specs/[0-9]+-<short-name>`
+   
+   c. Determine the next available number:
+      - Extract all numbers from all three sources
+      - Find the highest number N
+      - Use N+1 for the new branch number
+   
+   d. Run the script `.specify/scripts/bash/create-new-feature.sh --json "$ARGUMENTS"` with the calculated number and short-name:
+      - Pass `--number N+1` and `--short-name "your-short-name"` along with the feature description
+      - Bash example: `.specify/scripts/bash/create-new-feature.sh --json "$ARGUMENTS" --json --number 5 --short-name "user-auth" "Add user authentication"`
+      - PowerShell example: `.specify/scripts/bash/create-new-feature.sh --json "$ARGUMENTS" -Json -Number 5 -ShortName "user-auth" "Add user authentication"`
+   
    **IMPORTANT**:
-
-   - Append the short-name argument to the `.specify/scripts/bash/create-new-feature.sh --json "$ARGUMENTS"` command with the 2-4 word short name you created in step 1
-   - Bash: `--short-name "your-generated-short-name"`
-   - You must only ever run this script once
+   - Check all three sources (remote branches, local branches, specs directories) to find the highest number
+   - Only match branches/directories with the exact short-name pattern
+   - If no existing branches/directories found with this short-name, start with number 1
+   - You must only ever run this script once per feature
    - The JSON is provided in the terminal as output - always refer to it to get the actual content you're looking for
+   - The JSON output will contain BRANCH_NAME and SPEC_FILE paths
+   - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot")
 
-   **ADDITIONAL CHECK (ENFORCEMENT)**:
-   - After the script returns BRANCH_NAME and SPEC_FILE, ensure that BRANCH_NAME exactly equals the BRANCH_NAME provided by the caller (see Precondition). If they differ, abort and report the mismatch.
-   - Ensure SPEC_FILE and FEATURE_DIR are inside the intended feature path (e.g. `specs/feature-[NUMBER]-short-name/`); if not, abort.
-
-3. Load `.specify/templates/spec-template.md` to understand required sections. Also, review `docs/Feature-Roadmap.md` to understand the feature's context and dependencies, and check `docs/design/` for relevant design documents.
+3. Load `.specify/templates/spec-template.md` to understand required sections.
 
 4. Follow this execution flow:
 
@@ -157,7 +174,8 @@ Given that feature description, do this:
       - For each item, determine if it passes or fails
       - Document specific issues found (quote relevant spec sections)
 
-   c. **Handle Validation Results**n
+   c. **Handle Validation Results**:
+
       - **If all items pass**: Mark checklist complete and proceed to step 6
 
       - **If items fail (excluding [NEEDS CLARIFICATION])**:
@@ -173,20 +191,20 @@ Given that feature description, do this:
 
            ```markdown
            ## Question [N]: [Topic]
-
+           
            **Context**: [Quote relevant spec section]
-
+           
            **What we need to know**: [Specific question from NEEDS CLARIFICATION marker]
-
+           
            **Suggested Answers**:
-
+           
            | Option | Answer | Implications |
            |--------|--------|--------------|
            | A      | [First suggested answer] | [What this means for the feature] |
            | B      | [Second suggested answer] | [What this means for the feature] |
            | C      | [Third suggested answer] | [What this means for the feature] |
            | Custom | Provide your own answer | [Explain how to provide custom input] |
-
+           
            **Your choice**: _[Wait for user response]_
            ```
 
@@ -205,7 +223,7 @@ Given that feature description, do this:
 
 7. Report completion with branch name, spec file path, checklist results, and readiness for the next phase (`/speckit.clarify` or `/speckit.plan`).
 
-**NOTE:** The script creates and checks out the new branch and initializes the spec file before writing. The agent must ensure the branch matches the BRANCH_NAME provided by the caller and push only that branch.
+**NOTE:** The script creates and checks out the new branch and initializes the spec file before writing.
 
 ## General Guidelines
 
@@ -238,6 +256,14 @@ When creating this spec from a user prompt:
    - Feature scope and boundaries (include/exclude specific use cases)
    - User types and permissions (if multiple conflicting interpretations possible)
    - Security/compliance requirements (when legally/financially significant)
+
+**Examples of reasonable defaults** (don't ask about these):
+
+- Data retention: Industry-standard practices for the domain
+- Performance targets: Standard web/mobile app expectations unless specified
+- Error handling: User-friendly messages with appropriate fallbacks
+- Authentication method: Standard session-based or OAuth2 for web apps
+- Integration patterns: RESTful APIs unless specified otherwise
 
 ### Success Criteria Guidelines
 

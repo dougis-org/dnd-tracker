@@ -48,8 +48,6 @@ You **MUST** consider the user input before proceeding (if not empty).
 3. Load and analyze the implementation context:
    - **REQUIRED**: Read tasks.md for the complete task list and execution plan
    - **REQUIRED**: Read plan.md for tech stack, architecture, and file structure
-   - **REQUIRED**: Read `docs/Tech-Stack.md` for approved frameworks, libraries, and tooling expectations
-   - **REQUIRED**: Review the increment entry in `docs/Feature-Roadmap.md` for governance checkpoints and evidence requirements
    - **IF EXISTS**: Read data-model.md for entities and relationships
    - **IF EXISTS**: Read contracts/ for API specifications and test requirements
    - **IF EXISTS**: Read research.md for technical decisions and constraints
@@ -66,31 +64,37 @@ You **MUST** consider the user input before proceeding (if not empty).
      ```
 
    - Check if Dockerfile* exists or Docker in plan.md → create/verify .dockerignore
-   - Check if .eslintrc* or eslint.config.* exists → create/verify .eslintignore
+   - Check if .eslintrc*or eslint.config.* exists → create/verify .eslintignore
    - Check if .prettierrc* exists → create/verify .prettierignore
    - Check if .npmrc or package.json exists → create/verify .npmignore (if publishing)
    - Check if terraform files (*.tf) exist → create/verify .terraformignore
    - Check if .helmignore needed (helm charts present) → create/verify .helmignore
 
-   **If ignore file already exists**: Verify essential patterns present, append missing critical patterns only
+   **If ignore file already exists**: Verify it contains essential patterns, append missing critical patterns only
    **If ignore file missing**: Create with full pattern set for detected technology
 
    **Common Patterns by Technology** (from plan.md tech stack):
-   | Technology | Patterns |
-   |---|---|
-   | Node.js/JS/TS | `node_modules/`, `dist/`, `build/`, `*.log`, `.env*` |
-   | Python | `__pycache__/`, `*.pyc`, `.venv/`, `venv/`, `dist/`, `*.egg-info/` |
-   | Java | `target/`, `*.class`, `*.jar`, `.gradle/`, `build/` |
-   | C#/.NET | `bin/`, `obj/`, `*.user`, `*.suo`, `packages/` |
-   | Go | `*.exe`, `*.test`, `vendor/`, `*.out` |
-   | Ruby | `.bundle/`, `log/`, `tmp/`, `*.gem`, `vendor/bundle/` |
-   | PHP | `vendor/`, `*.log`, `*.cache`, `*.env` |
-   | Rust/Kotlin/C++/C | `target/`/`build/`, `*.o`, `.idea/`, `*.log`, `.env*` |
-   | Swift | `.build/`, `DerivedData/`, `*.swiftpm/`, `Packages/` |
-   | R | `.Rproj.user/`, `.Rhistory`, `.RData`, `*.Rproj` |
-   | Universal | `.DS_Store`, `Thumbs.db`, `*.tmp`, `*.swp`, `.vscode/` |
+   - **Node.js/JavaScript/TypeScript**: `node_modules/`, `dist/`, `build/`, `*.log`, `.env*`
+   - **Python**: `__pycache__/`, `*.pyc`, `.venv/`, `venv/`, `dist/`, `*.egg-info/`
+   - **Java**: `target/`, `*.class`, `*.jar`, `.gradle/`, `build/`
+   - **C#/.NET**: `bin/`, `obj/`, `*.user`, `*.suo`, `packages/`
+   - **Go**: `*.exe`, `*.test`, `vendor/`, `*.out`
+   - **Ruby**: `.bundle/`, `log/`, `tmp/`, `*.gem`, `vendor/bundle/`
+   - **PHP**: `vendor/`, `*.log`, `*.cache`, `*.env`
+   - **Rust**: `target/`, `debug/`, `release/`, `*.rs.bk`, `*.rlib`, `*.prof*`, `.idea/`, `*.log`, `.env*`
+   - **Kotlin**: `build/`, `out/`, `.gradle/`, `.idea/`, `*.class`, `*.jar`, `*.iml`, `*.log`, `.env*`
+   - **C++**: `build/`, `bin/`, `obj/`, `out/`, `*.o`, `*.so`, `*.a`, `*.exe`, `*.dll`, `.idea/`, `*.log`, `.env*`
+   - **C**: `build/`, `bin/`, `obj/`, `out/`, `*.o`, `*.a`, `*.so`, `*.exe`, `Makefile`, `config.log`, `.idea/`, `*.log`, `.env*`
+   - **Swift**: `.build/`, `DerivedData/`, `*.swiftpm/`, `Packages/`
+   - **R**: `.Rproj.user/`, `.Rhistory`, `.RData`, `.Ruserdata`, `*.Rproj`, `packrat/`, `renv/`
+   - **Universal**: `.DS_Store`, `Thumbs.db`, `*.tmp`, `*.swp`, `.vscode/`, `.idea/`
 
-   **Tool-Specific Patterns**: Docker (`coverage/`), ESLint/Prettier (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`), Terraform (`.terraform/`, `*.tfstate*`, `*.tfvars`), Kubernetes (`*.secret.yaml`, `secrets/`, `kubeconfig*`)
+   **Tool-Specific Patterns**:
+   - **Docker**: `node_modules/`, `.git/`, `Dockerfile*`, `.dockerignore`, `*.log*`, `.env*`, `coverage/`
+   - **ESLint**: `node_modules/`, `dist/`, `build/`, `coverage/`, `*.min.js`
+   - **Prettier**: `node_modules/`, `dist/`, `build/`, `coverage/`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`
+   - **Terraform**: `.terraform/`, `*.tfstate*`, `*.tfvars`, `.terraform.lock.hcl`
+   - **Kubernetes/k8s**: `*.secret.yaml`, `secrets/`, `.kube/`, `kubeconfig*`, `*.key`, `*.crt`
 
 5. Parse tasks.md structure and extract:
    - **Task phases**: Setup, Tests, Core, Integration, Polish
