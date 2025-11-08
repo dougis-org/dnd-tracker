@@ -22,7 +22,7 @@ and security. All contributors—including any AI agents **must** follow these u
 ### 1. Issue Selection & Branching
 
 - Select issues by priority (P1 > P2, Phase1 > Phase2, lower# first).
-  - Examine the docs/execution-plan.md to find the next open issue, if none found, review all open issues in GitHub
+  - Examine [docs/Feature-Roadmap.md](docs/Feature-Roadmap.md) to find the next open issue; if none found, review all open issues in GitHub
 - Do not start work on issues labeled `in-progress` or `effort:human`.
 - Add the `in-progress` label when starting.
 - Create a feature branch from `main` using descriptive, kebab-case naming and including the issue number:  
@@ -31,27 +31,42 @@ and security. All contributors—including any AI agents **must** follow these u
 
 ### 2. Development Process (TDD Required)
 
-- Determine if the scope of the issue is appropriate, if the issue can be broken into smaller deliverables
-  create sub issues for those deliverables and iterate over their delivery (following the standards below)
-- Write failing tests before implementing code (Test-Driven Development).
+- Determine if the scope of the issue is appropriate; if the issue can be broken into smaller deliverables, create sub-issues for those deliverables and iterate over their delivery (following the standards below).
+- Write failing tests before implementing code (Test-Driven Development):
   - Follow the guidelines in [TESTING.md](TESTING.md)
-- Implement code to pass tests; extract duplicated test code to utilities.
-- Follow all coding, security, and documentation standards below.
-- After every file edit, run:
-  - `npm run lint:fix`
-  - `npm run lint:markdown:fix` (for markdown files)
+  - Write test cases that define expected behavior and currently fail
+  - Include edge cases and error scenarios
+  - Target 80%+ coverage for touched code
+  - Extract duplicated test setup to shared utilities (`test-utils.ts`, fixtures)
+- Implement code to pass tests (minimal code required, no over-engineering):
+  - Follow all coding standards below
+  - Keep functions under 50 lines
+  - Keep files under 450 lines
+  - Use TypeScript strict mode throughout
+- After every file edit, run linting and formatting:
+
+  ```bash
+  npm run lint:fix
+  npm run lint:markdown:fix  # if markdown files were modified
+  ```
+
 - Commit and push after local checks pass.
 
 ### 3. Pre-PR Checklist
 
-Before creating a PR, ensure:
+Before creating a PR, ensure all of the following pass locally:
 
-- [ ] All TypeScript errors are resolved (`npm run type-check`)
-- [ ] ESLint passes without errors (`npm run lint`)
-- [ ] Markdownlint passes without errors (`npm run lint:markdown:fix`)
-- [ ] All tests pass (`npm run test:ci:parallel`)
-- [ ] Build completes successfully (`npm run build`)
-- [ ] All new dependencies are installed and scanned (see Security below)
+```bash
+npm run type-check      # All TypeScript errors resolved
+npm run lint            # ESLint passes without errors
+npm run lint:markdown   # Markdownlint passes without errors
+npm run test:ci:parallel  # All tests pass
+npm run build           # Build completes successfully
+```
+
+Also verify:
+
+- [ ] All new dependencies are installed and scanned (see [Testing & Quality Checks](#testing--quality-checks))
 - [ ] Environment variables are documented in `.env.example`
 - [ ] Code follows all project conventions and best practices
 
@@ -66,10 +81,13 @@ Before creating a PR, ensure:
 #### Pull Request Flow
 
 1. Open the PR with the details outlined above
-2. Wait 90 seconds for the AI agents to review the PR
-   1. If after 90 seconds you still do not see review comments from both Gemini and GitHub Copilot, wait another 90 seconds
-3. Address ALL comments made by the AI agents, if you are not fixing an issue raised, that **MUST** be confirmed with the repository owner, all items in your PR are in scope
+2. Wait 90 seconds for automated review comments to appear
+   1. Automated agents may provide code review feedback and quality checks
+   2. If after 90 seconds you still do not see review comments, wait another 90 seconds
+3. Address ALL comments made by automated agents; if you are not fixing an issue raised, that **MUST** be confirmed with the repository owner—all items in your PR are considered in scope
    1. If any items are deferred as out of scope, a GitHub issue **MUST** be opened to track the work needed
+      - Document the deferred work in the PR body with a link to the created issue
+      - Add a comment in the PR explaining why the work is deferred (scope, dependencies, etc.)
 4. Review the results of all checks on the PR
    1. The build **MUST** pass
    2. All tests **MUST** pass
@@ -84,8 +102,9 @@ Before creating a PR, ensure:
 
 ### 5. Post-PR Merge Process
 
-- Update task status and remove `in-progress` label after merge.
-- Prune local branches after merge.
+- Remove the `in-progress` label from the GitHub issue after merge
+- Update the issue status to `completed` in GitHub (if using issue status/state field)
+- Prune local branches after merge: `git branch -d feature/branch-name` or the appropriate MCP tool
 - Report that the feature is complete and the PR is merged
 
 ---
@@ -181,17 +200,37 @@ To maintain code quality and keep the codebase maintainable, all contributors mu
 
 ## Testing & Quality Checks
 
-- All code must pass:
-  - `npm run test:ci`
-  - `npm run build`
-  - `npm run lint:fix`
-  - `npm run lint:markdown:fix`
-  - `npm run type-check`
-- After any dependency install, run a security scan:
-  - `codacy_cli_analyze --tool trivy`
-- Before PR, run a full Codacy scan:
-  - `codacy_cli_analyze .`
+All code must pass the following quality gates before PR submission:
+
+```bash
+npm run test:ci              # Unit and integration tests
+npm run build                # TypeScript and Next.js build
+npm run lint:fix             # ESLint fixes
+npm run lint:markdown:fix    # Markdown formatting
+npm run type-check           # TypeScript strict mode check
+```
+
+Additional security and quality checks:
+
+- After any dependency install, run a security scan using the Codacy MCP Server tool:
+
+  ```bash
+  # For AI agents: Use the Codacy MCP Server tool codacy_cli_analyze with --tool trivy
+  # For humans: Use the Codacy CLI command
+  codacy-cli analyze --tool trivy
+  ```
+
+- Before PR, run a full Codacy analysis using the Codacy MCP Server tool:
+
+  ```bash
+  # For AI agents: Use the Codacy MCP Server tool codacy_cli_analyze
+  # For humans: Use the Codacy CLI command
+  codacy-cli analyze
+  ```
+
 - Fix all issues found by remote Codacy or CI, even pre-existing ones.
+
+For detailed code quality standards, see [Reducing Complexity & Duplication](#reducing-complexity--duplication) and [Codacy Instructions](.github/instructions/codacy.instructions.md).
 
 ---
 
@@ -201,7 +240,7 @@ To maintain code quality and keep the codebase maintainable, all contributors mu
 - Document new environment variables in `.env.example`.
 - Use JSDoc for complex functions.
 - Update API documentation for new endpoints.
-- Update `docs/Execution-Plan.md` if the issue is listed.
+- Update [docs/Feature-Roadmap.md](docs/Feature-Roadmap.md) if the issue is listed there.
 
 ---
 
