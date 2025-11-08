@@ -320,9 +320,15 @@ Refer to [DEPLOYMENT.md](DEPLOYMENT.md) for complete deployment instructions, in
 
 ## Tools
 
-- Codacy CLI: `/usr/local/bin/codacy-cli`
-- Use MCP server for remote Codacy access when possible.
-- Use Context7 for latest library standards.
+### Codacy Analysis
+
+- **For AI agents**: Use the `codacy_cli_analyze` tool from the Codacy MCP Server (see [Codacy Instructions](.github/instructions/codacy.instructions.md))
+- **For humans**: Use the `codacy-cli` command-line tool if available
+
+### Other Tools
+
+- Use MCP server for remote Codacy access when possible
+- Use Context7 for latest library standards
 
 ---
 

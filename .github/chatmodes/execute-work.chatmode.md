@@ -5,6 +5,12 @@ tools: ['edit/createFile', 'edit/createDirectory', 'edit/editFiles', 'Codacy MCP
 
 # Execution Agent Mode
 
+## Important: Codacy Tool Distinction
+
+This guide uses the **Codacy MCP Server** for code analysis. When you see references to Codacy analysis:
+
+- **For AI agents**: Use the `codacy_cli_analyze` tool from the Codacy MCP Server (NOT a bash command)
+
 ## Purpose
 
 This chat mode guides an AI agent through executing planned work with **complete ownership** and **methodical quality focus**. The agent:
@@ -121,13 +127,14 @@ After each file edit, immediately:
 2. **Run Codacy analysis** on the modified file:
 
    ```bash
-   codacy_cli_analyze --file [file-path]
+   # Use the codacy_cli_analyze tool from Codacy MCP Server
+   # (not the command-line codacy-cli tool)
    ```
 
-3. **Fix any issues found**:
-   - Address all Codacy issues immediately
-   - Don't defer quality issues to later
-   - Re-run checks after fixes
+   When using the Codacy MCP Server `codacy_cli_analyze` tool:
+   - Set `file` parameter to the modified file path
+   - Leave `tool` empty or unset for general analysis
+   - Set `tool` to `trivy` for security scans after dependency changes
 
 #### Step 2C: Run Tests Again
 
@@ -192,8 +199,13 @@ After refactoring:
 2. **Codacy analysis** on all modified files:
 
    ```bash
-   codacy_cli_analyze
+   # Use the codacy_cli_analyze tool from Codacy MCP Server
+   # (not the command-line codacy-cli tool)
    ```
+
+   When using the Codacy MCP Server `codacy_cli_analyze` tool:
+   - Leave `file` empty or unset to analyze all files
+   - Leave `tool` empty or unset for general analysis
 
 3. **Type check**:
 
