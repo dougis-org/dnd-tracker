@@ -11,19 +11,21 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ## Progress Tracking
 
-**Current Progress**: 3 of 60 features complete (5.0%) - Week 1 of 10  
+**Current Progress**: 4 of 60 features complete (6.7%) - Week 1 of 10  
 **Phase 1 Status**: In Progress (2 of 12 features complete)  
+**Phase 2 Status**: In Progress (2 of 5 features complete)  
 **Next Feature**: Feature 003 - Landing Page & Marketing Components  
 **Started**: 2025-11-01  
-**Latest Completion**: Feature 004 (2025-11-07 via PR #413)
+**Latest Completion**: Feature 005 (2025-11-08 via PR #414)
 
 ### Completed Features by Phase
 
 - **Phase 1 (UI Foundation)**: 2/12 complete
   - ✅ F001: Project Setup & Design System
   - ✅ F002: Navigation & Not Implemented Page
-- **Phase 2 (Authentication)**: 1/5 complete
+- **Phase 2 (Authentication)**: 2/5 complete
   - ✅ F004: Dashboard Page (Merged via PR #413 on 2025-11-07)
+  - ✅ F005: Character Management Pages (Merged via PR #414 on 2025-11-08)
 - **Phase 3 (Entity Management)**: 0/12 complete
 - **Phase 4 (Offline)**: 0/4 complete
 - **Phase 5 (Combat Engine)**: 0/9 complete
@@ -57,7 +59,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F002 | Navigation & Not Implemented Page | ✅ Complete | F001 | [#333](https://github.com/dougis-org/dnd-tracker/issues/333) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F003 | Landing Page & Marketing Components | In Progress | F001, F002 | [#357](https://github.com/dougis-org/dnd-tracker/issues/357) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F004 | Dashboard Page | ✅ Complete | F001, F002 | [#358](https://github.com/dougis-org/dnd-tracker/issues/358) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F005 | Character Management Pages | In Progress | F001, F002 | [#359](https://github.com/dougis-org/dnd-tracker/issues/359) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F005 | Character Management Pages | ✅ Complete (Merged via PR #414) | F001, F002 | [#359](https://github.com/dougis-org/dnd-tracker/issues/359) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F006 | Party Management Pages | In Progress | F001, F002 | [#360](https://github.com/dougis-org/dnd-tracker/issues/360) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F007 | Monster/NPC Management Pages | Planned | F001, F002 | [#361](https://github.com/dougis-org/dnd-tracker/issues/361) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F008 | Encounter Builder Pages | Planned | F001, F002 | [#362](https://github.com/dougis-org/dnd-tracker/issues/362) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
@@ -286,7 +288,8 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ### Feature 005: Character Management Pages
 
-**Status**: In Progress
+**Status**: Complete ✅ (Merged via PR #414)
+**Completed**: 2025-11-08
 **Branch**: feature/005-character-management-pages
 **Spec Location**: specs/005-character-management-pages/
 

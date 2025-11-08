@@ -1,9 +1,15 @@
 ---
 description: 'A mode for executing planned work with methodical quality focus. This agent takes complete ownership over implementation, follows TDD principles, maintains strict code quality standards, and ensures all deliverables meet project requirements before PR creation.'
-tools: ['edit', 'Codacy MCP Server/*', 'GitKraken/*', 'github/add_comment_to_pending_review', 'github/add_issue_comment', 'github/create_branch', 'github/get_commit', 'github/get_file_contents', 'github/get_label', 'github/get_me', 'github/issue_read', 'github/issue_write', 'github/list_commits', 'github/list_issue_types', 'github/list_issues', 'github/list_pull_requests', 'github/list_tags', 'github/merge_pull_request', 'github/pull_request_read', 'github/push_files', 'github/request_copilot_review', 'github/search_issues', 'github/search_pull_requests', 'github/sub_issue_write', 'github/update_pull_request', 'sequentialthinking/*', 'mongodb/collection-indexes', 'mongodb/collection-schema', 'mongodb/connect', 'mongodb/count', 'mongodb/explain', 'mongodb/find', 'desktop-commander-wonderwhy/create_directory', 'desktop-commander-wonderwhy/edit_block', 'desktop-commander-wonderwhy/force_terminate', 'desktop-commander-wonderwhy/get_file_info', 'desktop-commander-wonderwhy/get_more_search_results', 'desktop-commander-wonderwhy/get_prompts', 'desktop-commander-wonderwhy/get_recent_tool_calls', 'desktop-commander-wonderwhy/interact_with_process', 'desktop-commander-wonderwhy/kill_process', 'desktop-commander-wonderwhy/list_directory', 'desktop-commander-wonderwhy/list_processes', 'desktop-commander-wonderwhy/list_searches', 'desktop-commander-wonderwhy/move_file', 'desktop-commander-wonderwhy/read_file', 'desktop-commander-wonderwhy/read_multiple_files', 'desktop-commander-wonderwhy/read_process_output', 'desktop-commander-wonderwhy/start_process', 'desktop-commander-wonderwhy/start_search', 'desktop-commander-wonderwhy/stop_search', 'desktop-commander-wonderwhy/write_file', 'deepcontext/*', 'microsoft/playwright-mcp/*', 'upstash/context7/*', 'usages', 'think', 'openSimpleBrowser', 'github.vscode-pull-request-github/openPullRequest', 'todos']
+tools: ['edit/createFile', 'edit/createDirectory', 'edit/editFiles', 'Codacy MCP Server/*', 'GitKraken/*', 'github/add_comment_to_pending_review', 'github/add_issue_comment', 'github/assign_copilot_to_issue', 'github/create_branch', 'github/create_pull_request', 'github/get_commit', 'github/get_file_contents', 'github/get_label', 'github/get_me', 'github/issue_read', 'github/issue_write', 'github/list_commits', 'github/list_issue_types', 'github/list_issues', 'github/list_pull_requests', 'github/list_tags', 'github/merge_pull_request', 'github/pull_request_read', 'github/push_files', 'github/request_copilot_review', 'github/search_issues', 'github/search_pull_requests', 'github/sub_issue_write', 'github/update_pull_request', 'sequentialthinking/*', 'mongodb/collection-indexes', 'mongodb/collection-schema', 'mongodb/connect', 'mongodb/count', 'mongodb/explain', 'mongodb/find', 'desktop-commander-wonderwhy/create_directory', 'desktop-commander-wonderwhy/edit_block', 'desktop-commander-wonderwhy/force_terminate', 'desktop-commander-wonderwhy/get_file_info', 'desktop-commander-wonderwhy/get_more_search_results', 'desktop-commander-wonderwhy/get_prompts', 'desktop-commander-wonderwhy/get_recent_tool_calls', 'desktop-commander-wonderwhy/interact_with_process', 'desktop-commander-wonderwhy/kill_process', 'desktop-commander-wonderwhy/list_directory', 'desktop-commander-wonderwhy/list_processes', 'desktop-commander-wonderwhy/list_searches', 'desktop-commander-wonderwhy/move_file', 'desktop-commander-wonderwhy/read_file', 'desktop-commander-wonderwhy/read_multiple_files', 'desktop-commander-wonderwhy/read_process_output', 'desktop-commander-wonderwhy/start_process', 'desktop-commander-wonderwhy/start_search', 'desktop-commander-wonderwhy/stop_search', 'desktop-commander-wonderwhy/write_file', 'deepcontext/*', 'microsoft/playwright-mcp/*', 'upstash/context7/*', 'usages', 'think', 'openSimpleBrowser', 'github.vscode-pull-request-github/openPullRequest', 'todos']
 ---
 
 # Execution Agent Mode
+
+## Important: Codacy Tool Distinction
+
+This guide uses the **Codacy MCP Server** for code analysis. When you see references to Codacy analysis:
+
+- **For AI agents**: Use the `codacy_cli_analyze` tool from the Codacy MCP Server (NOT a bash command)
 
 ## Purpose
 
@@ -121,13 +127,14 @@ After each file edit, immediately:
 2. **Run Codacy analysis** on the modified file:
 
    ```bash
-   codacy_cli_analyze --file [file-path]
+   # Use the codacy_cli_analyze tool from Codacy MCP Server
+   # (not the command-line codacy-cli tool)
    ```
 
-3. **Fix any issues found**:
-   - Address all Codacy issues immediately
-   - Don't defer quality issues to later
-   - Re-run checks after fixes
+   When using the Codacy MCP Server `codacy_cli_analyze` tool:
+   - Set `file` parameter to the modified file path
+   - Leave `tool` empty or unset for general analysis
+   - Set `tool` to `trivy` for security scans after dependency changes
 
 #### Step 2C: Run Tests Again
 
@@ -192,8 +199,13 @@ After refactoring:
 2. **Codacy analysis** on all modified files:
 
    ```bash
-   codacy_cli_analyze
+   # Use the codacy_cli_analyze tool from Codacy MCP Server
+   # (not the command-line codacy-cli tool)
    ```
+
+   When using the Codacy MCP Server `codacy_cli_analyze` tool:
+   - Leave `file` empty or unset to analyze all files
+   - Leave `tool` empty or unset for general analysis
 
 3. **Type check**:
 
