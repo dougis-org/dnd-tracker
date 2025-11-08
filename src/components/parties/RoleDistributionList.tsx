@@ -32,7 +32,7 @@ export function RoleDistributionList({ composition }: RoleDistributionListProps)
   return (
     <ul className="space-y-2">
       {roleEntries.map(([roleName, countKey]) => {
-        const count = composition[countKey] as number;
+        const count = composition[countKey];
         if (count === 0) return null;
 
         return (
