@@ -3,6 +3,11 @@ import React, { useState } from 'react';
 import { Party, PartyMember } from '@/types/party';
 import { MemberForm } from './MemberForm';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
+import {
+  updateOrAddMember,
+  removeMember,
+  findMemberById,
+} from '@/lib/utils/partyMemberHelpers';
 
 export interface PartyFormProps {
   party?: Party;
@@ -63,29 +68,8 @@ export function PartyForm({
   };
 
   const handleMemberSubmit = (memberData: Partial<PartyMember>) => {
-    const fullMember: PartyMember = {
-      id: memberData.id || `member-${Date.now()}`,
-      partyId: '',
-      characterName: memberData.characterName || '',
-      class: memberData.class || 'Fighter',
-      race: memberData.race || 'Human',
-      level: memberData.level || 1,
-      ac: memberData.ac || 10,
-      hp: memberData.hp || 10,
-      role: memberData.role,
-      position: memberData.position || 0,
-    };
-
-    if (editingMemberId) {
-      // Edit existing member
-      setMembers((prev) =>
-        prev.map((m) => (m.id === editingMemberId ? fullMember : m))
-      );
-      setEditingMemberId(null);
-    } else {
-      // Add new member
-      setMembers((prev) => [...prev, fullMember]);
-    }
+    setMembers(updateOrAddMember(members, memberData, editingMemberId));
+    setEditingMemberId(null);
     setShowMemberForm(false);
   };
 
@@ -95,7 +79,7 @@ export function PartyForm({
   };
 
   const handleDeleteMember = (memberId: string) => {
-    setMembers((prev) => prev.filter((m) => m.id !== memberId));
+    setMembers(removeMember(members, memberId));
     setDeletingMemberId(null);
   };
 
@@ -119,8 +103,8 @@ export function PartyForm({
     onSubmit(submitData);
   };
 
-  const editingMember = members.find((m) => m.id === editingMemberId);
-  const memberToDelete = members.find((m) => m.id === deletingMemberId);
+  const editingMember = findMemberById(members, editingMemberId);
+  const memberToDelete = findMemberById(members, deletingMemberId);
 
   return (
     <form
