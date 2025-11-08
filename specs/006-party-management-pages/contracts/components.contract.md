@@ -7,6 +7,7 @@
 ## Contract Overview
 
 This document defines the interface contracts for all reusable components in Party Management feature. Each component specifies:
+
 - Props interface with types
 - Required vs. optional props
 - Expected behavior
@@ -42,12 +43,12 @@ interface PartyCardProps {
 - **Rendering**: Display party name, description (truncated to 2 lines), and composition summary
 - **Composition Summary**: Show role distribution as icons/counts (e.g., "🛡️ 1 Tank • 🩹 1 Healer • ⚔️ 2 DPS")
 - **Member Preview**: Show member count and average level (e.g., "4 members • Avg Level 4.75")
-- **Styling**: 
+- **Styling**:
   - Border: light gray, rounded corners, subtle shadow
   - Hover state: shadow increase, slight scale up (transform: scale(1.02))
   - Dark mode: border and text colors adjust via Tailwind dark mode
 - **Click Behavior**: If onClick provided, invoke it on card click
-- **Accessibility**: 
+- **Accessibility**:
   - Use semantic HTML (button or link)
   - Add aria-label with party name
   - Keyboard navigation support
@@ -90,7 +91,7 @@ interface PartyDetailProps {
 
 ### Behavior Specification
 
-- **Header Section**: 
+- **Header Section**:
   - Party name (large heading)
   - Campaign setting (subtitle)
   - Description (paragraph)

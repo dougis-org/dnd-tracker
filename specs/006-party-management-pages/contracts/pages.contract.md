@@ -399,6 +399,7 @@ Same as Create page but with pre-populated data and additional delete option.
 ### Responsive Breakpoints
 
 All pages must adapt to:
+
 - Mobile: 375px (default: single column, full-width)
 - Tablet: 768px (default: two columns where appropriate)
 - Desktop: 1024px+ (default: three columns where appropriate)
@@ -419,6 +420,7 @@ All pages must adapt to:
 ### Integration Tests for Each Page
 
 **party-list.test.tsx**:
+
 - [ ] Renders list of parties
 - [ ] PartyCard components display
 - [ ] Create button navigates to /parties/new
@@ -426,6 +428,7 @@ All pages must adapt to:
 - [ ] Responsive grid layout
 
 **party-detail.test.tsx**:
+
 - [ ] Renders party with correct name, description
 - [ ] Displays all members in grid
 - [ ] Edit button navigates to /parties/:id/edit
@@ -433,12 +436,14 @@ All pages must adapt to:
 - [ ] Back button navigates to /parties
 
 **party-create.test.tsx**:
+
 - [ ] Form displays empty fields
 - [ ] Member add/remove works
 - [ ] Submit button shows "Not Implemented"
 - [ ] Cancel navigates back to /parties
 
 **party-edit.test.tsx**:
+
 - [ ] Form pre-populates with party data
 - [ ] Member edit/remove works
 - [ ] Submit shows "Not Implemented"

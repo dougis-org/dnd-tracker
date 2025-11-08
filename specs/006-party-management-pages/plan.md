@@ -14,33 +14,37 @@ Party Management Pages provides DMs with UI for viewing, creating, editing, and 
 ## Technical Context
 
 **Language/Version**: TypeScript 5.9.2 with Next.js 16.0.1 / React 19.2.0  
-**Primary Dependencies**: 
-  - Frontend: React hooks, shadcn/ui components, Tailwind CSS 4.x
-  - Testing: Jest 30.2.0+, Playwright 1.56.1+, @testing-library/react
-  - Form handling: React Hook Form or uncontrolled form components (mock only)
+**Primary Dependencies**:
+
+- Frontend: React hooks, shadcn/ui components, Tailwind CSS 4.x
+- Testing: Jest 30.2.0+, Playwright 1.56.1+, @testing-library/react
+- Form handling: React Hook Form or uncontrolled form components (mock only)
 
 **Storage**: Mock JSON data in memory during session (no persistence until F014 - MongoDB integration)  
 **Testing**: Jest for unit/integration, Playwright for E2E critical flows  
 **Target Platform**: Web application (Next.js)  
 **Project Type**: Single web application (monorepo not applicable)  
 **Performance Goals**: Page load <2s (development), form interactions <200ms response time  
-**Constraints**: 
-  - All pages must work without authentication until F013 (Clerk integration)
-  - Mock data only - forms show "Not Implemented" message
-  - Component files must be <450 lines, functions <50 lines
-  - 80%+ test coverage on all touched code
+**Constraints**:
 
-**Scale/Scope**: 
-  - 4 main pages: list, detail, create, edit
-  - ~6 reusable components (PartyCard, PartyForm, MemberCard, RoleSelector, etc.)
-  - ~15 total files (components, pages, tests, utilities)
-  - Estimated complexity: Medium (component composition, conditional rendering, form state)
+- All pages must work without authentication until F013 (Clerk integration)
+- Mock data only - forms show "Not Implemented" message
+- Component files must be <450 lines, functions <50 lines
+- 80%+ test coverage on all touched code
+
+**Scale/Scope**:
+
+- 4 main pages: list, detail, create, edit
+- ~6 reusable components (PartyCard, PartyForm, MemberCard, RoleSelector, etc.)
+- ~15 total files (components, pages, tests, utilities)
+- Estimated complexity: Medium (component composition, conditional rendering, form state)
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research*
 
 Project follows `.specify/memory/constitution.md` requirements:
+
 - ✅ Feature scope is discrete and deployable within 1-2 days (Day 1 from roadmap)
 - ✅ Depends on completed features: F001 (Design System), F002 (Navigation)
 - ✅ Follows Next.js App Router conventions (specified in Tech-Stack.md)
@@ -139,6 +143,7 @@ tests/
 ```
 
 **Structure Decision**: Single web application with monolithic structure. Party management pages follow Next.js App Router conventions with:
+
 - Page components in `src/app/parties/`
 - Reusable UI components in `src/components/parties/`
 - Utility functions in `src/lib/`
@@ -148,6 +153,7 @@ tests/
 ## Complexity Tracking
 
 No constitution violations. All decisions justified by:
+
 - **Single app structure**: Party feature is part of monolithic D&D Tracker (Tech-Stack.md), not separate microservice
 - **No persistence layer**: Mock data only (backend integration is F014, deferred dependency)
 - **Component composition**: Follows shadcn/ui and React best practices
@@ -199,6 +205,7 @@ No constitution violations. All decisions justified by:
 ## Ready for Execution
 
 This plan is complete and ready for:
+
 - Phase 0: Research unknown technologies and design decisions
 - Phase 1: Create data model, API contracts, and component architecture
 - Phase 2: Implement using TDD workflow

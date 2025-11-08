@@ -13,6 +13,7 @@
 ### Rationale
 
 React Hook Form provides:
+
 - Minimal re-renders (performance advantage with React 19 concurrent rendering)
 - Built-in validation integration
 - Easy integration with shadcn/ui form wrapper component
@@ -21,13 +22,13 @@ React Hook Form provides:
 
 ### Alternatives Evaluated
 
-1. **Uncontrolled components with native form**: 
+1. **Uncontrolled components with native form**:
    - Rejected: Requires manual validation, no type safety, harder to test
-   
-2. **Controlled components with useState**: 
+
+2. **Controlled components with useState**:
    - Rejected: More boilerplate, more re-renders, harder to manage complex forms
 
-3. **Formik**: 
+3. **Formik**:
    - Rejected: Heavier bundle, React Hook Form is lighter and more modern
 
 ### Implementation Pattern
@@ -60,6 +61,7 @@ const { control, watch, handleSubmit } = useForm({
 ### Rationale
 
 shadcn/ui Dialog provides:
+
 - Accessible by default (ARIA attributes, focus management)
 - Built on Radix UI primitives (battle-tested)
 - Integrates perfectly with existing Tailwind styling
@@ -118,6 +120,7 @@ shadcn/ui Dialog provides:
 ### Rationale
 
 Structured approach provides:
+
 - Type-safe mock data with TypeScript interfaces
 - Factory functions for generating variations
 - Easy to extend for future tests
@@ -180,6 +183,7 @@ export function createMockParty(overrides: Partial<Party> = {}): Party {
 ### Rationale
 
 Tailwind CSS 4.x provides:
+
 - Built-in responsive utilities (no custom media queries needed)
 - Mobile-first approach (default 1 column, expand for larger screens)
 - Container queries for adaptive layouts
@@ -225,11 +229,13 @@ Tailwind CSS 4.x provides:
 ### Rationale
 
 Reuse across contexts requires:
+
 - `detail` variant: Full display of member stats
 - `edit` variant: Display + edit controls (delete button)
 - `preview` variant: Compact display in party list
 
 Single component with variants:
+
 - Reduces duplication
 - Maintains consistency
 - Easy to test (single test file covers all variants)
@@ -309,6 +315,7 @@ All Phase 0 research tasks complete. Key decisions finalized:
 ### Phase 1 Ready
 
 All unknowns resolved. Ready to proceed with:
+
 1. Create data-model.md with entity definitions
 2. Create component contracts in `/contracts/` directory
 3. Create quickstart.md for implementation guide

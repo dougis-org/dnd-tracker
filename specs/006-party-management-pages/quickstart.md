@@ -100,6 +100,7 @@ Follow this priority order to implement components efficiently. Each step follow
 3. Verify tests pass
 
 **Test scenarios**:
+
 - List renders with mock parties
 - PartyCard components display correctly
 - Click navigation works
@@ -112,6 +113,7 @@ Follow this priority order to implement components efficiently. Each step follow
 3. Verify tests pass
 
 **Test scenarios**:
+
 - Correct party displays
 - PartyDetail component renders
 - Edit/Delete buttons work
@@ -124,6 +126,7 @@ Follow this priority order to implement components efficiently. Each step follow
 3. Verify tests pass
 
 **Test scenarios**:
+
 - Form displays
 - Submit shows "Not Implemented" message
 - Cancel button works
@@ -135,6 +138,7 @@ Follow this priority order to implement components efficiently. Each step follow
 3. Verify tests pass
 
 **Test scenarios**:
+
 - Form pre-populates with party data
 - Submit shows "Not Implemented" message
 - Delete confirmation modal works
@@ -148,6 +152,7 @@ Follow this priority order to implement components efficiently. Each step follow
 1. Create `tests/e2e/party-management.spec.ts` (200-250 LOC)
 
 **Critical user flows**:
+
 - View party list
 - Click party card to view detail
 - Click Edit button
@@ -258,6 +263,7 @@ tests/
 ### Unit Tests (Per Component)
 
 Each component test file includes:
+
 - Rendering tests (does it render? correct props display?)
 - Interaction tests (click handlers, form input)
 - Variant tests (if component has variants)
@@ -269,6 +275,7 @@ Each component test file includes:
 ### Integration Tests (Per Page)
 
 Each page test file includes:
+
 - Page renders correctly
 - Mock data displays
 - Navigation works
@@ -280,6 +287,7 @@ Each page test file includes:
 ### E2E Tests (User Workflows)
 
 Critical workflows:
+
 1. View party list and click party card
 2. Navigate through party detail, edit, and back to list
 3. Verify page transitions work correctly

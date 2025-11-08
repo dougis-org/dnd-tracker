@@ -18,6 +18,7 @@ Party Management Pages provides DMs with a complete UI for viewing, creating, ed
 **Phase Structure**: Tests → Implementation → Refactoring → Documentation
 
 This document follows **Test-Driven Development (TDD)**:
+
 1. Write failing tests first (Red phase)
 2. Implement to pass tests (Green phase)
 3. Refactor and extract duplication (Blue phase)
@@ -39,6 +40,7 @@ This document follows **Test-Driven Development (TDD)**:
 ### Parallel Execution Opportunities
 
 **Independent components can be built concurrently:**
+
 - MemberCard, RoleSelector (no dependencies on other components)
 - PartyCard can start after types/mock data
 - MemberForm depends on RoleSelector completion

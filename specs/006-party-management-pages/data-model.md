@@ -25,16 +25,19 @@ Represents a group of adventurers forming a player party for a D&D campaign.
 | updated_at | Date/ISO-8601 | Yes | Last update timestamp | Automatically updated |
 
 **Relationships**:
+
 - `members`: One-to-many with PartyMember (cascade delete if party deleted)
 - Future: One-to-many with Encounter (when F034 implemented)
 - Future: Many-to-one with User (when F013 authentication added)
 
 **State Transitions**:
+
 - `draft` → `active` (when members added)
 - `active` → `archived` (manual user action)
 - Any state → `deleted` (hard delete for now, soft delete when audit needed)
 
 **Validation Rules**:
+
 - name: Required, 1-100 chars, trimmed
 - members: Minimum 1 member, maximum 20 members per party
 - description: Optional, max 500 chars
@@ -64,10 +67,12 @@ Represents an individual character within a party.
 | position | number | No | Display order in member list | 0-19 |
 
 **Relationships**:
+
 - `partyId`: Many-to-one with Party (required)
 - Future: One-to-one with Character (when F018 implemented)
 
 **Validation Rules**:
+
 - characterName: Required, 1-100 chars, non-empty
 - class: Required, must be one of valid D&D 5e classes
 - race: Required, must be one of valid D&D 5e races  
@@ -109,6 +114,7 @@ Classification system for party member roles.
 | Undefined | Gray (#6b7280) | Role not assigned | Question icon |
 
 **Usage**:
+
 - Badge display: Color-coded role indicator
 - Selection: Dropdown selector in forms
 - Filtering: (Future) Filter parties by role composition
@@ -319,11 +325,13 @@ function getPartyComposition(party: Party) {
 ## Storage Considerations
 
 **Current Phase (F006 - Mock Only)**:
+
 - Data stored in-memory via TypeScript module (`lib/mockData/parties.ts`)
 - No persistence between page refreshes
 - Mock data sufficient for UI/UX validation
 
 **Future Integration (F014 - MongoDB)**:
+
 - MongoDB collections: `parties`, `members`
 - Mongoose schemas: `PartySchema`, `PartyMemberSchema`
 - Indexes on: `userId`, `party.id`, `created_at`
