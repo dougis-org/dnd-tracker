@@ -38,9 +38,25 @@ export function getInitialState(initial: PartialCharacter | Character | null | u
   };
 }
 
-function parseIntSafe(value: string | number, fallback: number): number {
-  const parsed = parseInt(String(value), 10);
-  return Number.isNaN(parsed) ? fallback : parsed;
+const isFiniteNumber = (value: number): boolean => Number.isFinite(value);
+
+function parseInteger(value: string): number | null {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const parsed = Number.parseInt(trimmed, 10);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+function normalizeInteger(value: string | number, fallback: number): number {
+  if (typeof value === 'number') {
+    return isFiniteNumber(value) ? Math.trunc(value) : fallback;
+  }
+
+  const parsed = parseInteger(value);
+  return parsed ?? fallback;
 }
 
 function getAbilitiesFromInitial(
@@ -79,12 +95,12 @@ export function buildPartialCharacter(
     name: name.trim(),
     className: className.trim() || 'Commoner',
     race: race.trim() || 'Human',
-    level: parseIntSafe(level, 1),
-    hitPoints: { 
-      current: parseIntSafe(hp, 1), 
-      max: parseIntSafe(hp, 1) 
+    level: normalizeInteger(level, 1),
+    hitPoints: {
+      current: normalizeInteger(hp, 1),
+      max: normalizeInteger(hp, 1),
     },
-    armorClass: parseIntSafe(ac, 10),
+    armorClass: normalizeInteger(ac, 10),
     abilities: getAbilitiesFromInitial(initial),
     equipment: getEquipmentFromInitial(initial),
     notes: getNotesFromInitial(initial),
