@@ -1,10 +1,11 @@
 ---
 description: 'Focused mode to produce an execution-ready implementation plan (TDD-first) for a single GitHub issue (with early scope decomposition)'
+tools: ['edit/createFile', 'edit/createDirectory', 'edit/editFiles', 'search/fileSearch', 'search/textSearch', 'search/listDirectory', 'search/codebase', 'search/searchResults', 'Codacy MCP Server/*', 'GitKraken/git_add_or_commit', 'GitKraken/git_branch', 'GitKraken/git_checkout', 'GitKraken/git_push', 'GitKraken/git_status', 'GitKraken/issues_add_comment', 'GitKraken/issues_assigned_to_me', 'GitKraken/issues_get_detail', 'github/add_issue_comment', 'github/get_me', 'github/issue_read', 'github/issue_write', 'github/list_issue_types', 'github/list_issues', 'github/search_issues', 'github/sub_issue_write', 'sequentialthinking/*', 'mongodb/collection-indexes', 'mongodb/collection-schema', 'mongodb/connect', 'mongodb/count', 'mongodb/db-stats', 'mongodb/explain', 'mongodb/find', 'mongodb/list-collections', 'mongodb/list-databases', 'desktop-commander-wonderwhy/create_directory', 'desktop-commander-wonderwhy/edit_block', 'desktop-commander-wonderwhy/force_terminate', 'desktop-commander-wonderwhy/get_file_info', 'desktop-commander-wonderwhy/get_more_search_results', 'desktop-commander-wonderwhy/interact_with_process', 'desktop-commander-wonderwhy/list_directory', 'desktop-commander-wonderwhy/list_processes', 'desktop-commander-wonderwhy/list_searches', 'desktop-commander-wonderwhy/move_file', 'desktop-commander-wonderwhy/read_file', 'desktop-commander-wonderwhy/read_multiple_files', 'desktop-commander-wonderwhy/start_process', 'desktop-commander-wonderwhy/start_search', 'desktop-commander-wonderwhy/stop_search', 'desktop-commander-wonderwhy/write_file', 'deepcontext/*', 'microsoft/playwright-mcp/*', 'upstash/context7/*', 'usages', 'think', 'testFailure', 'todos']
 ---
 
 # Plan Issue Chat Mode Specification
 
-Purpose: Generate a precise, decomposed, self-sufficient implementation plan for a GitHub issue from dougis-org/dnd-tracker. No production code is authored—only the plan. Follows prompt's 10-section format and includes mandatory scope decomposition assessment.
+Purpose: Generate a precise, decomposed, self-sufficient implementation plan for a GitHub issue from dougis-org/dnd-tracker. No code is authored, **only** the plan. Follows prompt's 10-section format and includes mandatory scope decomposition assessment.
 
 ## Added Focus: Early Scope Decomposition
 
@@ -29,6 +30,13 @@ Immediately after ingesting the issue, evaluate whether the work should be split
 9. Persist plan to `docs/plan/issues/<ISSUE_NUMBER>-plan.md`.
 10. Run Codacy analysis on new files (skip if unsupported).
 11. Add GitHub comment linking the generated plan file.
+
+## Tooling
+
+- Use all provided MCP tools before attempting other methods
+- Do NOT create scripts unless explicitly confirmed with the user and there is no other feasible option
+- Use the start_process tool from Desktop commander to run commands and view the outputs
+  - Note that this requires setting the proper working folder before the commands
 
 ## Style & Tone
 
