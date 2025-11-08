@@ -5,11 +5,22 @@
 
 import { PartyMember } from '@/types/party';
 
+// Default values for member fields
+const DEFAULTS = {
+  PARTY_ID: '',
+  CLASS: 'Fighter',
+  RACE: 'Human',
+  LEVEL: 1,
+  AC: 10,
+  HP: 10,
+  POSITION: 0,
+};
+
 /**
- * Get default member ID
+ * Generate a unique ID for a new member
  */
-function getDefaultId(providedId?: string): string {
-  return providedId || `member-${Date.now()}`;
+function generateMemberId(): string {
+  return crypto.randomUUID?.() || `member-${Date.now()}`;
 }
 
 /**
@@ -23,17 +34,19 @@ function getMemberField<T>(value: T | undefined, defaultValue: T): T {
  * Creates a complete party member object from partial data
  */
 export function createFullMember(memberData: Partial<PartyMember>): PartyMember {
+  const id = memberData.id || generateMemberId();
+
   return {
-    id: getDefaultId(memberData.id),
-    partyId: '',
+    id,
+    partyId: DEFAULTS.PARTY_ID,
     characterName: getMemberField(memberData.characterName, ''),
-    class: getMemberField(memberData.class, 'Fighter'),
-    race: getMemberField(memberData.race, 'Human'),
-    level: getMemberField(memberData.level, 1),
-    ac: getMemberField(memberData.ac, 10),
-    hp: getMemberField(memberData.hp, 10),
+    class: getMemberField(memberData.class, DEFAULTS.CLASS),
+    race: getMemberField(memberData.race, DEFAULTS.RACE),
+    level: getMemberField(memberData.level, DEFAULTS.LEVEL),
+    ac: getMemberField(memberData.ac, DEFAULTS.AC),
+    hp: getMemberField(memberData.hp, DEFAULTS.HP),
     role: memberData.role,
-    position: getMemberField(memberData.position, 0),
+    position: getMemberField(memberData.position, DEFAULTS.POSITION),
   };
 }
 
