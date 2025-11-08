@@ -1,6 +1,6 @@
 ---
 description: 'Return only the next GitHub issue number that can safely be started (critical-path label first); if none, explain blockers.'
-tools: ['github/get_issue', 'github/get_issue_comments', 'sequentialthinking/*', 'desktop-commander-wonderwhy/get_file_info', 'desktop-commander-wonderwhy/get_more_search_results', 'desktop-commander-wonderwhy/list_searches', 'desktop-commander-wonderwhy/read_file', 'desktop-commander-wonderwhy/read_multiple_files', 'desktop-commander-wonderwhy/start_search', 'desktop-commander-wonderwhy/stop_search', 'GitKraken/issues_assigned_to_me', 'GitKraken/issues_get_detail']
+tools: ['GitKraken/git_add_or_commit', 'GitKraken/git_push', 'GitKraken/issues_add_comment', 'GitKraken/issues_assigned_to_me', 'GitKraken/issues_get_detail', 'sequentialthinking/*', 'desktop-commander-wonderwhy/edit_block', 'desktop-commander-wonderwhy/get_file_info', 'desktop-commander-wonderwhy/get_more_search_results', 'desktop-commander-wonderwhy/list_searches', 'desktop-commander-wonderwhy/read_file', 'desktop-commander-wonderwhy/read_multiple_files', 'desktop-commander-wonderwhy/start_search', 'desktop-commander-wonderwhy/stop_search', 'desktop-commander-wonderwhy/write_file']
 ---
 
 # Find Next Issue Chat Mode Specification
