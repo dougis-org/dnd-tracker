@@ -1,0 +1,38 @@
+[
+  {
+    "id": "feature-1",
+    "title": "Character Management",
+    "description": "Create, customize, and manage your D&D characters with detailed attributes, skills, and progression tracking.",
+    "icon": "users"
+  },
+  {
+    "id": "feature-2",
+    "title": "Combat Tracking",
+    "description": "Real-time initiative tracking, round management, and combat state organization for seamless gameplay.",
+    "icon": "swords"
+  },
+  {
+    "id": "feature-3",
+    "title": "Party Management",
+    "description": "Organize your party members, manage relationships, and track group statistics and dynamics.",
+    "icon": "users-round"
+  },
+  {
+    "id": "feature-4",
+    "title": "Encounter Planning",
+    "description": "Design and prepare encounters with monster selection, difficulty balancing, and encounter notes.",
+    "icon": "map-pin"
+  },
+  {
+    "id": "feature-5",
+    "title": "Item & Inventory Tracking",
+    "description": "Manage character inventories, track items, gold, and equipment across your entire party.",
+    "icon": "package"
+  },
+  {
+    "id": "feature-6",
+    "title": "Monster Library",
+    "description": "Access an extensive library of creatures with stats, abilities, and quick reference cards.",
+    "icon": "zap"
+  }
+]

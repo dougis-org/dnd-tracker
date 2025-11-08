@@ -19,11 +19,11 @@ describe('Dashboard Page', () => {
     expect(screen.getByTestId('main-layout')).toBeInTheDocument()
 
     // Verify page title
-    expect(screen.getByRole('heading', { level: 2, name: /dashboard/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: /dashboard/i })).toBeInTheDocument()
 
     // Verify section headings
-    expect(screen.getByRole('heading', { level: 3, name: /recent activity/i })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 3, name: /quick actions/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: /recent activity/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: /quick actions/i })).toBeInTheDocument()
   })
 
   it('should render stat cards with mock data', () => {

@@ -21,18 +21,20 @@ export const StatCard: React.FC<StatCardProps> = ({ label, value, detailUrl }) =
 
   const content = (
     <>
-      <div className="text-sm text-muted-foreground">{label}</div>
-      <div className="mt-1 text-2xl font-semibold">
-        {hasValue ? formatValue(value as number | string) : <span className="text-sm text-muted">No data</span>}
+      <div className="text-sm font-medium text-slate-600 dark:text-slate-400">{label}</div>
+      <div className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-50">
+        {hasValue ? formatValue(value as number | string) : <span className="text-sm text-slate-500 dark:text-slate-400">No data</span>}
       </div>
     </>
   )
+
+  const baseClasses = 'p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm transition-all'
 
   if (detailUrl) {
     return (
       <a
         href={detailUrl}
-        className="block p-3 border rounded-md shadow-sm bg-white hover:bg-gray-50 focus:outline-none focus:ring-2"
+        className={`block ${baseClasses} hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950`}
         aria-label={`${label} details`}
       >
         {content}
@@ -40,7 +42,7 @@ export const StatCard: React.FC<StatCardProps> = ({ label, value, detailUrl }) =
     )
   }
 
-  return <div className="p-3 border rounded-md shadow-sm bg-white">{content}</div>
+  return <div className={baseClasses}>{content}</div>
 }
 
 export default StatCard

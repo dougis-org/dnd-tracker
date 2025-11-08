@@ -1,0 +1,41 @@
+[
+  {
+    "id": "tier-free",
+    "name": "Free",
+    "priceMonthly": "$0",
+    "features": [
+      "Up to 2 characters",
+      "Basic combat tracking",
+      "Monster library access",
+      "Community support"
+    ]
+  },
+  {
+    "id": "tier-pro",
+    "name": "Pro",
+    "priceMonthly": "$9.99",
+    "features": [
+      "Unlimited characters",
+      "Advanced combat tracking",
+      "Full monster library",
+      "Party management",
+      "Email support",
+      "Cloud sync",
+      "Export encounters"
+    ]
+  },
+  {
+    "id": "tier-ultimate",
+    "name": "Ultimate",
+    "priceMonthly": "$19.99",
+    "features": [
+      "Everything in Pro",
+      "AI-powered encounter generator",
+      "Advanced analytics",
+      "Priority support",
+      "Custom campaigns",
+      "API access",
+      "Advanced reporting"
+    ]
+  }
+]
