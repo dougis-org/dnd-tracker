@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Encounter API
+  version: 0.1.0
+paths:
+  /api/encounters:
+    get:
+      summary: List encounters for current user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Encounter'
+    post:
+      summary: Create a new encounter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EncounterCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+
+  /api/encounters/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get an encounter by id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+    put:
+      summary: Update an encounter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EncounterCreate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+
+components:
+  schemas:
+    Participant:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [monster, party_member, custom]
+        displayName:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+        hp:
+          type: integer
+          minimum: 0
+        initiative:
+          type: integer
+        metadata:
+          type: object
+      required: [type, displayName, quantity]
+
+    EncounterCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Participant'
+        tags:
+          type: array
+          items:
+            type: string
+        template_flag:
+          type: boolean
+      required: [name, participants]
+
+    Encounter:
+      allOf:
+        - $ref: '#/components/schemas/EncounterCreate'
+        - type: object
+          properties:
+            id:
+              type: string
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
