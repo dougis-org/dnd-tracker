@@ -98,7 +98,7 @@ describe('RoleSelector Component', () => {
     it('should close dropdown when clicking outside', async () => {
       const user = userEvent.setup();
 
-      const { container } = render(<RoleSelector value={undefined} onChange={jest.fn()} />);
+      render(<RoleSelector value={undefined} onChange={jest.fn()} />);
 
       const trigger = screen.getByRole('button', { name: /select role/i });
       await user.click(trigger);
