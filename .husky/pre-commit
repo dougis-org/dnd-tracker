@@ -1,0 +1,16 @@
+#!/bin/sh
+# Husky pre-commit hook: run lint, lint:markdown and build. Fail commit if any command fails.
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running pre-commit checks: lint, lint:markdown, build"
+
+# Run linter
+npm run lint
+
+# Run markdown lint
+npm run lint:markdown
+
+# Build (ensures code compiles)
+npm run build
+
+echo "Pre-commit checks passed."

@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
+        "prepare": "husky install",
         "build": "next build",
         "start": "next start",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
@@ -58,6 +59,7 @@
         "tailwindcss": "^4.0.0",
         "tailwindcss-animate": "^1.0.7",
         "ts-jest": "^29.2.5",
-        "typescript": "5.9.2"
+        "typescript": "5.9.2",
+        "husky": "^8.0.0"
     }
 }

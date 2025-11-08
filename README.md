@@ -167,3 +167,40 @@ See `.env.example` for complete list and descriptions.
 ## Contributing
 
 Contributions are welcome! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information on how to contribute to this project.
+
+## Developer setup: local pre-commit checks
+
+This repository includes a Husky pre-commit hook that runs the following checks before allowing a commit:
+
+- `npm run lint` (ESLint)
+- `npm run lint:markdown` (markdownlint)
+- `npm run build` (Next.js build — ensures TypeScript/Next compile)
+
+These checks are also enforced in CI, but running them locally at commit-time prevents waiting for CI feedback and keeps the main branch healthier.
+
+To enable the Git hooks on your machine, run:
+
+```bash
+# install dependencies (this runs the `prepare` script which installs husky hooks)
+npm install
+
+# OR, if you prefer to install husky manually:
+npx husky install
+
+# Make sure the hook file is executable (Unix/macOS)
+chmod +x .husky/pre-commit
+```
+
+Notes:
+
+- The `prepare` script in `package.json` runs `husky install` automatically on `npm install`.
+- The first time you run `npm install` after pulling these changes, Husky will create the necessary Git hook shims under `.git/hooks` so the `.husky/pre-commit` script will run on commit.
+- If you ever need to skip hooks for a single commit, use `git commit --no-verify` (use sparingly).
+
+Repo policy: because adding dev dependencies changed `package.json`, this project requires a security scan after dependency changes. If you have the Codacy CLI available, run:
+
+```bash
+codacy_cli_analyze --rootPath /home/doug/ai-dev-2/dnd-tracker --tool trivy
+```
+
+If the Codacy CLI is not installed, follow your usual org process for running the scan, or ask me and I can attempt to run it (I may need permission or the CLI available in this environment).
