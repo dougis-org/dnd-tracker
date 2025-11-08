@@ -6,20 +6,34 @@
 import { PartyMember } from '@/types/party';
 
 /**
+ * Get default member ID
+ */
+function getDefaultId(providedId?: string): string {
+  return providedId || `member-${Date.now()}`;
+}
+
+/**
+ * Get member field with default value
+ */
+function getMemberField<T>(value: T | undefined, defaultValue: T): T {
+  return value ?? defaultValue;
+}
+
+/**
  * Creates a complete party member object from partial data
  */
 export function createFullMember(memberData: Partial<PartyMember>): PartyMember {
   return {
-    id: memberData.id || `member-${Date.now()}`,
+    id: getDefaultId(memberData.id),
     partyId: '',
-    characterName: memberData.characterName || '',
-    class: memberData.class || 'Fighter',
-    race: memberData.race || 'Human',
-    level: memberData.level || 1,
-    ac: memberData.ac || 10,
-    hp: memberData.hp || 10,
+    characterName: getMemberField(memberData.characterName, ''),
+    class: getMemberField(memberData.class, 'Fighter'),
+    race: getMemberField(memberData.race, 'Human'),
+    level: getMemberField(memberData.level, 1),
+    ac: getMemberField(memberData.ac, 10),
+    hp: getMemberField(memberData.hp, 10),
     role: memberData.role,
-    position: memberData.position || 0,
+    position: getMemberField(memberData.position, 0),
   };
 }
 

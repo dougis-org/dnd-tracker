@@ -14,39 +14,77 @@ export interface MemberFormErrors {
   hp?: string;
 }
 
-export function validateMemberForm(data: {
+interface FormData {
   characterName: string;
   class: string;
   race: string;
   level: number;
   ac: number;
   hp: number;
-}): MemberFormErrors {
+}
+
+/**
+ * Validate character name field
+ */
+function validateCharacterName(name: string): string | undefined {
+  return !name.trim() ? 'Character name is required' : undefined;
+}
+
+/**
+ * Validate class field
+ */
+function validateClass(cls: string): string | undefined {
+  return !cls ? 'Class is required' : undefined;
+}
+
+/**
+ * Validate race field
+ */
+function validateRace(race: string): string | undefined {
+  return !race ? 'Race is required' : undefined;
+}
+
+/**
+ * Validate level field
+ */
+function validateLevel(level: number): string | undefined {
+  return level < 1 || level > 20 ? 'Level must be between 1 and 20' : undefined;
+}
+
+/**
+ * Validate AC field
+ */
+function validateAC(ac: number): string | undefined {
+  return ac < 1 || ac > 30 ? 'AC must be between 1 and 30' : undefined;
+}
+
+/**
+ * Validate HP field
+ */
+function validateHP(hp: number): string | undefined {
+  return hp <= 0 ? 'HP must be greater than 0' : undefined;
+}
+
+export function validateMemberForm(data: FormData): MemberFormErrors {
   const errors: MemberFormErrors = {};
 
-  if (!data.characterName.trim()) {
-    errors.characterName = 'Character name is required';
-  }
+  const charNameError = validateCharacterName(data.characterName);
+  if (charNameError) errors.characterName = charNameError;
 
-  if (!data.class) {
-    errors.class = 'Class is required';
-  }
+  const classError = validateClass(data.class);
+  if (classError) errors.class = classError;
 
-  if (!data.race) {
-    errors.race = 'Race is required';
-  }
+  const raceError = validateRace(data.race);
+  if (raceError) errors.race = raceError;
 
-  if (data.level < 1 || data.level > 20) {
-    errors.level = 'Level must be between 1 and 20';
-  }
+  const levelError = validateLevel(data.level);
+  if (levelError) errors.level = levelError;
 
-  if (data.ac < 1 || data.ac > 30) {
-    errors.ac = 'AC must be between 1 and 30';
-  }
+  const acError = validateAC(data.ac);
+  if (acError) errors.ac = acError;
 
-  if (data.hp <= 0) {
-    errors.hp = 'HP must be greater than 0';
-  }
+  const hpError = validateHP(data.hp);
+  if (hpError) errors.hp = hpError;
 
   return errors;
 }
