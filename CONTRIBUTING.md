@@ -57,24 +57,36 @@ Before creating a PR, ensure:
 
 ### 4. Pull Request Creation
 
-- Use the GitHub CLI to create PRs with auto-merge enabled:
-
-  ```bash
-  gh pr create --title "type: descriptive title" --body "detailed description" --head feature-branch --base main
-  gh pr merge --auto --squash
-  ```
-
+- AI Agents should use the tools outlined in [PR Instructions](.github/instructions/pr.instructions.md)
+- Humans can choose whatever tooling works best for them
 - Use conventional commit format for PR titles (e.g., `feat: add user authentication system`).
 - Include the related GitHub issue in the PR description.
-- Use the provided PR description template (see below).
-- Enable auto-merge and use squash merge.
+- Use the provided [PR description template](#pull-request-description-template)
 
-### 5. Post-PR Process
+#### Pull Request Flow
 
-- Monitor for CI/CD failures and PR comments and address promptly.
-- PR will auto-merge once all requirements are satisfied.
+1. Open the PR with the details outlined above
+2. Wait 90 seconds for the AI agents to review the PR
+   1. If after 90 seconds you still do not see review comments from both Gemini and GitHub Copilot, wait another 90 seconds
+3. Address ALL comments made by the AI agents, if you are not fixing an issue raised, that **MUST** be confirmed with the repository owner, all items in your PR are in scope
+   1. If any items are deferred as out of scope, a GitHub issue **MUST** be opened to track the work needed
+4. Review the results of all checks on the PR
+   1. The build **MUST** pass
+   2. All tests **MUST** pass
+   3. All linting checks **MUST** pass
+5. Address any items causing failing checks, this includes the Codacy quality scans for
+   1. Complexity added
+   2. Code duplication
+   3. Test Coverage
+   4. Any discovered Code Issues
+6. Once all of those items are complete and addressed, enable auto merge on the PR
+7. **NEVER** force merge without repository owner approval
+
+### 5. Post-PR Merge Process
+
 - Update task status and remove `in-progress` label after merge.
 - Prune local branches after merge.
+- Report that the feature is complete and the PR is merged
 
 ---
 
@@ -207,32 +219,32 @@ To maintain code quality and keep the codebase maintainable, all contributors mu
 Include in every PR:
 
 ```markdown
-## Summary
+### Summary
 
 Brief description of what this PR accomplishes
 
-## Requirements Satisfied
+### Requirements Satisfied
 
 List the specific requirements/tasks this addresses
 
-## Key Changes
+### Key Changes
 
 - Bullet point list of major changes
 - Include new files created
 - Include modified functionality
 
-## Testing
+### Testing
 
 - [ ] Build passes
 - [ ] TypeScript compilation successful
 - [ ] ESLint passes
 - [ ] Manual testing completed (if applicable)
 
-## Dependencies
+### Dependencies
 
 List any new dependencies added and why they were needed
 
-## Issue
+### Issue
 
 Closes **Issue**
 ```
@@ -244,7 +256,7 @@ Closes **Issue**
 - Never commit directly to `main`.
 - All changes must go through PR review and auto-merge.
 - All status checks must pass before merge (build, lint, tests, coverage, no merge conflicts).
-- Test coverage must not decrease; maintain at least 70% project coverage.
+- Test coverage must not decrease; maintain at least 80% project coverage.
 
 ---
 
@@ -258,84 +270,12 @@ Closes **Issue**
 
 ## Deployment Requirements
 
-### Environment Variables
+Refer to [DEPLOYMENT.md](DEPLOYMENT.md) for complete deployment instructions, including:
 
-The application requires specific environment variables for both development and production deployment. These must be configured in:
-
-- **Development**: `.env.local` file (not committed to repository)
-- **Production (Fly.io)**: Secrets are managed via `flyctl secrets set`, and non-sensitive environment variables are configured in `fly.toml`
-
-#### Required Secrets
-
-The following environment variables are required and must be kept secure:
-
-```bash
-# Clerk Authentication (secrets required at runtime; a fallback is used during build)
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...   # Public key for Clerk authentication
-CLERK_SECRET_KEY=sk_live_...                    # Private key for Clerk server-side operations
-
-# Database
-MONGODB_URI=mongodb://...                       # MongoDB connection string
-
-# Optional Clerk URLs (have sensible defaults)
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
-```
-
-#### Setting Up Fly.io Secrets
-
-For production deployment on Fly.io, configure secrets using the Fly CLI:
-
-```bash
-# Set required secrets for production deployment
-flyctl secrets set NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_live_..."
-flyctl secrets set CLERK_SECRET_KEY="sk_live_..."
-flyctl secrets set MONGODB_URI="mongodb://..."
-
-# Verify secrets are configured
-flyctl secrets list
-```
-
-### Docker Build Considerations
-
-The Docker build process has been configured to handle missing environment variables gracefully:
-
-- **Build Time**: Uses placeholder values for Clerk keys to prevent build failures
-- **Runtime**: Actual secret values are injected by Fly.io automatically
-
-#### Important Notes for Contributors
-
-1. **Local Development**: Ensure your `.env.local` file contains all required environment variables
-2. **Docker Builds**: The build process will use placeholder values during the build phase
-3. **Production Deployment**: Fly.io automatically injects secrets as environment variables at runtime
-4. **Testing**: Use test values in `.env.test` or test configuration files
-
-### Deployment Commands
-
-```bash
-# Deploy to Fly.io (requires secrets to be configured first)
-flyctl deploy
-
-# Check deployment status
-flyctl status
-
-# View application logs
-flyctl logs
-
-# Scale application (if needed)
-flyctl scale count 1
-```
-
-### Troubleshooting Deployment Issues
-
-If you encounter deployment issues:
-
-1. **Build Failures**: Check that the Dockerfile builds locally with `docker build .`
-2. **Runtime Errors**: Verify all required secrets are set with `flyctl secrets list`
-3. **Authentication Issues**: Ensure Clerk keys are valid and properly configured
-4. **Database Connection**: Verify MongoDB URI is accessible from Fly.io infrastructure
+- Fly.io deployment setup
+- Environment variables and secrets configuration
+- Docker build considerations
+- Troubleshooting deployment issues
 
 ---
 
