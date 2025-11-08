@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Party, PartyMember } from '@/types/party';
 import { MemberForm } from './MemberForm';
-import DeleteConfirmModal from './DeleteConfirmModal';
+import { DeleteConfirmModal } from './DeleteConfirmModal';
 
 export interface PartyFormProps {
   party?: Party;

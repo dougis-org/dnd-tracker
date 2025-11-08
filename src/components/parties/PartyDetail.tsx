@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Party, PartyMember } from '@/types/party';
-import PartyCompositionSummary from './PartyCompositionSummary';
-import MemberCard from './MemberCard';
-import DeleteConfirmModal from './DeleteConfirmModal';
+import { PartyCompositionSummary } from './PartyCompositionSummary';
+import { MemberCard } from './MemberCard';
+import { DeleteConfirmModal } from './DeleteConfirmModal';
 
 export interface PartyDetailProps {
   party: Party;
@@ -64,7 +64,7 @@ export default function PartyDetail({
                   key={member.id}
                   member={member}
                   onEdit={() => onEditMember(member.id)}
-                  onDelete={() => setDeletingMemberId(member.id)}
+                  onRemove={() => setDeletingMemberId(member.id)}
                 />
               ))}
             </div>
