@@ -251,6 +251,18 @@ For detailed code quality standards, see [Reducing Complexity & Duplication](#re
 - Write descriptive commit messages explaining the "why".
 - Keep commits focused and avoid mixing unrelated changes.
 
+### Commit Quality Enforcement
+
+There is a pre commit hook that runs and executes
+
+``` bash
+npm run build
+npm run lint
+npm rum lint:markdown
+```
+
+Any failures on those commands will block the commit to ensure we do not introduce issues
+
 ---
 
 ## Pull Request Description Template
