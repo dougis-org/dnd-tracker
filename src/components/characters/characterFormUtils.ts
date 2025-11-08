@@ -53,7 +53,7 @@ function getAbilitiesFromInitial(
 
 function getEquipmentFromInitial(
   initial: PartialCharacter | Character | null | undefined
-): Array<unknown> {
+): string[] {
   if (!initial || !('equipment' in initial)) return [];
   return Array.isArray(initial.equipment) ? initial.equipment : [];
 }
