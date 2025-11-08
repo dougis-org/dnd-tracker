@@ -26,25 +26,34 @@ function withHistory(state: State, newCharacters: Character[]): State {
   };
 }
 
+function handleUpdate(state: State, id: string, newChar: Character): State {
+  const updated = state.characters.map((c) => (c.id === id ? newChar : c));
+  return withHistory(state, updated);
+}
+
+function handleDelete(state: State, id: string): State {
+  const filtered = state.characters.filter((c) => c.id !== id);
+  return withHistory(state, filtered);
+}
+
+function handleUndo(state: State): State {
+  const last = state.history[state.history.length - 1];
+  if (!last) return state;
+  return { characters: last, history: state.history.slice(0, -1) };
+}
+
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'init':
       return { ...state, characters: action.payload };
     case 'add':
       return withHistory(state, [...state.characters, action.payload]);
-    case 'update': {
-      const updated = state.characters.map((c) => (c.id === action.payload.id ? action.payload : c));
-      return withHistory(state, updated);
-    }
-    case 'delete': {
-      const filtered = state.characters.filter((c) => c.id !== action.payload);
-      return withHistory(state, filtered);
-    }
-    case 'undo': {
-      const last = state.history[state.history.length - 1];
-      if (!last) return state;
-      return { characters: last, history: state.history.slice(0, -1) };
-    }
+    case 'update':
+      return handleUpdate(state, action.payload.id, action.payload);
+    case 'delete':
+      return handleDelete(state, action.payload);
+    case 'undo':
+      return handleUndo(state);
     case 'clear':
       return { characters: [], history: [] };
     default:

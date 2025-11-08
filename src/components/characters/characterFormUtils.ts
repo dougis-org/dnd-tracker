@@ -9,6 +9,13 @@ export const DEFAULT_ABILITIES = {
   cha: 10,
 };
 
+function extractHitPoints(initial: PartialCharacter | Character): number {
+  if (typeof initial.hitPoints === 'number') {
+    return initial.hitPoints;
+  }
+  return initial.hitPoints?.current ?? 1;
+}
+
 export function getInitialState(initial: PartialCharacter | Character | null | undefined) {
   if (!initial) {
     return {
@@ -21,18 +28,42 @@ export function getInitialState(initial: PartialCharacter | Character | null | u
     };
   }
 
-  const hp = typeof initial.hitPoints === 'number'
-    ? initial.hitPoints
-    : initial.hitPoints?.current ?? 1;
-
   return {
     name: initial.name ?? '',
     className: initial.className ?? '',
     race: initial.race ?? '',
     level: initial.level ?? 1,
-    hp,
+    hp: extractHitPoints(initial),
     ac: initial.armorClass ?? 10,
   };
+}
+
+function parseIntSafe(value: string | number, fallback: number): number {
+  const parsed = parseInt(String(value), 10);
+  return Number.isNaN(parsed) ? fallback : parsed;
+}
+
+function getAbilitiesFromInitial(
+  initial: PartialCharacter | Character | null | undefined
+): typeof DEFAULT_ABILITIES {
+  return (initial && 'abilities' in initial && initial.abilities)
+    ? initial.abilities
+    : DEFAULT_ABILITIES;
+}
+
+function getEquipmentFromInitial(
+  initial: PartialCharacter | Character | null | undefined
+): Array<unknown> {
+  if (!initial || !('equipment' in initial)) return [];
+  return Array.isArray(initial.equipment) ? initial.equipment : [];
+}
+
+function getNotesFromInitial(
+  initial: PartialCharacter | Character | null | undefined
+): string {
+  return (initial && 'notes' in initial && typeof initial.notes === 'string')
+    ? initial.notes
+    : '';
 }
 
 export function buildPartialCharacter(
@@ -48,12 +79,15 @@ export function buildPartialCharacter(
     name: name.trim(),
     className: className.trim() || 'Commoner',
     race: race.trim() || 'Human',
-    level: parseInt(String(level), 10) || 1,
-    hitPoints: { current: parseInt(String(hp), 10) || 1, max: parseInt(String(hp), 10) || 1 },
-    armorClass: parseInt(String(ac), 10) || 10,
-    abilities: (initial && 'abilities' in initial && initial.abilities) ? initial.abilities : DEFAULT_ABILITIES,
-    equipment: (initial && 'equipment' in initial && initial.equipment) ? initial.equipment : [],
-    notes: (initial && 'notes' in initial && initial.notes) ? initial.notes : '',
+    level: parseIntSafe(level, 1),
+    hitPoints: { 
+      current: parseIntSafe(hp, 1), 
+      max: parseIntSafe(hp, 1) 
+    },
+    armorClass: parseIntSafe(ac, 10),
+    abilities: getAbilitiesFromInitial(initial),
+    equipment: getEquipmentFromInitial(initial),
+    notes: getNotesFromInitial(initial),
   };
 }
 
