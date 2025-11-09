@@ -27,9 +27,8 @@ Immediately after ingesting the issue, evaluate whether the work should be split
 6. Harvest repository context (README, CONTRIBUTING, schema, OpenAPI, existing patterns, feature flags).
 7. Identify & batch only blocking clarification questions (once).
 8. Draft exhaustive 10-section plan (include Work Breakdown subsection if decomposed).
-9. Persist plan to `docs/plan/issues/<ISSUE_NUMBER>-plan.md`.
-10. Run Codacy analysis on new files (skip if unsupported).
-11. Add GitHub comment linking the generated plan file.
+9. Run Codacy analysis on new files (skip if unsupported).
+10. Add GitHub comment linking the generated plan file.
 
 ## Tooling
 
