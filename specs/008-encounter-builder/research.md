@@ -1,3 +1,59 @@
+# research.md decisions
+
+Decision: Per-user storage with optional org-scoped field
+
+Rationale:
+
+- The feature spec and session notes explicitly require per-user saved encounters for MVP. Adding an optional `org_id` (nullable) lets us upgrade to organization-level sharing without a breaking migration.
+- This keeps the initial implementation simple while preserving future extensibility.
+
+Alternatives considered:
+
+- Shared-only storage (rejected): too broad for MVP and introduces permissioning complexity.
+- Multi-tenant schema with separate collections (rejected): premature optimization and increases operational complexity.
+
+Decision: Persistence adapter pattern (Mongoose + localStorage fallback)
+
+Rationale:
+
+- The repo already uses Mongoose and MongoDB in other features. Implementing a small persistence adapter lets UI-first development use localStorage for early testing and wire in Mongoose-based server adapters later.
+
+Alternatives considered:
+
+- Direct API-first approach (rejected for UI-first iteration): increases backend dependency and slows TDD for UI components.
+
+Decision: API contract surface using REST endpoints under `/api/encounters`
+
+Rationale:
+
+- REST maps well to the CRUD nature of encounters and integrates cleanly with Next.js app-router API routes.
+- Easier to write integration tests and mock adapters for TDD.
+
+Alternatives considered:
+
+- GraphQL (rejected for now): more flexible but adds complexity for the MVP.
+
+Decision: Validation using Zod on both client and server
+
+Rationale:
+
+- Zod is an approved dependency for the repo and ensures consistent validation rules across client and server.
+
+Open questions (resolved):
+
+- Data sharing model: resolved to per-user with optional org_id field (see Decision above).
+
+Security & Observability notes:
+
+- All API routes must check authenticated user's id and enforce owner_id matching on mutation routes. Log structured events for create/update/delete operations.
+
+Testing plan (summary):
+
+- Unit tests for form validation and adapters
+- Component tests for create/edit pages using Testing Library
+- Integration tests for API endpoints (adapter mocks + DB integration tests)
+- E2E Playwright flows for the user stories (create, import-from-party, edit)
+
 # research.md
 
 ## Purpose

@@ -9,25 +9,22 @@
 
 ## Summary
 
-Build the Encounter Builder UI: Encounters list, New Encounter page, and Encounter editor to allow Game Masters to create, import, edit, save, and reuse encounters. Approach is UI-first with client-side validation, TDD for all new behaviors, and a persistence adapter targeting the existing MongoDB/Mongoose backend with a localStorage fallback for early integration/testing.
+Implement the Encounter Builder feature as a UI-first Next.js app-router set of pages backed by a small persistence adapter that can use either MongoDB (Mongoose) or a localStorage fallback for early development and E2E stubbing. Deliver an MVP that covers create/import/edit/save flows with TDD-first tests (unit, integration, E2E) and basic observability and security checks.
 
 ## Technical Context
 
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
+This section documents the concrete technical choices and goals for the feature to avoid implementation drift.
 
-**Language/Version**: TypeScript 5.9.2 (Next.js 16, React 19)  
-**Primary Dependencies**: Next.js 16, React 19, Tailwind CSS, Mongoose, Zod  
-**Storage**: MongoDB (via Mongoose) for server persistence; localStorage fallback for MVP/testing  
-**Testing**: Jest for unit tests, Playwright for E2E, Testing Library for component tests  
-**Target Platform**: Web (desktop-first, responsive for tablet/mobile)  
-**Project Type**: Web application (Next.js app router)  
-**Performance Goals**: UI remains responsive for encounters up to 100 participants; save/list latency under 2s in test environment  
-**Constraints**: Must comply with project Constitution (TDD, file/function size limits), accessibility (labels, focus order), and existing lint/type gates  
-**Scale/Scope**: Per-user saved encounters for MVP; later work may add sharing/organization-level templates
+**Language/Version**: TypeScript 5.x (align with repo; current workspace uses TypeScript 5.9.x)
+**Framework / Runtime**: Next.js 16 (App Router) + React 19
+**Primary Dependencies**: Mongoose (MongoDB), Zod (validation), Jest (unit), Testing Library (component tests), Playwright (E2E)
+**Storage**: MongoDB via Mongoose adapter; localStorage fallback adapter for UI-first development and E2E stubbing
+**Testing**: Jest + Testing Library for unit/component tests; Playwright for E2E flows; integration tests via Jest with adapter mocks and optional in-memory MongoDB for DB integration
+**Target Platform**: Web (modern desktop & mobile browsers)
+**Project Type**: Web application (frontend in `src/app` + shared `src/lib` adapters)
+**Performance Goals**: UI responsiveness for up to 100 participants (SC-004); saved items visible in list within 2s in test environments (SC-002)
+**Constraints**: Keep files <450 lines and functions <50 lines; follow TDD (tests must be authored before implementation); run Codacy analysis on edits per repo policy
+**Scale/Scope**: MVP scoped to per-user encounters with optional `org_id` for future sharing; do not implement live combat features in this iteration
 
 ## Constitution Check
 
@@ -40,6 +37,17 @@ Build the Encounter Builder UI: Encounters list, New Encounter page, and Encount
 - [ ] Confirm `.specify/memory/constitution.md` is referenced in the feature spec
 - [ ] Run Codacy analysis on any edited files (per repo rules)
 - [ ] Update templates if constitution wording changes
+
+### TDD enforcement & task updates
+
+Per the project's constitution (Test-First / TDD), the `tasks.md` for this feature has been updated to enforce tests-before-implementation ordering. Key changes applied to `specs/008-encounter-builder/tasks.md`:
+
+- Explicit failing-test tasks were added before implementation tasks (examples: `T006a`, `T007a`, `T008a`, `T010a`, `T031`, `T032`).
+- Authorization tests were moved into the Foundational phase to ensure owner/permission checks are validated early (`T036`).
+- Duplicate implementation tasks were removed to avoid confusion and single-source the model/schema work.
+- Performance test tasks were added to cover measurable success criteria (`T037`, `T038`).
+
+Please ensure reviewers verify the updated `tasks.md` before implementation begins. Implementation must follow the TDD cycle: Red (failing tests) → Green (implementation) → Refactor.
 
 ## Project Structure
 
@@ -99,8 +107,7 @@ ios/ or android/
 └── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: Web application using `src/app/` for routes and `src/components/` for UI. Backend models/adapters live in `src/lib/` and API routes under `src/app/api/encounters`. Tests follow repo conventions: `tests/unit/`, `tests/integration/`, `tests/e2e/`.
 
 ## Complexity Tracking
 

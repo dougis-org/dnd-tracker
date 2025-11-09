@@ -9,6 +9,12 @@
 **Canonical components (UI)**: EncountersList, EncounterCreatePage, EncounterEditor
 **Constitution**: This specification must comply with `.specify/memory/constitution.md`. After edits, run the required Codacy analysis for any edited files per repository rules.
 
+## Clarifications
+
+### Session 2025-11-08
+
+- Q: Data sharing model for encounters & templates? → A: Per-user storage for MVP; design schema to include an `owner_id` and an optional `org_id` (nullable) so the permissions/organization-sharing model can be added later without a breaking migration.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Create encounter from scratch (Priority: P1)
@@ -74,7 +80,7 @@ The GM wants to edit a saved encounter to change initiative order, hit points, o
 
 ### Key Entities
 
-- **Encounter**: Represents an encounter instance. Attributes: id, name, description, participants[], created_at, updated_at, tags, template_flag.
+- **Encounter**: Represents an encounter instance. Attributes: id, name, description, participants[], created_at, updated_at, tags, template_flag, owner_id, org_id (nullable).
 - **Participant**: Represents a participant entry in an encounter. Attributes: id, type (monster|party_member|custom), displayName, quantity, hp, initiative, metadata (notes).
 - **EncounterTemplate**: A saved encounter flagged for reuse. Essentially an Encounter with template_flag=true.
 
