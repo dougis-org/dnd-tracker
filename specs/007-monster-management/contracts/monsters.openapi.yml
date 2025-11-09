@@ -1,0 +1,149 @@
+openapi: 3.0.3
+info:
+  title: Monsters API (sketch)
+  version: 0.1.0
+paths:
+  /monsters:
+    get:
+      summary: List monsters (supports filters: cr_min, cr_max, type, q)
+      parameters:
+        - in: query
+          name: cr_min
+          schema:
+            type: number
+        - in: query
+          name: cr_max
+          schema:
+            type: number
+        - in: query
+          name: type
+          schema:
+            type: string
+        - in: query
+          name: q
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Monster'
+    post:
+      summary: Create a new monster
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MonsterCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monster'
+  /monsters/{id}:
+    get:
+      summary: Get monster by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monster'
+    put:
+      summary: Update monster
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MonsterUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monster'
+    delete:
+      summary: Delete monster
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted
+
+components:
+  schemas:
+    Monster:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        cr:
+          type: number
+        size:
+          type: string
+        type:
+          type: string
+        alignment:
+          type: string
+        hp:
+          type: integer
+        ac:
+          type: integer
+        abilities:
+          type: object
+          additionalProperties:
+            type: integer
+        actions:
+          type: array
+          items:
+            type: object
+      required: [id, name, cr, hp, ac]
+
+    MonsterCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        cr:
+          type: number
+        hp:
+          type: integer
+        ac:
+          type: integer
+      required: [name, cr, hp, ac]
+
+    MonsterUpdate:
+      allOf:
+        - $ref: '#/components/schemas/MonsterCreate'
+        - type: object
+          properties:
+            id:
+              type: string

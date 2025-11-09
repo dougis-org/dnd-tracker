@@ -1,3 +1,4 @@
+
 # Feature Specification: Monster / NPC Management
 
 **Feature Branch**: `feature/007-monster-management`  
@@ -12,16 +13,19 @@
 ## Assumptions & Open Questions
 
 - Assumption: Authentication and persistent storage are provided by later features (Feature 013/014). For now the UI should support both mock/local data and real API integration where available.
-
 - Scope policy (resolved): Users may choose one of three scopes when creating or editing a monster/NPC:
 
-  - Global: The monster is owned by the user and available across all of their campaigns (default personal library).
+- Global: The monster is owned by the user and available across all of their campaigns (default personal library).
+- Campaign-specific: The monster is scoped to a single campaign and visible only when that campaign is active/selected.
+- Public: The monster is published to the system catalog, becomes read-only for all other users, and ownership transfers to the system. The original creator is preserved in metadata and credited on the monster detail page.
 
-  - Campaign-specific: The monster is scoped to a single campaign and visible only when that campaign is active/selected.
+The UI MUST allow the user to set the scope at creation time and edit scope later (subject to rules below). Public monsters are visible to all users as read-only entries. When a monster is made public its ownership transfers to the system account (ownerId = "system") and the original creator is recorded as creditedBy/creditedTo metadata for attribution.
 
-  - Public: The monster is published to the system catalog, becomes read-only for all other users, and ownership transfers to the system. The original creator is preserved in metadata and credited on the monster detail page.
+## Clarifications
 
-  The UI MUST allow the user to set the scope at creation time and edit scope later (subject to rules below). Public monsters are visible to all users as read-only entries. When a monster is made public its ownership transfers to the system account (ownerId = "system") and the original creator is recorded as creditedBy/creditedTo metadata for attribution.
+### Session 2025-11-08
+
+- Q: Library scope (Q1) → A: C (Hybrid) — Templates/global defaults, instances campaign-scoped; additionally, users can create items which are Public. When an item is made Public it becomes read-only to all non-admin users and is available to anyone. Admin users retain edit/manage rights for public items. This clarification guides API and permissions design for follow-up stories.
 
 ## User Scenarios & Testing (mandatory)
 
@@ -45,7 +49,7 @@ Acceptance Scenarios:
 
 As a DM I want to create new monsters (or edit existing ones) with a stat block builder so I can capture homebrew content and adjust monsters during play.
 
-Why this priority: Creation/editing is necessary for homebrew and fine-tuning challenge. It's second to reuse in combat but still essential.
+Why this priority: Creation/editing is necessary for homebrew and fine-tuning challenge. It's second to reuse in combat but still essential.  
 
 Independent Test: Open `/monsters/new` and complete the creation form. On save (or mock-save), verify the new monster appears in the list and its detail page shows the input fields.
 
@@ -61,7 +65,7 @@ Acceptance Scenarios:
 
 As a DM I want to filter the monster list by CR, type, and search by name so I can quickly find appropriate monsters during planning or combat.
 
-Why this priority: Finding monsters quickly improves speed during prep and play.
+Why this priority: Finding monsters quickly improves speed during prep and play.  
 
 Independent Test: On `/monsters` apply a CR filter and search by a monster name; confirm the list updates to show matching results.
 
@@ -91,6 +95,7 @@ Acceptance Scenarios:
 - **FR-006**: Monster templates library MUST allow saving monsters as templates and instantiating from templates when creating new monsters.
 - **FR-007**: The UI MUST render special abilities, legendary actions and lair actions in clearly labeled sections and support multiple entries.
 - **FR-008**: All pages MUST be navigable from the global navigation and respect mobile/responsive layouts.
+
 - **FR-009**: Users MUST be able to set a Monster's scope to one of {Global, Campaign, Public} during creation and via edit page.
 - **FR-010**: When a user marks a Monster as Public, ownership MUST transfer to the system account and the Monster becomes read-only for other users; the original creator's identity MUST be preserved in credited metadata and displayed on the detail page.
 
@@ -100,9 +105,10 @@ Acceptance Scenarios:
 
 - **Monster**: Represents a creature or NPC. Key attributes: id, name, cr, size, type, alignment, hp, ac, speed, abilities (STR/DEX/CON/INT/WIS/CHA), savingThrows, skills, resistances, immunities, senses, languages, actions (array), legendaryActions (array), lairActions (array), tags, templateId (optional), createdAt, updatedAt.
 
-  Additional ownership and scope metadata: `ownerId` (current owner; may be "system" for public entries), `createdBy` (original creator userId), `scope` (enum: `global` | `campaign` | `public`), `isPublic` (boolean), `publicAt` (timestamp if public), `creditedTo` (userId or display name shown on public entries).
+Additional ownership and scope metadata: `ownerId` (current owner; may be "system" for public entries), `createdBy` (original creator userId), `scope` (enum: `global` | `campaign` | `public`), `isPublic` (boolean), `publicAt` (timestamp if public), `creditedTo` (userId or display name shown on public entries).
+**MonsterTemplate**: A reusable definition used to instantiate a Monster. Key attributes: templateId, name, defaultValues (subset of Monster fields), tags, createdBy.
 
-- **MonsterTemplate**: A reusable definition used to instantiate a Monster. Key attributes: templateId, name, defaultValues (subset of Monster fields), tags, createdBy.
+Implementation note: Under the Hybrid model (Q1: C) templates are global by default (available across a user's campaigns) while instantiated Monsters may be campaign-scoped. Capture this behavior in the API contract and UI guidance.
 
 ## Success Criteria (mandatory)
 
@@ -113,6 +119,27 @@ Acceptance Scenarios:
 - **SC-003**: Users can create a new monster via the UI (or mock-save) and see it listed within one UX flow (create → list → detail) in at most 3 user actions.
 - **SC-004**: Monster detail page displays all mandatory stat-block fields for 98% of sample monsters (based on provided mock dataset of 10 monsters).
 - **SC-005**: Accessibility: Core pages (`/monsters`, `/monsters/:id`, `/monsters/new`) pass basic keyboard-navigation and screen-reader spot checks during review.
+
+### Performance benchmark (normative)
+
+To make SC-002 testable, the feature adopts the following benchmark for filter/search latency:
+
+- Environments:
+  - Developer workstation (target): 4 physical cores, 16 GB RAM, NVMe/SSD, Chromium via Playwright.
+  - CI baseline (ubuntu-latest): headless Chromium on GitHub Actions.
+- Dataset sizes:
+  - Representative: 200 monsters (seeded via `src/lib/mocks/sampleMonsters.ts`).
+  - Stress (informational): 5,000 monsters (optional).
+- Measurement:
+  - Action: user triggers search or filter (e.g., type name and press Enter, or apply CR filter).
+  - Metric: latency from action start to first matching result visible in the DOM (measured in ms).
+  - Implementation note: use robust `data-test` attributes (`data-test=monster-list`, `data-test=monster-item`, `data-test=monster-search-input`) to avoid fragile selectors.
+- Success criteria (pass/fail):
+  - Developer workstation (200 items): 95th percentile latency <= 1.0 second (primary). Median <= 0.5s (informational).
+  - CI baseline (200 items): median latency <= 1.5 seconds (secondary).
+  - Stress (5,000 items): median <= 3.0 seconds (informational only).
+
+See Task `T029` in `tasks.md` which must implement a Playwright perf smoke test that records `search-latency-ms` so CI can capture metrics as artifacts.
 
 ## Testable Acceptance Criteria (normalized)
 
@@ -125,22 +152,39 @@ Acceptance Scenarios:
 ## Implementation Notes (UI-only, non-implementation guidance)
 
 - The spec intentionally omits backend schema design; use the Key Entities section to guide API contract design in a follow-up story.
-
 - For this feature MVP: prefer read/write via mock adapters or existing API stubs so UI teams can iterate before API stabilization.
 
-## Policy note
+## Questions (batched)
 
-The library scope decision has been recorded above: support for *Global*, *Campaign-specific*, and *Public* scopes with the public ownership-transfer behavior.
+### Q1: Library scope (required)
+
+**Context**: The spec assumes user-scoped monster libraries.
+
+**What we need to know**: Should monster/NPC libraries be shared across a user's campaigns (global to user) or scoped per campaign (each campaign has its own library)?
+
+**Suggested Answers**:
+
+| Option | Answer | Implications |
+|--------|--------|--------------|
+| A      | Global: monsters are stored at the user level | Simpler reuse across campaigns, single source of truth; permissions and sharing are simpler for MVP |
+| B      | Campaign-scoped: each campaign has its own library | More granular organization; requires campaign association in data model and UI to choose scope |
+| C      | Hybrid: templates global, instances campaign-scoped | Allows global templates and campaign-specific variants; more complexity but flexible |
+| Custom | Provide custom behavior | Describe desired policy and UI impacts |
+
+*Your choice*: [Please reply: Q1: A/B/C/Custom + details]
+
+---
 
 ## Files referenced (for implementers)
 
-- Design reference: `docs/design/dnd-tracker-database-design.md` (monster data model inspiration)
-- Roadmap: `docs/Feature-Roadmap.md` (Feature 007 entry)
+- Design reference: `docs/design/dnd-tracker-database-design.md` (monster data model inspiration)  
+- Roadmap: `docs/Feature-Roadmap.md` (Feature 007 entry)  
 
 ## Next steps
 
-1. Create API contract story (Monster model & CRUD APIs) as Feature 023/024 (already planned).
-2. Implement UI pages in the following vertical slices (list/detail → create/edit → templates → encounter integration).
+1. Resolve Q1 (library scope).  
+2. Create API contract story (Monster model & CRUD APIs) as Feature 023/024 (already planned).  
+3. Implement UI pages in the following vertical slices (list/detail → create/edit → templates → encounter integration).  
 
 ---
 
