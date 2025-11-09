@@ -36,6 +36,14 @@ You **MUST** consider the user input before proceeding (if not empty).
 
    - **If any checklist is incomplete**:
      - Display the table with incomplete item counts
+     - Review the incomplete items and examine all content to see if the items actually ARE complete
+       - If the tasks appear to actually be complete.
+         - Notify the user that they show incomplete, but appear to actually be done
+         - Ask if they want you to update the tasks
+         - If user says "yes" or "proceed" or "continue"
+           - Update the checklist items to reflect their actual state
+           - return to step 1 and start the process over
+       - If the items do not appear complete, move to the next step.
      - **STOP** and ask: "Some checklists are incomplete. Do you want to proceed with implementation anyway? (yes/no)"
      - Wait for user response before continuing
      - If user says "no" or "wait" or "stop", halt execution
