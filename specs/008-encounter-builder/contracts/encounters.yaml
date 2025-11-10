@@ -8,6 +8,9 @@ info:
     email: support@dnd-tracker.dev
 servers:
   - url: /api
+tags:
+  - name: encounters
+    description: Encounter management operations
 paths:
   /api/encounters:
     get:
