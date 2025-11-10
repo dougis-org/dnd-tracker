@@ -22,7 +22,7 @@ npm test
 
 5. API Contract
 
-- See `specs/008-encounter-builder/contracts/encounters.openapi.yml` for the minimal REST contract. Implement server routes under `src/app/api/encounters/*` when ready.
+- See `specs/008-encounter-builder/contracts/encounters.yaml` for the OpenAPI contract. Implement server routes under `src/app/api/encounters/*` when ready.
 
 Notes
 

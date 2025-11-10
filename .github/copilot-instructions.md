@@ -22,9 +22,7 @@ npm test && npm run lint
 TypeScript 5.9.2 (Next.js 16, React 19): Follow standard conventions
 
 ## Recent Changes
-- 008-encounter-builder: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
-
-- feature/008-encounter-builder: Added TypeScript 5.9.2 (Next.js 16, React 19) + Next.js 16, React 19, Tailwind CSS, Mongoose, Zod
+- 008-encounter-builder: Added Mongoose models, Zod schemas, API adapter, Next.js routes, and testcontainers integration
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

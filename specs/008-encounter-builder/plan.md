@@ -64,47 +64,31 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
+├── app/
+│   ├── encounters/
+│   │   ├── page.tsx           # Main encounters list
+│   │   └── new/
+│   │       └── page.tsx       # Create new encounter form
+│   └── api/encounters/
+│       └── route.ts           # API endpoints (GET, POST)
+├── components/encounters/
+│   ├── ParticipantForm.tsx    # Individual participant input
+│   └── EncountersList.tsx     # Display saved encounters
 └── lib/
+    ├── models/
+    │   └── encounter.ts       # Mongoose schema
+    ├── schemas/
+    │   └── encounter.ts       # Zod validation
+    └── api/
+        └── encounters.ts      # Adapter with Mongoose/localStorage
 
 tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+├── unit/encounter/           # Unit tests
+├── integration/              # Mongoose integration tests
+└── e2e/                      # Playwright E2E tests
 ```
 
 **Structure Decision**: Web application using `src/app/` for routes and `src/components/` for UI. Backend models/adapters live in `src/lib/` and API routes under `src/app/api/encounters`. Tests follow repo conventions: `tests/unit/`, `tests/integration/`, `tests/e2e/`.
