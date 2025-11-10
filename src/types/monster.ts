@@ -20,7 +20,13 @@ export interface Abilities {
   cha: number;
 }
 
-export type MonsterSize = 'Tiny' | 'Small' | 'Medium' | 'Large' | 'Huge' | 'Gargantuan';
+export type MonsterSize =
+  | 'Tiny'
+  | 'Small'
+  | 'Medium'
+  | 'Large'
+  | 'Huge'
+  | 'Gargantuan';
 export type MonsterScope = 'global' | 'campaign' | 'public';
 
 export interface Monster {

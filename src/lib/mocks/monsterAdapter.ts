@@ -4,7 +4,11 @@
  * Will be replaced by real API calls when backend is available
  */
 
-import { Monster, MonsterCreateInput, MonsterUpdateInput } from '@/types/monster';
+import {
+  Monster,
+  MonsterCreateInput,
+  MonsterUpdateInput,
+} from '@/types/monster';
 import { generateSampleMonsters } from './sampleMonsters';
 
 const STORAGE_KEY = 'dnd-tracker:monsters';
@@ -56,7 +60,11 @@ export class MonsterAdapter {
     }
   }
 
-  async list(filters?: { cr?: { min?: number; max?: number }; type?: string; scope?: string }): Promise<Monster[]> {
+  async list(filters?: {
+    cr?: { min?: number; max?: number };
+    type?: string;
+    scope?: string;
+  }): Promise<Monster[]> {
     await this.ensureInitialized();
 
     let result = Array.from(this.cache.values());
@@ -68,7 +76,9 @@ export class MonsterAdapter {
       result = result.filter((m) => m.cr <= filters.cr!.max!);
     }
     if (filters?.type) {
-      result = result.filter((m) => m.type.toLowerCase().includes(filters.type!.toLowerCase()));
+      result = result.filter((m) =>
+        m.type.toLowerCase().includes(filters.type!.toLowerCase())
+      );
     }
     if (filters?.scope) {
       result = result.filter((m) => m.scope === filters.scope);
@@ -105,7 +115,11 @@ export class MonsterAdapter {
     return monster;
   }
 
-  async update(id: string, input: MonsterUpdateInput, _userId: string): Promise<Monster | null> {
+  async update(
+    id: string,
+    input: MonsterUpdateInput,
+    _userId: string
+  ): Promise<Monster | null> {
     await this.ensureInitialized();
 
     const existing = this.cache.get(id);
@@ -140,7 +154,10 @@ export class MonsterAdapter {
 
     const q = query.toLowerCase();
     return Array.from(this.cache.values())
-      .filter((m) => m.name.toLowerCase().includes(q) || m.type.toLowerCase().includes(q))
+      .filter(
+        (m) =>
+          m.name.toLowerCase().includes(q) || m.type.toLowerCase().includes(q)
+      )
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 

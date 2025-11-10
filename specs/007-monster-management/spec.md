@@ -133,13 +133,12 @@ To make SC-002 testable, the feature adopts the following benchmark for filter/s
 - Measurement:
   - Action: user triggers search or filter (e.g., type name and press Enter, or apply CR filter).
   - Metric: latency from action start to first matching result visible in the DOM (measured in ms).
-  - Implementation note: use robust `data-test` attributes (`data-test=monster-list`, `data-test=monster-item`, `data-test=monster-search-input`) to avoid fragile selectors.
 - Success criteria (pass/fail):
   - Developer workstation (200 items): 95th percentile latency <= 1.0 second (primary). Median <= 0.5s (informational).
   - CI baseline (200 items): median latency <= 1.5 seconds (secondary).
   - Stress (5,000 items): median <= 3.0 seconds (informational only).
 
-See Task `T029` in `tasks.md` which must implement a Playwright perf smoke test that records `search-latency-ms` so CI can capture metrics as artifacts.
+See Task `T033` in `tasks.md` which must implement a Playwright perf smoke test that records `search-latency-ms` so CI can capture metrics as artifacts.
 
 ## Testable Acceptance Criteria (normalized)
 

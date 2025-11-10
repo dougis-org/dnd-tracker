@@ -17,7 +17,14 @@ const ActionSchema = z.object({
   damage: z.string().nullable().optional(),
 });
 
-export const MonsterSizeEnum = z.enum(['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan']);
+export const MonsterSizeEnum = z.enum([
+  'Tiny',
+  'Small',
+  'Medium',
+  'Large',
+  'Huge',
+  'Gargantuan',
+]);
 export const MonsterScopeEnum = z.enum(['global', 'campaign', 'public']);
 
 export const MonsterCreateSchema = z.object({

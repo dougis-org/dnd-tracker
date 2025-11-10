@@ -6,29 +6,90 @@
 import { Monster } from '@/types/monster';
 
 const MONSTER_NAMES = [
-  'Goblin', 'Kobold', 'Orc', 'Hobgoblin', 'Gnoll',
-  'Dire Wolf', 'Giant Spider', 'Wyvern', 'Manticore', 'Chimera',
-  'Zombie', 'Skeleton', 'Vampire', 'Lich', 'Ghost',
-  'Fire Elemental', 'Water Elemental', 'Air Elemental', 'Earth Elemental', 'Lightning Elemental',
-  'Red Dragon', 'Blue Dragon', 'Green Dragon', 'Gold Dragon', 'Silver Dragon',
-  'Griffon', 'Phoenix', 'Hydra', 'Basilisk', 'Medusa',
-  'Treant', 'Dryad', 'Satyr', 'Nymph', 'Eladrin',
-  'Succubus', 'Incubus', 'Demon', 'Devil', 'Celestial',
-  'Giant', 'Hill Giant', 'Frost Giant', 'Fire Giant', 'Cloud Giant',
-  'Beholder', 'Mind Flayer', 'Aboleth', 'Ancient Dragon', 'Tarrasque',
+  'Goblin',
+  'Kobold',
+  'Orc',
+  'Hobgoblin',
+  'Gnoll',
+  'Dire Wolf',
+  'Giant Spider',
+  'Wyvern',
+  'Manticore',
+  'Chimera',
+  'Zombie',
+  'Skeleton',
+  'Vampire',
+  'Lich',
+  'Ghost',
+  'Fire Elemental',
+  'Water Elemental',
+  'Air Elemental',
+  'Earth Elemental',
+  'Lightning Elemental',
+  'Red Dragon',
+  'Blue Dragon',
+  'Green Dragon',
+  'Gold Dragon',
+  'Silver Dragon',
+  'Griffon',
+  'Phoenix',
+  'Hydra',
+  'Basilisk',
+  'Medusa',
+  'Treant',
+  'Dryad',
+  'Satyr',
+  'Nymph',
+  'Eladrin',
+  'Succubus',
+  'Incubus',
+  'Demon',
+  'Devil',
+  'Celestial',
+  'Giant',
+  'Hill Giant',
+  'Frost Giant',
+  'Fire Giant',
+  'Cloud Giant',
+  'Beholder',
+  'Mind Flayer',
+  'Aboleth',
+  'Ancient Dragon',
+  'Tarrasque',
 ];
 
 const TYPES = [
-  'humanoid', 'beast', 'dragon', 'elemental', 'undead',
-  'fiend', 'celestial', 'construct', 'giant', 'aberration',
+  'humanoid',
+  'beast',
+  'dragon',
+  'elemental',
+  'undead',
+  'fiend',
+  'celestial',
+  'construct',
+  'giant',
+  'aberration',
 ];
 
-const SIZES = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'] as const;
+const SIZES = [
+  'Tiny',
+  'Small',
+  'Medium',
+  'Large',
+  'Huge',
+  'Gargantuan',
+] as const;
 
 const ALIGNMENTS = [
-  'Chaotic Evil', 'Neutral Evil', 'Lawful Evil',
-  'Chaotic Neutral', 'True Neutral', 'Lawful Neutral',
-  'Chaotic Good', 'Neutral Good', 'Lawful Good',
+  'Chaotic Evil',
+  'Neutral Evil',
+  'Lawful Evil',
+  'Chaotic Neutral',
+  'True Neutral',
+  'Lawful Neutral',
+  'Chaotic Good',
+  'Neutral Good',
+  'Lawful Good',
 ];
 
 function hashCode(str: string): number {
@@ -68,7 +129,8 @@ export function generateSampleMonsters(count: number): Monster[] {
 
   for (let i = 0; i < count; i++) {
     const seed = hashCode(`monster-${i}`);
-    const name = `${pickFromArray(MONSTER_NAMES, seed)} ${Math.floor(i / MONSTER_NAMES.length) > 0 ? `(${Math.floor(i / MONSTER_NAMES.length)})` : ''}`.trim();
+    const name =
+      `${pickFromArray(MONSTER_NAMES, seed)} ${Math.floor(i / MONSTER_NAMES.length) > 0 ? `(${Math.floor(i / MONSTER_NAMES.length)})` : ''}`.trim();
 
     monsters.push({
       id: `sample-${i}`,
@@ -76,7 +138,8 @@ export function generateSampleMonsters(count: number): Monster[] {
       cr: Math.floor(seededRandom(seed + 100) * 30) / 2, // 0-15, some fractional
       size: pickFromArray(SIZES, seed + 200),
       type: pickFromArray(TYPES, seed + 300),
-      alignment: Math.random() > 0.3 ? pickFromArray(ALIGNMENTS, seed + 400) : null,
+      alignment:
+        Math.random() > 0.3 ? pickFromArray(ALIGNMENTS, seed + 400) : null,
       hp: 10 + Math.floor(seededRandom(seed + 500) * 200),
       ac: 10 + Math.floor(seededRandom(seed + 600) * 8),
       speed: '30 ft.',

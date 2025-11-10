@@ -53,10 +53,11 @@ Notes on ordering: S1 → (S2 and S3 can run in parallel after S1) → S4 → S5
 
 ## Work Breakdown with mapping to existing tasks.md IDs
 
-- Phase A (Setup): tasks T001–T008 (types, mock adapter, component skeletons, pages shells)
-- S1 (MVP): tasks T009–T012 (list, detail, encounter picker, list-detail tests)
-- S2 (Create/Edit): tasks T013–T016 (form, edit page, integration test, local persistence)
-- S3 (Filter/Search): tasks T017–T019 (filters, logic, unit & e2e tests)
+- Phase A (Setup): tasks T001–T007 (types, mock adapter, component skeletons, sample fixtures, validation schemas)
+- Phase B (Foundational): tasks T008–T012 (page shells, navigation, sample data, OpenAPI spec, basic layout)
+- S1 (MVP): tasks T013–T018 (list tests, list UI, detail tests, detail UI, encounter picker, integration tests)
+- S2 (Create/Edit): tasks T019–T024 (integration tests, form component, create page, edit page, persistence, scope selector)
+- S3 (Filter/Search): tasks T025–T028 (filter tests, filter UI, filter logic, E2E tests)
 - S4/S5: not fully expanded in tasks.md — recommend follow-up tasks to implement templates and scope metadata, migration utility, and UI confirmations.
 
 ## Proposed new issue titles (suggested names)

@@ -179,7 +179,10 @@ describe('T023: Monster Persistence (Integration)', () => {
       },
     };
 
-    const updated = await monsterService.update(created.id, { ...updateInput, id: created.id });
+    const updated = await monsterService.update(created.id, {
+      ...updateInput,
+      id: created.id,
+    });
 
     expect(updated?.name).toBe('Updated Name');
     expect(updated?.cr).toBe(2);

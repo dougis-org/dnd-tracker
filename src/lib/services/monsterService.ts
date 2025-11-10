@@ -4,14 +4,22 @@
  * Components use this service and never directly call the adapter
  */
 
-import { Monster, MonsterCreateInput, MonsterUpdateInput } from '@/types/monster';
+import {
+  Monster,
+  MonsterCreateInput,
+  MonsterUpdateInput,
+} from '@/types/monster';
 import { monsterAdapter } from '@/lib/mocks/monsterAdapter';
 
 class MonsterService {
   /**
    * List all monsters with optional filtering
    */
-  async list(filters?: { cr?: { min?: number; max?: number }; type?: string; scope?: string }): Promise<Monster[]> {
+  async list(filters?: {
+    cr?: { min?: number; max?: number };
+    type?: string;
+    scope?: string;
+  }): Promise<Monster[]> {
     return monsterAdapter.list(filters);
   }
 
@@ -25,14 +33,21 @@ class MonsterService {
   /**
    * Create a new monster
    */
-  async create(input: MonsterCreateInput, userId = 'current-user'): Promise<Monster> {
+  async create(
+    input: MonsterCreateInput,
+    userId = 'current-user'
+  ): Promise<Monster> {
     return monsterAdapter.create(input, userId);
   }
 
   /**
    * Update an existing monster
    */
-  async update(id: string, input: MonsterUpdateInput, userId = 'current-user'): Promise<Monster | null> {
+  async update(
+    id: string,
+    input: MonsterUpdateInput,
+    userId = 'current-user'
+  ): Promise<Monster | null> {
     return monsterAdapter.update(id, input, userId);
   }
 

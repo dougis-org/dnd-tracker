@@ -97,4 +97,3 @@ Validation note
 All tasks follow the required checklist format: `- [ ] T### [P?] [US#] Description with file path`.
 
 -- End of generated tasks --
--- End of generated tasks --

@@ -11,15 +11,9 @@
 
 Deliver a UI-first Monster/NPC management feature using mock adapters and local persistence for the MVP. Prioritize the list/detail workflow (US1) to enable encounter integration. After the MVP, implement create/edit (US2), templates (FR-006), and filter/search (US3). Ensure TDD-first, accessibility, and Codacy quality gates are satisfied before PR merge.
 
-Performance benchmark: Follow the Performance benchmark in `specs/007-monster-management/spec.md` (representative dataset = 200 items). Implement Task `T029` (Playwright perf smoke test) to record `search-latency-ms` and publish results as CI artifacts for trend analysis.
+Performance benchmark: Follow the Performance benchmark in `specs/007-monster-management/spec.md` (representative dataset = 200 items). Implement Task `T033` (Playwright perf smoke test) to record `search-latency-ms` and publish results as CI artifacts for trend analysis.
 
 ## Technical Context
-
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
 
 **Language/Version**: TypeScript 5.9 (repository `package.json`)  
 **Primary Dependencies**: Next.js 16, React 19, Zod (validation), Tailwind CSS, Mongoose (present in repo but backend work out of scope for frontend MVP)  
@@ -58,50 +52,8 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
 
-```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
-
-tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
-```
-
-**Structure Decision**: Web application split (frontend-only for this feature).
+**Structure Decision**: Web application, frontend-only for this feature MVP.
 
 - The feature will live in the existing frontend layout under `src/app` and `src/components`.
 - No backend changes are required for the UI-first iteration; adapters and stubs should be added under `src/lib/services` and `src/lib/mocks`.
