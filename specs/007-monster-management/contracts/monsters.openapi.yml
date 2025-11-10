@@ -7,6 +7,9 @@ info:
     name: API Support
     url: https://www.example.com/support
     email: support@example.com
+tags:
+  - name: monsters
+    description: Operations related to monster management
 servers:
   - url: https://api.example.com
 paths:
@@ -15,7 +18,7 @@ paths:
       operationId: listMonsters
       tags:
         - monsters
-      summary: List monsters (supports filters: cr_min, cr_max, type, q)
+      summary: 'List monsters (supports filters: cr_min, cr_max, type, q)'
       description: Retrieves a list of monsters based on specified filters
       parameters:
         - in: query
