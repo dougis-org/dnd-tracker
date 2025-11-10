@@ -8,7 +8,7 @@
  * - Handle errors
  */
 
-import { render } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import { useParams, useRouter } from 'next/navigation';
 import MonsterEditPage from '@/app/monsters/[id]/edit/page';
 import { monsterService } from '@/lib/services/monsterService';
@@ -33,34 +33,45 @@ describe('MonsterEditPage (T022)', () => {
     back: jest.fn(),
   };
 
+  const renderMonsterEditPage = async () => {
+    let result: ReturnType<typeof render>;
+
+    await act(async () => {
+      result = render(<MonsterEditPage />);
+    });
+
+    return result!;
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
     (useParams as jest.Mock).mockReturnValue({ id: 'monster-123' });
   });
 
-  it('should render with correct structure', () => {
+  it('should render with correct structure', async () => {
     (monsterService.getById as jest.Mock).mockResolvedValue(null);
 
-    render(<MonsterEditPage />);
+    await renderMonsterEditPage();
 
-    // Page should render (either loading or error state)
+    await waitFor(() => expect(monsterService.getById).toHaveBeenCalledWith('monster-123'));
     expect(document.body).toBeInTheDocument();
   });
 
-  it('should call getById on mount with monster ID', () => {
+  it('should call getById on mount with monster ID', async () => {
     (monsterService.getById as jest.Mock).mockResolvedValue(null);
 
-    render(<MonsterEditPage />);
+    await renderMonsterEditPage();
 
-    expect(monsterService.getById).toHaveBeenCalledWith('monster-123');
+    await waitFor(() => expect(monsterService.getById).toHaveBeenCalledWith('monster-123'));
   });
 
-  it('should handle missing monster ID', () => {
+  it('should handle missing monster ID', async () => {
     (useParams as jest.Mock).mockReturnValue({});
 
-    render(<MonsterEditPage />);
+    await renderMonsterEditPage();
 
+    expect(monsterService.getById).not.toHaveBeenCalled();
     // Should not crash with missing ID
     expect(document.body).toBeInTheDocument();
   });
