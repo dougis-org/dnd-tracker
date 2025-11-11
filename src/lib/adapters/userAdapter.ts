@@ -25,7 +25,7 @@ const NETWORK_DELAY_MS = 300; // Simulate network latency
 function createDefaultProfile(userId: string): UserProfile {
   return {
     id: userId,
-    name: '',
+    name: `User ${userId}`,
     email: `user-${userId}@example.com`,
     createdAt: new Date(),
     updatedAt: new Date(),

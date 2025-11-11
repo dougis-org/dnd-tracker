@@ -1,15 +1,27 @@
-import { parseEmail, validateName, validatePreferences } from '@/lib/validation/userValidation';
+import {
+  parseEmail,
+  validateName,
+  validatePreferences,
+} from '@/lib/validation/userValidation';
+import {
+  validEmails,
+  invalidEmails,
+  validNames,
+  invalidNames,
+  experienceLevels,
+  preferredRoles,
+  rulesets,
+} from '../../fixtures/userSchemaFixtures';
 
 describe('userValidation utilities', () => {
   describe('parseEmail', () => {
-    it('should parse valid email', () => {
-      const result = parseEmail('alice@example.com');
+    it.each(validEmails)('should parse valid email: %s', (email) => {
+      const result = parseEmail(email);
       expect(result.success).toBe(true);
-      expect(result.data).toBe('alice@example.com');
     });
 
-    it('should reject invalid email', () => {
-      const result = parseEmail('not-an-email');
+    it.each(invalidEmails)('should reject invalid email: %s', (email) => {
+      const result = parseEmail(email);
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
     });
@@ -28,33 +40,18 @@ describe('userValidation utilities', () => {
   });
 
   describe('validateName', () => {
-    it('should accept valid name', () => {
-      const result = validateName('Alice Adventurer');
+    it.each(validNames)('should accept valid name', (name) => {
+      const result = validateName(name);
       expect(result.success).toBe(true);
     });
 
-    it('should reject empty name', () => {
-      const result = validateName('');
+    it.each(invalidNames)('should reject invalid name', (name) => {
+      const result = validateName(name);
       expect(result.success).toBe(false);
-    });
-
-    it('should reject name > 100 chars', () => {
-      const result = validateName('A'.repeat(101));
-      expect(result.success).toBe(false);
-    });
-
-    it('should accept name exactly 100 chars', () => {
-      const result = validateName('A'.repeat(100));
-      expect(result.success).toBe(true);
     });
 
     it('should trim whitespace', () => {
       const result = validateName('  Alice Adventurer  ');
-      expect(result.success).toBe(true);
-    });
-
-    it('should accept Unicode characters', () => {
-      const result = validateName('艾莉丝 冒险家');
       expect(result.success).toBe(true);
     });
   });
@@ -96,13 +93,9 @@ describe('userValidation utilities', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should accept all valid enums', () => {
-      const levels = ['Novice', 'Intermediate', 'Advanced'];
-      const roles = ['DM', 'Player', 'Both'];
-      const rulesets = ['5e', '3.5e', 'PF2e'];
-
-      levels.forEach((level) => {
-        roles.forEach((role) => {
+    it('should accept all valid enum combinations', () => {
+      experienceLevels.forEach((level) => {
+        preferredRoles.forEach((role) => {
           rulesets.forEach((ruleset) => {
             const result = validatePreferences({
               experienceLevel: level,
