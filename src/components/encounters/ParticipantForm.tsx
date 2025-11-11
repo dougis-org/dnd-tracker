@@ -1,5 +1,6 @@
 'use client'
 
+import { useCallback, useMemo, type ReactNode } from 'react'
 import type { ParticipantDoc } from '../../types/encounter'
 
 interface ParticipantFormProps {
@@ -10,17 +11,33 @@ interface ParticipantFormProps {
   errors: Array<{ field: string; message: string }>
 }
 
-/**
- * T019: Participant form component for editing individual participants
- *
- * Allows editing:
- * - Type (monster, party_member, custom)
- * - Display name
- * - Quantity
- * - HP
- * - Initiative (optional)
- */
+type FieldProps = {
+  id: string
+  label: string
+  required?: boolean
+  error?: string
+  children: ReactNode
+}
 
+const INPUT_CLASS = 'w-full px-2 py-1 border rounded text-sm'
+
+function Field({ id, label, required, error, children }: FieldProps) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-sm font-medium mb-1">
+        {label}
+        {required ? ' *' : null}
+      </label>
+      {children}
+      {error ? <p className="mt-1 text-xs text-red-600">{error}</p> : null}
+    </div>
+  )
+}
+
+const parseInteger = (value: string, fallback: number) => {
+  const parsed = parseInt(value, 10)
+  return Number.isNaN(parsed) ? fallback : parsed
+}
 export default function ParticipantForm({
   index,
   participant,
@@ -28,10 +45,47 @@ export default function ParticipantForm({
   onRemove,
   errors,
 }: ParticipantFormProps) {
-  const getFieldError = (suffix: string) => {
-    const err = errors.find((e) => e.field === `participants.${index}${suffix}`)
-    return err?.message
-  }
+  const errorMap = useMemo(() => {
+    const map = new Map<string, string>()
+    errors.forEach((error) => {
+      map.set(error.field, error.message)
+    })
+    return map
+  }, [errors])
+
+  const getFieldError = useCallback(
+    (suffix: string) => errorMap.get(`participants.${index}${suffix}`),
+    [errorMap, index]
+  )
+
+  const updateParticipant = useCallback(
+    (updates: Partial<ParticipantDoc>) => {
+      onUpdate(index, updates)
+    },
+    [index, onUpdate]
+  )
+
+  const ids = useMemo(
+    () => ({
+      type: `type-${index}`,
+      displayName: `displayName-${index}`,
+      quantity: `quantity-${index}`,
+      hp: `hp-${index}`,
+      initiative: `initiative-${index}`,
+    }),
+    [index]
+  )
+
+  const names = useMemo(
+    () => ({
+      type: `participants.${index}.type`,
+      displayName: `participants.${index}.displayName`,
+      quantity: `participants.${index}.quantity`,
+      hp: `participants.${index}.hp`,
+      initiative: `participants.${index}.initiative`,
+    }),
+    [index]
+  )
 
   return (
     <div className="mb-4 p-4 border rounded-md bg-gray-50">
@@ -49,97 +103,75 @@ export default function ParticipantForm({
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        {/* Type */}
-        <div>
-          <label htmlFor={`type-${index}`} className="block text-sm font-medium mb-1">
-            Type
-          </label>
+        <Field id={ids.type} label="Type">
           <select
-            id={`type-${index}`}
-            name={`participants.${index}.type`}
+            id={ids.type}
+            name={names.type}
             value={participant.type}
-            onChange={(e) => {
-              const newType = e.target.value as ParticipantDoc['type']
-              onUpdate(index, { type: newType })
-            }}
-            className="w-full px-2 py-1 border rounded text-sm"
+            onChange={(event) =>
+              updateParticipant({ type: event.target.value as ParticipantDoc['type'] })
+            }
+            className={INPUT_CLASS}
           >
             <option value="monster">Monster</option>
             <option value="party_member">Party Member</option>
             <option value="custom">Custom NPC</option>
           </select>
-        </div>
+        </Field>
 
-        {/* Display Name */}
-        <div>
-          <label htmlFor={`displayName-${index}`} className="block text-sm font-medium mb-1">
-            Name *
-          </label>
+        <Field id={ids.displayName} label="Name" required error={getFieldError('.displayName')}>
           <input
-            id={`displayName-${index}`}
-            name={`participants.${index}.displayName`}
+            id={ids.displayName}
+            name={names.displayName}
             type="text"
             value={participant.displayName}
-            onChange={(e) => onUpdate(index, { displayName: e.target.value })}
+            onChange={(event) => updateParticipant({ displayName: event.target.value })}
             placeholder="e.g., Goblin"
-            className="w-full px-2 py-1 border rounded text-sm"
+            className={INPUT_CLASS}
           />
-          {getFieldError('.displayName') && (
-            <p className="mt-1 text-xs text-red-600">{getFieldError('.displayName')}</p>
-          )}
-        </div>
+        </Field>
 
-        {/* Quantity */}
-        <div>
-          <label htmlFor={`quantity-${index}`} className="block text-sm font-medium mb-1">
-            Quantity
-          </label>
+        <Field id={ids.quantity} label="Quantity" error={getFieldError('.quantity')}>
           <input
-            id={`quantity-${index}`}
-            name={`participants.${index}.quantity`}
+            id={ids.quantity}
+            name={names.quantity}
             type="number"
             min="1"
             value={participant.quantity}
-            onChange={(e) => onUpdate(index, { quantity: parseInt(e.target.value, 10) || 1 })}
-            className="w-full px-2 py-1 border rounded text-sm"
+            onChange={(event) =>
+              updateParticipant({ quantity: parseInteger(event.target.value, 1) })
+            }
+            className={INPUT_CLASS}
           />
-          {getFieldError('.quantity') && (
-            <p className="mt-1 text-xs text-red-600">{getFieldError('.quantity')}</p>
-          )}
-        </div>
+        </Field>
 
-        {/* HP */}
-        <div>
-          <label htmlFor={`hp-${index}`} className="block text-sm font-medium mb-1">
-            HP (per individual)
-          </label>
+        <Field id={ids.hp} label="HP (per individual)">
           <input
-            id={`hp-${index}`}
-            name={`participants.${index}.hp`}
+            id={ids.hp}
+            name={names.hp}
             type="number"
             min="0"
-            value={participant.hp || 0}
-            onChange={(e) => onUpdate(index, { hp: parseInt(e.target.value, 10) || 0 })}
-            className="w-full px-2 py-1 border rounded text-sm"
+            value={participant.hp ?? 0}
+            onChange={(event) => updateParticipant({ hp: parseInteger(event.target.value, 0) })}
+            className={INPUT_CLASS}
           />
-        </div>
+        </Field>
 
-        {/* Initiative */}
-        <div>
-          <label htmlFor={`initiative-${index}`} className="block text-sm font-medium mb-1">
-            Initiative (optional)
-          </label>
+        <Field id={ids.initiative} label="Initiative (optional)">
           <input
-            id={`initiative-${index}`}
-            name={`participants.${index}.initiative`}
+            id={ids.initiative}
+            name={names.initiative}
             type="number"
             value={participant.initiative ?? ''}
-            onChange={(e) =>
-              onUpdate(index, { initiative: e.target.value ? parseInt(e.target.value, 10) : null })
-            }
-            className="w-full px-2 py-1 border rounded text-sm"
+            onChange={(event) => {
+              const value = event.target.value.trim()
+              updateParticipant({
+                initiative: value === '' ? null : parseInteger(value, 0),
+              })
+            }}
+            className={INPUT_CLASS}
           />
-        </div>
+        </Field>
       </div>
     </div>
   )

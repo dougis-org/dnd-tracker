@@ -1,104 +1,187 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import Model from '../models/encounter';
-import type { ParticipantDoc } from '../models/encounter';
+import Model from '../models/encounter'
+import type { ParticipantDoc } from '../models/encounter'
 
-// Simple interface for API adapter (not bound to Mongoose Document)
 export interface EncounterPayload {
-  id?: string;
-  name: string;
-  description?: string;
-  participants: ParticipantDoc[];
-  tags?: string[];
-  template_flag?: boolean;
-  owner_id: string;
-  org_id?: string | null;
-  created_at?: Date | string;
-  updated_at?: Date | string;
+  id?: string
+  name: string
+  description?: string
+  participants: ParticipantDoc[]
+  tags?: string[]
+  template_flag?: boolean
+  owner_id: string
+  org_id?: string | null
+  created_at?: string
+  updated_at?: string
 }
 
-// Minimal adapter: prefer server-side model when available, otherwise use in-memory/localStorage fallback.
-// This satisfies T008/T009 for the TDD-first phase.
+type EncounterModelLike = {
+  findAllByOwner?: (ownerId?: string) => Promise<EncounterPayload[]>
+  create?: (payload: Partial<EncounterPayload>) => Promise<EncounterPayload>
+  findById?: (id: string) => Promise<EncounterPayload | null>
+  update?: (id: string, patch: Partial<EncounterPayload>) => Promise<EncounterPayload | null>
+  delete?: (id: string) => Promise<boolean>
+}
 
-const isBrowser =
-  typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+interface StorageLike {
+  getItem(key: string): string | null
+  setItem(key: string, value: string): void
+}
 
-const STORAGE_KEY = 'dnd:encounters';
+interface AdapterOptions {
+  model?: EncounterModelLike | null
+  storage?: StorageLike | null
+  now?: () => Date
+  idFactory?: () => string
+  memoryStore?: Record<string, EncounterPayload>
+}
 
-function readLocal(): Record<string, EncounterPayload> {
-  try {
-    if (!isBrowser) return {};
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch (_) {
-    return {};
+const STORAGE_KEY = 'dnd:encounters'
+const defaultMemoryStore: Record<string, EncounterPayload> = {}
+const defaultNow = () => new Date()
+const defaultIdFactory = () => {
+  if (
+    typeof globalThis.crypto !== 'undefined' &&
+    typeof globalThis.crypto.randomUUID === 'function'
+  ) {
+    return globalThis.crypto.randomUUID()
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`
+}
+
+const cloneEncounter = (encounter: EncounterPayload): EncounterPayload =>
+  JSON.parse(JSON.stringify(encounter))
+
+const syncMemory = (
+  target: Record<string, EncounterPayload>,
+  source: Record<string, EncounterPayload>
+) => {
+  Object.keys(target).forEach((key) => {
+    if (!Object.prototype.hasOwnProperty.call(source, key)) {
+      delete target[key]
+    }
+  })
+  Object.keys(source).forEach((key) => {
+    target[key] = source[key]
+  })
+}
+export function createEncounterAdapter(options: AdapterOptions = {}) {
+  const {
+    model,
+    storage: providedStorage,
+    now = defaultNow,
+    idFactory = defaultIdFactory,
+    memoryStore = defaultMemoryStore,
+  } = options
+
+  const storage = providedStorage ??
+    (typeof window !== 'undefined' && window.localStorage ? window.localStorage : null)
+
+  const useMemory = !storage
+  const memory = memoryStore
+
+  const readAll = (): Record<string, EncounterPayload> => {
+    if (useMemory) {
+      return { ...memory }
+    }
+    try {
+      const raw = storage?.getItem(STORAGE_KEY)
+      if (!raw) return {}
+      return JSON.parse(raw) as Record<string, EncounterPayload>
+    } catch {
+      return {}
+    }
+  }
+
+  const writeAll = (data: Record<string, EncounterPayload>) => {
+    if (useMemory) {
+      syncMemory(memory, data)
+      return
+    }
+    try {
+      storage?.setItem(STORAGE_KEY, JSON.stringify(data))
+    } catch {
+      // ignore storage failures
+    }
+  }
+
+  const resolvedModel: EncounterModelLike | null =
+    (model as EncounterModelLike | null | undefined) ??
+    ((Model as unknown) as EncounterModelLike | null)
+
+  const hasModelMethod = <K extends keyof EncounterModelLike>(
+    source: EncounterModelLike | null,
+    key: K
+  ): source is Required<Pick<EncounterModelLike, K>> =>
+    !!source && typeof source[key] === 'function'
+
+  return {
+    async list(ownerId?: string) {
+      if (hasModelMethod(resolvedModel, 'findAllByOwner')) {
+        return resolvedModel.findAllByOwner(ownerId)
+      }
+      const data = readAll()
+      const encounters = Object.values(data).map(cloneEncounter)
+      return ownerId ? encounters.filter((enc) => enc.owner_id === ownerId) : encounters
+    },
+    async create(payload: Partial<EncounterPayload>) {
+      if (hasModelMethod(resolvedModel, 'create')) {
+        return resolvedModel.create(payload)
+      }
+      const data = readAll()
+      const timestamp = now().toISOString()
+      const id = payload.id ?? idFactory()
+      const created: EncounterPayload = {
+        ...payload,
+        id,
+        created_at: timestamp,
+        updated_at: timestamp,
+      } as EncounterPayload
+      data[id] = cloneEncounter(created)
+      writeAll(data)
+      return cloneEncounter(created)
+    },
+    async get(id: string) {
+      if (hasModelMethod(resolvedModel, 'findById')) {
+        return resolvedModel.findById(id)
+      }
+      const data = readAll()
+      const encounter = data[id]
+      return encounter ? cloneEncounter(encounter) : null
+    },
+    async update(id: string, patch: Partial<EncounterPayload>) {
+      if (hasModelMethod(resolvedModel, 'update')) {
+        return resolvedModel.update(id, patch)
+      }
+      const data = readAll()
+      const current = data[id]
+      if (!current) return null
+      const nextTimestamp = now().toISOString()
+      const updated: EncounterPayload = {
+        ...current,
+        ...patch,
+        id,
+        created_at: current.created_at,
+        updated_at: nextTimestamp,
+      }
+      data[id] = cloneEncounter(updated)
+      writeAll(data)
+      return cloneEncounter(updated)
+    },
+    async delete(id: string) {
+      if (hasModelMethod(resolvedModel, 'delete')) {
+        return resolvedModel.delete(id)
+      }
+      const data = readAll()
+      const exists = Object.prototype.hasOwnProperty.call(data, id)
+      if (!exists) {
+        return false
+      }
+      delete data[id]
+      writeAll(data)
+      return true
+    },
   }
 }
+const defaultAdapter = createEncounterAdapter()
 
-function writeLocal(data: Record<string, EncounterPayload>) {
-  try {
-    if (!isBrowser) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch (_) {
-    // ignore
-  }
-}
-
-const adapter = {
-  async list(owner_id?: string) {
-    // Use model if it exists (server environment); fallback to localStorage/memory
-    if (
-      Model &&
-      typeof (Model as unknown as any).findAllByOwner === 'function'
-    ) {
-      return (Model as unknown as any).findAllByOwner(owner_id);
-    }
-    const data = readLocal();
-    const arr = Object.values(data);
-    return owner_id ? arr.filter((e) => e.owner_id === owner_id) : arr;
-  },
-  async create(payload: Partial<EncounterPayload>) {
-    if (Model && typeof (Model as unknown as any).create === 'function') {
-      return (Model as unknown as any).create(payload);
-    }
-    const store = readLocal();
-    const id = String(Date.now());
-    const created: EncounterPayload = {
-      ...(payload as EncounterPayload),
-      id,
-    } as EncounterPayload;
-    store[id] = created;
-    writeLocal(store);
-    return created;
-  },
-  async get(id: string) {
-    if (Model && typeof (Model as unknown as any).findById === 'function') {
-      return (Model as unknown as any).findById(id);
-    }
-    const store = readLocal();
-    return store[id] ?? null;
-  },
-  async update(id: string, patch: Partial<EncounterPayload>) {
-    if (Model && typeof (Model as unknown as any).update === 'function') {
-      return (Model as unknown as any).update(id, patch);
-    }
-    const store = readLocal();
-    const cur = store[id];
-    if (!cur) return null;
-    const updated = { ...cur, ...patch };
-    store[id] = updated;
-    writeLocal(store);
-    return updated;
-  },
-  async delete(id: string) {
-    if (Model && typeof (Model as unknown as any).delete === 'function') {
-      return (Model as unknown as any).delete(id);
-    }
-    const store = readLocal();
-    const exists = !!store[id];
-    delete store[id];
-    writeLocal(store);
-    return exists;
-  },
-};
-
-export default adapter;
+export default defaultAdapter
