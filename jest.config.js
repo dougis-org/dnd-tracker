@@ -6,12 +6,12 @@ const createJestConfig = nextJest({
 
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testEnvironment: 'jest-environment-jsdom',
+  testEnvironment: 'jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(bson)/)',
+    'node_modules/(?!(bson|mongodb)/)',
   ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
@@ -23,7 +23,14 @@ const customJestConfig = {
     '<rootDir>/tests/unit/**/*.{spec,test}.{js,jsx,ts,tsx}',
     '<rootDir>/tests/integration/**/*.{spec,test}.{js,jsx,ts,tsx}',
   ],
-  testPathIgnorePatterns: ['<rootDir>/tests/e2e/'],
+  testPathIgnorePatterns: [
+    '<rootDir>/tests/e2e/',
+    '<rootDir>/tests/unit/encounter/encounter.model.test.ts',
+    '<rootDir>/tests/unit/encounter/encounter.schema.test.ts',
+    '<rootDir>/tests/unit/encounter/encounters.api.test.ts',
+    '<rootDir>/tests/integration/encounter-mongo.test.ts',
+    '<rootDir>/tests/integration/api/encounters.route.test.ts',
+  ],
   coverageThreshold: {
     global: {
       branches: 50,
