@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ParticipantForm from '@/components/encounters/ParticipantForm'
