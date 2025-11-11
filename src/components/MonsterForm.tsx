@@ -43,6 +43,10 @@ type FieldErrorMap = Partial<Record<string, string>>;
 
 const DEFAULT_SPEED = '30 ft.';
 const abilityKeys: AbilityKey[] = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+const abilityFieldConfigs = abilityKeys.map((ability) => ({
+  ability,
+  label: ability.toUpperCase(),
+}));
 
 const createDefaultAbilities = (): MonsterFormData['abilities'] => ({
   str: 10,
@@ -415,16 +419,17 @@ interface MonsterAbilityFieldsProps {
 
 interface AbilityInputFieldProps {
   ability: AbilityKey;
+  label: string;
   value: number;
   error?: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-function AbilityInputField({ ability, value, error, onChange }: AbilityInputFieldProps) {
+function AbilityInputField({ ability, label, value, error, onChange }: AbilityInputFieldProps) {
   return (
     <FormField
       key={ability}
-      label={ability.toUpperCase()}
+      label={label}
       htmlFor={ability}
       error={error}
       labelClassName="uppercase"
@@ -451,10 +456,11 @@ function MonsterAbilityFields({
     <div className="space-y-3">
       <h3 className="font-semibold text-lg">Abilities</h3>
       <div className="grid grid-cols-3 gap-3">
-        {abilityKeys.map((ability) => (
+        {abilityFieldConfigs.map(({ ability, label }) => (
           <AbilityInputField
             key={ability}
             ability={ability}
+            label={label}
             value={formData.abilities[ability]}
             error={validationErrors[`abilities.${ability}`]}
             onChange={handleAbilityChange(ability)}
