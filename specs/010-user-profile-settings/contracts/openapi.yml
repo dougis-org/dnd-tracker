@@ -1,0 +1,487 @@
+openapi: 3.0.0
+info:
+  title: D&D Tracker User Profile & Settings API
+  description: API contracts for user profile, preferences, and notification settings (F010)
+  version: '1.0.0'
+  contact:
+    name: D&D Tracker Team
+    url: https://dnd-tracker.fly.dev
+
+servers:
+  - url: http://localhost:3000
+    description: Development (F010 mock adapter)
+  - url: https://dnd-tracker.fly.dev
+    description: Production (F014+ with Mongoose)
+
+paths:
+  /api/user/profile:
+    get:
+      summary: Get user profile
+      description: Retrieve the authenticated user's profile information
+      tags:
+        - Profile
+      operationId: getProfile
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+              example:
+                id: user-123
+                name: Alice Adventurer
+                email: alice@example.com
+                createdAt: '2025-10-01T00:00:00Z'
+                updatedAt: '2025-11-11T19:00:00Z'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update user profile
+      description: Update the authenticated user's profile information (name, email)
+      tags:
+        - Profile
+      operationId: updateProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserProfile'
+            example:
+              name: Alice the Brave
+              email: alice.brave@example.com
+      responses:
+        '200':
+          description: User profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '400':
+          description: Validation error (invalid email, name too long, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              example:
+                error: Validation failed
+                details:
+                  email: Invalid email address
+                  name: Name must be 100 characters or less
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/user/preferences:
+    get:
+      summary: Get user D&D preferences
+      description: Retrieve the authenticated user's D&D preferences (experience level, role, ruleset)
+      tags:
+        - Preferences
+      operationId: getPreferences
+      responses:
+        '200':
+          description: User preferences retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreferences'
+              example:
+                userId: user-123
+                experienceLevel: Intermediate
+                preferredRole: Player
+                ruleset: 5e
+                updatedAt: '2025-11-11T19:00:00Z'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User preferences not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update user D&D preferences
+      description: Update the authenticated user's D&D preferences
+      tags:
+        - Preferences
+      operationId: updatePreferences
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserPreferences'
+            example:
+              experienceLevel: Advanced
+              preferredRole: DM
+              ruleset: 5e
+      responses:
+        '200':
+          description: User preferences updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreferences'
+        '400':
+          description: Validation error (invalid enum value)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              example:
+                error: Validation failed
+                details:
+                  experienceLevel: "Invalid enum value. Expected 'Novice' | 'Intermediate' | 'Advanced'"
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/user/notifications:
+    get:
+      summary: Get user notification preferences
+      description: Retrieve the authenticated user's notification settings
+      tags:
+        - Notifications
+      operationId: getNotifications
+      responses:
+        '200':
+          description: User notification settings retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSettings'
+              example:
+                userId: user-123
+                emailNotifications: true
+                partyUpdates: false
+                encounterReminders: true
+                updatedAt: '2025-11-11T19:00:00Z'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User notification settings not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update user notification preferences
+      description: Update the authenticated user's notification preferences
+      tags:
+        - Notifications
+      operationId: updateNotifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateNotificationSettings'
+            example:
+              emailNotifications: false
+              partyUpdates: true
+      responses:
+        '200':
+          description: User notification settings updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSettings'
+        '400':
+          description: Validation error (invalid boolean value)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              example:
+                error: Validation failed
+                details:
+                  emailNotifications: Expected boolean
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    UserProfile:
+      type: object
+      description: User profile containing account information
+      required:
+        - id
+        - name
+        - email
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          description: Unique user identifier (ObjectId or Clerk userId)
+          example: user-123
+        name:
+          type: string
+          description: User's display name (1-100 characters, Unicode allowed)
+          minLength: 1
+          maxLength: 100
+          example: Alice Adventurer
+        email:
+          type: string
+          format: email
+          description: User's email address (RFC 5322 format, unique)
+          example: alice@example.com
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of profile creation (immutable)
+          example: '2025-10-01T00:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of last profile update
+          example: '2025-11-11T19:00:00Z'
+
+    UpdateUserProfile:
+      type: object
+      description: Partial user profile update (name and/or email)
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          description: User's display name (1-100 characters, Unicode allowed)
+          minLength: 1
+          maxLength: 100
+          example: Alice the Brave
+        email:
+          type: string
+          format: email
+          description: User's email address (RFC 5322 format)
+          example: alice.brave@example.com
+
+    UserPreferences:
+      type: object
+      description: User's D&D preferences
+      required:
+        - userId
+        - experienceLevel
+        - preferredRole
+        - ruleset
+        - updatedAt
+      properties:
+        userId:
+          type: string
+          description: Reference to UserProfile.id
+          example: user-123
+        experienceLevel:
+          type: string
+          enum:
+            - Novice
+            - Intermediate
+            - Advanced
+          description: User's D&D experience level
+          example: Intermediate
+        preferredRole:
+          type: string
+          enum:
+            - DM
+            - Player
+            - Both
+          description: User's preferred D&D role
+          example: Player
+        ruleset:
+          type: string
+          enum:
+            - 5e
+            - 3.5e
+            - PF2e
+          description: User's preferred D&D ruleset
+          example: 5e
+        updatedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of last preferences update
+          example: '2025-11-11T19:00:00Z'
+
+    UpdateUserPreferences:
+      type: object
+      description: Partial user preferences update
+      minProperties: 1
+      properties:
+        experienceLevel:
+          type: string
+          enum:
+            - Novice
+            - Intermediate
+            - Advanced
+          description: User's D&D experience level
+          example: Advanced
+        preferredRole:
+          type: string
+          enum:
+            - DM
+            - Player
+            - Both
+          description: User's preferred D&D role
+          example: DM
+        ruleset:
+          type: string
+          enum:
+            - 5e
+            - 3.5e
+            - PF2e
+          description: User's preferred D&D ruleset
+          example: 5e
+
+    NotificationSettings:
+      type: object
+      description: User's notification preferences
+      required:
+        - userId
+        - emailNotifications
+        - partyUpdates
+        - encounterReminders
+        - updatedAt
+      properties:
+        userId:
+          type: string
+          description: Reference to UserProfile.id
+          example: user-123
+        emailNotifications:
+          type: boolean
+          description: Whether user receives email notifications
+          example: true
+        partyUpdates:
+          type: boolean
+          description: Whether user receives party activity notifications
+          example: false
+        encounterReminders:
+          type: boolean
+          description: Whether user receives combat encounter reminders
+          example: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of last settings update
+          example: '2025-11-11T19:00:00Z'
+
+    UpdateNotificationSettings:
+      type: object
+      description: Partial notification settings update
+      minProperties: 1
+      properties:
+        emailNotifications:
+          type: boolean
+          description: Whether user receives email notifications
+          example: false
+        partyUpdates:
+          type: boolean
+          description: Whether user receives party activity notifications
+          example: true
+        encounterReminders:
+          type: boolean
+          description: Whether user receives combat encounter reminders
+          example: true
+
+    Error:
+      type: object
+      description: Standard error response
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+          example: User profile not found
+
+    ValidationError:
+      type: object
+      description: Validation error response with field-level details
+      required:
+        - error
+        - details
+      properties:
+        error:
+          type: string
+          description: Error summary
+          example: Validation failed
+        details:
+          type: object
+          description: Field-level validation errors
+          additionalProperties:
+            type: string
+          example:
+            email: Invalid email address
+            name: Name must be 100 characters or less
+
+tags:
+  - name: Profile
+    description: User profile management endpoints
+  - name: Preferences
+    description: D&D preferences endpoints
+  - name: Notifications
+    description: Notification settings endpoints

@@ -3,12 +3,24 @@
 **Feature Branch**: `feature/010-user-profile-settings`  
 **Feature Number**: F010  
 **Created**: 2025-11-11  
-**Status**: Draft  
+**Status**: Ready for Implementation  
 **Input**: "build the user profile display and edit page"
 
 **Maintainer**: @doug  
 **Canonical components (UI)**: ProfilePage, SettingsPage, ProfileForm  
 **Constitution**: This specification must comply with `.specify/memory/constitution.md`. After edits, run the required Codacy analysis for any edited files per repository rules.
+
+---
+
+## Clarifications
+
+### Session 2025-11-11
+
+- Q: Security & data protection strategy (audit logging, PII encryption, GDPR)? → A: Defer security best practices until Clerk auth integration (Feature 013). Create follow-up issue #425 to track security implementation.
+- Q: Exact validation rules for profile fields (email, name, preferences) and error display? → A: RFC 5322 email validation, name 1-100 characters (Unicode allowed), preferences enum-only dropdowns, inline error messages + optional toast on save failure.
+- Q: Data persistence pattern (optimistic updates vs. server-confirmed saves)? → A: Optimistic updates: reflect changes immediately on client, disable save button with loading spinner, show success toast on completion or error toast with revert on failure.
+- Q: Error/loading states UX (skeleton loader, error banner, empty state)? → A: Show skeleton loader during initial fetch, display error banner with retry button on failure, show helpful empty state message for new users.
+- Q: Notification preferences scope (complete list of toggles)? → A: Core set: Email Notifications (boolean), Party Updates (boolean), Encounter Reminders (boolean). Extensible for future frequency/digest options.
 
 ---
 
@@ -110,14 +122,16 @@ User can initiate a data export from the settings page to download their campaig
 - **FR-002**: Users MUST be able to edit their D&D preferences (experience level, preferred role, ruleset) on the profile page
 - **FR-003**: Users MUST be able to access a dedicated settings page at `/settings` with organized sections
 - **FR-004**: Settings page MUST contain sections for: Account Settings, D&D Preferences, Notification Preferences, and Data Management
-- **FR-005**: Users MUST be able to configure notification preferences (email notifications, party updates, etc.)
+- **FR-005**: Users MUST be able to configure notification preferences: Email Notifications, Party Updates, Encounter Reminders (all boolean toggles)
 - **FR-006**: Users MUST be able to initiate data export from the Data Management section
-- **FR-007**: All profile and settings changes MUST be persisted to the database
-- **FR-008**: The system MUST validate profile input data (email format, preference selections, etc.)
-- **FR-009**: The system MUST display appropriate error messages when operations fail
-- **FR-010**: The system MUST display success messages when profile changes are saved
+- **FR-007**: All profile and settings changes MUST be persisted to the database using optimistic updates (reflect changes immediately, revert on error)
+- **FR-008**: The system MUST validate profile input data: email (RFC 5322 format), name (1-100 characters, Unicode allowed), preferences (enum-only dropdowns)
+- **FR-009**: The system MUST display inline validation error messages immediately upon field edit and optional toast on save failure
+- **FR-010**: The system MUST display success toast messages when profile changes are saved successfully
 - **FR-011**: Unauthenticated users attempting to access `/profile` or `/settings` MUST be redirected to login
 - **FR-012**: Profile page MUST have a visual form layout that groups related fields logically
+- **FR-013**: Profile page MUST show skeleton loader during initial data fetch and error banner with retry button on load failure
+- **FR-014**: New users with no preferences MUST see helpful empty state messages guiding them to configure settings
 
 ### Key Entities
 
@@ -147,8 +161,9 @@ User can initiate a data export from the settings page to download their campaig
 - User data model exists in MongoDB with profile fields (Feature 014 prerequisite)
 - API endpoints for user profile updates are already available
 - D&D preferences are enum-based with predefined values (no free-text entry)
-- Notification settings are boolean toggles (on/off only, no frequency options in this phase)
+- Notification settings are boolean toggles: Email Notifications, Party Updates, Encounter Reminders (on/off only, no frequency options in this phase)
 - Data export returns JSON format (implementation details deferred)
+- Security controls (audit logging, PII encryption) are deferred until Clerk auth integration (tracked in follow-up issue #425)
 
 ---
 
