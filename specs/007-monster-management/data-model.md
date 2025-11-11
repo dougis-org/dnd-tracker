@@ -13,16 +13,15 @@ Canonical data model for Monster (frontend-first shape; used for Zod schema gene
 - hp: number (hit points)
 - ac: number (armor class)
 - speed: string | structured object (e.g., "30 ft.", or {walk: 30, swim: 20})
-- abilities: object {
+- abilities: object
   - str: number
   - dex: number
   - con: number
   - int: number
   - wis: number
   - cha: number
-}
-- savingThrows: map<string, number> | null
-- skills: map<string, number> | null
+- savingThrows: object | null
+- skills: object | null
 - resistances: string[]
 - immunities: string[]
 - conditionImmunities: string[]
