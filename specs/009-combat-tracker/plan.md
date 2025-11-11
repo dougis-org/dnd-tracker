@@ -646,6 +646,21 @@ docs/Feature-Roadmap.md                  # Mark Feature 009 as "In Progress" →
 
 ## Rollout & Monitoring Plan
 
+### Development Workflow: Per-Component Codacy Scans
+
+**Important**: While T077 (Phase 9) serves as the final integration audit, per-component Codacy scans should be run during development as each major component file is completed. This catches quality issues early and prevents rework.
+
+**Recommended workflow during implementation**:
+
+- After implementing `CombatTracker.tsx`: Run `codacy-cli analyze --file src/components/combat/CombatTracker.tsx`
+- After implementing `InitiativeOrder.tsx`: Run `codacy-cli analyze --file src/components/combat/InitiativeOrder.tsx`
+- After implementing each adapter (`combatSessionAdapter.ts`, etc.): Run Codacy on that file
+- After implementing each utility (`combatHelpers.ts`, etc.): Run Codacy on that file
+
+This is part of the standard developer workflow per `CONTRIBUTING.md` codacy.instructions.md. It is **not a separate task**, but rather a quality gate developers should apply proactively during implementation.
+
+**T077 (Phase 9)** then serves as the final project-wide Codacy scan to catch any remaining issues before PR merge.
+
 ### Pre-Merge Checklist
 
 - [ ] All unit tests pass locally (`npm test`)

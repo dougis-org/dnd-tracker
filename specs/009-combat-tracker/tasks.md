@@ -68,10 +68,10 @@ description: "Task list for Feature 009 - Combat Tracker Page"
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Create CombatTracker main container component in `src/components/combat/CombatTracker.tsx` (session loading, state management, undo/redo buttons, layout structure)
-- [ ] T016 [US1] Implement InitiativeOrder component in `src/components/combat/InitiativeOrder.tsx` (display sorted list, highlight current turn, participant HP/name/type)
-- [ ] T017 [P] [US1] Create round/turn counter UI subcomponent in `src/components/combat/RoundTurnCounter.tsx` (display format: "Round X, Turn Y/Z")
-- [ ] T018 [P] [US1] Create participant status effects display subcomponent in `src/components/combat/ParticipantStatusBadges.tsx` (render StatusEffect pills with duration)
+- [ ] T015 [US1] Create CombatTracker main container component in `src/components/combat/CombatTracker.tsx` (session loading, state management, undo/redo buttons, layout structure; **include ARIA labels for undo/redo buttons and main container role**)
+- [ ] T016 [US1] Implement InitiativeOrder component in `src/components/combat/InitiativeOrder.tsx` (display sorted list, highlight current turn, participant HP/name/type; **include ARIA live region for turn highlight changes, semantic markup for list, aria-current for active turn**)
+- [ ] T017 [P] [US1] Create round/turn counter UI subcomponent in `src/components/combat/RoundTurnCounter.tsx` (display format: "Round X, Turn Y/Z"; **include aria-label for round/turn status**)
+- [ ] T018 [P] [US1] Create participant status effects display subcomponent in `src/components/combat/ParticipantStatusBadges.tsx` (render StatusEffect pills with duration; **include aria-label for each effect pill with effect name and remaining duration**)
 - [ ] T019 [US1] Create combat page layout wrapper in `src/app/combat/layout.tsx` (page structure, error boundary)
 - [ ] T020 [US1] Create combat page entry point in `src/app/combat/page.tsx` (route handler, CombatTracker instantiation)
 - [ ] T021 [US1] Add TypeScript types for internal component state in `src/types/combat.ts` (optional if not in schemas already)
@@ -117,8 +117,8 @@ description: "Task list for Feature 009 - Combat Tracker Page"
 
 ### Implementation for User Story 3
 
-- [ ] T032 [US3] Implement HPTracker component in `src/components/combat/HPTracker.tsx` (numeric HP display, input field for damage/healing, apply button)
-- [ ] T033 [P] [US3] Create HPBar visual subcomponent in `src/components/combat/HPBar.tsx` (percentage width bar, color coding: green/yellow/red based on HP%)
+- [ ] T032 [US3] Implement HPTracker component in `src/components/combat/HPTracker.tsx` (numeric HP display, input field for damage/healing, apply button; **includes styling for unconscious/dead state per FR-009: HP ≤ 0 shows "Unconscious" label, visual graying; include aria-label for HP input, aria-live region for HP changes**)
+- [ ] T033 [P] [US3] Create HPBar visual subcomponent in `src/components/combat/HPBar.tsx` (percentage width bar, color coding: green/yellow/red based on HP%; **include role="progressbar", aria-valuemin/max/now for screen readers**)
 - [ ] T034 [US3] Integrate HPTracker into InitiativeOrder participant list items (display HP input next to each participant)
 - [ ] T035 [US3] Add damage/healing input validation and error handling in HPTracker (prevent invalid input, show errors)
 - [ ] T036 [US3] Implement Zod validation for DamageInput in `src/lib/schemas/combat.ts` and validate in damage application flow
@@ -165,7 +165,7 @@ description: "Task list for Feature 009 - Combat Tracker Page"
 
 ### Implementation for User Story 5
 
-- [ ] T048 [US5] Implement LairActionNotification component in `src/components/combat/LairActionNotification.tsx` (conditional banner/toast, dismiss button, accessibility)
+- [ ] T048 [US5] Implement LairActionNotification component in `src/components/combat/LairActionNotification.tsx` (conditional banner/toast, dismiss button, accessibility; **include role="alert", aria-live="assertive" for notification, aria-label for dismiss button, aria-pressed state tracking**)
 - [ ] T049 [US5] Add lair action detection logic in CombatTracker (check if current participant initiative === lairActionInitiative)
 - [ ] T050 [US5] Integrate LairActionNotification into CombatTracker layout (display at top, toast, or modal based on design)
 - [ ] T051 [US5] Add tracking state to avoid re-showing notification on same turn (dismissed flag, reset on turn advance)
@@ -187,8 +187,8 @@ description: "Task list for Feature 009 - Combat Tracker Page"
 
 ### Implementation for User Story 6
 
-- [ ] T054 [US6] Implement CombatLog component in `src/components/combat/CombatLog.tsx` (collapsible panel, log entry list, scroll container)
-- [ ] T055 [P] [US6] Create CombatLogEntry subcomponent in `src/components/combat/CombatLogEntry.tsx` (display timestamp, action type, description, details)
+- [ ] T054 [US6] Implement CombatLog component in `src/components/combat/CombatLog.tsx` (collapsible panel, log entry list, scroll container; **include aria-label for collapse/expand button, aria-expanded state, role="region" for log container, aria-live="polite" for new entries**)
+- [ ] T055 [P] [US6] Create CombatLogEntry subcomponent in `src/components/combat/CombatLogEntry.tsx` (display timestamp, action type, description, details; **include semantic markup for log entries, aria-label with full entry summary for screen readers**)
 - [ ] T056 [US6] Add log entry generation in CombatTracker helpers (create CombatLogEntry on damage, heal, effect add/remove, turn advance)
 - [ ] T057 [US6] Integrate CombatLog into CombatTracker layout (sidebar or bottom panel, toggleable visibility)
 - [ ] T058 [P] [US6] Create CombatLogEntry type and builder functions in `src/lib/combat/combatLogHelpers.ts` (generate readable descriptions per action type)
