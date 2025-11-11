@@ -56,7 +56,7 @@ Canonical data model for Monster (frontend-first shape; used for Zod schema gene
 - defaultValues: partial Monster fields
 - tags: string[]
 - createdBy: string
-- createdAt: timestamp
+- createdAt: ISO8601 timestamp
 
 ## Validation notes (for Zod schema)
 
