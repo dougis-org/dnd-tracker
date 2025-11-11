@@ -174,9 +174,13 @@ components:
           items:
             type: string
         senses:
-          type: string
+          type: array
+          items:
+            type: string
         languages:
-          type: string
+          type: array
+          items:
+            type: string
         tags:
           type: array
           items:
@@ -240,6 +244,38 @@ components:
           type: object
           additionalProperties:
             type: integer
+        savingThrows:
+          type: object
+          additionalProperties:
+            type: integer
+        skills:
+          type: object
+          additionalProperties:
+            type: integer
+        resistances:
+          type: array
+          items:
+            type: string
+        immunities:
+          type: array
+          items:
+            type: string
+        conditionImmunities:
+          type: array
+          items:
+            type: string
+        senses:
+          type: array
+          items:
+            type: string
+        languages:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
         actions:
           type: array
           items:
@@ -301,9 +337,13 @@ components:
           items:
             type: string
         senses:
-          type: string
+          type: array
+          items:
+            type: string
         languages:
-          type: string
+          type: array
+          items:
+            type: string
         tags:
           type: array
           items:
