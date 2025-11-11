@@ -48,6 +48,9 @@ export default [
         beforeEach: 'readonly',
         afterEach: 'readonly',
         jest: 'readonly',
+        HTMLFormElement: 'readonly',
+        HTMLInputElement: 'readonly',
+        HTMLSelectElement: 'readonly',
       },
     },
     rules: {

@@ -1,0 +1,325 @@
+openapi: 3.0.3
+info:
+  title: Monsters API (sketch)
+  version: 0.1.0
+  description: A simple API to manage and retrieve information about various monsters
+  contact:
+    name: API Support
+    url: https://www.example.com/support
+    email: support@example.com
+tags:
+  - name: monsters
+    description: Operations related to monster management
+servers:
+  - url: https://api.example.com
+paths:
+  /monsters:
+    get:
+      operationId: listMonsters
+      tags:
+        - monsters
+      summary: 'List monsters (supports filters: cr_min, cr_max, type, q)'
+      description: Retrieves a list of monsters based on specified filters
+      parameters:
+        - in: query
+          name: cr_min
+          schema:
+            type: number
+        - in: query
+          name: cr_max
+          schema:
+            type: number
+        - in: query
+          name: type
+          schema:
+            type: string
+        - in: query
+          name: q
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Monster'
+    post:
+      operationId: createMonster
+      tags:
+        - monsters
+      summary: Create a new monster
+      description: Creates a new monster in the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MonsterCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monster'
+  /monsters/{id}:
+    get:
+      operationId: getMonster
+      tags:
+        - monsters
+      summary: Get monster by id
+      description: Retrieves a single monster by its ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monster'
+    put:
+      operationId: updateMonster
+      tags:
+        - monsters
+      summary: Update monster
+      description: Updates the details of an existing monster
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MonsterUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Monster'
+    delete:
+      operationId: deleteMonster
+      tags:
+        - monsters
+      summary: Delete monster
+      description: Deletes a monster by its ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted
+
+components:
+  schemas:
+    Monster:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        cr:
+          type: number
+        size:
+          type: string
+        type:
+          type: string
+        alignment:
+          type: string
+        hp:
+          type: integer
+        ac:
+          type: integer
+        speed:
+          type: string
+        abilities:
+          type: object
+          additionalProperties:
+            type: integer
+        savingThrows:
+          type: object
+          additionalProperties:
+            type: integer
+        skills:
+          type: object
+          additionalProperties:
+            type: integer
+        resistances:
+          type: array
+          items:
+            type: string
+        immunities:
+          type: array
+          items:
+            type: string
+        conditionImmunities:
+          type: array
+          items:
+            type: string
+        senses:
+          type: string
+        languages:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        actions:
+          type: array
+          items:
+            type: object
+        legendaryActions:
+          type: array
+          items:
+            type: object
+        lairActions:
+          type: array
+          items:
+            type: object
+        templateId:
+          type: string
+        ownerId:
+          type: string
+        createdBy:
+          type: string
+        scope:
+          type: string
+          enum: [global, campaign, public]
+        isPublic:
+          type: boolean
+        publicAt:
+          type: string
+          format: date-time
+        creditedTo:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, name, cr, hp, ac]
+
+    MonsterCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        cr:
+          type: number
+        hp:
+          type: integer
+        ac:
+          type: integer
+        size:
+          type: string
+        type:
+          type: string
+        alignment:
+          type: string
+        speed:
+          type: string
+        abilities:
+          type: object
+          additionalProperties:
+            type: integer
+        actions:
+          type: array
+          items:
+            type: object
+        legendaryActions:
+          type: array
+          items:
+            type: object
+        lairActions:
+          type: array
+          items:
+            type: object
+        scope:
+          type: string
+          enum: [global, campaign, public]
+      required: [name, cr, hp, ac]
+
+    MonsterUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        cr:
+          type: number
+        hp:
+          type: integer
+        ac:
+          type: integer
+        size:
+          type: string
+        type:
+          type: string
+        alignment:
+          type: string
+        speed:
+          type: string
+        abilities:
+          type: object
+          additionalProperties:
+            type: integer
+        savingThrows:
+          type: object
+          additionalProperties:
+            type: integer
+        skills:
+          type: object
+          additionalProperties:
+            type: integer
+        resistances:
+          type: array
+          items:
+            type: string
+        immunities:
+          type: array
+          items:
+            type: string
+        conditionImmunities:
+          type: array
+          items:
+            type: string
+        senses:
+          type: string
+        languages:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        actions:
+          type: array
+          items:
+            type: object
+        legendaryActions:
+          type: array
+          items:
+            type: object
+        lairActions:
+          type: array
+          items:
+            type: object
+        scope:
+          type: string
+          enum: [global, campaign, public]
