@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { CombatSession } from '@/lib/schemas/combat';
 import { combatSessionAdapter } from '@/lib/combat/combatSessionAdapter';
 import { undoRedoManager } from '@/lib/combat/undoRedoManager';
+import { advanceTurn, rewindTurn } from '@/lib/combat/combatHelpers';
 import InitiativeOrder from './InitiativeOrder';
 import RoundTurnCounter from './RoundTurnCounter';
+import TurnControlButtons from './TurnControlButtons';
 import ErrorBoundary from './ErrorBoundary';
 
 interface CombatTrackerProps {
@@ -81,6 +83,33 @@ const CombatTracker: React.FC<CombatTrackerProps> = ({ sessionId }) => {
     // Will be used in future user stories for HP/damage tracking
     console.log('Selected participant:', participantId);
   };
+
+  const handleNextTurn = async () => {
+    if (!session) return;
+    try {
+      const updatedSession = advanceTurn(session);
+      await _saveSession(updatedSession);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to advance turn';
+      setError(errorMessage);
+      console.error('Error advancing turn:', err);
+    }
+  };
+
+  const handlePreviousTurn = async () => {
+    if (!session) return;
+    try {
+      const updatedSession = rewindTurn(session);
+      await _saveSession(updatedSession);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to rewind turn';
+      setError(errorMessage);
+      console.error('Error rewinding turn:', err);
+    }
+  };
+
+  const canAdvanceTurn = session && session.participants.length > 0;
+  const canRewindTurn = session && session.currentRoundNumber > 1 || (session && session.currentTurnIndex > 0);
 
   if (loading) {
     return (
@@ -183,11 +212,17 @@ const CombatTracker: React.FC<CombatTrackerProps> = ({ sessionId }) => {
             />
           </div>
 
-          {/* Placeholder for turn controls and status effects */}
-          <div className="bg-gray-50 rounded-lg border border-gray-200 p-6">
-            <p className="text-gray-600 italic">
-              Turn controls and status effects coming in Phase 3-4
-            </p>
+          {/* Turn Controls */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Turn Management</h2>
+            <TurnControlButtons
+              onNextTurn={handleNextTurn}
+              onPreviousTurn={handlePreviousTurn}
+              canAdvance={!!canAdvanceTurn}
+              canRewind={!!canRewindTurn}
+              currentTurn={session.currentTurnIndex}
+              totalParticipants={session.participants.length}
+            />
           </div>
         </div>
       </main>

@@ -9,13 +9,15 @@ export { default as InitiativeOrder } from './InitiativeOrder';
 export { default as RoundTurnCounter } from './RoundTurnCounter';
 export { default as ParticipantStatusBadges } from './ParticipantStatusBadges';
 
-// Planned components (to be implemented in Phase 4-8)
+// Phase 4 components (turn advancement - implemented)
+export { default as TurnControlButtons } from './TurnControlButtons';
+
+// Planned components (to be implemented in Phase 5-8)
 // export { default as HPTracker } from './HPTracker';
 // export { default as HPBar } from './HPBar';
 // export { default as StatusEffectsPanel } from './StatusEffectsPanel';
 // export { default as StatusEffectMenu } from './StatusEffectMenu';
 // export { default as StatusEffectPill } from './StatusEffectPill';
-// export { default as TurnControlButtons } from './TurnControlButtons';
 // export { default as CombatLog } from './CombatLog';
 // export { default as CombatLogEntry } from './CombatLogEntry';
 // export { default as LairActionNotification } from './LairActionNotification';
