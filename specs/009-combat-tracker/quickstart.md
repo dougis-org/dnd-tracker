@@ -1,265 +1,715 @@
-# Quick Start - Combat Tracker Page (Feature 009)
+# Combat Tracker — Developer Quickstart
 
-## Objective
+**Date**: 2025-11-11  
+**Feature**: Feature 009 — Combat Tracker  
+**Target**: Developers implementing this feature  
+**Status**: ✅ Complete
 
-Implement the Combat Tracker page UI (/combat) with mock data, focusing on P1 user stories: loading a combat session, advancing turns, and applying damage/healing.
+---
 
-## Prerequisites
+## Overview
 
-- Node.js 25.x or higher
-- npm 9.x or higher
-- Repository cloned and dependencies installed (`npm install`)
-- Familiarity with Next.js 16, React 19, TypeScript, and Tailwind CSS
+This quickstart guide provides developers with everything needed to implement the Combat Tracker feature. It covers:
 
-## Getting Started
+- Project structure & file organization
+- Key dependencies & setup
+- Component API reference (props, event handlers)
+- Helper function examples
+- Testing strategy & examples
+- Common workflows & patterns
+- Debugging tips
 
-### 1. Set Up Feature Branch
+---
 
-```bash
-cd /home/doug/ai-dev-2/dnd-tracker
-git checkout feature/009-combat-tracker
-git pull origin feature/009-combat-tracker
-```
+## Table of Contents
 
-### 2. Review Project Structure
+1. [File Structure](#file-structure)
+2. [Key Dependencies](#key-dependencies)
+3. [Component Architecture](#component-architecture)
+4. [Helper Functions & Utilities](#helper-functions--utilities)
+5. [State Management](#state-management)
+6. [Testing Patterns](#testing-patterns)
+7. [Common Workflows](#common-workflows)
+8. [Debugging & Troubleshooting](#debugging--troubleshooting)
+
+---
+
+## File Structure
 
 ```
 src/
-├── app/
-│   ├── combat/
-│   │   └── page.tsx          # Main Combat Tracker page
-│   └── ...
-├── components/
-│   ├── combat/
-│   │   ├── CombatTracker.tsx
-│   │   ├── InitiativeOrder.tsx
-│   │   ├── HPTracker.tsx
-│   │   ├── StatusEffectsPanel.tsx
-│   │   ├── CombatLog.tsx
-│   │   └── ...│   └── ...
-├── lib/
-│   ├── adapters/
-│   │   └── combat-session.adapter.ts  # Mock/API adapter for session data
-│   └── ...
-└── types/
-    ├── combat-session.ts
-    ├── participant.ts
-    ├── status-effect.ts
-    └── combat-log.ts
+├── app/combat/
+│   ├── layout.tsx                    # Page wrapper layout
+│   └── page.tsx                      # Main entry point (renders CombatTracker)
+│
+├── components/combat/
+│   ├── index.ts                      # Exports all components
+│   ├── CombatTracker.tsx             # Main container (orchestrates state + components)
+│   ├── InitiativeOrder.tsx           # Displays initiative list
+│   ├── HPTracker.tsx                 # HP input & display
+│   ├── StatusEffectsPanel.tsx        # Status effect management
+│   ├── CombatLog.tsx                 # Action log display
+│   ├── LairActionNotification.tsx    # Initiative 20 notification
+│   └── __tests__/
+│       ├── CombatTracker.test.tsx
+│       ├── InitiativeOrder.test.tsx
+│       ├── HPTracker.test.tsx
+│       ├── StatusEffectsPanel.test.tsx
+│       ├── CombatLog.test.tsx
+│       └── LairActionNotification.test.tsx
+│
+└── lib/combat/
+    ├── combatSessionAdapter.ts       # Data persistence layer
+    ├── combatSessionStore.ts         # (optional) Custom hook for state
+    ├── combatHelpers.ts              # Pure utility functions
+    ├── undoRedoManager.ts            # Undo/redo state stack
+    └── __tests__/
+        ├── combatSessionAdapter.test.ts
+        ├── combatHelpers.test.ts
+        └── undoRedoManager.test.ts
+
+src/lib/schemas/
+└── combat.ts                         # Zod validation schemas
+
+specs/009-combat-tracker/
+├── spec.md                           # Feature requirements
+├── research.md                       # Research findings & decisions
+├── data-model.md                     # Entity definitions
+├── quickstart.md                     # This file
+└── contracts/
+    └── combat-session.contract.ts    # TypeScript types
 ```
 
-### 3. Install Dependencies
+---
 
-If not already done:
+## Key Dependencies
 
-```bash
-npm install
+**Already installed** (in `package.json`):
+
+```json
+{
+  "react": "19.0.0",
+  "next": "16.0.1",
+  "zod": "^3.23.8",
+  "tailwindcss": "^4.0.0",
+  "jest": "^30.2.0",
+  "@testing-library/react": "^16.1.0",
+  "@playwright/test": "^1.56.1"
+}
 ```
 
-Verify the project compiles:
+**No new dependencies required** for MVP.
 
-```bash
-npm run type-check
-```
+---
 
-### 4. Start Development Server
+## Component Architecture
 
-```bash
-npm run dev
-```
+### CombatTracker (Main Container)
 
-The app will run at <http://localhost:3000>. Navigate to <http://localhost:3000/combat> to view the Combat Tracker page.
+**Purpose**: Root component that loads session, manages state, coordinates sub-components.
 
-## Development Workflow (TDD)
+**File**: `src/components/combat/CombatTracker.tsx`
 
-### Phase 1: Test Suite
-
-1. Create test files for each component:
-   - `tests/unit/components/combat/CombatTracker.test.tsx`
-   - `tests/unit/components/combat/InitiativeOrder.test.tsx`
-   - `tests/unit/components/combat/HPTracker.test.tsx`
-   - `tests/unit/components/combat/StatusEffectsPanel.test.tsx`
-   - `tests/unit/components/combat/CombatLog.test.tsx`
-
-2. Write failing tests for User Story 1 (Load session):
-   - Component renders without crashing
-   - Initiative order list displays all participants
-   - Current turn is highlighted
-   - Round/turn counter shows correct values
-   - Status effects display as pills
-
-3. Run tests to confirm they fail:
-
-   ```bash
-   npm run test:ci:parallel
-   ```
-
-### Phase 2: Implementation
-
-1. Create mock data adapter in `lib/adapters/combat-session.adapter.ts`:
-   - Export `getCombatSession()` function returning mock CombatSession
-   - Use in-memory store or localStorage for MVP
-
-2. Implement `CombatTracker` component:
-   - Load session via adapter
-   - Manage local state (current turn, round)
-   - Pass data to sub-components
-
-3. Implement sub-components:
-   - `InitiativeOrder`: Display sorted participant list with current turn highlight
-   - `HPTracker`: Show HP for each participant (numeric + optional bar)
-   - `StatusEffectsPanel`: Display status effect pills with duration
-   - `CombatLog`: Collapsible log of recent actions
-
-4. Run tests:
-
-   ```bash
-   npm run test:ci:parallel
-   ```
-
-5. Ensure TypeScript and lint pass:
-
-   ```bash
-   npm run type-check
-   npm run lint
-   ```
-
-### Phase 3: Refinement & Additional Features
-
-1. Add "Next Turn" and "Previous Turn" buttons (User Story 2)
-2. Add damage/healing input controls (User Story 3)
-3. Add status effect management UI (User Story 4)
-4. Add lair action notification (User Story 5)
-5. Enhance combat log with filters (User Story 6)
-
-## Key Files to Create/Modify
-
-### New Files
-
-- `src/app/combat/page.tsx` - Main Combat Tracker page
-- `src/components/combat/CombatTracker.tsx` - Main tracker component
-- `src/components/combat/InitiativeOrder.tsx` - Initiative order list
-- `src/components/combat/HPTracker.tsx` - HP management UI
-- `src/components/combat/StatusEffectsPanel.tsx` - Status effect management
-- `src/components/combat/CombatLog.tsx` - Combat log display
-- `src/lib/adapters/combat-session.adapter.ts` - Mock/API adapter
-- `src/types/combat-session.ts` - TypeScript types
-- `tests/unit/components/combat/*.test.tsx` - Test files
-
-### Modified Files
-
-- `src/app/layout.tsx` (if global navigation needs update)
-- `tsconfig.json` (if new path aliases needed)
-
-## Mock Data
-
-A sample CombatSession with 6 participants (mock data defined in `specs/009-combat-tracker/data-model.md`):
+**Props**:
 
 ```typescript
-const mockSession: CombatSession = {
-  id: 'session-001',
-  encounterId: 'encounter-001',
-  status: 'active',
-  currentRoundNumber: 3,
-  currentTurnIndex: 1, // Orc Warrior's turn
-  participants: [
-    { id: '1', name: 'Legolas', initiativeValue: 18, maxHP: 45, currentHP: 45, ... },
-    { id: '2', name: 'Orc Warrior', initiativeValue: 15, maxHP: 50, currentHP: 38, statusEffects: [{ name: 'Prone', durationInRounds: 2 }], ... },
-    // ... 4 more
-  ],
-  ownerId: 'user-001',
+interface CombatTrackerProps {
+  sessionId?: string;           // Optional; if not provided, use mock
+  onSessionEnd?: () => void;    // Called when user ends combat
+  onSessionError?: (error: Error) => void;
+}
+```
+
+**State** (internal):
+
+```typescript
+const [session, setSession] = useState<CombatSession>(mockSession);
+const [isLoading, setIsLoading] = useState(true);
+const [error, setError] = useState<Error | null>(null);
+const [undoStack, setUndoStack] = useState<CombatSession[]>([]);
+const [redoStack, setRedoStack] = useState<CombatSession[]>([]);
+const [currentLogEntries, setCurrentLogEntries] = useState<CombatLogEntry[]>([]);
+```
+
+**Key Methods**:
+
+```typescript
+// Load session on mount
+useEffect(() => {
+  adapter.loadSession(sessionId ?? 'mock')
+    .then(setSession)
+    .catch(error => { setError(error); });
+}, [sessionId]);
+
+// Apply damage
+const handleApplyDamage = async (participantId: string, amount: number) => {
+  const participant = session.participants.find(p => p.id === participantId);
+  const updated = applyDamage(participant, amount);
+  // ... update session
+};
+
+// Advance turn
+const handleNextTurn = () => {
+  const newSession = advanceTurn(session);
+  setSession(newSession);
+  adapter.saveSession(newSession);
+  // ... add log entry
+};
+
+// Undo
+const handleUndo = () => {
+  if (undoStack.length > 0) {
+    setRedoStack([...redoStack, session]);
+    setSession(undoStack[undoStack.length - 1]);
+    setUndoStack(undoStack.slice(0, -1));
+  }
 };
 ```
 
-## Testing
+**Renders**:
 
-### Unit Tests
-
-Test individual components:
-
-```bash
-npm run test tests/unit/components/combat/ -- --watch
+```typescript
+return (
+  <div className="combat-tracker">
+    {isLoading && <Spinner />}
+    {error && <ErrorBoundary error={error} />}
+    {!isLoading && (
+      <>
+        <InitiativeOrder
+          participants={session.participants}
+          currentTurnIndex={session.currentTurnIndex}
+        />
+        <div className="hp-and-effects">
+          {session.participants.map(p => (
+            <HPTracker
+              key={p.id}
+              participant={p}
+              onDamageApply={(amount) => handleApplyDamage(p.id, amount)}
+              onHealingApply={(amount) => handleApplyHealing(p.id, amount)}
+            />
+          ))}
+        </div>
+        <StatusEffectsPanel
+          participant={session.participants[session.currentTurnIndex]}
+          onEffectAdd={handleEffectAdd}
+          onEffectRemove={handleEffectRemove}
+        />
+        <LairActionNotification
+          currentTurnParticipant={session.participants[session.currentTurnIndex]}
+          lairActionInitiative={session.lairActionInitiative}
+          onTrigger={handleTriggerLairActions}
+        />
+        <CombatLog entries={currentLogEntries} />
+        <div className="controls">
+          <button onClick={handlePreviousTurn} disabled={session.currentRoundNumber === 1 && session.currentTurnIndex === 0}>
+            Previous Turn
+          </button>
+          <button onClick={handleNextTurn}>Next Turn</button>
+          <button onClick={handleUndo} disabled={undoStack.length === 0}>Undo</button>
+          <button onClick={handleRedo} disabled={redoStack.length === 0}>Redo</button>
+        </div>
+      </>
+    )}
+  </div>
+);
 ```
 
-### Integration Tests
+---
 
-Test user flows (e.g., "load session → advance turn → apply damage"):
+### InitiativeOrder (Display Component)
 
-```bash
-npm run test tests/integration/combat/ -- --watch
+**Purpose**: Render participants in initiative order with current turn highlight.
+
+**File**: `src/components/combat/InitiativeOrder.tsx`
+
+**Props**:
+
+```typescript
+interface InitiativeOrderProps {
+  participants: Participant[];
+  currentTurnIndex: number;
+}
 ```
 
-### E2E Tests
+**Renders**:
 
-Test in a browser environment:
+```typescript
+const sorted = [...participants].sort((a, b) => b.initiativeValue - a.initiativeValue);
 
-```bash
-npm run test:e2e:ui
+return (
+  <div className="initiative-order">
+    <h2>Initiative Order</h2>
+    <ul>
+      {sorted.map((p, index) => (
+        <li
+          key={p.id}
+          className={
+            sorted[index].id === participants[currentTurnIndex].id
+              ? 'current-turn'
+              : ''
+          }
+        >
+          <span className="initiative">{p.initiativeValue}</span>
+          <span className="name">{p.name}</span>
+          <span className="hp">{p.currentHP}/{p.maxHP}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
 ```
 
-(Open Playwright UI at <http://localhost:3000/combat> and interact)
+---
 
-## Build & Deployment
+### HPTracker (Input Component)
 
-### Local Build
+**Purpose**: Display and modify participant HP.
 
-```bash
-npm run build
-npm start
+**File**: `src/components/combat/HPTracker.tsx`
+
+**Props**:
+
+```typescript
+interface HPTrackerProps {
+  participant: Participant;
+  onDamageApply: (amount: number) => void;
+  onHealingApply: (amount: number) => void;
+}
 ```
 
-### Pre-PR Checks
+**State**:
 
-Before pushing:
-
-```bash
-npm run type-check
-npm run lint
-npm run lint:markdown
-npm run test:ci:parallel
-npm run build
+```typescript
+const [damageInput, setDamageInput] = useState('');
+const [healingInput, setHealingInput] = useState('');
 ```
 
-All must pass.
+**Renders**:
 
-## Common Tasks
-
-### View Coverage
-
-```bash
-npm run test:coverage
+```typescript
+return (
+  <div className="hp-tracker">
+    <h3>{participant.name}</h3>
+    
+    {/* HP Bar */}
+    <div className="hp-bar-container">
+      <div
+        className="hp-bar-fill"
+        style={{ width: `${(participant.currentHP / participant.maxHP) * 100}%` }}
+      />
+    </div>
+    
+    {/* HP Text */}
+    <p className={participant.currentHP <= 0 ? 'unconscious' : ''}>
+      {Math.max(0, participant.currentHP)}/{participant.maxHP} HP
+      {participant.temporaryHP > 0 && ` + ${participant.temporaryHP} temp`}
+    </p>
+    
+    {/* Damage Input */}
+    <div className="damage-input">
+      <input
+        type="number"
+        placeholder="Damage"
+        value={damageInput}
+        onChange={(e) => setDamageInput(e.target.value)}
+      />
+      <button onClick={() => { onDamageApply(parseInt(damageInput)); setDamageInput(''); }}>
+        Apply Damage
+      </button>
+    </div>
+    
+    {/* Healing Input */}
+    <div className="healing-input">
+      <input
+        type="number"
+        placeholder="Healing"
+        value={healingInput}
+        onChange={(e) => setHealingInput(e.target.value)}
+      />
+      <button onClick={() => { onHealingApply(parseInt(healingInput)); setHealingInput(''); }}>
+        Apply Healing
+      </button>
+    </div>
+  </div>
+);
 ```
 
-Open `coverage/lcov-report/index.html` to see coverage report.
+---
 
-### Fix Linting Issues
+## Helper Functions & Utilities
 
-```bash
-npm run lint:fix
+**File**: `src/lib/combat/combatHelpers.ts`
+
+### advanceTurn
+
+```typescript
+export function advanceTurn(session: CombatSession): CombatSession {
+  const nextTurnIndex = (session.currentTurnIndex + 1) % session.participants.length;
+  const newRoundNumber = nextTurnIndex === 0 ? session.currentRoundNumber + 1 : session.currentRoundNumber;
+  
+  // Decrement effect durations if round advanced
+  let participants = session.participants;
+  if (nextTurnIndex === 0) {
+    participants = session.participants.map(p => ({
+      ...p,
+      statusEffects: p.statusEffects
+        .map(e => e.durationInRounds !== null ? { ...e, durationInRounds: e.durationInRounds - 1 } : e)
+        .filter(e => e.durationInRounds === null || e.durationInRounds > 0),
+    }));
+  }
+  
+  return {
+    ...session,
+    currentTurnIndex: nextTurnIndex,
+    currentRoundNumber: newRoundNumber,
+    participants,
+    updatedAt: new Date().toISOString(),
+  };
+}
 ```
 
-### Run Specific Test
+### applyDamage
 
-```bash
-npm run test -- --testNamePattern="LoadCombatSession"
+```typescript
+export function applyDamage(participant: Participant, damage: number): Participant {
+  const tempHPRemaining = Math.max(0, participant.temporaryHP - damage);
+  const damageToCurrentHP = Math.max(0, damage - (participant.temporaryHP - tempHPRemaining));
+  const newCurrentHP = participant.currentHP - damageToCurrentHP;
+  
+  return {
+    ...participant,
+    temporaryHP: tempHPRemaining,
+    currentHP: newCurrentHP,
+  };
+}
 ```
 
-## Resources
+### applyHealing
 
-- **Feature Spec**: `specs/009-combat-tracker/spec.md`
-- **Data Model**: `specs/009-combat-tracker/data-model.md`
-- **Research**: `specs/009-combat-tracker/research.md`
-- **Next.js Docs**: <https://nextjs.org/docs>
-- **React 19 Docs**: <https://react.dev>
-- **Tailwind CSS**: <https://tailwindcss.com/docs>
-- **shadcn/ui**: <https://ui.shadcn.com>
+```typescript
+export function applyHealing(participant: Participant, healing: number): Participant {
+  return {
+    ...participant,
+    currentHP: Math.min(participant.maxHP, participant.currentHP + healing),
+  };
+}
+```
 
-## Next Phase (Feature 037+)
+### sortParticipantsByInitiative
 
-This feature is UI-first. The following features will integrate backend models and APIs:
+```typescript
+export function sortParticipantsByInitiative(participants: Participant[]): Participant[] {
+  return [...participants].sort((a, b) => b.initiativeValue - a.initiativeValue);
+}
+```
 
-- **Feature 036**: CombatSession Model & API
-- **Feature 037**: Initiative System
-- **Feature 038**: Combat Tracker Basic Integration (connects UI to models)
-- **Feature 039**: HP Tracking System
-- **Feature 040**: HP Tracking UI Integration
+---
+
+## State Management
+
+### Using useState Hooks
+
+```typescript
+// In CombatTracker.tsx
+const [session, setSession] = useState<CombatSession>(mockSession);
+
+// Update session on damage
+const handleApplyDamage = (participantId: string, amount: number) => {
+  setSession(prev => ({
+    ...prev,
+    participants: prev.participants.map(p =>
+      p.id === participantId ? applyDamage(p, amount) : p
+    ),
+    updatedAt: new Date().toISOString(),
+  }));
+};
+```
+
+### Using the Adapter
+
+```typescript
+// In combatSessionAdapter.ts
+export async function loadSession(sessionId: string): Promise<CombatSession> {
+  const stored = localStorage.getItem(`combatSession-${sessionId}`);
+  if (!stored) throw new Error('Session not found');
+  
+  const parsed = JSON.parse(stored);
+  return CombatSessionSchema.parse(parsed);
+}
+
+export async function saveSession(session: CombatSession): Promise<void> {
+  localStorage.setItem(`combatSession-${session.id}`, JSON.stringify(session));
+}
+```
+
+---
+
+## Testing Patterns
+
+### Unit Test Example (Jest)
+
+```typescript
+// src/lib/combat/__tests__/combatHelpers.test.ts
+import { advanceTurn, applyDamage } from '../combatHelpers';
+import { mockSession } from '../../../test-helpers/fixtures';
+
+describe('combatHelpers', () => {
+  describe('advanceTurn', () => {
+    it('advances to next participant', () => {
+      const session = { ...mockSession, currentTurnIndex: 0 };
+      const result = advanceTurn(session);
+      expect(result.currentTurnIndex).toBe(1);
+    });
+
+    it('increments round when wrapping', () => {
+      const session = {
+        ...mockSession,
+        currentTurnIndex: mockSession.participants.length - 1,
+      };
+      const result = advanceTurn(session);
+      expect(result.currentRoundNumber).toBe(session.currentRoundNumber + 1);
+    });
+  });
+
+  describe('applyDamage', () => {
+    it('applies damage to temp HP first', () => {
+      const p = { ...mockSession.participants[0], temporaryHP: 5 };
+      const result = applyDamage(p, 8);
+      expect(result.temporaryHP).toBe(0);
+      expect(result.currentHP).toBe(p.currentHP - 3);
+    });
+  });
+});
+```
+
+### Component Test Example (React Testing Library)
+
+```typescript
+// src/components/combat/__tests__/HPTracker.test.tsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import { HPTracker } from '../HPTracker';
+import { mockParticipant } from '../../../test-helpers/fixtures';
+
+describe('HPTracker', () => {
+  it('renders participant HP', () => {
+    render(
+      <HPTracker
+        participant={mockParticipant}
+        onDamageApply={jest.fn()}
+        onHealingApply={jest.fn()}
+      />
+    );
+    expect(screen.getByText(`${mockParticipant.currentHP}/${mockParticipant.maxHP} HP`)).toBeInTheDocument();
+  });
+
+  it('applies damage on button click', () => {
+    const onDamage = jest.fn();
+    render(
+      <HPTracker
+        participant={mockParticipant}
+        onDamageApply={onDamage}
+        onHealingApply={jest.fn()}
+      />
+    );
+    
+    const input = screen.getByPlaceholderText('Damage');
+    fireEvent.change(input, { target: { value: '5' } });
+    fireEvent.click(screen.getByText('Apply Damage'));
+    
+    expect(onDamage).toHaveBeenCalledWith(5);
+  });
+});
+```
+
+### E2E Test Example (Playwright)
+
+```typescript
+// tests/e2e/combat-tracker.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('US1: Load active combat session', async ({ page }) => {
+  await page.goto('/combat');
+  
+  // Verify session loads
+  await expect(page.locator('text=Initiative Order')).toBeVisible();
+  
+  // Verify initiative list
+  const initiativeItems = page.locator('[class*="initiative-order"] li');
+  await expect(initiativeItems).toHaveCount(2); // Mock has 2 participants
+  
+  // Verify current turn highlighted
+  await expect(page.locator('.current-turn')).toBeVisible();
+});
+
+test('US2: Advance turn', async ({ page }) => {
+  await page.goto('/combat');
+  
+  const nextTurnButton = page.locator('button:has-text("Next Turn")');
+  await nextTurnButton.click();
+  
+  // Verify turn advanced (UI updates)
+  const currentTurn = page.locator('.current-turn');
+  const currentName = await currentTurn.locator('.name').textContent();
+  expect(currentName).not.toBe('Goblin 1'); // First participant was previous turn
+});
+
+test('US3: Apply damage', async ({ page }) => {
+  await page.goto('/combat');
+  
+  // Find damage input and apply
+  const damageInput = page.locator('input[placeholder="Damage"]').first();
+  await damageInput.fill('10');
+  await page.locator('button:has-text("Apply Damage")').first().click();
+  
+  // Verify HP updated
+  const hpText = page.locator('.hp-tracker p').first();
+  await expect(hpText).toContainText(/\d+\/\d+ HP/);
+});
+```
+
+---
+
+## Common Workflows
+
+### Workflow 1: Adding a New Status Effect
+
+```typescript
+// In CombatTracker.tsx
+const handleAddStatusEffect = (participantId: string, effectName: string, durationRounds: number | null) => {
+  setSession(prev => ({
+    ...prev,
+    participants: prev.participants.map(p => {
+      if (p.id !== participantId) return p;
+      
+      const newEffect: StatusEffect = {
+        id: crypto.randomUUID(),
+        name: effectName,
+        durationInRounds: durationRounds,
+        appliedAtRound: prev.currentRoundNumber,
+      };
+      
+      return {
+        ...p,
+        statusEffects: [...p.statusEffects, newEffect],
+      };
+    }),
+  }));
+  
+  // Log entry
+  setCurrentLogEntries([...currentLogEntries, {
+    id: crypto.randomUUID(),
+    timestamp: new Date().toISOString(),
+    roundNumber: session.currentRoundNumber,
+    turnIndex: session.currentTurnIndex,
+    actionType: 'effect_applied',
+    actor: session.participants[session.currentTurnIndex].id,
+    target: participantId,
+    details: { effectName, durationRounds },
+    description: `${session.participants[session.currentTurnIndex].name} applied ${effectName} to ${session.participants.find(p => p.id === participantId)?.name}`,
+  }]);
+};
+```
+
+### Workflow 2: Undoing an Action
+
+```typescript
+// In CombatTracker.tsx
+const handleUndo = () => {
+  if (undoStack.length === 0) return;
+  
+  const previous = undoStack[undoStack.length - 1];
+  setRedoStack([...redoStack, session]);
+  setSession(previous);
+  setUndoStack(undoStack.slice(0, -1));
+  
+  // Log undo
+  setCurrentLogEntries([...currentLogEntries, {
+    id: crypto.randomUUID(),
+    timestamp: new Date().toISOString(),
+    roundNumber: previous.currentRoundNumber,
+    turnIndex: previous.currentTurnIndex,
+    actionType: 'undo',
+    details: {},
+    description: 'Previous action undone',
+  }]);
+};
+```
+
+### Workflow 3: Handling Session Not Found
+
+```typescript
+// In CombatTracker.tsx
+useEffect(() => {
+  const load = async () => {
+    try {
+      const loaded = await adapter.loadSession(sessionId ?? 'mock');
+      setSession(loaded);
+    } catch (err) {
+      // Fallback to mock
+      setError(new Error('Session not found; using mock data'));
+      setSession(mockSession);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  load();
+}, [sessionId]);
+```
+
+---
+
+## Debugging & Troubleshooting
+
+### Enable Debug Logging
+
+```typescript
+// In combatHelpers.ts
+const DEBUG = process.env.NODE_ENV === 'development';
+
+export function advanceTurn(session: CombatSession): CombatSession {
+  if (DEBUG) console.log('advanceTurn:', { from: session.currentTurnIndex, to: (session.currentTurnIndex + 1) % session.participants.length });
+  // ...
+}
+```
+
+### Common Issues
+
+**Issue**: HP not updating after damage  
+**Debug**: Check if `adapter.saveSession()` was called; verify Zod validation passes
+
+**Issue**: Undo/redo not working  
+**Debug**: Log `undoStack` length; check if `setUndoStack` is called correctly
+
+**Issue**: localStorage quota exceeded  
+**Debug**: Check browser console for quota error; trim old log entries
+
+**Issue**: Initiative order not sorting correctly  
+**Debug**: Verify `initiativeValue` is populated; test `sortParticipantsByInitiative()` in isolation
+
+**Issue**: Status effects not decrementing  
+**Debug**: Check if `nextTurnIndex === 0` logic triggers correctly; verify `decrementEffectDurations()` called
+
+---
+
+## Performance Tips
+
+1. **Avoid unnecessary re-renders**: Use `React.memo()` for list items
+2. **Batch state updates**: Combine multiple `setSession()` calls into one
+3. **Throttle localStorage writes**: Optional in Feature X
+4. **Virtualize long lists**: If 50+ participants, use react-window
+
+---
+
+## Next Steps
+
+1. Review `research.md` for design rationale
+2. Review `data-model.md` for entity schemas
+3. Implement in TDD order (tests first, then implementation)
+4. Refer to `CONTRIBUTING.md` for code style & PR process
+5. Run local tests frequently: `npm test`, `npm run test:e2e`
+
+---
+
+**Quickstart Status**: ✅ Complete  
+**Ready for Implementation**: Yes
