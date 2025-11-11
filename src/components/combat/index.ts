@@ -3,20 +3,22 @@
  * Feature 009: Combat Tracker Page
  */
 
-// Core components (to be implemented)
-// export { CombatTracker } from './CombatTracker';
-// export { InitiativeOrder } from './InitiativeOrder';
-// export { HPTracker } from './HPTracker';
-// export { HPBar } from './HPBar';
-// export { StatusEffectsPanel } from './StatusEffectsPanel';
-// export { StatusEffectMenu } from './StatusEffectMenu';
-// export { StatusEffectPill } from './StatusEffectPill';
-// export { RoundTurnCounter } from './RoundTurnCounter';
-// export { ParticipantStatusBadges } from './ParticipantStatusBadges';
-// export { TurnControlButtons } from './TurnControlButtons';
-// export { CombatLog } from './CombatLog';
-// export { CombatLogEntry } from './CombatLogEntry';
-// export { LairActionNotification } from './LairActionNotification';
+// Core components (Phase 3 implemented)
+export { default as CombatTracker } from './CombatTracker';
+export { default as InitiativeOrder } from './InitiativeOrder';
+export { default as RoundTurnCounter } from './RoundTurnCounter';
+export { default as ParticipantStatusBadges } from './ParticipantStatusBadges';
+
+// Planned components (to be implemented in Phase 4-8)
+// export { default as HPTracker } from './HPTracker';
+// export { default as HPBar } from './HPBar';
+// export { default as StatusEffectsPanel } from './StatusEffectsPanel';
+// export { default as StatusEffectMenu } from './StatusEffectMenu';
+// export { default as StatusEffectPill } from './StatusEffectPill';
+// export { default as TurnControlButtons } from './TurnControlButtons';
+// export { default as CombatLog } from './CombatLog';
+// export { default as CombatLogEntry } from './CombatLogEntry';
+// export { default as LairActionNotification } from './LairActionNotification';
 
 // Error boundary (implemented)
-export { ErrorBoundary } from './ErrorBoundary';
+export { default as ErrorBoundary } from './ErrorBoundary';

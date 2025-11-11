@@ -89,3 +89,6 @@ export class UndoRedoManager {
     this.redoStack = [];
   }
 }
+
+// Export singleton instance for use throughout the application
+export const undoRedoManager = new UndoRedoManager();
