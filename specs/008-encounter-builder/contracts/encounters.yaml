@@ -1,0 +1,151 @@
+openapi: 3.0.3
+info:
+  title: Encounter API
+  version: 0.1.0
+  description: API for managing D&D encounters with participants
+  contact:
+    name: API Support
+    email: support@dnd-tracker.dev
+servers:
+  - url: /api
+tags:
+  - name: encounters
+    description: Encounter management operations
+paths:
+  /api/encounters:
+    get:
+      operationId: listEncounters
+      summary: List encounters for current user
+      description: Retrieves a list of all encounters for the authenticated user
+      tags: [encounters]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Encounter'
+    post:
+      operationId: createEncounter
+      summary: Create a new encounter
+      description: Creates a new encounter for the authenticated user
+      tags: [encounters]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EncounterCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+
+  /api/encounters/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getEncounter
+      summary: Get an encounter by id
+      description: Retrieves a specific encounter by its ID
+      tags: [encounters]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+    put:
+      operationId: updateEncounter
+      summary: Update an encounter
+      description: Updates an existing encounter by its ID
+      tags: [encounters]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EncounterCreate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+    delete:
+      operationId: deleteEncounter
+      summary: Delete an encounter
+      description: Deletes a specified encounter by its ID
+      tags: [encounters]
+      responses:
+        '204':
+          description: Deleted
+
+components:
+  schemas:
+    Participant:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [monster, party_member, custom]
+        displayName:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+        hp:
+          type: integer
+          minimum: 0
+        initiative:
+          type: integer
+        metadata:
+          type: object
+      required: [type, displayName, quantity]
+
+    EncounterCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        participants:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Participant'
+        tags:
+          type: array
+          items:
+            type: string
+        template_flag:
+          type: boolean
+      required: [name, participants]
+
+    Encounter:
+      allOf:
+        - $ref: '#/components/schemas/EncounterCreate'
+        - type: object
+          properties:
+            id:
+              type: string
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
