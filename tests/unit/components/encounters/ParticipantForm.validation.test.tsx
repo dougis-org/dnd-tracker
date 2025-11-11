@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import { render, screen } from '@testing-library/react'
 import ParticipantForm from '@/components/encounters/ParticipantForm'
 import { createMockParticipant } from '../../../test-helpers/encounter-fixtures'
