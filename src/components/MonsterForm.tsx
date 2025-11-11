@@ -413,6 +413,35 @@ interface MonsterAbilityFieldsProps {
   handleAbilityChange: (ability: AbilityKey) => (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
+interface AbilityInputFieldProps {
+  ability: AbilityKey;
+  value: number;
+  error?: string;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}
+
+function AbilityInputField({ ability, value, error, onChange }: AbilityInputFieldProps) {
+  return (
+    <FormField
+      key={ability}
+      label={ability.toUpperCase()}
+      htmlFor={ability}
+      error={error}
+      labelClassName="uppercase"
+    >
+      <input
+        id={ability}
+        type="number"
+        min="-5"
+        max="30"
+        value={value}
+        onChange={onChange}
+        className="w-full px-3 py-2 border rounded-lg"
+      />
+    </FormField>
+  );
+}
+
 function MonsterAbilityFields({
   formData,
   validationErrors,
@@ -423,23 +452,13 @@ function MonsterAbilityFields({
       <h3 className="font-semibold text-lg">Abilities</h3>
       <div className="grid grid-cols-3 gap-3">
         {abilityKeys.map((ability) => (
-          <FormField
+          <AbilityInputField
             key={ability}
-            label={ability.toUpperCase()}
-            htmlFor={ability}
+            ability={ability}
+            value={formData.abilities[ability]}
             error={validationErrors[`abilities.${ability}`]}
-            labelClassName="uppercase"
-          >
-            <input
-              id={ability}
-              type="number"
-              min="-5"
-              max="30"
-              value={formData.abilities[ability]}
-              onChange={handleAbilityChange(ability)}
-              className="w-full px-3 py-2 border rounded-lg"
-            />
-          </FormField>
+            onChange={handleAbilityChange(ability)}
+          />
         ))}
       </div>
     </div>
