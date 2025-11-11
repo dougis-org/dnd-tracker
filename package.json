@@ -7,7 +7,7 @@
         "prepare": "husky install",
         "build": "next build",
         "start": "next start",
-        "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+        "lint": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-pattern 'specs/**'",
         "lint:fix": "npm run lint -- --fix",
         "lint:markdown": "markdownlint '**/*.md' --ignore node_modules",
         "lint:markdown:fix": "npm run lint:markdown -- --fix",
