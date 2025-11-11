@@ -66,7 +66,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F006 | Party Management Pages | ✅ Complete (Merged via PR #417) | F001, F002 | [#360](https://github.com/dougis-org/dnd-tracker/issues/360) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F007 | Monster/NPC Management Pages | ✅ Complete (Merged via PR #419) | F001, F002 | [#361](https://github.com/dougis-org/dnd-tracker/issues/361) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F008 | Encounter Builder Pages | ✅ Complete (Merged via PR #420) | F001, F002 | [#362](https://github.com/dougis-org/dnd-tracker/issues/362) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F009 | Combat Tracker Page | Planned | F001, F002 | [#363](https://github.com/dougis-org/dnd-tracker/issues/363) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
+| F009 | Combat Tracker Page | In Progress | F001, F002 | [#363](https://github.com/dougis-org/dnd-tracker/issues/363) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F010 | User Profile & Settings Pages | Planned | F001, F002 | [#364](https://github.com/dougis-org/dnd-tracker/issues/364) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F011 | Item Catalog Pages | Planned | F001, F002 | [#365](https://github.com/dougis-org/dnd-tracker/issues/365) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F012 | Subscription & Billing Pages | Planned | F001, F002 | [#366](https://github.com/dougis-org/dnd-tracker/issues/366) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
@@ -431,6 +431,9 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ### Feature 009: Combat Tracker Page
 
+**Status**: In Progress
+**Branch**: feature/009-combat-tracker
+**Spec Location**: specs/009-combat-tracker/
 **Depends on**: Feature 001, Feature 002
 **Duration**: Day 2
 **Deliverables**:
