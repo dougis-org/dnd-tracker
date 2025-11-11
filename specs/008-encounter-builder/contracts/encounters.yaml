@@ -112,9 +112,10 @@ components:
           minimum: 0
         initiative:
           type: integer
+          nullable: true
         metadata:
           type: object
-      required: [type, displayName, quantity]
+  required: [type, displayName, quantity, hp]
 
     EncounterCreate:
       type: object
@@ -143,9 +144,15 @@ components:
           properties:
             id:
               type: string
+            owner_id:
+              type: string
+            org_id:
+              type: string
+              nullable: true
             created_at:
               type: string
               format: date-time
             updated_at:
               type: string
               format: date-time
+          required: [id, owner_id]

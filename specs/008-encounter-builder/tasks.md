@@ -4,7 +4,7 @@ description: "Generated task list for Encounter Builder feature"
 
 # Tasks: Encounter Builder
 
-**Input**: Design documents from `/specs/008-encounter-builder/` (spec.md, plan.md, data-model.md, contracts/encounters.yaml)
+**Input**: Design documents from `/specs/008-encounter-builder/` (spec.md, plan.md, data-model.md, contracts/encounters.yaml – canonical OpenAPI contract)
 
 **Maintainer**: @doug
 
@@ -57,7 +57,6 @@ description: "Generated task list for Encounter Builder feature"
 - [ ] T023 [P] [US2] Implement party/template import UI component: `src/components/encounters/ImportFromParty.tsx`
 - [ ] T024 [US2] Implement service to fetch parties and templates: `src/lib/api/parties.ts` and `src/lib/api/templates.ts`
 - [ ] T025 [US2] Add Template flag behavior to save flow (allow saving with `template_flag=true`): update `src/lib/api/encounters.ts`
-- [ ] T026 [US2] Add integration test for import-and-save: `tests/integration/encounter-import.test.ts`
 
 ## Phase 5: User Story 3 - Edit encounter and adjust initiative/HP during planning (Priority: P3)
 
@@ -68,7 +67,6 @@ description: "Generated task list for Encounter Builder feature"
 - [ ] T027 [US3] Write failing integration test for edit/save (failing): `tests/integration/encounter-edit.test.ts` (place before implementation tasks T028..T029)
 - [ ] T028 [US3] Implement Encounter edit page route: `src/app/encounters/[id]/page.tsx`
 - [ ] T029 [US3] Implement update API route for encounter: `src/app/api/encounters/[id]/route.ts`
-- [ ] T030 [US3] Add unit/integration tests for edit/save flow: `tests/integration/encounter-edit.test.ts`
 
 ## Phase N: Polish & Cross-Cutting Concerns
 

@@ -1,57 +1,48 @@
-# quickstart.md
+# Quickstart — Encounter Builder
 
-How to run and test the Encounter Builder feature locally (UI-first)
+This guide explains how to run, test, and develop the Encounter Builder feature locally.
 
-1. Start the dev server
+## 1. Setup & Start the Dev Server
 
 ```bash
+git checkout feature/008-encounter-builder
+npm install
 npm run dev
 ```
 
-2. Open the app and navigate to `/encounters` (or the route that will host the Encounters list)
+Open the app and navigate to `/encounters` (or the route that will host the encounters list).
 
-3. Run unit and component tests while developing
+## 2. Run Tests
 
-```bash
-npm test
-```
+- **All unit/component tests**
 
-4. Implementations & adapters
+  ```bash
+  npm test
+  ```
 
-- During UI-first development, use the localStorage adapter to persist temporary encounters. The persistence adapter should implement the same interface as the server adapter so tests can swap implementations.
+- **Focused encounter component tests**
 
-5. API Contract
+  ```bash
+  npm run test -- src/components/encounters
+  ```
 
-- See `specs/008-encounter-builder/contracts/encounters.yaml` for the OpenAPI contract. Implement server routes under `src/app/api/encounters/*` when ready.
+- **Playwright E2E scenario**
 
-Notes
+  ```bash
+  npm run test:e2e -- tests/e2e/encounters.spec.ts
+  ```
 
-- Follow the project's TDD workflow: write failing tests first, implement minimal code to pass tests, then refactor and run lint/type checks.
-- After creating or editing source files, run Codacy analysis as required by the repository governance.
+## 3. Implementations & Adapters
 
-# Quickstart — Encounter Builder (developer)
+- Use the persistence adapter in `src/lib/api/encounters.ts`, which supports both the MongoDB-backed implementation and a localStorage fallback for UI-first development.
+- Keep the adapter interface consistent so tests can swap between storage modes.
+- For local development before server routes exist, rely on the localStorage path to unblock UI work.
 
-1. Checkout feature branch (local):
+## 4. API Contract
 
-   ```bash
-   git checkout feature/008-encounter-builder
-   npm install
-   npm run dev
-   ```
+- Follow the canonical OpenAPI contract at `specs/008-encounter-builder/contracts/encounters.yaml` when implementing API routes under `src/app/api/encounters/*`.
 
-2. Run unit tests for new components:
+## 5. Workflow Notes
 
-   ```bash
-   npm run test -- src/components/encounters
-   ```
-
-3. Run E2E scenario (Playwright):
-
-   ```bash
-   npm run test:e2e -- tests/e2e/encounters.spec.ts
-   ```
-
-4. Development notes:
-
-- Persistence adapter `src/lib/api/encounters.ts` should be implemented to satisfy the OpenAPI contract in `specs/008-encounter-builder/contracts/encounters.yaml`.  
-- For local development, implement a localStorage fallback to enable UI development before backend endpoints are available.
+- Follow the project's TDD workflow: write failing tests first, implement the minimal code to pass, then refactor.
+- After editing source files, run Codacy analysis as required by the repository governance.

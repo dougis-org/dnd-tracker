@@ -30,7 +30,7 @@ Validation rules
 - displayName: string (required, non-empty)
 - quantity: number (integer, min 1)
 - hp: number (integer, min 0)
-- initiative: number | null
+- initiative: number | null (nullable to allow participants without a rolled value)
 - metadata: Record<string, unknown> (notes, sourceId, tags, additional attributes)
 
 Validation rules

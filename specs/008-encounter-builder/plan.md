@@ -1,7 +1,7 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Encounter Builder
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Branch**: `feature/008-encounter-builder` | **Date**: 2025-11-08 | **Spec**: `specs/008-encounter-builder/spec.md`
+**Input**: Feature specification from `/specs/008-encounter-builder/spec.md`
 
 **Maintainer**: @doug
 
@@ -16,7 +16,7 @@ Implement the Encounter Builder feature as a UI-first Next.js app-router set of 
 This section documents the concrete technical choices and goals for the feature to avoid implementation drift.
 
 **Language/Version**: TypeScript 5.x (align with repo; current workspace uses TypeScript 5.9.x)
-**Framework / Runtime**: Next.js 16 (App Router) + React 19
+**Framework / Runtime**: Next.js 16.0.1 (App Router) + React 19.0.0
 **Primary Dependencies**: Mongoose (MongoDB), Zod (validation), Jest (unit), Testing Library (component tests), Playwright (E2E)
 **Storage**: MongoDB via Mongoose adapter; localStorage fallback adapter for UI-first development and E2E stubbing
 **Testing**: Jest + Testing Library for unit/component tests; Playwright for E2E flows; integration tests via Jest with adapter mocks and optional in-memory MongoDB for DB integration
