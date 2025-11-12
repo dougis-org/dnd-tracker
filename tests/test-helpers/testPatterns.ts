@@ -135,6 +135,7 @@ export const testRendersText = (text: string | RegExp) => {
  * Verifies element exists with specific role
  */
 export const testRendersElement = (role: string, options?: Record<string, unknown>) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const element = screen.getByRole(role as any, options);
   expect(element).toBeInTheDocument();
 };
