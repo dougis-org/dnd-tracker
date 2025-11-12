@@ -74,7 +74,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F009 | Combat Tracker Page | ✅ Complete (Merged via PR #443) | F001, F002 | [#363](https://github.com/dougis-org/dnd-tracker/issues/363) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F010 | User Profile & Settings Pages | ✅ Complete (Merged via PR #446) | F001, F002 | [#364](https://github.com/dougis-org/dnd-tracker/issues/364) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F011 | Item Catalog Pages | In Progress | F001, F002 | [#365](https://github.com/dougis-org/dnd-tracker/issues/365) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F012 | Subscription & Billing Pages | Planned | F001, F002 | [#366](https://github.com/dougis-org/dnd-tracker/issues/366) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
+| F012 | Subscription & Billing Pages | In Progress | F001, F002 | [#366](https://github.com/dougis-org/dnd-tracker/issues/366) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F013 | Clerk Integration & Auth Flow | Planned | F001, F002, F012 | [#367](https://github.com/dougis-org/dnd-tracker/issues/367) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F014 | MongoDB User Model & Webhook | Planned | F013 | [#368](https://github.com/dougis-org/dnd-tracker/issues/368) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F015 | Profile Setup Wizard | Planned | F014 | [#369](https://github.com/dougis-org/dnd-tracker/issues/369) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
@@ -593,10 +593,11 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 - [ ] Rarity indicators display
 - [ ] Stakeholder design review sign-off captured for item catalog mock
 
----
-
 ### Feature 012: Subscription & Billing Pages
 
+**Status**: In Progress
+**Branch**: feature/012-subscription-billing
+**Spec Location**: specs/012-subscription-billing/
 **Depends on**: Feature 001, Feature 002
 **Duration**: Day 1
 **Deliverables**:
