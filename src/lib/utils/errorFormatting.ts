@@ -34,9 +34,10 @@ function isZodFlattenedError(error: unknown): error is { fieldErrors: unknown } 
 /**
  * Format error messages for display
  * Handles both Zod validation errors and simple error strings
+ * Always returns Record<string, string> for consistency
  *
  * @param error - Error object or string to format
- * @returns Formatted error: Record of field errors or error string
+ * @returns Formatted error record - field errors or general error under 'general' key
  *
  * @example
  * // Zod error
@@ -51,12 +52,12 @@ function isZodFlattenedError(error: unknown): error is { fieldErrors: unknown } 
  * @example
  * // String error
  * formatErrorMessage('Network failed')
- * // Returns: 'Network failed'
+ * // Returns: { general: 'Network failed' }
  */
-export function formatErrorMessage(error: unknown): Record<string, string> | string {
-  // Handle simple string errors
+export function formatErrorMessage(error: unknown): Record<string, string> {
+  // Handle simple string errors - place under 'general' key
   if (typeof error === 'string') {
-    return error;
+    return { general: error };
   }
 
   // Handle Zod flattened errors

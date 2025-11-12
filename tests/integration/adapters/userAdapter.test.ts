@@ -113,14 +113,25 @@ describe('userAdapter - Mock CRUD Operations', () => {
   });
 
   describe('Error Handling', () => {
-    it.each([
-      { field: 'email', value: 'invalid-email', description: 'invalid profile email' },
-      { field: 'name', value: 'A'.repeat(101), description: 'name exceeding 100 characters' },
-      { field: 'name', value: '', description: 'empty name' },
-      { field: 'name', value: null, description: 'null value' },
-    ])('should reject $description on profile update', async ({ field, value }) => {
-      const updates = { [field]: value } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-      await expect(userAdapter.updateProfile(testUserId, updates)).rejects.toThrow();
+    describe('Email Validation Errors', () => {
+      it.each(['invalid-email', 'spaces in@email.com', 'not-an-email'])(
+        'should reject invalid email: %s',
+        async (invalidEmail) => {
+          const updates = { email: invalidEmail };
+          await expect(userAdapter.updateProfile(testUserId, updates)).rejects.toThrow();
+        }
+      );
+    });
+
+    describe('Name Validation Errors', () => {
+      it.each([
+        { value: 'A'.repeat(101), description: 'name exceeding 100 characters' },
+        { value: '', description: 'empty name' },
+        { value: null, description: 'null value' },
+      ])('should reject $description', async ({ value }) => {
+        const updates = { name: value } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+        await expect(userAdapter.updateProfile(testUserId, updates)).rejects.toThrow();
+      });
     });
   });
 

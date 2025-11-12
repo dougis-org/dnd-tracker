@@ -71,10 +71,10 @@ describe('profileFormHelpers - Error Formatting', () => {
       expect(formatted.name).toBe('Name is required');
     });
 
-    it('should handle string errors', () => {
+    it('should handle string errors under general key', () => {
       const error = 'Network failed';
       const formatted = formatErrorMessage(error);
-      expect(formatted).toBe('Network failed');
+      expect(formatted.general).toBe('Network failed');
     });
 
     it('should handle empty field errors', () => {

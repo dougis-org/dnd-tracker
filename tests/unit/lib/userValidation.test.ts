@@ -142,9 +142,9 @@ describe('userValidation - Error Formatting', () => {
       expect(formatted.name).toBe('Name is required');
     });
 
-    it('should return empty object for string errors', () => {
+    it('should wrap string errors under general key', () => {
       const formatted = formatValidationErrors('Network error');
-      expect(formatted).toEqual({});
+      expect(formatted).toEqual({ general: 'Network error' });
     });
   });
 });
