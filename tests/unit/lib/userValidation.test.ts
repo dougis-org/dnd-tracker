@@ -2,6 +2,10 @@ import {
   parseEmail,
   validateName,
   validatePreferences,
+  validateNotifications,
+  formatValidationErrors,
+  validateProfileUpdate,
+  validatePreferencesUpdate,
 } from '@/lib/validation/userValidation';
 import {
   validEmails,
@@ -106,6 +110,78 @@ describe('userValidation utilities', () => {
           });
         });
       });
+    });
+  });
+
+  describe('validateNotifications', () => {
+    it('should accept valid notification settings', () => {
+      const result = validateNotifications({
+        emailNotifications: true,
+        partyUpdates: false,
+        encounterReminders: true,
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('should reject invalid notification settings', () => {
+      const result = validateNotifications({
+        emailNotifications: 'yes',
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('formatValidationErrors', () => {
+    it('should format Zod error details to field errors', () => {
+      const error = {
+        fieldErrors: {
+          email: ['Invalid email'],
+          name: ['Name is required'],
+        },
+      };
+      const formatted = formatValidationErrors(error);
+      expect(formatted.email).toBe('Invalid email');
+      expect(formatted.name).toBe('Name is required');
+    });
+
+    it('should return empty object for string errors', () => {
+      const formatted = formatValidationErrors('Network error');
+      expect(formatted).toEqual({});
+    });
+  });
+
+  describe('validateProfileUpdate', () => {
+    it('should accept valid profile data', () => {
+      const result = validateProfileUpdate({
+        name: 'Alice',
+        email: 'alice@example.com',
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('should reject invalid profile data', () => {
+      const result = validateProfileUpdate({
+        name: '',
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('validatePreferencesUpdate', () => {
+    it('should accept valid preferences data', () => {
+      const result = validatePreferencesUpdate({
+        experienceLevel: 'Novice',
+        preferredRole: 'Player',
+        ruleset: '5e',
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('should reject invalid preferences data', () => {
+      const result = validatePreferencesUpdate({
+        experienceLevel: 'Unknown',
+      });
+      expect(result.success).toBe(false);
     });
   });
 });
