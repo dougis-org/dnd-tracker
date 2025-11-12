@@ -2,90 +2,89 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import HPTracker from '@/components/combat/HPTracker';
-import { mockParticipant1 } from '@/../tests/fixtures/combat-sessions';
+import {
+  createHPTrackerDefaultProps,
+  createParticipantWithHP,
+  createParticipantWithTempHP,
+  createUnconsciousParticipant,
+} from '@test-helpers/combatTestHelpers';
 
 describe('HPTracker Component', () => {
-  const defaultProps = {
-    participant: mockParticipant1,
-    onApplyDamage: jest.fn(),
-    onApplyHealing: jest.fn(),
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render participant name and HP display', () => {
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
-      expect(screen.getByText(mockParticipant1.name)).toBeInTheDocument();
-      expect(screen.getByText(`${mockParticipant1.currentHP} / ${mockParticipant1.maxHP}`)).toBeInTheDocument();
+      expect(screen.getByText(props.participant.name)).toBeInTheDocument();
+      expect(
+        screen.getByText(`${props.participant.currentHP} / ${props.participant.maxHP}`),
+      ).toBeInTheDocument();
     });
 
     it('should display temp HP when present', () => {
-      const participantWithTempHP = {
-        ...mockParticipant1,
-        temporaryHP: 10,
-      };
+      const props = createHPTrackerDefaultProps();
+      const participant = createParticipantWithTempHP(10);
 
-      render(<HPTracker {...defaultProps} participant={participantWithTempHP} />);
+      render(<HPTracker {...props} participant={participant} />);
 
-      // HP text may be rendered in multiple places (tracker + HPBar). Ensure at least one is present
       const matches = screen.getAllByText(/Temp HP:/);
       expect(matches.length).toBeGreaterThan(0);
       expect(screen.getAllByText('10').length).toBeGreaterThan(0);
     });
 
     it('should show unconscious label when HP <= 0', () => {
-      const unconsciousParticipant = {
-        ...mockParticipant1,
-        currentHP: -5,
-      };
+      const props = createHPTrackerDefaultProps();
+      const participant = createUnconsciousParticipant(-5);
 
-      render(<HPTracker {...defaultProps} participant={unconsciousParticipant} />);
+      render(<HPTracker {...props} participant={participant} />);
 
       expect(screen.getByText(/Unconscious/)).toBeInTheDocument();
     });
 
     it('should apply unconscious styling when HP <= 0', () => {
-      const unconsciousParticipant = {
-        ...mockParticipant1,
-        currentHP: 0,
-      };
+      const props = createHPTrackerDefaultProps();
+      const participant = createUnconsciousParticipant(0);
 
-      const { container } = render(<HPTracker {...defaultProps} participant={unconsciousParticipant} />);
+      const { container } = render(<HPTracker {...props} participant={participant} />);
 
       const hpSection = container.querySelector('[data-testid="hp-display"]');
       expect(hpSection).toHaveClass('opacity-50', 'grayscale');
     });
 
     it('should render damage and healing input fields', () => {
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       expect(screen.getByPlaceholderText(/Damage/)).toBeInTheDocument();
       expect(screen.getByPlaceholderText(/Healing/)).toBeInTheDocument();
     });
 
     it('should render apply buttons for damage and healing', () => {
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       expect(screen.getByRole('button', { name: /Apply Damage/ })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Apply Healing/ })).toBeInTheDocument();
     });
   });
 
-  describe('Damage Input Validation', () => {
+  describe('Input Validation', () => {
     it('should not allow empty damage input', () => {
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const applyButton = screen.getByRole('button', { name: /Apply Damage/ });
       expect(applyButton).toBeDisabled();
     });
 
-    it('should enable apply button when valid damage entered', async () => {
+    it('should enable button when valid damage entered', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const damageInput = screen.getByPlaceholderText(/Damage/);
       const applyButton = screen.getByRole('button', { name: /Apply Damage/ });
@@ -97,7 +96,8 @@ describe('HPTracker Component', () => {
 
     it('should show error for negative damage', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const damageInput = screen.getByPlaceholderText(/Damage/);
       const applyButton = screen.getByRole('button', { name: /Apply Damage/ });
@@ -112,7 +112,8 @@ describe('HPTracker Component', () => {
 
     it('should show error for zero damage', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const damageInput = screen.getByPlaceholderText(/Damage/);
       const applyButton = screen.getByRole('button', { name: /Apply Damage/ });
@@ -125,39 +126,18 @@ describe('HPTracker Component', () => {
       });
     });
 
-    it.skip('should show error for non-numeric damage', async () => {
-      // Skip: number input in test environment coerces 'abc' to empty string
-      // This behavior is browser-specific and doesn't affect real usage
-      const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
-
-      const damageInput = screen.getByPlaceholderText(/Damage/) as HTMLInputElement;
-      const applyButton = screen.getByRole('button', { name: /Apply Damage/ });
-
-      // Type 'abc' - on a number input, this results in an empty value
-      await user.type(damageInput, 'abc');
-      expect(damageInput.value).toBe(''); // Verify the value is empty
-      
-      fireEvent.click(applyButton);
-
-      await waitFor(() => {
-        // Empty input triggers the "enter a damage amount" error
-        expect(screen.getByText(/Please enter a damage amount/)).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('Healing Input Validation', () => {
     it('should not allow empty healing input', () => {
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const applyButton = screen.getByRole('button', { name: /Apply Healing/ });
       expect(applyButton).toBeDisabled();
     });
 
-    it('should enable healing button when valid amount entered', async () => {
+    it('should enable healing button with valid amount', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const healingInput = screen.getByPlaceholderText(/Healing/);
       const applyButton = screen.getByRole('button', { name: /Apply Healing/ });
@@ -169,7 +149,8 @@ describe('HPTracker Component', () => {
 
     it('should show error for negative healing', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const healingInput = screen.getByPlaceholderText(/Healing/);
       const applyButton = screen.getByRole('button', { name: /Apply Healing/ });
@@ -184,7 +165,8 @@ describe('HPTracker Component', () => {
 
     it('should show error for zero healing', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const healingInput = screen.getByPlaceholderText(/Healing/);
       const applyButton = screen.getByRole('button', { name: /Apply Healing/ });
@@ -199,9 +181,10 @@ describe('HPTracker Component', () => {
   });
 
   describe('Damage Application', () => {
-    it('should call onApplyDamage with correct damage amount', async () => {
+    it('should call onApplyDamage with correct amount', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const damageInput = screen.getByPlaceholderText(/Damage/);
       const applyButton = screen.getByRole('button', { name: /Apply Damage/ });
@@ -210,13 +193,14 @@ describe('HPTracker Component', () => {
       fireEvent.click(applyButton);
 
       await waitFor(() => {
-        expect(defaultProps.onApplyDamage).toHaveBeenCalledWith(15);
+        expect(props.onApplyDamage).toHaveBeenCalledWith(15);
       });
     });
 
-    it('should clear damage input after applying', async () => {
+    it('should clear input after applying damage', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const damageInput = screen.getByPlaceholderText(/Damage/) as HTMLInputElement;
       const applyButton = screen.getByRole('button', { name: /Apply Damage/ });
@@ -231,7 +215,8 @@ describe('HPTracker Component', () => {
 
     it('should show success message after applying damage', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const damageInput = screen.getByPlaceholderText(/Damage/);
       const applyButton = screen.getByRole('button', { name: /Apply Damage/ });
@@ -246,9 +231,10 @@ describe('HPTracker Component', () => {
   });
 
   describe('Healing Application', () => {
-    it('should call onApplyHealing with correct healing amount', async () => {
+    it('should call onApplyHealing with correct amount', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const healingInput = screen.getByPlaceholderText(/Healing/);
       const applyButton = screen.getByRole('button', { name: /Apply Healing/ });
@@ -257,13 +243,14 @@ describe('HPTracker Component', () => {
       fireEvent.click(applyButton);
 
       await waitFor(() => {
-        expect(defaultProps.onApplyHealing).toHaveBeenCalledWith(20);
+        expect(props.onApplyHealing).toHaveBeenCalledWith(20);
       });
     });
 
-    it('should clear healing input after applying', async () => {
+    it('should clear input after applying healing', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const healingInput = screen.getByPlaceholderText(/Healing/) as HTMLInputElement;
       const applyButton = screen.getByRole('button', { name: /Apply Healing/ });
@@ -278,7 +265,8 @@ describe('HPTracker Component', () => {
 
     it('should show success message after applying healing', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const healingInput = screen.getByPlaceholderText(/Healing/);
       const applyButton = screen.getByRole('button', { name: /Apply Healing/ });
@@ -294,29 +282,28 @@ describe('HPTracker Component', () => {
 
   describe('Accessibility', () => {
     it('should have aria-label on HP display region', () => {
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const hpDisplay = screen.getByRole('region');
       expect(hpDisplay).toHaveAttribute('aria-label');
     });
 
-    it('should have aria-label on damage input', () => {
-      render(<HPTracker {...defaultProps} />);
+    it('should have aria-label on inputs', () => {
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const damageInput = screen.getByPlaceholderText(/Damage/);
-      expect(damageInput).toHaveAttribute('aria-label');
-    });
-
-    it('should have aria-label on healing input', () => {
-      render(<HPTracker {...defaultProps} />);
-
       const healingInput = screen.getByPlaceholderText(/Healing/);
+
+      expect(damageInput).toHaveAttribute('aria-label');
       expect(healingInput).toHaveAttribute('aria-label');
     });
 
     it('should have aria-live region for status messages', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const damageInput = screen.getByPlaceholderText(/Damage/);
       const applyButton = screen.getByRole('button', { name: /Apply Damage/ });
@@ -330,14 +317,12 @@ describe('HPTracker Component', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle damage greater than current HP', async () => {
+    it('should handle damage greater than HP', async () => {
       const user = userEvent.setup();
-      const lowHPParticipant = {
-        ...mockParticipant1,
-        currentHP: 5,
-      };
+      const props = createHPTrackerDefaultProps();
+      const lowHPParticipant = createParticipantWithHP(5);
 
-      render(<HPTracker {...defaultProps} participant={lowHPParticipant} />);
+      render(<HPTracker {...props} participant={lowHPParticipant} />);
 
       const damageInput = screen.getByPlaceholderText(/Damage/);
       const applyButton = screen.getByRole('button', { name: /Apply Damage/ });
@@ -346,18 +331,16 @@ describe('HPTracker Component', () => {
       fireEvent.click(applyButton);
 
       await waitFor(() => {
-        expect(defaultProps.onApplyDamage).toHaveBeenCalledWith(20);
+        expect(props.onApplyDamage).toHaveBeenCalledWith(20);
       });
     });
 
     it('should accept large healing amounts', async () => {
       const user = userEvent.setup();
-      const damagedParticipant = {
-        ...mockParticipant1,
-        currentHP: mockParticipant1.maxHP - 5,
-      };
+      const props = createHPTrackerDefaultProps();
+      const damagedParticipant = createParticipantWithHP(props.participant.maxHP - 5);
 
-      render(<HPTracker {...defaultProps} participant={damagedParticipant} />);
+      render(<HPTracker {...props} participant={damagedParticipant} />);
 
       const healingInput = screen.getByPlaceholderText(/Healing/);
       const applyButton = screen.getByRole('button', { name: /Apply Healing/ });
@@ -366,13 +349,14 @@ describe('HPTracker Component', () => {
       fireEvent.click(applyButton);
 
       await waitFor(() => {
-        expect(defaultProps.onApplyHealing).toHaveBeenCalledWith(100);
+        expect(props.onApplyHealing).toHaveBeenCalledWith(100);
       });
     });
 
     it('should handle float damage values', async () => {
       const user = userEvent.setup();
-      render(<HPTracker {...defaultProps} />);
+      const props = createHPTrackerDefaultProps();
+      render(<HPTracker {...props} />);
 
       const damageInput = screen.getByPlaceholderText(/Damage/);
       const applyButton = screen.getByRole('button', { name: /Apply Damage/ });
@@ -381,7 +365,7 @@ describe('HPTracker Component', () => {
       fireEvent.click(applyButton);
 
       await waitFor(() => {
-        expect(defaultProps.onApplyDamage).toHaveBeenCalledWith(3.5);
+        expect(props.onApplyDamage).toHaveBeenCalledWith(3.5);
       });
     });
   });

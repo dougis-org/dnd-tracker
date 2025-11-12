@@ -31,6 +31,9 @@
       ],
       "@fixtures/*": [
         "./tests/fixtures/*"
+      ],
+      "@test-helpers/*": [
+        "./tests/test-helpers/*"
       ]
     }
   },

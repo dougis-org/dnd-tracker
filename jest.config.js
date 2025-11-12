@@ -10,6 +10,7 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@fixtures/(.*)$': '<rootDir>/tests/fixtures/$1',
+    '^@test-helpers/(.*)$': '<rootDir>/tests/test-helpers/$1',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(bson|mongodb)/)',
