@@ -219,7 +219,9 @@ export const userAdapter = {
     const validated = userPreferencesSchema.safeParse(preferences);
 
     if (!validated.success) {
-      throw new Error('Invalid preferences data in storage');
+      throw new Error(
+        `Invalid preferences data in storage: ${validated.error.issues.map((i) => i.message).join(', ')}`
+      );
     }
 
     return validated.data;
@@ -262,7 +264,9 @@ export const userAdapter = {
     const validated = notificationSettingsSchema.safeParse(notifications);
 
     if (!validated.success) {
-      throw new Error('Invalid notification settings in storage');
+      throw new Error(
+        `Invalid notification settings in storage: ${validated.error.issues.map((i) => i.message).join(', ')}`
+      );
     }
 
     return validated.data;
