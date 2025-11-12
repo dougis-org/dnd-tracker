@@ -2,7 +2,9 @@ import { z } from 'zod';
 import {
   updateUserProfileSchema,
   updateUserPreferencesSchema,
+  updateNotificationSettingsSchema,
 } from '@/lib/schemas/userSchema';
+import { formatErrorMessage } from '@/lib/utils/profileFormHelpers';
 
 /**
  * Parse and validate email address
@@ -50,21 +52,14 @@ export function validateName(name: string) {
 
 /**
  * Validate D&D preferences
- * - Checks all enum values are valid
- * - Validates against allowed experience levels, roles, rulesets
+ * Uses updateUserPreferencesSchema to ensure consistency with base schema
  */
 export function validatePreferences(prefs: {
   experienceLevel: string;
   preferredRole: string;
   ruleset: string;
 }) {
-  const preferencesSchema = z.object({
-    experienceLevel: z.enum(['Novice', 'Intermediate', 'Advanced']),
-    preferredRole: z.enum(['DM', 'Player', 'Both']),
-    ruleset: z.enum(['5e', '3.5e', 'PF2e']),
-  });
-
-  const result = preferencesSchema.safeParse(prefs);
+  const result = updateUserPreferencesSchema.safeParse(prefs);
 
   if (result.success) {
     return { success: true, data: result.data };
@@ -83,15 +78,10 @@ export function validatePreferences(prefs: {
 
 /**
  * Validate notification settings (all boolean values)
+ * Uses updateNotificationSettingsSchema to ensure consistency with base schema
  */
 export function validateNotifications(settings: Record<string, unknown>) {
-  const schema = z.object({
-    emailNotifications: z.boolean(),
-    partyUpdates: z.boolean(),
-    encounterReminders: z.boolean(),
-  });
-
-  const result = schema.safeParse(settings);
+  const result = updateNotificationSettingsSchema.safeParse(settings);
 
   if (result.success) {
     return { success: true, data: result.data };
@@ -106,26 +96,15 @@ export function validateNotifications(settings: Record<string, unknown>) {
 
 /**
  * Format validation errors for display
+ * Wrapper around formatErrorMessage from profileFormHelpers for backward compatibility
  * Converts Zod error details to user-friendly field error messages
  */
 export function formatValidationErrors(error: unknown): Record<string, string> {
-  if (!error || typeof error !== 'object') {
-    return {};
-  }
+  const formatted = formatErrorMessage(error);
 
-  const errorObj = error as Record<string, unknown>;
-  if (!errorObj.fieldErrors || typeof errorObj.fieldErrors !== 'object') {
-    return {};
-  }
-
-  const formatted: Record<string, string> = {};
-  Object.entries(errorObj.fieldErrors).forEach(([field, messages]) => {
-    if (Array.isArray(messages) && messages.length > 0 && typeof messages[0] === 'string') {
-      formatted[field] = messages[0];
-    }
-  });
-
-  return formatted;
+  // formatErrorMessage returns string | Record<string, string>
+  // formatValidationErrors expects Record<string, string>, so convert if needed
+  return typeof formatted === 'string' ? {} : formatted;
 }
 
 /**

@@ -75,8 +75,9 @@ function getProfileFromStorage(userId: string): UserProfile {
   if (stored) {
     try {
       return JSON.parse(stored);
-    } catch {
-      console.error(`Failed to parse profile from storage for user ${userId}`);
+    } catch (e) {
+      console.error(`Failed to parse profile from storage for user ${userId}. Clearing invalid data.`, e);
+      localStorage.removeItem(key);
     }
   }
 
@@ -93,8 +94,12 @@ function getPreferencesFromStorage(userId: string): UserPreferences {
   if (stored) {
     try {
       return JSON.parse(stored);
-    } catch {
-      console.error(`Failed to parse preferences from storage for user ${userId}`);
+    } catch (e) {
+      console.error(
+        `Failed to parse preferences from storage for user ${userId}. Clearing invalid data.`,
+        e
+      );
+      localStorage.removeItem(key);
     }
   }
 
@@ -111,8 +116,12 @@ function getNotificationsFromStorage(userId: string): NotificationSettings {
   if (stored) {
     try {
       return JSON.parse(stored);
-    } catch {
-      console.error(`Failed to parse notifications from storage for user ${userId}`);
+    } catch (e) {
+      console.error(
+        `Failed to parse notifications from storage for user ${userId}. Clearing invalid data.`,
+        e
+      );
+      localStorage.removeItem(key);
     }
   }
 
@@ -159,7 +168,9 @@ export const userAdapter = {
     const validated = userProfileSchema.safeParse(profile);
 
     if (!validated.success) {
-      throw new Error('Invalid profile data in storage');
+      throw new Error(
+        `Invalid profile data in storage: ${validated.error.issues.map((i) => i.message).join(', ')}`
+      );
     }
 
     return validated.data;

@@ -44,33 +44,26 @@ export type NotificationSettings = z.infer<typeof notificationSettingsSchema>;
 
 /**
  * Partial Update Schemas
- * For PUT requests where fields are optional and id/userId cannot be updated
+ * Derived from base schemas using .omit() and .partial() to maintain single source of truth
+ * For PUT requests where fields are optional and id/userId/timestamps cannot be updated
  */
-export const updateUserProfileSchema = z
-  .object({
-    name: z.string().min(1, 'Name is required').max(100, 'Name must be 100 characters or less').optional(),
-    email: z.string().email('Invalid email address').optional(),
-  })
+export const updateUserProfileSchema = userProfileSchema
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .partial()
   .strict();
 
 export type UpdateUserProfile = z.infer<typeof updateUserProfileSchema>;
 
-export const updateUserPreferencesSchema = z
-  .object({
-    experienceLevel: z.enum(['Novice', 'Intermediate', 'Advanced']).optional(),
-    preferredRole: z.enum(['DM', 'Player', 'Both']).optional(),
-    ruleset: z.enum(['5e', '3.5e', 'PF2e']).optional(),
-  })
+export const updateUserPreferencesSchema = userPreferencesSchema
+  .omit({ userId: true, updatedAt: true })
+  .partial()
   .strict();
 
 export type UpdateUserPreferences = z.infer<typeof updateUserPreferencesSchema>;
 
-export const updateNotificationSettingsSchema = z
-  .object({
-    emailNotifications: z.boolean().optional(),
-    partyUpdates: z.boolean().optional(),
-    encounterReminders: z.boolean().optional(),
-  })
+export const updateNotificationSettingsSchema = notificationSettingsSchema
+  .omit({ userId: true, updatedAt: true })
+  .partial()
   .strict();
 
 export type UpdateNotificationSettings = z.infer<typeof updateNotificationSettingsSchema>;
