@@ -1,7 +1,7 @@
 'use client';
 
-import { NotImplementedPage } from '@/components/NotImplementedPage';
+import SettingsPage from '@/components/settings/SettingsPage';
 
-export default function SettingsPage() {
-  return <NotImplementedPage />;
+export default function Page() {
+  return <SettingsPage />;
 }
