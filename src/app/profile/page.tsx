@@ -1,7 +1,7 @@
 'use client';
 
-import { NotImplementedPage } from '@/components/NotImplementedPage';
+import ProfilePage from '@/components/profile/ProfilePage';
 
-export default function ProfilePage() {
-  return <NotImplementedPage />;
+export default function Page() {
+  return <ProfilePage />;
 }
