@@ -4,6 +4,8 @@
  * Used by ProfileForm and settings components
  */
 
+import { formatErrorMessage } from './errorFormatting';
+
 /**
  * Apply optimistic update to form data
  * Updates a field immediately without waiting for server confirmation
@@ -30,35 +32,8 @@ export function revertOptimisticUpdate<T extends Record<string, unknown>>(
   return previousState;
 }
 
-/**
- * Format error messages for display
- * Handles both Zod validation errors and simple error strings
- */
-export function formatErrorMessage(error: unknown): Record<string, string> | string {
-  // If it's a simple string error
-  if (typeof error === 'string') {
-    return error;
-  }
-
-  // If it's a Zod flattened error with fieldErrors
-  if (error && typeof error === 'object' && 'fieldErrors' in error) {
-    const errorObj = error as Record<string, unknown>;
-    const formatted: Record<string, string> = {};
-
-    if (typeof errorObj.fieldErrors === 'object' && errorObj.fieldErrors !== null) {
-      Object.entries(errorObj.fieldErrors).forEach(([field, messages]) => {
-        if (Array.isArray(messages) && messages.length > 0 && typeof messages[0] === 'string') {
-          formatted[field] = messages[0]; // Take first error message
-        }
-      });
-    }
-
-    return formatted;
-  }
-
-  // Fallback
-  return { general: 'An error occurred' };
-}
+// Re-export formatErrorMessage from errorFormatting module
+export { formatErrorMessage };
 
 /**
  * Form state tracking

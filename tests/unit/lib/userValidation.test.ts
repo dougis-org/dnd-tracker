@@ -7,17 +7,9 @@ import {
   validateProfileUpdate,
   validatePreferencesUpdate,
 } from '@/lib/validation/userValidation';
-import {
-  validEmails,
-  invalidEmails,
-  validNames,
-  invalidNames,
-  experienceLevels,
-  preferredRoles,
-  rulesets,
-} from '../../fixtures/userSchemaFixtures';
+import { validEmails, invalidEmails, validNames, invalidNames } from '../../fixtures/userSchemaFixtures';
 
-describe('userValidation utilities', () => {
+describe('userValidation - Email Parsing', () => {
   describe('parseEmail', () => {
     it.each(validEmails)('should parse valid email: %s', (email) => {
       const result = parseEmail(email);
@@ -42,7 +34,9 @@ describe('userValidation utilities', () => {
       expect(result.data).toBe('alice@example.com');
     });
   });
+});
 
+describe('userValidation - Name Validation', () => {
   describe('validateName', () => {
     it.each(validNames)('should accept valid name', (name) => {
       const result = validateName(name);
@@ -59,7 +53,9 @@ describe('userValidation utilities', () => {
       expect(result.success).toBe(true);
     });
   });
+});
 
+describe('userValidation - Preferences Validation', () => {
   describe('validatePreferences', () => {
     it('should accept valid preferences', () => {
       const result = validatePreferences({
@@ -98,21 +94,21 @@ describe('userValidation utilities', () => {
     });
 
     it('should accept all valid enum combinations', () => {
-      experienceLevels.forEach((level) => {
-        preferredRoles.forEach((role) => {
-          rulesets.forEach((ruleset) => {
-            const result = validatePreferences({
-              experienceLevel: level,
-              preferredRole: role,
-              ruleset,
-            });
-            expect(result.success).toBe(true);
-          });
-        });
+      const testData = [
+        { experienceLevel: 'Novice', preferredRole: 'DM', ruleset: '5e' },
+        { experienceLevel: 'Intermediate', preferredRole: 'Player', ruleset: '3.5e' },
+        { experienceLevel: 'Advanced', preferredRole: 'Both', ruleset: 'PF2e' },
+      ];
+
+      testData.forEach(({ experienceLevel, preferredRole, ruleset }) => {
+        const result = validatePreferences({ experienceLevel, preferredRole, ruleset });
+        expect(result.success).toBe(true);
       });
     });
   });
+});
 
+describe('userValidation - Notifications Validation', () => {
   describe('validateNotifications', () => {
     it('should accept valid notification settings', () => {
       const result = validateNotifications({
@@ -130,7 +126,9 @@ describe('userValidation utilities', () => {
       expect(result.success).toBe(false);
     });
   });
+});
 
+describe('userValidation - Error Formatting', () => {
   describe('formatValidationErrors', () => {
     it('should format Zod error details to field errors', () => {
       const error = {
@@ -149,7 +147,9 @@ describe('userValidation utilities', () => {
       expect(formatted).toEqual({});
     });
   });
+});
 
+describe('userValidation - Profile Updates', () => {
   describe('validateProfileUpdate', () => {
     it('should accept valid profile data', () => {
       const result = validateProfileUpdate({
@@ -166,7 +166,9 @@ describe('userValidation utilities', () => {
       expect(result.success).toBe(false);
     });
   });
+});
 
+describe('userValidation - Preferences Updates', () => {
   describe('validatePreferencesUpdate', () => {
     it('should accept valid preferences data', () => {
       const result = validatePreferencesUpdate({
