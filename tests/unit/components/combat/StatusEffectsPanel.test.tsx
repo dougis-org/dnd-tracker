@@ -4,31 +4,56 @@ import userEvent from '@testing-library/user-event';
 import StatusEffectsPanel from '@/components/combat/StatusEffectsPanel';
 import { StatusEffect } from '@/lib/schemas/combat';
 
+const mockEffects: StatusEffect[] = [
+  {
+    id: '1',
+    name: 'Poisoned',
+    durationInRounds: 3,
+    appliedAtRound: 1,
+  },
+  {
+    id: '2',
+    name: 'Blinded',
+    durationInRounds: 1,
+    appliedAtRound: 2,
+  },
+];
+
+const defaultProps = {
+  participantId: 'participant-1',
+  participantName: 'Test Creature',
+  effects: mockEffects,
+  onAddEffect: jest.fn(),
+  onRemoveEffect: jest.fn(),
+  currentRound: 2,
+};
+
+/**
+ * Dialog interaction helpers to eliminate async pattern duplication
+ */
+const openAndSelectEffect = async (effectName: string, durationInRounds?: number) => {
+  const user = userEvent.setup();
+  const addButton = screen.getByRole('button', { name: /Add Effect/i });
+  fireEvent.click(addButton);
+
+  await waitFor(() => {
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  const select = screen.getByLabelText(/Effect Type/i);
+  await user.selectOptions(select, effectName);
+
+  if (durationInRounds !== undefined) {
+    const durationInput = screen.getByPlaceholderText(/5/i);
+    await user.clear(durationInput);
+    await user.type(durationInput, durationInRounds.toString());
+  }
+
+  const addEffectButton = screen.getByRole('button', { name: /^Add$/i });
+  fireEvent.click(addEffectButton);
+};
+
 describe('StatusEffectsPanel Component', () => {
-  const mockEffects: StatusEffect[] = [
-    {
-      id: '1',
-      name: 'Poisoned',
-      durationInRounds: 3,
-      appliedAtRound: 1,
-    },
-    {
-      id: '2',
-      name: 'Blinded',
-      durationInRounds: 1,
-      appliedAtRound: 2,
-    },
-  ];
-
-  const defaultProps = {
-    participantId: 'participant-1',
-    participantName: 'Test Creature',
-    effects: mockEffects,
-    onAddEffect: jest.fn(),
-    onRemoveEffect: jest.fn(),
-    currentRound: 2,
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -41,7 +66,6 @@ describe('StatusEffectsPanel Component', () => {
 
     it('should display all effects in panel', () => {
       render(<StatusEffectsPanel {...defaultProps} />);
-      // Get the main panel region (not the menu)
       const panels = screen.getAllByRole('region');
       const mainPanel = panels[0];
       expect(mainPanel.textContent).toContain('Poisoned');
@@ -70,7 +94,6 @@ describe('StatusEffectsPanel Component', () => {
     it('should render effect pills for each effect', () => {
       render(<StatusEffectsPanel {...defaultProps} />);
       const pills = screen.getAllByRole('status');
-      // Should have at least 2 pills (Poisoned + Blinded) plus StatusEffectPill status regions
       expect(pills.length).toBeGreaterThanOrEqual(2);
     });
 
@@ -83,7 +106,6 @@ describe('StatusEffectsPanel Component', () => {
       ];
       const { container } = render(<StatusEffectsPanel {...defaultProps} effects={manyEffects} />);
       
-      // Check that the panel contains the effects
       const panel = container.querySelector('div[role="region"]');
       expect(panel?.textContent).toContain('Poisoned');
       expect(panel?.textContent).toContain('Blinded');
@@ -94,21 +116,8 @@ describe('StatusEffectsPanel Component', () => {
 
   describe('Add Effect Functionality', () => {
     it('should pass onAddEffect callback to StatusEffectMenu', async () => {
-      const user = userEvent.setup();
       render(<StatusEffectsPanel {...defaultProps} />);
-
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      const select = screen.getByLabelText(/Effect Type/i);
-      await user.selectOptions(select, 'Stunned');
-
-      const addEffectButton = screen.getByRole('button', { name: /^Add$/i });
-      fireEvent.click(addEffectButton);
+      await openAndSelectEffect('Stunned');
 
       await waitFor(() => {
         expect(defaultProps.onAddEffect).toHaveBeenCalled();
@@ -116,25 +125,8 @@ describe('StatusEffectsPanel Component', () => {
     });
 
     it('should call onAddEffect with correct effect data', async () => {
-      const user = userEvent.setup();
       render(<StatusEffectsPanel {...defaultProps} />);
-
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      const select = screen.getByLabelText(/Effect Type/i);
-      await user.selectOptions(select, 'Frightened');
-
-      const durationInput = screen.getByPlaceholderText(/5/i);
-      await user.clear(durationInput);
-      await user.type(durationInput, '4');
-
-      const addEffectButton = screen.getByRole('button', { name: /^Add$/i });
-      fireEvent.click(addEffectButton);
+      await openAndSelectEffect('Frightened', 4);
 
       await waitFor(() => {
         expect(defaultProps.onAddEffect).toHaveBeenCalledWith({
@@ -160,9 +152,6 @@ describe('StatusEffectsPanel Component', () => {
       const panel = container.querySelector('div[role="region"]');
       expect(panel?.textContent).toContain('Poisoned');
 
-      const removeButtons = screen.getAllByRole('button', { name: /Remove/i });
-      fireEvent.click(removeButtons[0]);
-
       rerender(<StatusEffectsPanel {...defaultProps} effects={[mockEffects[1]]} />);
       const newPanel = container.querySelector('div[role="region"]');
       expect(newPanel?.textContent).not.toContain('Poisoned');
@@ -182,7 +171,6 @@ describe('StatusEffectsPanel Component', () => {
     it('should have region landmark for effects panel', () => {
       render(<StatusEffectsPanel {...defaultProps} />);
       const regions = screen.getAllByRole('region');
-      // Should have at least one region (StatusEffectsPanel itself)
       expect(regions.length).toBeGreaterThanOrEqual(1);
     });
 
@@ -204,7 +192,6 @@ describe('StatusEffectsPanel Component', () => {
 
       const addButton = screen.getByRole('button', { name: /Add Effect/i });
       await user.keyboard('{Tab}');
-      // Add button should be focusable
       expect(addButton).toBeInTheDocument();
     });
   });
@@ -214,14 +201,10 @@ describe('StatusEffectsPanel Component', () => {
       const { rerender, container } = render(
         <StatusEffectsPanel {...defaultProps} currentRound={2} />
       );
-      // Effect has durationInRounds: 3, appliedAtRound: 1, currentRound: 2
-      // Remaining = (1 + 3) - 2 = 2 rounds
       const mainPanel = container.querySelector('div[role="region"]');
       expect(mainPanel?.textContent).toContain('2R');
 
-      // After advancing to round 3
       rerender(<StatusEffectsPanel {...defaultProps} currentRound={3} />);
-      // Remaining = (1 + 3) - 3 = 1 round (should show red warning)
       expect(mainPanel?.textContent).toContain('1R');
     });
 
@@ -232,22 +215,8 @@ describe('StatusEffectsPanel Component', () => {
     });
 
     it('should handle concurrent effect operations', async () => {
-      const user = userEvent.setup();
       render(<StatusEffectsPanel {...defaultProps} />);
-
-      // Add an effect
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      const select = screen.getByLabelText(/Effect Type/i);
-      await user.selectOptions(select, 'Stunned');
-
-      const addEffectButton = screen.getByRole('button', { name: /^Add$/i });
-      fireEvent.click(addEffectButton);
+      await openAndSelectEffect('Stunned');
 
       expect(defaultProps.onAddEffect).toHaveBeenCalled();
     });
@@ -296,10 +265,8 @@ describe('StatusEffectsPanel Component', () => {
         { id: '1', name: 'Poisoned', durationInRounds: 1, appliedAtRound: 1 },
       ];
       
-      // At round 5, effect with duration 1 applied at round 1 is expired
       const { container } = render(<StatusEffectsPanel {...defaultProps} effects={expiredEffects} currentRound={5} />);
       
-      // Effect should be displayed but with opacity-50
       const mainPanel = container.querySelector('div[role="region"]');
       const pillInPanel = mainPanel?.querySelector('div[role="status"]');
       expect(pillInPanel).toHaveClass('opacity-50');

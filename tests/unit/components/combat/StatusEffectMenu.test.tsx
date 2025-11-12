@@ -4,24 +4,60 @@ import userEvent from '@testing-library/user-event';
 import StatusEffectMenu from '@/components/combat/StatusEffectMenu';
 import { StatusEffect } from '@/lib/schemas/combat';
 
+const mockExistingEffects: StatusEffect[] = [
+  {
+    id: '1',
+    name: 'Poisoned',
+    durationInRounds: 3,
+    appliedAtRound: 1,
+  },
+];
+
+const defaultProps = {
+  _participantId: 'participant-1',
+  existingEffects: mockExistingEffects,
+  onAddEffect: jest.fn(),
+  onRemoveEffect: jest.fn(),
+  currentRound: 2,
+};
+
+/**
+ * Dialog interaction helpers to eliminate repeated async patterns
+ */
+const openAddEffectDialog = async () => {
+  const addButton = screen.getByRole('button', { name: /Add Effect/i });
+  fireEvent.click(addButton);
+
+  await waitFor(() => {
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+};
+
+const closeDialogWithCancel = async () => {
+  const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+  fireEvent.click(cancelButton);
+
+  await waitFor(() => {
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+};
+
+const selectEffectAndSubmit = async (effectName: string, durationInRounds?: number) => {
+  const user = userEvent.setup();
+  const select = screen.getByLabelText(/Effect Type/i);
+  await user.selectOptions(select, effectName);
+
+  if (durationInRounds !== undefined) {
+    const durationInput = screen.getByPlaceholderText(/5/i) as HTMLInputElement;
+    await user.clear(durationInput);
+    await user.type(durationInput, durationInRounds.toString());
+  }
+
+  const addEffectButton = screen.getByRole('button', { name: /^Add$/i });
+  fireEvent.click(addEffectButton);
+};
+
 describe('StatusEffectMenu Component', () => {
-  const mockExistingEffects: StatusEffect[] = [
-    {
-      id: '1',
-      name: 'Poisoned',
-      durationInRounds: 3,
-      appliedAtRound: 1,
-    },
-  ];
-
-  const defaultProps = {
-    _participantId: 'participant-1',
-    existingEffects: mockExistingEffects,
-    onAddEffect: jest.fn(),
-    onRemoveEffect: jest.fn(),
-    currentRound: 2,
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -51,33 +87,20 @@ describe('StatusEffectMenu Component', () => {
   describe('Add Effect Dialog', () => {
     it('should show dialog when add button clicked', async () => {
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
+      await openAddEffectDialog();
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
 
     it('should display effect selection dropdown', async () => {
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/Effect Type/i)).toBeInTheDocument();
-      });
+      await openAddEffectDialog();
+      expect(screen.getByLabelText(/Effect Type/i)).toBeInTheDocument();
     });
 
     it('should allow selecting an effect from dropdown', async () => {
       const user = userEvent.setup();
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
+      await openAddEffectDialog();
 
       const select = screen.getByLabelText(/Effect Type/i);
       await user.selectOptions(select, 'Stunned');
@@ -87,12 +110,7 @@ describe('StatusEffectMenu Component', () => {
     it('should allow custom duration entry', async () => {
       const user = userEvent.setup();
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
+      await openAddEffectDialog();
 
       const durationInput = screen.getByPlaceholderText(/5/i);
       await user.clear(durationInput);
@@ -103,12 +121,7 @@ describe('StatusEffectMenu Component', () => {
     it('should allow permanent effect checkbox', async () => {
       const user = userEvent.setup();
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
+      await openAddEffectDialog();
 
       const permanentCheckbox = screen.getByRole('checkbox', { name: /Permanent effect/i });
       await user.click(permanentCheckbox);
@@ -118,12 +131,7 @@ describe('StatusEffectMenu Component', () => {
     it('should disable duration input when permanent checked', async () => {
       const user = userEvent.setup();
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
+      await openAddEffectDialog();
 
       const permanentCheckbox = screen.getByRole('checkbox', { name: /Permanent effect/i });
       await user.click(permanentCheckbox);
@@ -134,50 +142,26 @@ describe('StatusEffectMenu Component', () => {
 
     it('should close dialog when cancel clicked', async () => {
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-      fireEvent.click(cancelButton);
-
-      await waitFor(() => {
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-      });
+      await openAddEffectDialog();
+      await closeDialogWithCancel();
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('should not call onAddEffect when cancel clicked', async () => {
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-      fireEvent.click(cancelButton);
-
+      await openAddEffectDialog();
+      await closeDialogWithCancel();
       expect(defaultProps.onAddEffect).not.toHaveBeenCalled();
     });
 
     it('should show error when adding effect without selection', async () => {
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
+      await openAddEffectDialog();
 
       const addEffectButton = screen.getByRole('button', { name: /^Add$/i });
       fireEvent.click(addEffectButton);
 
       await waitFor(() => {
-        // Get all elements matching the error text, filter for visible ones in dialog
         const errors = screen.queryAllByText(/Please select an effect/i);
         expect(errors.length).toBeGreaterThan(0);
       });
@@ -206,24 +190,9 @@ describe('StatusEffectMenu Component', () => {
 
   describe('Add Effect Functionality', () => {
     it('should call onAddEffect with correct effect data', async () => {
-      const user = userEvent.setup();
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      const select = screen.getByLabelText(/Effect Type/i);
-      await user.selectOptions(select, 'Charmed');
-
-      const durationInput = screen.getByPlaceholderText(/5/i);
-      await user.clear(durationInput);
-      await user.type(durationInput, '3');
-
-      const addEffectButton = screen.getByRole('button', { name: /^Add$/i });
-      fireEvent.click(addEffectButton);
+      await openAddEffectDialog();
+      await selectEffectAndSubmit('Charmed', 3);
 
       await waitFor(() => {
         expect(defaultProps.onAddEffect).toHaveBeenCalledWith({
@@ -235,20 +204,9 @@ describe('StatusEffectMenu Component', () => {
     });
 
     it('should close dialog after adding effect', async () => {
-      const user = userEvent.setup();
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      const select = screen.getByLabelText(/Effect Type/i);
-      await user.selectOptions(select, 'Restrained');
-
-      const addEffectButton = screen.getByRole('button', { name: /^Add$/i });
-      fireEvent.click(addEffectButton);
+      await openAddEffectDialog();
+      await selectEffectAndSubmit('Restrained', 2);
 
       await waitFor(() => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
@@ -272,8 +230,6 @@ describe('StatusEffectMenu Component', () => {
     it('should have live region for status messages', async () => {
       render(<StatusEffectMenu {...defaultProps} />);
       const liveRegions = screen.queryAllByRole('status');
-      // StatusEffectMenu has its own aria-live region plus each StatusEffectPill is a status region
-      // Just verify at least one has aria-live attribute  
       expect(liveRegions.some((region) => region.hasAttribute('aria-live'))).toBe(true);
     });
   });
@@ -292,21 +248,9 @@ describe('StatusEffectMenu Component', () => {
     });
 
     it('should use default duration of 1 when none specified', async () => {
-      const user = userEvent.setup();
       render(<StatusEffectMenu {...defaultProps} />);
-      const addButton = screen.getByRole('button', { name: /Add Effect/i });
-      fireEvent.click(addButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      const select = screen.getByLabelText(/Effect Type/i);
-      await user.selectOptions(select, 'Frightened');
-
-      // Don't enter duration, should default to 1
-      const addEffectButton = screen.getByRole('button', { name: /^Add$/i });
-      fireEvent.click(addEffectButton);
+      await openAddEffectDialog();
+      await selectEffectAndSubmit('Frightened');
 
       await waitFor(() => {
         expect(defaultProps.onAddEffect).toHaveBeenCalledWith({
