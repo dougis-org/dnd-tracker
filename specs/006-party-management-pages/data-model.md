@@ -27,7 +27,7 @@ Represents a group of adventurers forming a player party for a D&D campaign.
 **Relationships**:
 
 - `members`: One-to-many with PartyMember (cascade delete if party deleted)
-- Future: One-to-many with Encounter (when F034 implemented)
+- Future: One-to-many with Encounter (when F043 implemented)
 - Future: Many-to-one with User (when F013 authentication added)
 
 **State Transitions**:
@@ -130,8 +130,8 @@ Party (1)
 │              ├── role: Role enum
 │              └── position: integer
 │
-└─── (Future: 1:N) ──→ Encounter (when F034)
-     (when F034 implemented)
+└─── (Future: 1:N) ──→ Encounter (when F043)
+     (when F043 implemented)
 
 PartyMember
 ├── (Future: 1:1) ──→ Character (when F018)

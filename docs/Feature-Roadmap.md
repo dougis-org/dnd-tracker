@@ -11,12 +11,14 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ## Progress Tracking
 
-**Current Progress**: 7 of 60 features complete (11.7%) - Week 1 of 10  
+**Current Progress**: 7 of 75 features complete (9.3%) - Week 1 of 10  
 **Phase 1 Status**: In Progress (5 of 12 features complete)  
 **Phase 2 Status**: In Progress (2 of 5 features complete)  
 **Next Feature**: Feature 009 - Combat Tracker Page  
 **Started**: 2025-11-01  
 **Latest Completion**: Feature 008 (2025-11-11 via PR #420)
+
+> **Note**: Feature numbers F018+ have been renumbered to accommodate decomposed features. See `docs/feature-renumbering-plan.md` for complete mappings.
 
 ### Completed Features by Phase
 
@@ -29,12 +31,12 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 - **Phase 2 (Authentication)**: 2/5 complete
   - ✅ F004: Dashboard Page (Merged via PR #413 on 2025-11-07)
   - ✅ F005: Character Management Pages (Merged via PR #414 on 2025-11-08)
-- **Phase 3 (Entity Management)**: 0/12 complete
-- **Phase 4 (Offline)**: 0/4 complete
-- **Phase 5 (Combat Engine)**: 0/9 complete
-- **Phase 6 (Combat Polish)**: 0/6 complete
-- **Phase 7 (Monetization)**: 0/5 complete
-- **Phase 8 (Advanced)**: 0/7 complete
+- **Phase 3 (Entity Management)**: 0/17 complete
+- **Phase 4 (Offline)**: 0/5 complete
+- **Phase 5 (Combat Engine)**: 0/16 complete
+- **Phase 6 (Combat Polish)**: 0/7 complete
+- **Phase 7 (Monetization)**: 0/9 complete
+- **Phase 8 (Advanced)**: 0/6 complete
 
 ## Table of Contents
 
@@ -75,49 +77,64 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F015 | Profile Setup Wizard | Planned | F014 | [#369](https://github.com/dougis-org/dnd-tracker/issues/369) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F016 | User Dashboard with Real Data | Planned | F004, F014 | [#370](https://github.com/dougis-org/dnd-tracker/issues/370) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F017 | Profile Page Functionality | Planned | F010, F014 | [#371](https://github.com/dougis-org/dnd-tracker/issues/371) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F018 | Character Model & API | Planned | F014 | [#372](https://github.com/dougis-org/dnd-tracker/issues/372) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F019 | Character List Page Integration | Planned | F005, F018 | [#373](https://github.com/dougis-org/dnd-tracker/issues/373) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F020 | Character Creation Form | Planned | F019 | [#374](https://github.com/dougis-org/dnd-tracker/issues/374) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F021 | Character Edit Form | Planned | F019 | [#375](https://github.com/dougis-org/dnd-tracker/issues/375) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F022 | Character Templates | Planned | F018 | [#376](https://github.com/dougis-org/dnd-tracker/issues/376) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F023 | Monster Model & API | Planned | F014 | [#377](https://github.com/dougis-org/dnd-tracker/issues/377) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F024 | Monster List Page Integration | Planned | F007, F023 | [#378](https://github.com/dougis-org/dnd-tracker/issues/378) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F025 | Monster Creation/Edit Forms | Planned | F024 | [#379](https://github.com/dougis-org/dnd-tracker/issues/379) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F026 | Item Model & API | Planned | F014 | [#380](https://github.com/dougis-org/dnd-tracker/issues/380) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F027 | Item Management Pages | Planned | F011, F026 | [#381](https://github.com/dougis-org/dnd-tracker/issues/381) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F028 | Party Model & API | Planned | F014, F018 | [#382](https://github.com/dougis-org/dnd-tracker/issues/382) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F029 | Party Management Integration | Planned | F006, F028 | [#383](https://github.com/dougis-org/dnd-tracker/issues/383) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F030 | Service Worker Setup | Planned | F001 | [#384](https://github.com/dougis-org/dnd-tracker/issues/384) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
-| F031 | IndexedDB Setup | Planned | F030 | [#385](https://github.com/dougis-org/dnd-tracker/issues/385) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
-| F032 | Offline Combat | Planned | F031, F036 | [#386](https://github.com/dougis-org/dnd-tracker/issues/386) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
-| F033 | Background Sync | Planned | F032 | [#387](https://github.com/dougis-org/dnd-tracker/issues/387) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
-| F034 | Encounter Model & API | Planned | F014, F028, F023 | [#388](https://github.com/dougis-org/dnd-tracker/issues/388) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F035 | Encounter Builder Integration | Planned | F008, F034 | [#389](https://github.com/dougis-org/dnd-tracker/issues/389) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F036 | Combat Session Model | Planned | F034 | [#390](https://github.com/dougis-org/dnd-tracker/issues/390) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F037 | Initiative System | Planned | F036 | [#391](https://github.com/dougis-org/dnd-tracker/issues/391) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F038 | Combat Tracker Basic Integration | Planned | F009, F037 | [#392](https://github.com/dougis-org/dnd-tracker/issues/392) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F039 | HP Tracking System | Planned | F036 | [#393](https://github.com/dougis-org/dnd-tracker/issues/393) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F040 | HP Tracking UI Integration | Planned | F038, F039 | [#394](https://github.com/dougis-org/dnd-tracker/issues/394) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F041 | HP History & Undo | Planned | F039 | [#395](https://github.com/dougis-org/dnd-tracker/issues/395) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F042 | Status Effects Model | Planned | F036 | [#396](https://github.com/dougis-org/dnd-tracker/issues/396) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
-| F043 | Status Effects UI | Planned | F038, F042 | [#397](https://github.com/dougis-org/dnd-tracker/issues/397) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
-| F044 | Lair Actions System | Planned | F036 | [#398](https://github.com/dougis-org/dnd-tracker/issues/398) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
-| F045 | Combat Session Management | Planned | F036 | [#399](https://github.com/dougis-org/dnd-tracker/issues/399) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
-| F046 | Combat Log System | Planned | F036 | [#400](https://github.com/dougis-org/dnd-tracker/issues/400) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
-| F047 | Tier Limit Enforcement | Planned | F014 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F048 | Data Export System | Planned | F018, F034, F046 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/issues/383) |
-| F049 | Data Import System | Planned | F018 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F050 | Stripe Setup & Webhooks | Planned | F014 | [#401](https://github.com/dougis-org/dnd-tracker/issues/401) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F051 | Subscription Checkout | Planned | F050 | [#402](https://github.com/dougis-org/dnd-tracker/issues/402) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F052 | Subscription Management | Planned | F012, F051 | [#403](https://github.com/dougis-org/dnd-tracker/issues/403) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F053 | Billing Portal | Planned | F050 | [#404](https://github.com/dougis-org/dnd-tracker/issues/404) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F054 | Free Trial System | Planned | F051 | [#405](https://github.com/dougis-org/dnd-tracker/issues/405) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
-| F055 | Character Sharing | Planned | F018 | [#407](https://github.com/dougis-org/dnd-tracker/issues/407) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
-| F056 | Advanced Combat Logging (Paid) | Planned | F046, F047 | [#408](https://github.com/dougis-org/dnd-tracker/issues/408) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
-| F057 | Custom Themes (Paid) | Planned | F001, F047 | [#409](https://github.com/dougis-org/dnd-tracker/issues/409) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
-| F058 | Collaborative Mode (Paid) | Planned | F036, F047 | [#410](https://github.com/dougis-org/dnd-tracker/issues/410) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
-| F059 | Performance Optimization | Planned | All previous features | [#411](https://github.com/dougis-org/dnd-tracker/issues/411) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
-| F060 | Polish & Launch Prep | Planned | All previous features | [#412](https://github.com/dougis-org/dnd-tracker/issues/412) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
+| F018 | Character Read Operations | Planned | F014 | [#372](https://github.com/dougis-org/dnd-tracker/issues/372) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F019 | Character Write Operations | Planned | F018 | [#426](https://github.com/dougis-org/dnd-tracker/issues/426) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F020 | Character Validation & Business Rules | Planned | F018, F019 | [#427](https://github.com/dougis-org/dnd-tracker/issues/427) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F021 | Character List Page Integration | Planned | F005, F018 | [#373](https://github.com/dougis-org/dnd-tracker/issues/373) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F022 | Character Creation Form | Planned | F021 | [#374](https://github.com/dougis-org/dnd-tracker/issues/374) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F023 | Character Edit Form | Planned | F021 | [#375](https://github.com/dougis-org/dnd-tracker/issues/375) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F024 | Character Templates | Planned | F018 | [#376](https://github.com/dougis-org/dnd-tracker/issues/376) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F025 | Monster Read Operations | Planned | F014 | [#377](https://github.com/dougis-org/dnd-tracker/issues/377) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F026 | Monster Write Operations | Planned | F025 | [#428](https://github.com/dougis-org/dnd-tracker/issues/428) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F027 | Monster Validation & SRD Integration | Planned | F025, F026 | [#429](https://github.com/dougis-org/dnd-tracker/issues/429) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F028 | Monster List Page Integration | Planned | F007, F025 | [#378](https://github.com/dougis-org/dnd-tracker/issues/378) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F029 | Monster Creation/Edit Forms | Planned | F028 | [#379](https://github.com/dougis-org/dnd-tracker/issues/379) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F030 | Item Model & API | Planned | F014 | [#380](https://github.com/dougis-org/dnd-tracker/issues/380) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F031 | Item Management Pages | Planned | F011, F030 | [#381](https://github.com/dougis-org/dnd-tracker/issues/381) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F032 | Party Model & Read Operations | Planned | F014, F018 | [#382](https://github.com/dougis-org/dnd-tracker/issues/382) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F033 | Party Management Operations | Planned | F032 | [#430](https://github.com/dougis-org/dnd-tracker/issues/430) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F034 | Party Management Integration | Planned | F006, F032 | [#383](https://github.com/dougis-org/dnd-tracker/issues/383) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
+| F035 | Service Worker Setup | Planned | F001 | [#384](https://github.com/dougis-org/dnd-tracker/issues/384) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F036 | IndexedDB Setup | Planned | F035 | [#385](https://github.com/dougis-org/dnd-tracker/issues/385) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F037 | Offline Combat with Local Storage | Planned | F036, F044 | [#386](https://github.com/dougis-org/dnd-tracker/issues/386) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F038 | Sync Queue & Conflict Detection | Planned | F037 | [#432](https://github.com/dougis-org/dnd-tracker/issues/432) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F039 | Background Sync | Planned | F037 | [#387](https://github.com/dougis-org/dnd-tracker/issues/387) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F040 | Encounter Model & Read Operations | Planned | F014, F032, F025 | [#388](https://github.com/dougis-org/dnd-tracker/issues/388) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F041 | Encounter Write Operations | Planned | F040 | [#433](https://github.com/dougis-org/dnd-tracker/issues/433) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F042 | Encounter Templates & Presets | Planned | F040 | [#435](https://github.com/dougis-org/dnd-tracker/issues/435) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F043 | Encounter Builder Integration | Planned | F008, F040 | [#389](https://github.com/dougis-org/dnd-tracker/issues/389) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F044 | Combat Session Model & State | Planned | F040 | [#390](https://github.com/dougis-org/dnd-tracker/issues/390) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F045 | Combat Session Persistence | Planned | F044 | [#436](https://github.com/dougis-org/dnd-tracker/issues/436) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F046 | Initiative Calculation & Ordering | Planned | F044 | [#391](https://github.com/dougis-org/dnd-tracker/issues/391) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F047 | Initiative Modifiers & Effects | Planned | F046 | [#437](https://github.com/dougis-org/dnd-tracker/issues/437) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F048 | Combat Tracker Basic Integration | Planned | F009, F046 | [#392](https://github.com/dougis-org/dnd-tracker/issues/392) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F049 | HP Model & Basic Tracking | Planned | F044 | [#393](https://github.com/dougis-org/dnd-tracker/issues/393) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F050 | Damage Types & Resistances | Planned | F049 | [#438](https://github.com/dougis-org/dnd-tracker/issues/438) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F051 | HP Tracking UI Integration | Planned | F048, F049 | [#394](https://github.com/dougis-org/dnd-tracker/issues/394) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F052 | HP History & Undo | Planned | F049 | [#395](https://github.com/dougis-org/dnd-tracker/issues/395) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F053 | Status Effects Model & Basic Effects | Planned | F044 | [#396](https://github.com/dougis-org/dnd-tracker/issues/396) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F054 | Complex Status Effects & Conditions | Planned | F053 | [#439](https://github.com/dougis-org/dnd-tracker/issues/439) | [Phase 5](https://github.com/dougis-org/dnd-tracker/milestone/5) |
+| F055 | Status Effects UI | Planned | F048, F053 | [#397](https://github.com/dougis-org/dnd-tracker/issues/397) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
+| F056 | Lair Actions System | Planned | F044 | [#398](https://github.com/dougis-org/dnd-tracker/issues/398) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
+| F057 | Save & Load Combat Sessions | Planned | F044 | [#399](https://github.com/dougis-org/dnd-tracker/issues/399) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
+| F058 | Combat Session History & Archive | Planned | F057 | [#440](https://github.com/dougis-org/dnd-tracker/issues/440) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
+| F059 | Combat Event Logging | Planned | F044 | [#400](https://github.com/dougis-org/dnd-tracker/issues/400) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
+| F060 | Log Export & Analysis | Planned | F059 | [#441](https://github.com/dougis-org/dnd-tracker/issues/441) | [Phase 6](https://github.com/dougis-org/dnd-tracker/milestone/6) |
+| F061 | Tier Limit Enforcement | Planned | F014 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F062 | Data Export System | Planned | F018, F040, F059 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F063 | Data Import System | Planned | F018 | Not Created | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F064 | Stripe Account Setup & Integration | Planned | F014 | [#401](https://github.com/dougis-org/dnd-tracker/issues/401) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F065 | Webhook Handling & Events | Planned | F064 | [#442](https://github.com/dougis-org/dnd-tracker/issues/442) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F066 | Subscription Checkout | Planned | F064 | [#402](https://github.com/dougis-org/dnd-tracker/issues/402) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F067 | Subscription Management | Planned | F012, F066 | [#403](https://github.com/dougis-org/dnd-tracker/issues/403) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F068 | Billing Portal | Planned | F064 | [#404](https://github.com/dougis-org/dnd-tracker/issues/404) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F069 | Free Trial System | Planned | F066 | [#405](https://github.com/dougis-org/dnd-tracker/issues/405) | [Phase 7](https://github.com/dougis-org/dnd-tracker/milestone/7) |
+| F070 | Character Sharing | Planned | F018 | [#407](https://github.com/dougis-org/dnd-tracker/issues/407) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
+| F071 | Advanced Combat Logging (Paid) | Planned | F059, F061 | [#408](https://github.com/dougis-org/dnd-tracker/issues/408) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
+| F072 | Custom Themes (Paid) | Planned | F001, F061 | [#409](https://github.com/dougis-org/dnd-tracker/issues/409) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
+| F073 | Collaborative Mode (Paid) | Planned | F044, F061 | [#410](https://github.com/dougis-org/dnd-tracker/issues/410) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
+| F074 | Performance Optimization | Planned | All previous features | [#411](https://github.com/dougis-org/dnd-tracker/issues/411) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
+| F075 | Polish & Launch Prep | Planned | All previous features | [#412](https://github.com/dougis-org/dnd-tracker/issues/412) | [Phase 8](https://github.com/dougis-org/dnd-tracker/milestone/8) |
 
 ## Phase 1: UI Foundation & Site Structure (Week 1)
 
@@ -732,41 +749,91 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 **Milestone**: [Phase 3: Core Entity Management](https://github.com/dougis-org/dnd-tracker/milestone/3)  
 **PRD Alignment**: §§4.2-4.4 (Party, Encounter, and Creature Management)
 
-### Feature 018: Character Model & API
+> **Note**: Features F018-F034 represent decomposed character, monster, party, and entity APIs. See issue descriptions for decomposition details.
 
-**Depends on**: Feature 014
-**Duration**: Day 2
+### Feature 018: Character Read Operations
+
+**Previously**: Character Model & API (decomposed)  
+**Depends on**: Feature 014  
+**Duration**: Day 1  
+**GitHub Issue**: [#372](https://github.com/dougis-org/dnd-tracker/issues/372)  
 **Deliverables**:
 
 - Character Mongoose model
-- Character creation API
-- Character list API
-- Character detail API
-- Character update API
-- Character delete API
-- Validation rules
-- Tests: API endpoints, validation
+- Character list API (GET)
+- Character detail API (GET)
+- Database indexes
+- Tests: Read operations
+
+**API Routes**:
+
+- `GET /api/v1/characters`
+- `GET /api/v1/characters/:id`
+
+**Acceptance Criteria**:
+
+- [ ] Character model defined
+- [ ] List returns user's characters
+- [ ] Detail endpoint returns single character
+- [ ] Proper filtering and pagination
+
+---
+
+### Feature 019: Character Write Operations
+
+**Decomposed from**: F018 Character Model & API  
+**Depends on**: Feature 018  
+**Duration**: Day 1  
+**GitHub Issue**: [#426](https://github.com/dougis-org/dnd-tracker/issues/426)  
+**Deliverables**:
+
+- Character creation API (POST)
+- Character update API (PUT)
+- Character delete API (DELETE)
+- Optimistic locking
+- Tests: Write operations
 
 **API Routes**:
 
 - `POST /api/v1/characters`
-- `GET /api/v1/characters`
-- `GET /api/v1/characters/:id`
 - `PUT /api/v1/characters/:id`
 - `DELETE /api/v1/characters/:id`
 
 **Acceptance Criteria**:
 
 - [ ] Can create character via API
-- [ ] List returns user's characters
 - [ ] Update modifies character
 - [ ] Delete removes character
-- [ ] Validation rejects invalid data
+- [ ] Concurrent updates handled
 
 ---
 
-### Feature 019: Character List Page Integration
+### Feature 020: Character Validation & Business Rules
 
+**Decomposed from**: F018 Character Model & API  
+**Depends on**: Feature 018, Feature 019  
+**Duration**: Day 1  
+**GitHub Issue**: [#427](https://github.com/dougis-org/dnd-tracker/issues/427)  
+**Deliverables**:
+
+- Comprehensive validation rules
+- Ability score validation
+- Level/XP validation
+- HP boundary checks
+- Tests: Validation edge cases
+
+**Acceptance Criteria**:
+
+- [ ] Validation rejects invalid ability scores
+- [ ] Level/XP consistency enforced
+- [ ] HP cannot exceed maximum
+- [ ] Clear error messages
+
+---
+
+### Feature 021: Character List Page Integration
+
+**Previously**: F019 (renumbered)  
 **Depends on**: Feature 005, Feature 018
 **Duration**: Day 1
 **Deliverables**:
@@ -788,10 +855,12 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 020: Character Creation Form
+### Feature 022: Character Creation Form
 
-**Depends on**: Feature 019
-**Duration**: Day 1
+**Previously**: F020 (renumbered)  
+**Depends on**: Feature 021  
+**Duration**: Day 1  
+**GitHub Issue**: [#374](https://github.com/dougis-org/dnd-tracker/issues/374)  
 **Deliverables**:
 
 - Connect form to creation API
@@ -810,9 +879,10 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 021: Character Edit Form
+### Feature 023: Character Edit Form
 
-**Depends on**: Feature 019
+**Previously**: F021 (renumbered)  
+**Depends on**: Feature 021
 **Duration**: Day 1
 **Deliverables**:
 
@@ -830,10 +900,12 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 022: Character Templates
+### Feature 024: Character Templates
 
-**Depends on**: Feature 018
-**Duration**: Day 1
+**Previously**: F022 (renumbered)  
+**Depends on**: Feature 018  
+**Duration**: Day 1  
+**GitHub Issue**: [#376](https://github.com/dougis-org/dnd-tracker/issues/376)  
 **Deliverables**:
 
 - Template creation from character
@@ -856,38 +928,88 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 023: Monster Model & API
+### Feature 025: Monster Read Operations
 
-**Depends on**: Feature 014
-**Duration**: Day 2
+**Previously**: F023 Monster Model & API (decomposed)  
+**Depends on**: Feature 014  
+**Duration**: Day 1  
+**GitHub Issue**: [#377](https://github.com/dougis-org/dnd-tracker/issues/377)  
 **Deliverables**:
 
 - Monster Mongoose model
-- Monster CRUD APIs
-- Special abilities sub-schema
-- Legendary/lair actions
-- CR validation
-- Tests: Monster APIs
+- Monster list API (GET)
+- Monster detail API (GET)
+- CR calculation
+- Tests: Read operations
+
+**API Routes**:
+
+- `GET /api/v1/monsters`
+- `GET /api/v1/monsters/:id`
+
+**Acceptance Criteria**:
+
+- [ ] Monster model defined
+- [ ] List returns user's monsters
+- [ ] CR calculates correctly
+- [ ] Special abilities in schema
+
+---
+
+### Feature 026: Monster Write Operations
+
+**Decomposed from**: F023 Monster Model & API  
+**Depends on**: Feature 025  
+**Duration**: Day 1  
+**GitHub Issue**: [#428](https://github.com/dougis-org/dnd-tracker/issues/428)  
+**Deliverables**:
+
+- Monster creation API (POST)
+- Monster update API (PUT)
+- Monster delete API (DELETE)
+- Tests: Write operations
 
 **API Routes**:
 
 - `POST /api/v1/monsters`
-- `GET /api/v1/monsters`
-- `GET /api/v1/monsters/:id`
 - `PUT /api/v1/monsters/:id`
 - `DELETE /api/v1/monsters/:id`
 
 **Acceptance Criteria**:
 
-- [ ] Monster CRUD works
-- [ ] Special abilities save
-- [ ] CR calculates correctly
+- [ ] Can create monsters
+- [ ] Updates save correctly
+- [ ] Delete removes monster
 
 ---
 
-### Feature 024: Monster List Page Integration
+### Feature 027: Monster Validation & SRD Integration
 
-**Depends on**: Feature 007, Feature 023
+**Decomposed from**: F023 Monster Model & API  
+**Depends on**: Feature 025, Feature 026  
+**Duration**: Day 1  
+**GitHub Issue**: [#429](https://github.com/dougis-org/dnd-tracker/issues/429)  
+**Deliverables**:
+
+- Comprehensive validation rules
+- CR validation
+- SRD monster import
+- Legendary/lair action validation
+- Tests: Validation, SRD import
+
+**Acceptance Criteria**:
+
+- [ ] CR validation enforced
+- [ ] Can import SRD monsters
+- [ ] Legendary actions validated
+- [ ] Clear error messages
+
+---
+
+### Feature 028: Monster List Page Integration
+
+**Previously**: F024 (renumbered)  
+**Depends on**: Feature 007, Feature 025
 **Duration**: Day 1
 **Deliverables**:
 
@@ -900,15 +1022,17 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 **Acceptance Criteria**:
 
 - [ ] List shows monsters
-- [ ] Filters work
+- [ ] Filters work (CR, type)
 - [ ] Search functions
 
 ---
 
-### Feature 025: Monster Creation/Edit Forms
+### Feature 029: Monster Creation/Edit Forms
 
-**Depends on**: Feature 024
-**Duration**: Day 1
+**Previously**: F025 (renumbered)  
+**Depends on**: Feature 028  
+**Duration**: Day 1  
+**GitHub Issue**: [#379](https://github.com/dougis-org/dnd-tracker/issues/379)  
 **Deliverables**:
 
 - Connect forms to APIs
@@ -925,10 +1049,12 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 026: Item Model & API
+### Feature 030: Item Model & API
 
-**Depends on**: Feature 014
-**Duration**: Day 1
+**Previously**: F026 (renumbered)  
+**Depends on**: Feature 014  
+**Duration**: Day 1  
+**GitHub Issue**: [#380](https://github.com/dougis-org/dnd-tracker/issues/380)  
 **Deliverables**:
 
 - Item Mongoose model
@@ -953,10 +1079,12 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 027: Item Management Pages
+### Feature 031: Item Management Pages
 
-**Depends on**: Feature 011, Feature 026
-**Duration**: Day 1
+**Previously**: F027 (renumbered)  
+**Depends on**: Feature 011, Feature 030  
+**Duration**: Day 1  
+**GitHub Issue**: [#381](https://github.com/dougis-org/dnd-tracker/issues/381)  
 **Deliverables**:
 
 - Connect item pages to APIs
@@ -973,21 +1101,48 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 028: Party Model & API
+### Feature 032: Party Model & Read Operations
 
-**Depends on**: Feature 014, Feature 018
-**Duration**: Day 1
+**Previously**: F028 Party Model & API (decomposed)  
+**Depends on**: Feature 014, Feature 018  
+**Duration**: Day 1  
+**GitHub Issue**: [#382](https://github.com/dougis-org/dnd-tracker/issues/382)  
 **Deliverables**:
 
 - Party Mongoose model
-- Party CRUD APIs
+- Party list API (GET)
+- Party detail API (GET)
+- Tests: Read operations
+
+**API Routes**:
+
+- `GET /api/v1/parties`
+- `GET /api/v1/parties/:id`
+
+**Acceptance Criteria**:
+
+- [ ] Party model defined
+- [ ] List returns user's parties
+- [ ] Member associations work
+
+---
+
+### Feature 033: Party Management Operations
+
+**Decomposed from**: F028 Party Model & API  
+**Depends on**: Feature 032  
+**Duration**: Day 1  
+**GitHub Issue**: [#430](https://github.com/dougis-org/dnd-tracker/issues/430)  
+**Deliverables**:
+
+- Party creation/update/delete APIs
 - Member management APIs
-- Tests: Party APIs
+- Member limit enforcement
+- Tests: Write operations
 
 **API Routes**:
 
 - `POST /api/v1/parties`
-- `GET /api/v1/parties`
 - `PUT /api/v1/parties/:id`
 - `DELETE /api/v1/parties/:id`
 - `POST /api/v1/parties/:id/members`
@@ -1001,10 +1156,12 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 029: Party Management Integration
+### Feature 034: Party Management Integration
 
-**Depends on**: Feature 006, Feature 028
-**Duration**: Day 1
+**Previously**: F029 (renumbered)  
+**Depends on**: Feature 006, Feature 032  
+**Duration**: Day 1  
+**GitHub Issue**: [#383](https://github.com/dougis-org/dnd-tracker/issues/383)  
 **Deliverables**:
 
 - Connect party pages to APIs
@@ -1029,8 +1186,11 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 **Milestone**: [Phase 4: Offline Foundations](https://github.com/dougis-org/dnd-tracker/milestone/4)  
 **PRD Alignment**: §§4.6, 6.1, 8.3 (Data Persistence & Offline Experience)
 
-### Feature 030: Service Worker Setup
+> **Note**: Features F035-F039 represent offline-first architecture. See issue descriptions for decomposition details.
 
+### Feature 035: Service Worker Setup
+
+**Previously**: F030 (renumbered)  
 **Depends on**: Feature 001
 **Duration**: Day 1
 **Deliverables**:
@@ -1049,10 +1209,12 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 031: IndexedDB Setup
+### Feature 036: IndexedDB Setup
 
-**Depends on**: Feature 030
-**Duration**: Day 1
+**Previously**: F031 (renumbered)  
+**Depends on**: Feature 035  
+**Duration**: Day 1  
+**GitHub Issue**: [#385](https://github.com/dougis-org/dnd-tracker/issues/385)  
 **Deliverables**:
 
 - IndexedDB wrapper
@@ -1069,34 +1231,58 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 032: Offline Combat
+### Feature 037: Offline Combat with Local Storage
 
-**Depends on**: Feature 031, Feature 036
-**Duration**: Day 2
+**Previously**: F032 Offline Combat (decomposed)  
+**Depends on**: Feature 036, Feature 044  
+**Duration**: Day 1  
+**GitHub Issue**: [#386](https://github.com/dougis-org/dnd-tracker/issues/386)  
 **Deliverables**:
 
 - Local combat storage
 - Offline combat creation
 - Local state management
-- Sync queue
 - Tests: Offline combat
 
 **Acceptance Criteria**:
 
 - [ ] Combat experiences operate offline end-to-end
 - [ ] Local state persists across refresh
-- [ ] Sync queue records pending operations
+- [ ] Works without network connection
 
 ---
 
-### Feature 033: Background Sync
+### Feature 038: Sync Queue & Conflict Detection
 
-**Depends on**: Feature 032
-**Duration**: Day 1
+**Decomposed from**: F032 Offline Combat  
+**Depends on**: Feature 037  
+**Duration**: Day 1  
+**GitHub Issue**: [#432](https://github.com/dougis-org/dnd-tracker/issues/432)  
+**Deliverables**:
+
+- Sync queue implementation
+- Conflict detection logic
+- Merge strategies
+- Tests: Sync and conflicts
+
+**Acceptance Criteria**:
+
+- [ ] Sync queue records pending operations
+- [ ] Conflict detection identifies issues
+- [ ] Merge strategies handle conflicts
+
+---
+
+### Feature 039: Background Sync
+
+**Previously**: F033 (renumbered)  
+**Depends on**: Feature 037  
+**Duration**: Day 1  
+**GitHub Issue**: [#387](https://github.com/dougis-org/dnd-tracker/issues/387)  
 **Deliverables**:
 
 - Sync mechanism
-- Conflict resolution
+- Automatic sync when online
 - Sync status UI
 - Error handling
 - Tests: Sync system
@@ -1104,7 +1290,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 **Acceptance Criteria**:
 
 - [ ] Online reconciliation merges queued changes
-- [ ] Conflict resolution follows documented policy
+- [ ] Automatic sync when connection restored
 - [ ] Sync status indicator visible to users
 
 ---
@@ -1117,39 +1303,92 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 **Milestone**: [Phase 5: Combat Engine Core](https://github.com/dougis-org/dnd-tracker/milestone/5)  
 **PRD Alignment**: §§4.3-4.5 (Encounter Builder & Combat Tracker foundations)
 
-### Feature 034: Encounter Model & API
+> **Note**: Features F040-F055 include decomposed encounter, combat session, initiative, HP, and status effect systems.
 
-**Depends on**: Feature 014, Feature 028, Feature 023
-**Duration**: Day 2
+### Feature 040: Encounter Model & Read Operations
+
+**Previously**: F034 Encounter Model & API (decomposed)  
+**Depends on**: Feature 014, Feature 032, Feature 025  
+**Duration**: Day 1  
+**GitHub Issue**: [#388](https://github.com/dougis-org/dnd-tracker/issues/388)  
 **Deliverables**:
 
 - Encounter Mongoose model
-- Encounter CRUD APIs
+- Encounter list API (GET)
+- Encounter detail API (GET)
+- Participant associations
+- Tests: Read operations
+
+**API Routes**:
+
+- `GET /api/v1/encounters`
+- `GET /api/v1/encounters/:id`
+
+**Acceptance Criteria**:
+
+- [ ] Encounter model defined
+- [ ] List returns user's encounters
+- [ ] CR calculation logic present
+
+---
+
+### Feature 041: Encounter Write Operations
+
+**Decomposed from**: F034 Encounter Model & API  
+**Depends on**: Feature 040  
+**Duration**: Day 1  
+**GitHub Issue**: [#433](https://github.com/dougis-org/dnd-tracker/issues/433)  
+**Deliverables**:
+
+- Encounter creation API (POST)
+- Encounter update API (PUT)
+- Encounter delete API (DELETE)
 - Participant management
-- CR calculation
-- Lair action configuration
-- Tests: Encounter APIs
+- Tests: Write operations
 
 **API Routes**:
 
 - `POST /api/v1/encounters`
-- `GET /api/v1/encounters`
 - `PUT /api/v1/encounters/:id`
 - `DELETE /api/v1/encounters/:id`
 - `POST /api/v1/encounters/:id/participants`
 
 **Acceptance Criteria**:
 
-- [ ] Encounter CRUD works
+- [ ] Can create encounters
 - [ ] Can add participants
-- [ ] CR calculates
+- [ ] Updates save correctly
 
 ---
 
-### Feature 035: Encounter Builder Integration
+### Feature 042: Encounter Templates & Presets
 
-**Depends on**: Feature 008, Feature 034
-**Duration**: Day 1
+**Decomposed from**: F034 Encounter Model & API  
+**Depends on**: Feature 040  
+**Duration**: Day 1  
+**GitHub Issue**: [#435](https://github.com/dougis-org/dnd-tracker/issues/435)  
+**Deliverables**:
+
+- Template system
+- CR-based presets
+- Lair action templates
+- Quick encounter generation
+- Tests: Templates
+
+**Acceptance Criteria**:
+
+- [ ] Can save encounters as templates
+- [ ] CR-based presets available
+- [ ] Quick generation works
+
+---
+
+### Feature 043: Encounter Builder Integration
+
+**Previously**: F035 (renumbered)  
+**Depends on**: Feature 008, Feature 040  
+**Duration**: Day 1  
+**GitHub Issue**: [#389](https://github.com/dougis-org/dnd-tracker/issues/389)  
 **Deliverables**:
 
 - Connect builder to APIs
@@ -1167,35 +1406,60 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 036: Combat Session Model
+### Feature 044: Combat Session Model & State
 
-**Depends on**: Feature 034
-**Duration**: Day 1
+**Previously**: F036 Combat Session Model (decomposed)  
+**Depends on**: Feature 040  
+**Duration**: Day 1  
+**GitHub Issue**: [#390](https://github.com/dougis-org/dnd-tracker/issues/390)  
 **Deliverables**:
 
 - CombatSession model
 - Session creation from encounter
 - Participant state tracking
 - Round/turn tracking
+- State machine logic
 - Tests: Session model
 
 **API Routes**:
 
 - `POST /api/v1/combat/sessions`
 - `GET /api/v1/combat/sessions/:id`
-- `PUT /api/v1/combat/sessions/:id`
+- `PUT /api/v1/combat/sessions/:id/state`
 
 **Acceptance Criteria**:
 
-- [ ] Can start combat
-- [ ] Session persists
-- [ ] State tracks correctly
+- [ ] Can start combat from encounter
+- [ ] Session state persists
+- [ ] Round/turn tracking works
 
 ---
 
-### Feature 037: Initiative System
+### Feature 045: Combat Session Persistence
 
-**Depends on**: Feature 036
+**Decomposed from**: F036 Combat Session Model  
+**Depends on**: Feature 044  
+**Duration**: Day 1  
+**GitHub Issue**: [#436](https://github.com/dougis-org/dnd-tracker/issues/436)  
+**Deliverables**:
+
+- Save/load combat sessions
+- Session snapshots
+- Auto-save functionality
+- Tests: Persistence
+
+**Acceptance Criteria**:
+
+- [ ] Sessions save automatically
+- [ ] Can load saved sessions
+- [ ] Snapshots capture full state
+
+---
+
+### Feature 046: Initiative Calculation & Ordering
+
+**Previously**: F037 Initiative System (decomposed)  
+**Depends on**: Feature 044
 **Duration**: Day 2
 **Deliverables**:
 
@@ -1221,10 +1485,34 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 038: Combat Tracker Basic Integration
+### Feature 047: Initiative Modifiers & Effects
 
-**Depends on**: Feature 009, Feature 037
-**Duration**: Day 1
+**Decomposed from**: F037 Initiative System  
+**Depends on**: Feature 046  
+**Duration**: Day 1  
+**GitHub Issue**: [#437](https://github.com/dougis-org/dnd-tracker/issues/437)  
+**Deliverables**:
+
+- Advantage/disadvantage on initiative
+- Initiative bonuses
+- Surprise rounds
+- Alert feat support
+- Tests: Modifiers
+
+**Acceptance Criteria**:
+
+- [ ] Advantage/disadvantage works
+- [ ] Bonuses apply correctly
+- [ ] Surprise rounds handled
+
+---
+
+### Feature 048: Combat Tracker Basic Integration
+
+**Previously**: F038 (renumbered)  
+**Depends on**: Feature 009, Feature 046  
+**Duration**: Day 1  
+**GitHub Issue**: [#392](https://github.com/dougis-org/dnd-tracker/issues/392)  
 **Deliverables**:
 
 - Load combat session
@@ -1243,16 +1531,18 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 039: HP Tracking System
+### Feature 049: HP Model & Basic Tracking
 
-**Depends on**: Feature 036
-**Duration**: Day 1
+**Previously**: F039 HP Tracking System (decomposed)  
+**Depends on**: Feature 044  
+**Duration**: Day 1  
+**GitHub Issue**: [#393](https://github.com/dougis-org/dnd-tracker/issues/393)  
 **Deliverables**:
 
+- HP tracking model
 - Apply damage API
 - Apply healing API
 - Temporary HP
-- HP validation
 - Death/unconscious states
 - Tests: HP system
 
@@ -1271,10 +1561,34 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 040: HP Tracking UI Integration
+### Feature 050: Damage Types & Resistances
 
-**Depends on**: Feature 038, Feature 039
-**Duration**: Day 1
+**Decomposed from**: F039 HP Tracking System  
+**Depends on**: Feature 049  
+**Duration**: Day 1  
+**GitHub Issue**: [#438](https://github.com/dougis-org/dnd-tracker/issues/438)  
+**Deliverables**:
+
+- Damage type selection
+- Resistance/vulnerability/immunity logic
+- Damage calculation with types
+- Tests: Damage types
+
+**Acceptance Criteria**:
+
+- [ ] Damage types selectable
+- [ ] Resistance halves damage
+- [ ] Immunity prevents damage
+- [ ] Vulnerability doubles damage
+
+---
+
+### Feature 051: HP Tracking UI Integration
+
+**Previously**: F040 (renumbered)  
+**Depends on**: Feature 048, Feature 049  
+**Duration**: Day 1  
+**GitHub Issue**: [#394](https://github.com/dougis-org/dnd-tracker/issues/394)  
 **Deliverables**:
 
 - Damage/heal inputs
@@ -1292,10 +1606,12 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 041: HP History & Undo
+### Feature 052: HP History & Undo
 
-**Depends on**: Feature 039
-**Duration**: Day 1
+**Previously**: F041 (renumbered)  
+**Depends on**: Feature 049  
+**Duration**: Day 1  
+**GitHub Issue**: [#395](https://github.com/dougis-org/dnd-tracker/issues/395)  
 **Deliverables**:
 
 - HP change history
@@ -1318,36 +1634,64 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 042: Status Effects Model
+### Feature 053: Status Effects Model & Basic Effects
 
-**Depends on**: Feature 036
-**Duration**: Day 1
+**Previously**: F042 Status Effects Model (decomposed)  
+**Depends on**: Feature 044  
+**Duration**: Day 1  
+**GitHub Issue**: [#396](https://github.com/dougis-org/dnd-tracker/issues/396)  
 **Deliverables**:
 
 - StatusEffect definitions
 - ActiveStatusEffect tracking
 - Duration management
 - Effect expiration
+- Basic conditions (blinded, prone, etc.)
 - Tests: Status model
 
 **Data**:
 
-- All D&D 5e conditions
+- Core D&D 5e conditions
 - Duration types
 - Effect descriptions
 
 **Acceptance Criteria**:
 
-- [ ] Effects defined
+- [ ] Core effects defined
 - [ ] Can apply effects
-- [ ] Duration tracks
+- [ ] Duration tracks correctly
 
 ---
 
-### Feature 043: Status Effects UI
+### Feature 054: Complex Status Effects & Conditions
 
-**Depends on**: Feature 038, Feature 042
-**Duration**: Day 1
+**Decomposed from**: F042 Status Effects Model  
+**Depends on**: Feature 053  
+**Duration**: Day 1  
+**GitHub Issue**: [#439](https://github.com/dougis-org/dnd-tracker/issues/439)  
+**Deliverables**:
+
+- Advanced conditions (charmed, frightened, etc.)
+- Concentration tracking
+- Custom status effects
+- Effect stacking rules
+- Tests: Complex effects
+
+**Acceptance Criteria**:
+
+- [ ] Advanced conditions work
+- [ ] Concentration tracked
+- [ ] Custom effects supported
+- [ ] Stacking rules enforced
+
+---
+
+### Feature 055: Status Effects UI
+
+**Previously**: F043 (renumbered)  
+**Depends on**: Feature 048, Feature 053  
+**Duration**: Day 1  
+**GitHub Issue**: [#397](https://github.com/dougis-org/dnd-tracker/issues/397)  
 **Deliverables**:
 
 - Apply status effect UI
@@ -1371,10 +1715,22 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 044: Lair Actions System
+**Governance Checkpoint (AI Agent)**: Validate combat engine against `docs/Product-Requirements.md §§4.3-4.5` and ensure state management patterns are documented.
 
-**Depends on**: Feature 036
-**Duration**: Day 1
+## Phase 6: Combat Polish & State (Week 7)
+
+**Parent Issue**: [#340](https://github.com/dougis-org/dnd-tracker/issues/340)  
+**Milestone**: [Phase 6: Combat Polish & State](https://github.com/dougis-org/dnd-tracker/milestone/6)  
+**PRD Alignment**: §§4.5 (Combat Session Persistence & Logging)
+
+> **Note**: Features F056-F061 include session management, lair actions, and logging with decomposed save/load and export features.
+
+### Feature 056: Lair Actions System
+
+**Previously**: F044 (renumbered)  
+**Depends on**: Feature 044  
+**Duration**: Day 1  
+**GitHub Issue**: [#398](https://github.com/dougis-org/dnd-tracker/issues/398)  
 **Deliverables**:
 
 - Lair action triggers
@@ -1396,54 +1752,116 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 045: Combat Session Management
+### Feature 057: Save & Load Combat Sessions
 
-**Depends on**: Feature 036
-**Duration**: Day 1
+**Previously**: F045 Combat Session Management (decomposed)  
+**Depends on**: Feature 044  
+**Duration**: Day 1  
+**GitHub Issue**: [#399](https://github.com/dougis-org/dnd-tracker/issues/399)  
 **Deliverables**:
 
-- Pause/resume combat
-- End combat
-- Combat summary
-- Session list page
-- Tests: Session management
+- Save combat sessions
+- Load saved sessions
+- Auto-save functionality
+- Session restoration
+- Tests: Save/load
 
 **API Routes**:
 
-- `PUT /api/v1/combat/sessions/:id/pause`
-- `PUT /api/v1/combat/sessions/:id/resume`
-- `PUT /api/v1/combat/sessions/:id/end`
+- `POST /api/v1/combat/sessions/:id/save`
+- `GET /api/v1/combat/sessions/saved`
+- `POST /api/v1/combat/sessions/:id/load`
 
 **Acceptance Criteria**:
 
-- [ ] Can pause/resume
-- [ ] End generates summary
-- [ ] List shows sessions
+- [ ] Can save sessions
+- [ ] Can load sessions
+- [ ] Auto-save works
+- [ ] Full state restored
 
 ---
 
-### Feature 046: Combat Log System
+### Feature 058: Combat Session History & Archive
 
-**Depends on**: Feature 036
-**Duration**: Day 1
+**Decomposed from**: F045 Combat Session Management  
+**Depends on**: Feature 057  
+**Duration**: Day 1  
+**GitHub Issue**: [#440](https://github.com/dougis-org/dnd-tracker/issues/440)  
+**Deliverables**:
+
+- Session history list
+- Archive old sessions
+- Session statistics
+- Search/filter
+- Tests: History management
+
+**Acceptance Criteria**:
+
+- [ ] History list displays
+- [ ] Can archive sessions
+- [ ] Statistics calculated
+- [ ] Search/filter works
+
+---
+
+### Feature 059: Combat Event Logging
+
+**Previously**: F046 Combat Log System (decomposed)  
+**Depends on**: Feature 044  
+**Duration**: Day 1  
+**GitHub Issue**: [#400](https://github.com/dougis-org/dnd-tracker/issues/400)  
 **Deliverables**:
 
 - Action logging
+- Event timestamps
 - Log display panel
-- Filter by type
-- Export log
+- Filter by type/actor
 - Tests: Logging system
 
 **Acceptance Criteria**:
 
-- [ ] Actions log
-- [ ] Log displays
-- [ ] Can filter
-- [ ] Export works
+- [ ] Actions log correctly
+- [ ] Log displays in UI
+- [ ] Filters work
+- [ ] Timestamps accurate
 
 ---
 
-### Feature 047: Tier Limit Enforcement
+### Feature 060: Log Export & Analysis
+
+**Decomposed from**: F046 Combat Log System  
+**Depends on**: Feature 059  
+**Duration**: Day 1  
+**GitHub Issue**: [#441](https://github.com/dougis-org/dnd-tracker/issues/441)  
+**Deliverables**:
+
+- Export log (CSV, JSON, Markdown)
+- Basic analytics
+- Damage/healing totals
+- Tests: Export/analysis
+
+**Acceptance Criteria**:
+
+- [ ] Can export logs
+- [ ] Multiple formats supported
+- [ ] Analytics calculated
+- [ ] Reports generated
+
+---
+
+**Governance Checkpoint (AI Agent)**: Confirm combat persistence meets `docs/Product-Requirements.md §4.5` and logging capabilities support future analytics features.
+
+## Phase 7: Monetization (Week 8)
+
+**Parent Issue**: [#341](https://github.com/dougis-org/dnd-tracker/issues/341)  
+**Milestone**: [Phase 7: Monetization](https://github.com/dougis-org/dnd-tracker/milestone/7)  
+**PRD Alignment**: §§6.2-6.3 (Subscription Tiers & Payment Integration)
+
+> **Note**: Features F061-F069 include tier enforcement, data portability, and Stripe integration with decomposed webhook handling.
+
+### Feature 061: Tier Limit Enforcement
+
+**Previously**: F047 (renumbered)
 
 **Depends on**: Feature 014
 **Duration**: Day 1
@@ -1465,10 +1883,11 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 048: Data Export System
+### Feature 062: Data Export System
 
-**Depends on**: Feature 018, Feature 034, Feature 046
-**Duration**: Day 1
+**Previously**: F048 (renumbered)  
+**Depends on**: Feature 018, Feature 040, Feature 059  
+**Duration**: Day 1  
 **Deliverables**:
 
 - Character export (JSON)
@@ -1491,10 +1910,11 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 049: Data Import System
+### Feature 063: Data Import System
 
-**Depends on**: Feature 018
-**Duration**: Day 1
+**Previously**: F049 (renumbered)  
+**Depends on**: Feature 018  
+**Duration**: Day 1  
 **Deliverables**:
 
 - Character import
@@ -1516,35 +1936,63 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 050: Stripe Setup & Webhooks
+### Feature 064: Stripe Account Setup & Integration
 
-**Depends on**: Feature 014
-**Duration**: Day 2
+**Previously**: F050 Stripe Setup & Webhooks (decomposed)  
+**Depends on**: Feature 014  
+**Duration**: Day 1  
+**GitHub Issue**: [#401](https://github.com/dougis-org/dnd-tracker/issues/401)  
 **Deliverables**:
 
 - Stripe integration
-- Webhook endpoints
-- Event handling
 - Customer creation
+- Product/price setup
 - Tests: Stripe integration
 
 **API Routes**:
 
-- `POST /api/v1/webhooks/stripe`
 - `POST /api/v1/billing/create-customer`
+- `GET /api/v1/billing/products`
 
 **Acceptance Criteria**:
 
 - [ ] Stripe connected
-- [ ] Webhooks receive events
 - [ ] Customers created
+- [ ] Products configured
 
 ---
 
-### Feature 051: Subscription Checkout
+### Feature 065: Webhook Handling & Events
 
-**Depends on**: Feature 050
-**Duration**: Day 1
+**Decomposed from**: F050 Stripe Setup & Webhooks  
+**Depends on**: Feature 064  
+**Duration**: Day 1  
+**GitHub Issue**: [#442](https://github.com/dougis-org/dnd-tracker/issues/442)  
+**Deliverables**:
+
+- Webhook endpoints
+- Event handling
+- Subscription status updates
+- Tests: Webhook processing
+
+**API Routes**:
+
+- `POST /api/v1/webhooks/stripe`
+
+**Acceptance Criteria**:
+
+- [ ] Webhooks receive events
+- [ ] Status updates process
+- [ ] Events logged
+
+---
+
+### Feature 066: Subscription Checkout
+
+**Previously**: F051 (renumbered)  
+**Depends on**: Feature 064  
+**Duration**: Day 1  
+**GitHub Issue**: [#402](https://github.com/dougis-org/dnd-tracker/issues/402)  
 **Deliverables**:
 
 - Checkout session creation
@@ -1567,10 +2015,13 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 052: Subscription Management
+### Feature 067: Subscription Management
 
-**Depends on**: Feature 012, Feature 051
-**Duration**: Day 1
+**Previously**: F052 (renumbered)
+
+**Depends on**: Feature 012, Feature 066  
+**Duration**: Day 1  
+**GitHub Issue**: [#403](https://github.com/dougis-org/dnd-tracker/issues/403)  
 **Deliverables**:
 
 - Current plan display
@@ -1593,10 +2044,12 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 053: Billing Portal
+### Feature 068: Billing Portal
 
-**Depends on**: Feature 050
-**Duration**: Day 1
+**Previously**: F053 (renumbered)  
+**Depends on**: Feature 064  
+**Duration**: Day 1  
+**GitHub Issue**: [#404](https://github.com/dougis-org/dnd-tracker/issues/404)  
 **Deliverables**:
 
 - Customer portal link
@@ -1618,10 +2071,12 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ---
 
-### Feature 054: Free Trial System
+### Feature 069: Free Trial System
 
-**Depends on**: Feature 051
-**Duration**: Day 1
+**Previously**: F054 (renumbered)  
+**Depends on**: Feature 066  
+**Duration**: Day 1  
+**GitHub Issue**: [#405](https://github.com/dougis-org/dnd-tracker/issues/405)  
 **Deliverables**:
 
 - Trial activation
@@ -1641,34 +2096,6 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 **Governance Checkpoint (AI Agent)**: Confirm monetization flows match PRD §§3.1-3.2 and Stripe configurations in `docs/Tech-Stack.md`.
 
-## Phase 6: Combat Polish & State (Week 7)
-
-**Parent Issue**: [#340](https://github.com/dougis-org/dnd-tracker/issues/340)  
-**Milestone**: [Phase 6: Combat Polish & State](https://github.com/dougis-org/dnd-tracker/milestone/6)  
-**PRD Alignment**: §§4.3-4.6 (Combat UX, State Persistence & Edge Cases)
-
-This phase focuses on polishing the combat experience and hardening state management across offline/online transitions. Typical work includes:
-
-- Finalizing HP history, undo/redo UX, and edge case handling
-- Ensuring pause/resume/end-of-combat flows and session summaries are robust
-- Completing status-effects, lair action, and initiative edge-case fixes
-- Expanding E2E coverage for combat and offline sync reconciliation
-
-**Governance Checkpoint (AI Agent)**: Verify combat state persistence and undo/redo behaviors against `docs/Product-Requirements.md §4.6`. Capture regression test results and stakeholder acceptance notes.
-
-## Phase 7: Monetization (Week 8)
-
-**Parent Issue**: [#341](https://github.com/dougis-org/dnd-tracker/issues/341)  
-**Milestone**: [Phase 7: Monetization](https://github.com/dougis-org/dnd-tracker/milestone/7)  
-**PRD Alignment**: §§3.1-3.2 (Monetization & Billing)
-
-This phase finalizes paid features and billing integration. Work includes:
-
-- Stripe webhook verification and billing portal integration
-- Free-trial flows and subscription lifecycle handling
-- Tiered feature gating and telemetry for paid features
-- UX polish for checkout and subscription management
-
 **Governance Checkpoint (AI Agent)**: Run security and compliance checks on billing endpoints and record results. Ensure `docs/Tech-Stack.md` documents any third-party account configuration and webhook verification steps.
 
 ## Phase 8: Advanced Capabilities (Week 9-10)
@@ -1677,10 +2104,13 @@ This phase finalizes paid features and billing integration. Work includes:
 **Milestone**: [Phase 8: Advanced Capabilities](https://github.com/dougis-org/dnd-tracker/milestone/8)  
 **PRD Alignment**: §§3.3, 5.3, 12 (Premium Expansion & Future Enhancements)
 
-### Feature 055: Character Sharing
+### Feature 070: Character Sharing
 
-**Depends on**: Feature 018
+**Previously**: F055 (renumbered)  
+**Depends on**: Feature 018  
+**GitHub Issue**: [#407](https://github.com/dougis-org/dnd-tracker/issues/407)  
 **Duration**: Day 1
+
 **Deliverables**:
 
 - Share link generation
@@ -1702,10 +2132,13 @@ This phase finalizes paid features and billing integration. Work includes:
 
 ---
 
-### Feature 056: Advanced Combat Logging (Paid)
+### Feature 071: Advanced Combat Logging (Paid)
 
-**Depends on**: Feature 046, Feature 047
+**Previously**: F056 (renumbered)  
+**Depends on**: Feature 061, Feature 064  
+**GitHub Issue**: [#408](https://github.com/dougis-org/dnd-tracker/issues/408)  
 **Duration**: Day 1
+
 **Deliverables**:
 
 - Detailed action log
@@ -1722,10 +2155,13 @@ This phase finalizes paid features and billing integration. Work includes:
 
 ---
 
-### Feature 057: Custom Themes (Paid)
+### Feature 072: Custom Themes (Paid)
 
-**Depends on**: Feature 001, Feature 047
+**Previously**: F057 (renumbered)  
+**Depends on**: Feature 001, Feature 064  
+**GitHub Issue**: [#409](https://github.com/dougis-org/dnd-tracker/issues/409)  
 **Duration**: Day 1
+
 **Deliverables**:
 
 - Theme selector
@@ -1742,10 +2178,13 @@ This phase finalizes paid features and billing integration. Work includes:
 
 ---
 
-### Feature 058: Collaborative Mode (Paid)
+### Feature 073: Collaborative Mode (Paid)
 
-**Depends on**: Feature 036, Feature 047
+**Previously**: F058 (renumbered)  
+**Depends on**: Feature 051, Feature 064  
+**GitHub Issue**: [#410](https://github.com/dougis-org/dnd-tracker/issues/410)  
 **Duration**: Day 2
+
 **Deliverables**:
 
 - Real-time sync (Pusher)
@@ -1762,10 +2201,13 @@ This phase finalizes paid features and billing integration. Work includes:
 
 ---
 
-### Feature 059: Performance Optimization
+### Feature 074: Performance Optimization
 
-**Depends on**: All previous features
+**Previously**: F059 (renumbered)  
+**Depends on**: All previous features  
+**GitHub Issue**: [#411](https://github.com/dougis-org/dnd-tracker/issues/411)  
 **Duration**: Day 1
+
 **Deliverables**:
 
 - Code splitting
@@ -1782,10 +2224,13 @@ This phase finalizes paid features and billing integration. Work includes:
 
 ---
 
-### Feature 060: Polish & Launch Prep
+### Feature 075: Polish & Launch Prep
 
-**Depends on**: All previous features
+**Previously**: F060 (renumbered)  
+**Depends on**: All previous features  
+**GitHub Issue**: [#412](https://github.com/dougis-org/dnd-tracker/issues/412)  
 **Duration**: Day 1
+
 **Deliverables**:
 
 - Bug fixes
@@ -1809,7 +2254,7 @@ This phase finalizes paid features and billing integration. Work includes:
 
 ## Summary
 
-**Total Features**: 60
+**Total Features**: 75
 **Estimated Duration**: 10 weeks (50-60 working days)
 **Daily Deployment**: Each feature deploys to production
 
