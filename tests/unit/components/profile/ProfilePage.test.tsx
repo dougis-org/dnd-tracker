@@ -3,38 +3,29 @@ import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ProfilePage from '@/components/profile/ProfilePage';
 import * as userAdapter from '@/lib/adapters/userAdapter';
+import {
+  createMockProfile,
+  createMockPreferences,
+  setupUserAdapterMocks,
+  makeAdapterPending,
+  makeAdapterFail,
+} from '../../../test-helpers/userAdapterMocks';
 
 // Mock the adapter
 jest.mock('@/lib/adapters/userAdapter');
 
-describe('ProfilePage', () => {
-  const mockProfile = {
-    id: 'user-123',
-    name: 'Test User',
-    email: 'test@example.com',
-    createdAt: new Date('2025-01-01'),
-    updatedAt: new Date('2025-11-01'),
-  };
+const mockUserAdapter = userAdapter as jest.Mocked<typeof userAdapter>;
 
-  const mockPreferences = {
-    userId: 'user-123',
-    experienceLevel: 'Intermediate' as const,
-    preferredRole: 'Player' as const,
-    ruleset: '5e' as const,
-    updatedAt: new Date('2025-11-01'),
-  };
+describe('ProfilePage', () => {
+  const mockProfile = createMockProfile();
+  const mockPreferences = createMockPreferences();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    setupUserAdapterMocks(mockUserAdapter);
   });
 
   test('renders skeleton loader while data is loading', () => {
-    (userAdapter.getProfile as jest.Mock).mockImplementation(
-      () => new Promise(() => {}) // never resolves
-    );
-    (userAdapter.getPreferences as jest.Mock).mockImplementation(
-      () => new Promise(() => {}) // never resolves
-    );
+    makeAdapterPending(mockUserAdapter);
 
     render(<ProfilePage />);
 
@@ -44,8 +35,8 @@ describe('ProfilePage', () => {
   });
 
   test('renders profile form with data on successful load', async () => {
-    (userAdapter.getProfile as jest.Mock).mockResolvedValueOnce(mockProfile);
-    (userAdapter.getPreferences as jest.Mock).mockResolvedValueOnce(mockPreferences);
+    mockUserAdapter.getProfile.mockResolvedValueOnce(mockProfile);
+    mockUserAdapter.getPreferences.mockResolvedValueOnce(mockPreferences);
 
     render(<ProfilePage />);
 
@@ -61,7 +52,7 @@ describe('ProfilePage', () => {
 
   test('renders error banner on fetch failure', async () => {
     const error = new Error('Failed to fetch profile');
-    (userAdapter.getProfile as jest.Mock).mockRejectedValueOnce(error);
+    makeAdapterFail(mockUserAdapter, error);
 
     render(<ProfilePage />);
 
@@ -75,16 +66,10 @@ describe('ProfilePage', () => {
 
   test('renders empty state for new users with no profile data', async () => {
     // Return empty/minimal profile indicating new user
-    const emptyProfile = {
-      id: 'user-123',
-      name: '',
-      email: 'new@example.com',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    const emptyProfile = createMockProfile({ name: '' });
 
-    (userAdapter.getProfile as jest.Mock).mockResolvedValueOnce(emptyProfile);
-    (userAdapter.getPreferences as jest.Mock).mockResolvedValueOnce(mockPreferences);
+    mockUserAdapter.getProfile.mockResolvedValueOnce(emptyProfile);
+    mockUserAdapter.getPreferences.mockResolvedValueOnce(mockPreferences);
 
     render(<ProfilePage />);
 
@@ -100,7 +85,7 @@ describe('ProfilePage', () => {
 
   test('retry button calls fetch again after error', async () => {
     const error = new Error('Network error');
-    (userAdapter.getProfile as jest.Mock).mockRejectedValueOnce(error);
+    makeAdapterFail(mockUserAdapter, error);
 
     render(<ProfilePage />);
 
@@ -113,26 +98,21 @@ describe('ProfilePage', () => {
     expect(retryButton).toBeInTheDocument();
 
     // Mock successful response for retry
-    (userAdapter.getProfile as jest.Mock).mockResolvedValueOnce(mockProfile);
-    (userAdapter.getPreferences as jest.Mock).mockResolvedValueOnce(mockPreferences);
+    mockUserAdapter.getProfile.mockResolvedValueOnce(mockProfile);
+    mockUserAdapter.getPreferences.mockResolvedValueOnce(mockPreferences);
 
     // Click retry and verify new fetch is attempted
     retryButton.click();
 
     // After retry, should show form (or loader, then form)
     await waitFor(() => {
-      expect(userAdapter.getProfile).toHaveBeenCalledTimes(2); // initial call + retry
+      expect(mockUserAdapter.getProfile).toHaveBeenCalledTimes(2); // initial call + retry
     });
   });
 
   test('skeleton loader is initially shown before any data arrives', () => {
     // Simulate slow network - return never-resolving promise
-    (userAdapter.getProfile as jest.Mock).mockImplementation(
-      () => new Promise(() => {})
-    );
-    (userAdapter.getPreferences as jest.Mock).mockImplementation(
-      () => new Promise(() => {})
-    );
+    makeAdapterPending(mockUserAdapter);
 
     render(<ProfilePage />);
 

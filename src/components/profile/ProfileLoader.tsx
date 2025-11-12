@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
-export default function ProfileLoader() {
+// eslint-disable-next-line no-undef -- HTMLDivElement is available in browser DOM
+export default function ProfileLoader(props: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" {...props}>
       <Card>
         <CardHeader>
           <Skeleton className="h-8 w-32" />
