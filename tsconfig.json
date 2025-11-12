@@ -28,13 +28,19 @@
       ],
       "@types/*": [
         "./types/*"
+      ],
+      "@fixtures/*": [
+        "./tests/fixtures/*"
+      ],
+      "@test-helpers/*": [
+        "./tests/test-helpers/*"
       ]
     }
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],

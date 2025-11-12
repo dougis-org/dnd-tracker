@@ -49,6 +49,19 @@ const config: Config = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      // Combat UI utilities (Feature 009)
+      backgroundColor: {
+        'hp-full': 'rgb(34 197 94)', // green-600
+        'hp-half': 'rgb(202 138 4)', // amber-600
+        'hp-low': 'rgb(220 38 38)', // red-600
+        'status-prone': 'rgb(59 130 246)', // blue-500
+        'status-poisoned': 'rgb(168 85 247)', // purple-500
+        'status-restrained': 'rgb(106 90 205)', // slate-purple-600
+        'effect-active': 'rgb(251 191 36)', // amber-400
+      },
+      textColor: {
+        'hp-unconscious': 'rgb(107 114 128)', // gray-500
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],
