@@ -15,7 +15,7 @@ describe('StatusEffectMenu Component', () => {
   ];
 
   const defaultProps = {
-    participantId: 'participant-1',
+    _participantId: 'participant-1',
     existingEffects: mockExistingEffects,
     onAddEffect: jest.fn(),
     onRemoveEffect: jest.fn(),

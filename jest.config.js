@@ -9,6 +9,7 @@ const customJestConfig = {
   testEnvironment: 'jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@fixtures/(.*)$': '<rootDir>/tests/fixtures/$1',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(bson|mongodb)/)',

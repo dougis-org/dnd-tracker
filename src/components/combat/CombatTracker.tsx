@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { CombatSession } from '@/lib/schemas/combat';
+import { CombatSession, StatusEffect } from '@/lib/schemas/combat';
 import { combatSessionAdapter } from '@/lib/combat/combatSessionAdapter';
 import { undoRedoManager } from '@/lib/combat/undoRedoManager';
 import { advanceTurn, rewindTurn } from '@/lib/combat/combatHelpers';
 import InitiativeOrder from './InitiativeOrder';
 import RoundTurnCounter from './RoundTurnCounter';
 import TurnControlButtons from './TurnControlButtons';
+import StatusEffectsPanel from './StatusEffectsPanel';
 import ErrorBoundary from './ErrorBoundary';
 
 interface CombatTrackerProps {
@@ -105,6 +106,48 @@ const CombatTracker: React.FC<CombatTrackerProps> = ({ sessionId }) => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to rewind turn';
       setError(errorMessage);
       console.error('Error rewinding turn:', err);
+    }
+  };
+
+  const handleAddEffect = async (participantId: string, effect: Omit<StatusEffect, 'id'>) => {
+    if (!session) return;
+    try {
+      // Generate a unique ID for the new effect
+      const effectId = `effect-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const newEffect: StatusEffect = { ...effect, id: effectId };
+
+      const updatedSession = {
+        ...session,
+        participants: session.participants.map(p =>
+          p.id === participantId
+            ? { ...p, statusEffects: [...p.statusEffects, newEffect] }
+            : p
+        ),
+      };
+      await _saveSession(updatedSession);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to add effect';
+      setError(errorMessage);
+      console.error('Error adding effect:', err);
+    }
+  };
+
+  const handleRemoveEffect = async (participantId: string, effectId: string) => {
+    if (!session) return;
+    try {
+      const updatedSession = {
+        ...session,
+        participants: session.participants.map(p =>
+          p.id === participantId
+            ? { ...p, statusEffects: p.statusEffects.filter(e => e.id !== effectId) }
+            : p
+        ),
+      };
+      await _saveSession(updatedSession);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to remove effect';
+      setError(errorMessage);
+      console.error('Error removing effect:', err);
     }
   };
 
@@ -211,6 +254,24 @@ const CombatTracker: React.FC<CombatTrackerProps> = ({ sessionId }) => {
               onParticipantSelect={handleParticipantSelect}
             />
           </div>
+
+          {/* Status Effects for Current Participant */}
+          {session.participants[session.currentTurnIndex] && (
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <StatusEffectsPanel
+                participantId={session.participants[session.currentTurnIndex].id}
+                participantName={session.participants[session.currentTurnIndex].name}
+                effects={session.participants[session.currentTurnIndex].statusEffects}
+                onAddEffect={(effect) =>
+                  handleAddEffect(session.participants[session.currentTurnIndex].id, effect)
+                }
+                onRemoveEffect={(effectId) =>
+                  handleRemoveEffect(session.participants[session.currentTurnIndex].id, effectId)
+                }
+                currentRound={session.currentRoundNumber}
+              />
+            </div>
+          )}
 
           {/* Turn Controls */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">

@@ -71,7 +71,7 @@ export const mockSessionWithEffects: CombatSession = {
       ...mockParticipant1,
       statusEffects: [
         {
-          id: 'e1',
+          id: '550e8400-e29b-41d4-a716-446655440001',
           name: 'Prone',
           durationInRounds: 1,
           appliedAtRound: 1,
@@ -83,7 +83,7 @@ export const mockSessionWithEffects: CombatSession = {
       ...mockParticipant2,
       statusEffects: [
         {
-          id: 'e2',
+          id: '550e8400-e29b-41d4-a716-446655440002',
           name: 'Blessed',
           durationInRounds: null,
           appliedAtRound: 1,
