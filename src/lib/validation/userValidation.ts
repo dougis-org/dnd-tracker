@@ -100,11 +100,7 @@ export function validateNotifications(settings: Record<string, unknown>) {
  * Converts Zod error details to user-friendly field error messages
  */
 export function formatValidationErrors(error: unknown): Record<string, string> {
-  const formatted = formatErrorMessage(error);
-
-  // formatErrorMessage returns string | Record<string, string>
-  // formatValidationErrors expects Record<string, string>, so convert if needed
-  return typeof formatted === 'string' ? {} : formatted;
+  return formatErrorMessage(error);
 }
 
 /**

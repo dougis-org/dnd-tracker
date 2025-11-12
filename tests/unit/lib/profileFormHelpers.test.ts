@@ -13,13 +13,21 @@ import {
   getValidationSummary,
 } from '@/lib/utils/profileFormHelpers';
 
+// Test fixtures and helper functions
 const mockProfile = {
   id: 'user-123',
   name: 'Alice',
   email: 'alice@example.com',
 };
 
-describe('profileFormHelpers', () => {
+const createTestState = (profile = mockProfile) => createFormState(profile);
+
+const createUpdatedState = (profile = mockProfile, field: keyof typeof profile, value: string) => {
+  const state = createFormState(profile);
+  return updateFormField(state, field, value);
+};
+
+describe('profileFormHelpers - Optimistic Updates', () => {
   describe('applyOptimisticUpdate', () => {
     it('should update specified field', () => {
       const updated = applyOptimisticUpdate(mockProfile, 'name', 'Alice Updated');
@@ -32,13 +40,10 @@ describe('profileFormHelpers', () => {
       expect(updated.id).toBe('user-123');
     });
 
-    it.each([
-      ['id', 'new-id'],
-      ['name', 'Bob'],
-      ['email', 'bob@example.com'],
-    ])('should handle field %s update', (field, value) => {
-      const updated = applyOptimisticUpdate(mockProfile, field as keyof typeof mockProfile, value);
-      expect(updated[field as keyof typeof mockProfile]).toBe(value);
+    it.each(['id', 'name', 'email'])('should handle field %s update', (field) => {
+      const testValue = field === 'id' ? 'new-id' : field === 'name' ? 'Bob' : 'bob@example.com';
+      const updated = applyOptimisticUpdate(mockProfile, field as keyof typeof mockProfile, testValue);
+      expect(updated[field as keyof typeof mockProfile]).toBe(testValue);
     });
   });
 
@@ -50,7 +55,9 @@ describe('profileFormHelpers', () => {
       expect(reverted).toEqual(prev);
     });
   });
+});
 
+describe('profileFormHelpers - Error Formatting', () => {
   describe('formatErrorMessage', () => {
     it('should format Zod validation errors', () => {
       const error = {
@@ -64,10 +71,10 @@ describe('profileFormHelpers', () => {
       expect(formatted.name).toBe('Name is required');
     });
 
-    it('should handle string errors', () => {
+    it('should handle string errors under general key', () => {
       const error = 'Network failed';
       const formatted = formatErrorMessage(error);
-      expect(formatted).toBe('Network failed');
+      expect(formatted.general).toBe('Network failed');
     });
 
     it('should handle empty field errors', () => {
@@ -86,9 +93,11 @@ describe('profileFormHelpers', () => {
       expect(formatted.email).toBe('Invalid email');
     });
   });
+});
 
+describe('profileFormHelpers - Form State Creation', () => {
   describe('createFormState', () => {
-    it('should initialize form state', () => {
+    it('should initialize form state with defaults', () => {
       const state = createFormState(mockProfile);
       expect(state.data).toEqual(mockProfile);
       expect(state.isDirty).toBe(false);
@@ -99,54 +108,26 @@ describe('profileFormHelpers', () => {
 
   describe('updateFormField', () => {
     it('should update field and mark dirty', () => {
-      const state = createFormState(mockProfile);
+      const state = createTestState();
       const updated = updateFormField(state, 'name', 'Updated Name');
       expect(updated.data.name).toBe('Updated Name');
       expect(updated.isDirty).toBe(true);
     });
 
     it('should preserve other fields when updating', () => {
-      const state = createFormState(mockProfile);
+      const state = createTestState();
       const updated = updateFormField(state, 'name', 'Updated');
       expect(updated.data.email).toBe(mockProfile.email);
       expect(updated.data.id).toBe(mockProfile.id);
     });
   });
+});
 
-  describe('Form Save Flows', () => {
-    it('should handle successful save', () => {
-      let state = createFormState(mockProfile);
-      state = updateFormField(state, 'name', 'Alice Updated');
-      expect(state.isDirty).toBe(true);
-
-      state = { ...state, isSaving: false, isDirty: false, error: null };
-      expect(state.isDirty).toBe(false);
-      expect(state.error).toBeNull();
-    });
-
-    it('should handle failed save with revert', () => {
-      const prev = { ...mockProfile };
-      let state = createFormState(mockProfile);
-      state = updateFormField(state, 'name', 'Alice Updated');
-
-      state = {
-        ...state,
-        data: revertOptimisticUpdate(state.data, prev),
-        isSaving: false,
-        error: 'Failed to save',
-      };
-
-      expect(state.data).toEqual(prev);
-      expect(state.error).toBe('Failed to save');
-    });
-  });
-
+describe('profileFormHelpers - Save State Transitions', () => {
   describe('markSaving', () => {
     it('should set isSaving to true and clear error', () => {
-      let state = createFormState(mockProfile);
-      state = updateFormField(state, 'name', 'Updated');
+      const state = createUpdatedState();
       state.error = 'Previous error';
-      
       const savingState = markSaving(state);
       expect(savingState.isSaving).toBe(true);
       expect(savingState.error).toBeNull();
@@ -157,9 +138,7 @@ describe('profileFormHelpers', () => {
   describe('markSaveSuccess', () => {
     it('should clear dirty flag and set new data', () => {
       const newData = { ...mockProfile, name: 'Alice Updated' };
-      let state = createFormState(mockProfile);
-      state = updateFormField(state, 'name', 'Alice Updated');
-      
+      const state = createUpdatedState(mockProfile, 'name', 'Alice Updated');
       const successState = markSaveSuccess(state, newData);
       expect(successState.data).toEqual(newData);
       expect(successState.isDirty).toBe(false);
@@ -170,10 +149,8 @@ describe('profileFormHelpers', () => {
 
   describe('markSaveError', () => {
     it('should set error message and clear isSaving', () => {
-      let state = createFormState(mockProfile);
-      state = updateFormField(state, 'name', 'Alice Updated');
+      let state = createUpdatedState();
       state = { ...state, isSaving: true };
-      
       const errorState = markSaveError(state, 'Network error');
       expect(errorState.error).toBe('Network error');
       expect(errorState.isSaving).toBe(false);
@@ -182,9 +159,7 @@ describe('profileFormHelpers', () => {
 
     it('should revert data when provided', () => {
       const prev = { ...mockProfile };
-      let state = createFormState(mockProfile);
-      state = updateFormField(state, 'name', 'Alice Updated');
-      
+      const state = createUpdatedState();
       const errorState = markSaveError(state, 'Save failed', prev);
       expect(errorState.data).toEqual(prev);
       expect(errorState.error).toBe('Save failed');
@@ -194,11 +169,9 @@ describe('profileFormHelpers', () => {
   describe('resetForm', () => {
     it('should reset form to original state', () => {
       const originalData = { ...mockProfile };
-      let state = createFormState(mockProfile);
-      state = updateFormField(state, 'name', 'Alice Updated');
+      const state = createUpdatedState();
       state.error = 'Some error';
       state.isSaving = true;
-      
       const resetState = resetForm(state, originalData);
       expect(resetState.data).toEqual(originalData);
       expect(resetState.isDirty).toBe(false);
@@ -206,7 +179,9 @@ describe('profileFormHelpers', () => {
       expect(resetState.error).toBeNull();
     });
   });
+});
 
+describe('profileFormHelpers - Field Error Handling', () => {
   describe('getFieldError', () => {
     it('should return error for specific field', () => {
       const errors = { name: 'Name is required', email: 'Invalid email' };
@@ -230,28 +205,30 @@ describe('profileFormHelpers', () => {
       expect(error).toBeNull();
     });
   });
+});
 
+describe('profileFormHelpers - Form Validation', () => {
   describe('isFormValid', () => {
     it('should return false if form is saving', () => {
-      let state = createFormState(mockProfile);
+      let state = createTestState();
       state = { ...state, isDirty: true, isSaving: true };
       expect(isFormValid(state, {})).toBe(false);
     });
 
     it('should return false if form is not dirty', () => {
-      const state = createFormState(mockProfile);
+      const state = createTestState();
       expect(isFormValid(state, {})).toBe(false);
     });
 
     it('should return false if there are errors', () => {
-      let state = createFormState(mockProfile);
+      let state = createTestState();
       state = { ...state, isDirty: true };
       const errors = { name: 'Name is required' };
       expect(isFormValid(state, errors)).toBe(false);
     });
 
     it('should return true if form is dirty with no errors', () => {
-      let state = createFormState(mockProfile);
+      let state = createTestState();
       state = { ...state, isDirty: true };
       expect(isFormValid(state, {})).toBe(true);
     });
