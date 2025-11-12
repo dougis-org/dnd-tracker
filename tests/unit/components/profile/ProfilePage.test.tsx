@@ -1,27 +1,34 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ProfilePage from '@/components/profile/ProfilePage';
-import * as userAdapter from '@/lib/adapters/userAdapter';
 import {
   createMockProfile,
   createMockPreferences,
-  setupUserAdapterMocks,
   makeAdapterPending,
   makeAdapterFail,
 } from '../../../test-helpers/userAdapterMocks';
 
 // Mock the adapter
-jest.mock('@/lib/adapters/userAdapter');
+jest.mock('@/lib/adapters/userAdapter', () => ({
+  userAdapter: {
+    getProfile: jest.fn(),
+    getPreferences: jest.fn(),
+    updateProfile: jest.fn(),
+    updatePreferences: jest.fn(),
+    getNotifications: jest.fn(),
+    updateNotifications: jest.fn(),
+  },
+}));
 
-const mockUserAdapter = userAdapter as jest.Mocked<typeof userAdapter>;
+import { userAdapter as mockUserAdapter } from '@/lib/adapters/userAdapter';
 
 describe('ProfilePage', () => {
   const mockProfile = createMockProfile();
   const mockPreferences = createMockPreferences();
 
   beforeEach(() => {
-    setupUserAdapterMocks(mockUserAdapter);
+    jest.clearAllMocks();
   });
 
   test('renders skeleton loader while data is loading', () => {
@@ -41,9 +48,8 @@ describe('ProfilePage', () => {
     render(<ProfilePage />);
 
     // Wait for form to render
-    await waitFor(() => {
-      expect(screen.queryByTestId('profile-form')).toBeInTheDocument();
-    });
+    const form = await screen.findByTestId('profile-form');
+    expect(form).toBeInTheDocument();
 
     // Verify form is populated with data
     const nameInput = screen.getByDisplayValue('Test User');
@@ -56,9 +62,8 @@ describe('ProfilePage', () => {
 
     render(<ProfilePage />);
 
-    await waitFor(() => {
-      expect(screen.getByTestId('profile-error')).toBeInTheDocument();
-    });
+    const errorElement = await screen.findByTestId('profile-error');
+    expect(errorElement).toBeInTheDocument();
 
     // Error message should be visible
     expect(screen.getByText(/failed to fetch/i)).toBeInTheDocument();
@@ -73,9 +78,8 @@ describe('ProfilePage', () => {
 
     render(<ProfilePage />);
 
-    await waitFor(() => {
-      expect(screen.getByTestId('profile-empty')).toBeInTheDocument();
-    });
+    const emptyState = await screen.findByTestId('profile-empty');
+    expect(emptyState).toBeInTheDocument();
 
     // Empty state message should guide user
     expect(
@@ -89,9 +93,8 @@ describe('ProfilePage', () => {
 
     render(<ProfilePage />);
 
-    await waitFor(() => {
-      expect(screen.getByTestId('profile-error')).toBeInTheDocument();
-    });
+    const errorElement = await screen.findByTestId('profile-error');
+    expect(errorElement).toBeInTheDocument();
 
     // Simulate retry by clicking retry button
     const retryButton = screen.getByRole('button', { name: /retry/i });
@@ -102,7 +105,9 @@ describe('ProfilePage', () => {
     mockUserAdapter.getPreferences.mockResolvedValueOnce(mockPreferences);
 
     // Click retry and verify new fetch is attempted
-    retryButton.click();
+    await act(async () => {
+      retryButton.click();
+    });
 
     // After retry, should show form (or loader, then form)
     await waitFor(() => {
