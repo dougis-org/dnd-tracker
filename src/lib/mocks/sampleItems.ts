@@ -24,7 +24,7 @@ type SystemItemInput = {
 }
 
 function createSystemItem(input: SystemItemInput): Item {
-  return {
+  const baseItem: Item = {
     id: input.id,
     name: input.name,
     description: input.description,
@@ -33,18 +33,21 @@ function createSystemItem(input: SystemItemInput): Item {
     weight: input.weight ?? null,
     cost: input.cost ?? null,
     properties: input.properties ?? [],
-    damage: input.damage,
-    damageType: input.damageType,
-    armorClass: input.armorClass,
-    armorType: input.armorType,
-    strengthRequirement: input.strengthRequirement,
     requiresAttunement: input.requiresAttunement ?? false,
     isSystemItem: true,
     source: input.source ?? SYSTEM_SOURCE,
     tags: input.tags ?? [],
-    quantity: input.quantity,
-    uses: input.uses,
   }
+
+  if (input.damage) baseItem.damage = input.damage
+  if (input.damageType) baseItem.damageType = input.damageType
+  if (input.armorClass) baseItem.armorClass = input.armorClass
+  if (input.armorType) baseItem.armorType = input.armorType
+  if (input.strengthRequirement) baseItem.strengthRequirement = input.strengthRequirement
+  if (input.quantity) baseItem.quantity = input.quantity
+  if (input.uses) baseItem.uses = input.uses
+
+  return baseItem
 }
 
 export const sampleItems: Item[] = [
