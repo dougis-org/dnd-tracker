@@ -1,0 +1,73 @@
+import { Item, ItemCategory, ItemRarity } from '../../src/types/item';
+
+export const mockItemLongswordOfDawn: Item = {
+  id: 'item-1',
+  name: 'Longsword of Dawn',
+  description: 'A radiant blade that shines with the light of dawn.',
+  category: ItemCategory.Weapon,
+  rarity: ItemRarity.Rare,
+  weight: 3,
+  cost: '120 gp',
+  properties: ['Versatile (1d10)', '+1 to attack and damage rolls'],
+  damage: '1d8',
+  damageType: 'Slashing',
+  armorClass: undefined,
+  armorType: undefined,
+  strengthRequirement: undefined,
+  requiresAttunement: true,
+  isSystemItem: true,
+  source: 'System Catalog',
+  tags: [],
+  quantity: undefined,
+  uses: undefined,
+};
+
+export const mockItemHealingPotion: Item = {
+  id: 'item-2',
+  name: 'Healing Potion',
+  description: 'Restores a small amount of hit points when consumed.',
+  category: ItemCategory.Consumable,
+  rarity: ItemRarity.Common,
+  weight: 0.5,
+  cost: '50 gp',
+  properties: ['Regain 2d4 + 2 HP'],
+  damage: undefined,
+  damageType: undefined,
+  armorClass: undefined,
+  armorType: undefined,
+  strengthRequirement: undefined,
+  requiresAttunement: false,
+  isSystemItem: true,
+  source: 'System Catalog',
+  tags: [],
+  quantity: undefined,
+  uses: undefined,
+};
+
+export const mockItemWarhammerOfMountain: Item = {
+  id: 'item-3',
+  name: 'Warhammer of the Mountain',
+  description: 'A heavy hammer that channels the strength of the earth.',
+  category: ItemCategory.Weapon,
+  rarity: ItemRarity.Uncommon,
+  weight: 2,
+  cost: '180 gp',
+  properties: ['Versatile (1d10)'],
+  damage: '1d8',
+  damageType: 'Bludgeoning',
+  armorClass: undefined,
+  armorType: undefined,
+  strengthRequirement: undefined,
+  requiresAttunement: true,
+  isSystemItem: true,
+  source: 'System Catalog',
+  tags: [],
+  quantity: undefined,
+  uses: undefined,
+};
+
+export const mockItemsList: Item[] = [
+  mockItemLongswordOfDawn,
+  mockItemHealingPotion,
+  mockItemWarhammerOfMountain,
+];
