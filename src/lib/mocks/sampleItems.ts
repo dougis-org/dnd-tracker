@@ -24,7 +24,13 @@ type SystemItemInput = {
 }
 
 function createSystemItem(input: SystemItemInput): Item {
-  const baseItem: Item = {
+  const pickOptional = (obj: Record<string, unknown>, keys: string[]): Record<string, unknown> =>
+    keys.reduce((acc, key) => {
+      if (obj[key]) acc[key] = obj[key]
+      return acc
+    }, {} as Record<string, unknown>)
+
+  return {
     id: input.id,
     name: input.name,
     description: input.description,
@@ -37,17 +43,8 @@ function createSystemItem(input: SystemItemInput): Item {
     isSystemItem: true,
     source: input.source ?? SYSTEM_SOURCE,
     tags: input.tags ?? [],
-  }
-
-  if (input.damage) baseItem.damage = input.damage
-  if (input.damageType) baseItem.damageType = input.damageType
-  if (input.armorClass) baseItem.armorClass = input.armorClass
-  if (input.armorType) baseItem.armorType = input.armorType
-  if (input.strengthRequirement) baseItem.strengthRequirement = input.strengthRequirement
-  if (input.quantity) baseItem.quantity = input.quantity
-  if (input.uses) baseItem.uses = input.uses
-
-  return baseItem
+    ...pickOptional(input, ['damage', 'damageType', 'armorClass', 'armorType', 'strengthRequirement', 'quantity', 'uses']),
+  } as Item
 }
 
 export const sampleItems: Item[] = [
