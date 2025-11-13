@@ -4,10 +4,15 @@ import userEvent from '@testing-library/user-event'
 import { ItemFilters, type ItemFiltersValue } from '@/components/items'
 import { ItemCategory, ItemRarity } from '@/types/item'
 
+const renderWithFilters = (value: ItemFiltersValue, onChange: jest.Mock) => {
+  return render(<ItemFilters onFilterChange={onChange} value={value} />)
+}
+
 describe('ItemFilters', () => {
+  const defaultFilters = { category: null, rarity: null }
+
   it('renders category and rarity select inputs', () => {
-    const handleChange = jest.fn()
-    render(<ItemFilters onFilterChange={handleChange} value={{ category: null, rarity: null }} />)
+    renderWithFilters(defaultFilters, jest.fn())
 
     expect(screen.getByLabelText('Category')).toBeInTheDocument()
     expect(screen.getByLabelText('Rarity')).toBeInTheDocument()
@@ -17,7 +22,7 @@ describe('ItemFilters', () => {
     const user = userEvent.setup()
     const handleChange = jest.fn()
 
-    render(<ItemFilters onFilterChange={handleChange} value={{ category: null, rarity: null }} />)
+    renderWithFilters(defaultFilters, handleChange)
 
     const categorySelect = screen.getByLabelText('Category')
     await user.selectOptions(categorySelect, ItemCategory.Weapon)
@@ -29,7 +34,7 @@ describe('ItemFilters', () => {
     const user = userEvent.setup()
     const handleChange = jest.fn()
 
-    render(<ItemFilters onFilterChange={handleChange} value={{ category: null, rarity: null }} />)
+    renderWithFilters(defaultFilters, handleChange)
 
     const raritySelect = screen.getByLabelText('Rarity')
     await user.selectOptions(raritySelect, ItemRarity.Rare)
@@ -40,13 +45,9 @@ describe('ItemFilters', () => {
   it('maintains previous filter values when changing one filter', async () => {
     const user = userEvent.setup()
     const handleChange = jest.fn()
+    const currentFilters = { category: ItemCategory.Weapon, rarity: null }
 
-    render(
-      <ItemFilters
-        onFilterChange={handleChange}
-        value={{ category: ItemCategory.Weapon, rarity: null }}
-      />
-    )
+    renderWithFilters(currentFilters, handleChange)
 
     const raritySelect = screen.getByLabelText('Rarity')
     await user.selectOptions(raritySelect, ItemRarity.Legendary)
@@ -59,16 +60,15 @@ describe('ItemFilters', () => {
 
   it('reflects controlled values from props', () => {
     const value: ItemFiltersValue = { category: ItemCategory.Armor, rarity: ItemRarity.Uncommon }
-    const handleChange = jest.fn()
 
-    render(<ItemFilters onFilterChange={handleChange} value={value} />)
+    renderWithFilters(value, jest.fn())
 
     expect(screen.getByLabelText('Category')).toHaveValue(ItemCategory.Armor)
     expect(screen.getByLabelText('Rarity')).toHaveValue(ItemRarity.Uncommon)
   })
 
   it('includes "All" option in category select', () => {
-    render(<ItemFilters onFilterChange={jest.fn()} value={{ category: null, rarity: null }} />)
+    renderWithFilters(defaultFilters, jest.fn())
 
     const categoryOptions = screen.getByLabelText('Category').querySelectorAll('option')
     const allOption = Array.from(categoryOptions).find((opt) => opt.textContent === 'All Categories')
@@ -76,7 +76,7 @@ describe('ItemFilters', () => {
   })
 
   it('includes "All" option in rarity select', () => {
-    render(<ItemFilters onFilterChange={jest.fn()} value={{ category: null, rarity: null }} />)
+    renderWithFilters(defaultFilters, jest.fn())
 
     const rarityOptions = screen.getByLabelText('Rarity').querySelectorAll('option')
     const allOption = Array.from(rarityOptions).find((opt) => opt.textContent === 'All Rarities')

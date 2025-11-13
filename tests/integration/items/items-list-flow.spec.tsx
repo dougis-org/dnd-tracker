@@ -3,9 +3,8 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ItemsPage from '@/app/items/page'
 import { ItemCategory, ItemRarity } from '@/types/item'
-import {
-  mockItemsList,
-} from '../../test-helpers/item-fixtures'
+import { mockItemsList } from '../../test-helpers/item-fixtures'
+import { setupFakeTimers, teardownFakeTimers, getUserEventSetupWithTimers } from '../../test-helpers/test-setup'
 
 jest.mock('@/lib/adapters/items', () => ({
   itemAdapter: {
@@ -14,15 +13,8 @@ jest.mock('@/lib/adapters/items', () => ({
 }))
 
 describe('ItemsPage integration - US1 list filtering and search', () => {
-  beforeEach(() => {
-    jest.useFakeTimers()
-  })
-
-  afterEach(() => {
-    jest.clearAllTimers()
-    jest.useRealTimers()
-    jest.clearAllMocks()
-  })
+  beforeEach(setupFakeTimers)
+  afterEach(teardownFakeTimers)
 
   it('loads and displays all items on mount', async () => {
     render(<ItemsPage />)
@@ -37,7 +29,7 @@ describe('ItemsPage integration - US1 list filtering and search', () => {
   })
 
   it('filters items by category when filter changes', async () => {
-    const user = userEvent.setup({ advanceTimers: (ms) => jest.advanceTimersByTime(ms) })
+    const user = userEvent.setup(getUserEventSetupWithTimers())
     render(<ItemsPage />)
 
     await waitFor(() => {
@@ -55,7 +47,7 @@ describe('ItemsPage integration - US1 list filtering and search', () => {
   })
 
   it('filters items by rarity', async () => {
-    const user = userEvent.setup({ advanceTimers: (ms) => jest.advanceTimersByTime(ms) })
+    const user = userEvent.setup(getUserEventSetupWithTimers())
     render(<ItemsPage />)
 
     await waitFor(() => {
@@ -73,7 +65,7 @@ describe('ItemsPage integration - US1 list filtering and search', () => {
   })
 
   it('searches items by name and description', async () => {
-    const user = userEvent.setup({ advanceTimers: (ms) => jest.advanceTimersByTime(ms) })
+    const user = userEvent.setup(getUserEventSetupWithTimers())
     render(<ItemsPage />)
 
     await waitFor(() => {
@@ -81,7 +73,7 @@ describe('ItemsPage integration - US1 list filtering and search', () => {
     })
 
     await user.type(screen.getByPlaceholderText('Search items...'), 'potion')
-    
+
     await act(async () => {
       jest.advanceTimersByTime(300)
     })
@@ -94,7 +86,7 @@ describe('ItemsPage integration - US1 list filtering and search', () => {
   })
 
   it('shows empty state when no results match', async () => {
-    const user = userEvent.setup({ advanceTimers: (ms) => jest.advanceTimersByTime(ms) })
+    const user = userEvent.setup(getUserEventSetupWithTimers())
     render(<ItemsPage />)
 
     await waitFor(() => {
@@ -102,7 +94,7 @@ describe('ItemsPage integration - US1 list filtering and search', () => {
     })
 
     await user.type(screen.getByPlaceholderText('Search items...'), 'nonexistent artifact')
-    
+
     await act(async () => {
       jest.advanceTimersByTime(300)
     })

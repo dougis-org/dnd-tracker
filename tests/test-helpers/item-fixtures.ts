@@ -1,26 +1,28 @@
 import { Item, ItemCategory, ItemRarity } from '../../src/types/item';
 
-function createMockItem(overrides: Partial<Item> & { id: string; name: string }): Item {
-  const optionalFields = ['damage', 'damageType', 'armorClass', 'armorType', 'strengthRequirement', 'quantity', 'uses'];
-  const optional = Object.fromEntries(
-    Object.entries(overrides).filter(([key]) => optionalFields.includes(key))
-  );
+const OPTIONAL_FIELDS = ['damage', 'damageType', 'armorClass', 'armorType', 'strengthRequirement', 'quantity', 'uses'];
 
-  return {
-    id: overrides.id,
-    name: overrides.name,
-    description: overrides.description || '',
-    category: overrides.category || ItemCategory.Weapon,
-    rarity: overrides.rarity || ItemRarity.Common,
-    weight: overrides.weight !== undefined ? overrides.weight : null,
-    cost: overrides.cost || null,
-    properties: overrides.properties || [],
-    requiresAttunement: overrides.requiresAttunement ?? false,
-    isSystemItem: overrides.isSystemItem ?? true,
-    source: overrides.source || 'System Catalog',
-    tags: overrides.tags || [],
-    ...optional,
-  } as Item;
+const BASE_ITEM = {
+  description: '',
+  category: ItemCategory.Weapon,
+  rarity: ItemRarity.Common,
+  weight: null,
+  cost: null,
+  properties: [],
+  requiresAttunement: false,
+  isSystemItem: true,
+  source: 'System Catalog',
+  tags: [],
+} as const;
+
+function createMockItem(overrides: Partial<Item> & { id: string; name: string }): Item {
+  const optional: Record<string, unknown> = {};
+
+  OPTIONAL_FIELDS.forEach((field) => {
+    if (field in overrides) optional[field] = overrides[field as keyof typeof overrides];
+  });
+
+  return Object.assign({}, BASE_ITEM, overrides, optional) as Item;
 }
 
 export const mockItemLongswordOfDawn: Item = createMockItem({

@@ -37,11 +37,8 @@ test.describe('Item Catalog - Browse and Filter (E2E)', () => {
   })
 
   test('user can combine category and rarity filters', async ({ page }) => {
-    const categorySelect = page.getByLabel('Category')
-    const raritySelect = page.getByLabel('Rarity')
-
-    await categorySelect.selectOption('Weapon')
-    await raritySelect.selectOption('Uncommon')
+    await page.getByLabel('Category').selectOption('Weapon')
+    await page.getByLabel('Rarity').selectOption('Uncommon')
 
     await expect(page.getByRole('heading', { name: /warhammer of the mountain/i })).toBeVisible()
     await expect(page.getByRole('heading', { name: /longsword of dawn/i })).not.toBeVisible()
@@ -59,8 +56,7 @@ test.describe('Item Catalog - Browse and Filter (E2E)', () => {
 
     await expect(statusRegion).toContainText('3 of 3 items')
 
-    const categorySelect = page.getByLabel('Category')
-    await categorySelect.selectOption('Weapon')
+    await page.getByLabel('Category').selectOption('Weapon')
 
     await expect(statusRegion).toContainText('2 of 3 items')
   })
