@@ -7,7 +7,7 @@
  * Used for debounced input tests
  */
 export function setupFakeTimers(): void {
-  jest.useFakeTimers()
+  jest.useFakeTimers();
 }
 
 /**
@@ -15,14 +15,14 @@ export function setupFakeTimers(): void {
  * Standard cleanup after timer tests
  */
 export function teardownFakeTimers(): void {
-  jest.clearAllTimers()
-  jest.useRealTimers()
-  jest.clearAllMocks()
+  jest.clearAllTimers();
+  jest.useRealTimers();
+  jest.clearAllMocks();
 }
 
 /**
  * Create userEvent setup options with fake timer advancement
  */
 export function getUserEventSetupWithTimers() {
-  return { advanceTimers: (ms: number) => jest.advanceTimersByTime(ms) }
+  return { advanceTimers: (ms: number) => jest.advanceTimersByTime(ms) };
 }

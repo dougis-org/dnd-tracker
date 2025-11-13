@@ -36,7 +36,9 @@ describe('userAdapter - Mock CRUD Operations', () => {
 
     it('should throw on validation error during update', async () => {
       const invalidData = { email: 'not-an-email' };
-      await expect(userAdapter.updateProfile(testUserId, invalidData)).rejects.toThrow();
+      await expect(
+        userAdapter.updateProfile(testUserId, invalidData)
+      ).rejects.toThrow();
     });
 
     it('should handle missing profile gracefully', async () => {
@@ -51,7 +53,9 @@ describe('userAdapter - Mock CRUD Operations', () => {
       const prefs = await userAdapter.getPreferences(testUserId);
       expect(prefs).toBeDefined();
       expect(prefs.userId).toBe(testUserId);
-      expect(['Novice', 'Intermediate', 'Advanced']).toContain(prefs.experienceLevel);
+      expect(['Novice', 'Intermediate', 'Advanced']).toContain(
+        prefs.experienceLevel
+      );
     });
 
     it('should update preferences successfully', async () => {
@@ -72,7 +76,9 @@ describe('userAdapter - Mock CRUD Operations', () => {
 
     it('should validate enum values', async () => {
       const invalidPrefs = { experienceLevel: 'InvalidLevel' };
-      await expect(userAdapter.updatePreferences(testUserId, invalidPrefs)).rejects.toThrow();
+      await expect(
+        userAdapter.updatePreferences(testUserId, invalidPrefs)
+      ).rejects.toThrow();
     });
   });
 
@@ -91,7 +97,10 @@ describe('userAdapter - Mock CRUD Operations', () => {
         emailNotifications: false,
         partyUpdates: true,
       };
-      const updated = await userAdapter.updateNotifications(testUserId, newSettings);
+      const updated = await userAdapter.updateNotifications(
+        testUserId,
+        newSettings
+      );
 
       expect(updated.emailNotifications).toBe(false);
       expect(updated.partyUpdates).toBe(true);
@@ -107,7 +116,9 @@ describe('userAdapter - Mock CRUD Operations', () => {
 
     it('should validate boolean values', async () => {
       const invalidSettings = { emailNotifications: 'yes' };
-      await expect(userAdapter.updateNotifications(testUserId, invalidSettings)).rejects.toThrow();
+      await expect(
+        userAdapter.updateNotifications(testUserId, invalidSettings)
+      ).rejects.toThrow();
     });
   });
 
@@ -117,19 +128,26 @@ describe('userAdapter - Mock CRUD Operations', () => {
         'should reject invalid email: %s',
         async (invalidEmail) => {
           const updates = { email: invalidEmail };
-          await expect(userAdapter.updateProfile(testUserId, updates)).rejects.toThrow();
+          await expect(
+            userAdapter.updateProfile(testUserId, updates)
+          ).rejects.toThrow();
         }
       );
     });
 
     describe('Name Validation Errors', () => {
       it.each([
-        { value: 'A'.repeat(101), description: 'name exceeding 100 characters' },
+        {
+          value: 'A'.repeat(101),
+          description: 'name exceeding 100 characters',
+        },
         { value: '', description: 'empty name' },
         { value: null, description: 'null value' },
       ])('should reject $description', async ({ value }) => {
         const updates = { name: value } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-        await expect(userAdapter.updateProfile(testUserId, updates)).rejects.toThrow();
+        await expect(
+          userAdapter.updateProfile(testUserId, updates)
+        ).rejects.toThrow();
       });
     });
   });
@@ -154,7 +172,9 @@ describe('userAdapter - Mock CRUD Operations', () => {
       const user2 = 'user-2';
 
       await userAdapter.updatePreferences(user1, { experienceLevel: 'Novice' });
-      await userAdapter.updatePreferences(user2, { experienceLevel: 'Advanced' });
+      await userAdapter.updatePreferences(user2, {
+        experienceLevel: 'Advanced',
+      });
 
       const prefs1 = await userAdapter.getPreferences(user1);
       const prefs2 = await userAdapter.getPreferences(user2);

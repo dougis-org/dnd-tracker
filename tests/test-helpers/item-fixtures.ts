@@ -1,6 +1,14 @@
 import { Item, ItemCategory, ItemRarity } from '../../src/types/item';
 
-const OPTIONAL_FIELDS = ['damage', 'damageType', 'armorClass', 'armorType', 'strengthRequirement', 'quantity', 'uses'];
+const OPTIONAL_FIELDS = [
+  'damage',
+  'damageType',
+  'armorClass',
+  'armorType',
+  'strengthRequirement',
+  'quantity',
+  'uses',
+];
 
 const BASE_ITEM = {
   description: '',
@@ -15,11 +23,14 @@ const BASE_ITEM = {
   tags: [],
 } as const;
 
-function createMockItem(overrides: Partial<Item> & { id: string; name: string }): Item {
+function createMockItem(
+  overrides: Partial<Item> & { id: string; name: string }
+): Item {
   const optional: Record<string, unknown> = {};
 
   OPTIONAL_FIELDS.forEach((field) => {
-    if (field in overrides) optional[field] = overrides[field as keyof typeof overrides];
+    if (field in overrides)
+      optional[field] = overrides[field as keyof typeof overrides];
   });
 
   return Object.assign({}, BASE_ITEM, overrides, optional) as Item;
