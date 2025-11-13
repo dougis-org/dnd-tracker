@@ -5,7 +5,7 @@ import {
 } from '@/lib/schemas/userSchema';
 import type { UserProfile, UserPreferences, NotificationSettings } from '@/types/user';
 
-/* eslint-disable no-undef */
+ 
 // localStorage and setTimeout are globals available in browser environment
 
 /**
