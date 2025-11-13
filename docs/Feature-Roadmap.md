@@ -98,7 +98,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F032 | Party Model & Read Operations | Planned | F014, F018 | [#382](https://github.com/dougis-org/dnd-tracker/issues/382) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
 | F033 | Party Management Operations | Planned | F032 | [#430](https://github.com/dougis-org/dnd-tracker/issues/430) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
 | F034 | Party Management Integration | Planned | F006, F032 | [#383](https://github.com/dougis-org/dnd-tracker/issues/383) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F035 | Service Worker Setup | Planned | F001 | [#384](https://github.com/dougis-org/dnd-tracker/issues/384) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F035 | Service Worker Setup | In Progress | F001 | [#384](https://github.com/dougis-org/dnd-tracker/issues/384) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
 | F036 | IndexedDB Setup | Planned | F035 | [#385](https://github.com/dougis-org/dnd-tracker/issues/385) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
 | F037 | Offline Combat with Local Storage | Planned | F036, F044 | [#386](https://github.com/dougis-org/dnd-tracker/issues/386) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
 | F038 | Sync Queue & Conflict Detection | Planned | F037 | [#432](https://github.com/dougis-org/dnd-tracker/issues/432) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
@@ -1256,6 +1256,10 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 > **Note**: Features F035-F039 represent offline-first architecture. See issue descriptions for decomposition details.
 
 ### Feature 035: Service Worker Setup
+
+**Status**: In Progress
+**Branch**: feature/035-service-worker-setup
+**Spec Location**: specs/035-service-worker-setup/
 
 **Previously**: F030 (renumbered)  
 **Depends on**: Feature 001
