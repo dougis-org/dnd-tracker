@@ -1,5 +1,4 @@
 /* eslint-env jest */
-/* global localStorage */
 import { userAdapter } from '@/lib/adapters/userAdapter';
 
 describe('userAdapter - Mock CRUD Operations', () => {

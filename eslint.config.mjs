@@ -55,6 +55,8 @@ export default [
         HTMLFormElement: 'readonly',
         HTMLInputElement: 'readonly',
         HTMLSelectElement: 'readonly',
+        AbortController: 'readonly',
+        localStorage: 'readonly',
       },
     },
     rules: {

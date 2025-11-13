@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { ItemCard, ItemFilters, type ItemFiltersValue, ItemSearchBar } from '@/components/items'
 import { itemAdapter } from '@/lib/adapters/items'
@@ -51,26 +51,23 @@ export default function ItemsPage() {
   const [searchQuery, setSearchQuery] = React.useState('')
   const [filters, setFilters] = React.useState<FiltersState>(INITIAL_FILTERS)
 
-  React.useEffect(() => {
-    let isMounted = true
+  useEffect(() => {
+    const controller = new AbortController()
 
-    async function loadItems() {
+    const loadItems = async () => {
       try {
-        const data = await itemAdapter.findAll()
-        if (!isMounted) {
-          return
+        setLoading(true)
+        const allItems = await itemAdapter.findAll()
+        if (!controller.signal.aborted) {
+          setItems(allItems)
+          setError(null)
         }
-        setItems(data)
-        setError(null)
-      } catch (caughtError) {
-        if (!isMounted) {
-          return
+      } catch (err) {
+        if (!controller.signal.aborted) {
+          setError(err instanceof Error ? err.message : 'Failed to load items')
         }
-        const message = caughtError instanceof Error ? caughtError.message : 'Unable to load items'
-        setError(message)
-        setItems([])
       } finally {
-        if (isMounted) {
+        if (!controller.signal.aborted) {
           setLoading(false)
         }
       }
@@ -79,7 +76,7 @@ export default function ItemsPage() {
     loadItems()
 
     return () => {
-      isMounted = false
+      controller.abort()
     }
   }, [])
 
