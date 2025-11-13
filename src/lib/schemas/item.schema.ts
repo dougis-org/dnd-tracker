@@ -1,0 +1,42 @@
+import { z } from 'zod'
+import { Item, ItemCategory, ItemRarity, ArmorType } from '@/types/item'
+
+export const itemSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1),
+  description: z.string(),
+  category: z.enum([
+    ItemCategory.Weapon,
+    ItemCategory.Armor,
+    ItemCategory.Accessory,
+    ItemCategory.Consumable,
+    ItemCategory.Wondrous,
+    ItemCategory.Rod,
+    ItemCategory.Staff,
+    ItemCategory.Wand,
+    ItemCategory.Potion,
+    ItemCategory.Scroll,
+  ] as [string, ...string[]]),
+  rarity: z.enum([
+    ItemRarity.Common,
+    ItemRarity.Uncommon,
+    ItemRarity.Rare,
+    ItemRarity.VeryRare,
+    ItemRarity.Legendary,
+    ItemRarity.Artifact,
+  ] as [string, ...string[]]),
+  weight: z.number().nullable(),
+  cost: z.string().nullable(),
+  properties: z.array(z.string()),
+  damage: z.string().optional(),
+  damageType: z.string().optional(),
+  armorClass: z.number().optional(),
+  armorType: z.enum([ArmorType.Light, ArmorType.Medium, ArmorType.Heavy, ArmorType.Shield]).optional(),
+  strengthRequirement: z.number().optional(),
+  requiresAttunement: z.boolean(),
+  isSystemItem: z.boolean(),
+  source: z.string(),
+  tags: z.array(z.string()),
+  quantity: z.number().optional(),
+  uses: z.string().optional(),
+}) as z.ZodType<Item>

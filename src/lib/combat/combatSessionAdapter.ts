@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 /**
  * Combat Session Adapter for localStorage persistence
  * Feature 009: Combat Tracker

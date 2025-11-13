@@ -1,0 +1,611 @@
+openapi: 3.1.0
+info:
+  title: Item Catalog API
+  version: 1.0.0
+  description: |
+    REST API for managing D&D 5e items in the dnd-tracker application.
+    
+    This contract defines the API endpoints that will be implemented in Feature 030 (Backend Persistence).
+    For Feature 011 (Item Catalog Pages MVP), these endpoints are mocked using in-memory adapters.
+  contact:
+    name: dnd-tracker Development Team
+    url: https://github.com/dougis-org/dnd-tracker
+
+servers:
+  - url: https://api.dnd-tracker.dev/v1
+    description: Production server (future)
+  - url: http://localhost:3000/api/v1
+    description: Local development server
+
+tags:
+  - name: items
+    description: Operations for managing items (weapons, armor, consumables, etc.)
+
+paths:
+  /items:
+    get:
+      summary: List all items
+      description: Retrieve a paginated list of items with optional filtering by type, rarity, and tags
+      operationId: listItems
+      tags:
+        - items
+      parameters:
+        - name: type
+          in: query
+          description: Filter by item category
+          required: false
+          schema:
+            $ref: "#/components/schemas/ItemCategory"
+        - name: rarity
+          in: query
+          description: Filter by item rarity
+          required: false
+          schema:
+            $ref: "#/components/schemas/ItemRarity"
+        - name: tags
+          in: query
+          description: Filter by tags (comma-separated)
+          required: false
+          schema:
+            type: string
+            example: "martial,melee"
+        - name: search
+          in: query
+          description: Search query for item name or description
+          required: false
+          schema:
+            type: string
+            example: "longsword"
+        - name: page
+          in: query
+          description: Page number for pagination (1-indexed)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        "200":
+          description: Successful response with list of items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Item"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: Create a new item
+      description: Create a new user-defined item (system items cannot be created via API)
+      operationId: createItem
+      tags:
+        - items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemInput"
+      responses:
+        "201":
+          description: Item created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Item"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /items/{itemId}:
+    get:
+      summary: Get item by ID
+      description: Retrieve a single item by its unique identifier
+      operationId: getItemById
+      tags:
+        - items
+      parameters:
+        - name: itemId
+          in: path
+          description: Unique identifier of the item
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Successful response with item details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Item"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    put:
+      summary: Update an item
+      description: Update an existing item (only user-created items can be updated)
+      operationId: updateItem
+      tags:
+        - items
+      parameters:
+        - name: itemId
+          in: path
+          description: Unique identifier of the item
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemInput"
+      responses:
+        "200":
+          description: Item updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Item"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    delete:
+      summary: Delete an item
+      description: Delete a user-created item (system items cannot be deleted)
+      operationId: deleteItem
+      tags:
+        - items
+      parameters:
+        - name: itemId
+          in: path
+          description: Unique identifier of the item
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Item deleted successfully (no content)
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  schemas:
+    ItemCategory:
+      type: string
+      enum:
+        - Weapon
+        - Armor
+        - Consumable
+        - Magical
+        - Wondrous
+        - Tool
+        - Mount
+        - Vehicle
+        - Gear
+      description: Primary classification of items based on D&D 5e standards
+
+    ItemRarity:
+      type: string
+      enum:
+        - Common
+        - Uncommon
+        - Rare
+        - Very Rare
+        - Legendary
+        - Artifact
+      description: D&D 5e rarity tier for balancing and loot distribution
+
+    DamageType:
+      type: string
+      enum:
+        - Slashing
+        - Piercing
+        - Bludgeoning
+        - Fire
+        - Cold
+        - Lightning
+        - Poison
+        - Acid
+        - Psychic
+        - Necrotic
+        - Radiant
+        - Force
+      description: Type of damage dealt by weapons or spells
+
+    WeaponProperty:
+      type: string
+      enum:
+        - Finesse
+        - Versatile
+        - Reach
+        - Light
+        - Heavy
+        - Two-Handed
+        - Thrown
+        - Ammunition
+        - Loading
+      description: Special properties of weapons
+
+    ArmorType:
+      type: string
+      enum:
+        - Light
+        - Medium
+        - Heavy
+        - Shield
+      description: Armor weight classification
+
+    ItemCost:
+      type: object
+      properties:
+        gp:
+          type: number
+          minimum: 0
+          description: Gold pieces
+        sp:
+          type: number
+          minimum: 0
+          description: Silver pieces (optional)
+        cp:
+          type: number
+          minimum: 0
+          description: Copper pieces (optional)
+      required:
+        - gp
+
+    ItemBase:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier
+        name:
+          type: string
+          minLength: 1
+          description: Display name of the item
+        type:
+          $ref: "#/components/schemas/ItemCategory"
+        rarity:
+          $ref: "#/components/schemas/ItemRarity"
+        weight:
+          type: number
+          minimum: 0
+          description: Weight in pounds
+        cost:
+          $ref: "#/components/schemas/ItemCost"
+        description:
+          type: string
+          description: Full text description
+        properties:
+          type: array
+          items:
+            type: string
+          description: Generic properties (e.g., "Magical", "Cursed")
+        tags:
+          type: array
+          items:
+            type: string
+          description: User-defined tags for filtering
+        isSystem:
+          type: boolean
+          description: True if system-provided (D&D SRD)
+        source:
+          type: string
+          description: Source reference (e.g., "D&D 5e SRD")
+        createdBy:
+          type: string
+          nullable: true
+          description: User ID of creator
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of creation
+        updatedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of last update
+      required:
+        - id
+        - name
+        - type
+        - rarity
+        - weight
+        - cost
+        - description
+        - properties
+        - tags
+        - isSystem
+        - source
+        - createdAt
+        - updatedAt
+
+    WeaponItem:
+      allOf:
+        - $ref: "#/components/schemas/ItemBase"
+        - type: object
+          properties:
+            damage:
+              type: string
+              pattern: '^\d+d\d+([+-]\d+)?$'
+              example: "1d8"
+              description: Damage dice notation
+            damageType:
+              $ref: "#/components/schemas/DamageType"
+            weaponProperties:
+              type: array
+              items:
+                $ref: "#/components/schemas/WeaponProperty"
+            range:
+              type: object
+              properties:
+                normal:
+                  type: integer
+                  minimum: 5
+                  description: Normal range in feet
+                long:
+                  type: integer
+                  minimum: 5
+                  description: Long range in feet
+              required:
+                - normal
+                - long
+          required:
+            - damage
+            - damageType
+            - weaponProperties
+
+    ArmorItem:
+      allOf:
+        - $ref: "#/components/schemas/ItemBase"
+        - type: object
+          properties:
+            armorClass:
+              type: integer
+              minimum: 10
+              maximum: 20
+              description: AC bonus or base AC
+            armorType:
+              $ref: "#/components/schemas/ArmorType"
+            strRequirement:
+              type: integer
+              minimum: 1
+              description: Minimum strength score required
+            stealthDisadvantage:
+              type: boolean
+              description: True if armor imposes stealth disadvantage
+          required:
+            - armorClass
+            - armorType
+            - stealthDisadvantage
+
+    Item:
+      oneOf:
+        - $ref: "#/components/schemas/WeaponItem"
+        - $ref: "#/components/schemas/ArmorItem"
+        - $ref: "#/components/schemas/ItemBase"
+      discriminator:
+        propertyName: type
+        mapping:
+          Weapon: "#/components/schemas/WeaponItem"
+          Armor: "#/components/schemas/ArmorItem"
+
+    ItemInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        type:
+          $ref: "#/components/schemas/ItemCategory"
+        rarity:
+          $ref: "#/components/schemas/ItemRarity"
+        weight:
+          type: number
+          minimum: 0
+        cost:
+          $ref: "#/components/schemas/ItemCost"
+        description:
+          type: string
+        properties:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        damage:
+          type: string
+          pattern: '^\d+d\d+([+-]\d+)?$'
+          description: Required if type is Weapon
+        damageType:
+          $ref: "#/components/schemas/DamageType"
+        weaponProperties:
+          type: array
+          items:
+            $ref: "#/components/schemas/WeaponProperty"
+        range:
+          type: object
+          properties:
+            normal:
+              type: integer
+            long:
+              type: integer
+        armorClass:
+          type: integer
+          description: Required if type is Armor
+        armorType:
+          $ref: "#/components/schemas/ArmorType"
+        strRequirement:
+          type: integer
+        stealthDisadvantage:
+          type: boolean
+      required:
+        - name
+        - type
+        - rarity
+        - weight
+        - cost
+        - description
+
+    Pagination:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+          minimum: 1
+          description: Current page number
+        totalPages:
+          type: integer
+          minimum: 0
+          description: Total number of pages
+        totalItems:
+          type: integer
+          minimum: 0
+          description: Total number of items across all pages
+        itemsPerPage:
+          type: integer
+          minimum: 1
+          description: Number of items per page
+      required:
+        - currentPage
+        - totalPages
+        - totalItems
+        - itemsPerPage
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+            message:
+              type: string
+              description: Human-readable error message
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                  message:
+                    type: string
+          required:
+            - code
+            - message
+      required:
+        - error
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters or body
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              code: "VALIDATION_ERROR"
+              message: "Request validation failed"
+              details:
+                - field: "name"
+                  message: "Name is required"
+
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              code: "UNAUTHORIZED"
+              message: "Authentication token is missing or invalid"
+
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              code: "FORBIDDEN"
+              message: "You do not have permission to modify system items"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              code: "NOT_FOUND"
+              message: "Item not found"
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              code: "INTERNAL_ERROR"
+              message: "An unexpected error occurred"
