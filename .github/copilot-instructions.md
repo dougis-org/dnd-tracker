@@ -22,11 +22,16 @@ npm test && npm run lint
 TypeScript 5.9 (repo `package.json`), Next.js 16, React 19, Node runtime compatible with Next.js 16: Follow standard conventions
 
 ## Recent Changes
+
 - 007-monster-management: Added TypeScript 5.9 (repository `package.json`), Next.js 16, React 19, Node runtime compatible with Next.js 16, Zod (validation), Tailwind CSS, Mongoose (present in repo but backend work out of scope for frontend MVP), UI-first: mock adapters (in-memory/localStorage), Backend persistence: planned for follow-up (MongoDB / Mongoose indicated by repo deps), Testing: Jest + Testing Library, Playwright for E2E, design tokens / UI primitives already present (shadcn patterns)
 TypeScript 5.9.2 (Next.js 16, React 19): Follow standard conventions
-
-## Recent Changes
 - 008-encounter-builder: Added Mongoose models, Zod schemas, API adapter, Next.js routes, and testcontainers integration
 
 <!-- MANUAL ADDITIONS START -->
+## Tooling
+
+- **Always** use the start_process tool from Desktop commander to run system commands and view the output
+As the first step when running start_process, set the working directory properly (to the root directory of your repo)
+- **Always** use the GitKraken MCP server for git activities and fall back to the GitHub MCP server if there is a missing tool
+
 <!-- MANUAL ADDITIONS END -->
