@@ -1,0 +1,180 @@
+openapi: 3.0.0
+info:
+  title: Billing History API (Feature 012)
+  version: '1.0.0'
+  description: |
+    Billing history and invoice retrieval API for D&D Tracker.
+    Returns paginated invoices for the authenticated user.
+
+    **Status**: Mock adapter (localStorage); F014 will integrate Stripe.
+    **Network Delay**: 300ms simulated in mock adapter.
+    **Pagination**: Client-side in mock; will be server-side in F014 (MongoDB).
+
+servers:
+  - url: http://localhost:3000
+    description: Local development
+  - url: https://dnd-tracker.fly.dev
+    description: Production
+
+paths:
+  /api/billing/history:
+    get:
+      summary: Get paginated billing history
+      description: |
+        Returns a paginated list of invoices for the authenticated user.
+        Supports client-side pagination with page and pageSize parameters.
+      operationId: getBillingHistory
+      parameters:
+        - name: x-user-id
+          in: header
+          description: User ID (mocked; F013 will use Clerk auth)
+          required: true
+          schema:
+            type: string
+            example: user-123
+        - name: page
+          in: query
+          description: Page number (1-indexed)
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: pageSize
+          in: query
+          description: Number of invoices per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Paginated invoice list retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingHistoryResponse'
+        '400':
+          description: Invalid pagination parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    BillingHistoryResponse:
+      type: object
+      required:
+        - invoices
+        - totalCount
+        - pageSize
+        - currentPage
+      properties:
+        invoices:
+          type: array
+          description: List of invoices for this page
+          items:
+            $ref: '#/components/schemas/Invoice'
+        totalCount:
+          type: integer
+          minimum: 0
+          description: Total number of invoices across all pages
+          example: 12
+        pageSize:
+          type: integer
+          minimum: 1
+          description: Number of invoices per page
+          example: 10
+        currentPage:
+          type: integer
+          minimum: 1
+          description: Current page number (1-indexed)
+          example: 1
+        hasNextPage:
+          type: boolean
+          description: Whether there are more pages available
+          example: true
+
+    Invoice:
+      type: object
+      required:
+        - id
+        - userId
+        - date
+        - description
+        - amount
+        - currency
+        - status
+      properties:
+        id:
+          type: string
+          description: Unique invoice identifier
+          example: inv_001
+        userId:
+          type: string
+          description: User ID
+          example: user-123
+        date:
+          type: string
+          format: date-time
+          description: Invoice date (ISO 8601)
+          example: '2025-10-13T00:00:00Z'
+        description:
+          type: string
+          description: Invoice description
+          example: Seasoned Adventurer - Annual Subscription
+        amount:
+          type: number
+          minimum: 0
+          description: Total amount in specified currency
+          example: 99.99
+        currency:
+          type: string
+          description: ISO 4217 currency code
+          example: USD
+          default: USD
+        status:
+          type: string
+          enum:
+            - Paid
+            - Pending
+            - Failed
+          description: Payment status
+        taxAmount:
+          type: number
+          minimum: 0
+          nullable: true
+          description: Tax charged on this invoice
+          example: 7.50
+        taxRate:
+          type: number
+          minimum: 0
+          maximum: 1
+          nullable: true
+          description: Tax rate as decimal (e.g., 0.08 for 8%)
+          example: 0.08
+        downloadUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: URL to download invoice PDF (non-functional in F012)
+          example: https://billing.example.com/invoices/inv_001.pdf
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: Invalid page or pageSize
