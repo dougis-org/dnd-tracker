@@ -14,18 +14,18 @@ import type {
   Invoice,
   PaginatedInvoices,
 } from '../schemas/subscriptionSchema';
-import {
-  delay,
-  getStorage,
-  safeJsonParse,
-} from '../subscription/storageUtils';
+import { delay, getStorage, safeJsonParse } from '../subscription/storageUtils';
 import {
   validateSubscription,
   validateUsageMetrics,
   validatePlans,
   validateInvoices,
 } from '../subscription/validationHelpers';
-import { createDefaultSubscription, createDefaultUsageMetrics, createDefaultPlans } from './subscriptionDefaults';
+import {
+  createDefaultSubscription,
+  createDefaultUsageMetrics,
+  createDefaultPlans,
+} from './subscriptionDefaults';
 
 const NETWORK_DELAY_MS = 300;
 const storage = getStorage();
@@ -94,11 +94,8 @@ export async function getBillingHistory(
 ): Promise<PaginatedInvoices> {
   await delay(NETWORK_DELAY_MS);
 
-  const safePage = Math.max(1, parseInt(String(page), 10) || 1);
-  const safePageSize = Math.max(
-    1,
-    Math.min(100, parseInt(String(pageSize), 10) || 10)
-  );
+  const safePage = Math.max(1, page);
+  const safePageSize = Math.max(1, Math.min(100, pageSize));
 
   try {
     const data = safeJsonParse(

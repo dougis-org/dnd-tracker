@@ -30,17 +30,12 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     // For MVP, use a mock userId
     const userId = 'user-123';
 
-    // Fetch subscription data from adapter
-    const subscription = await getSubscription(userId);
-    const usageMetrics = await getUsageMetrics(userId);
-    const availablePlans = await getAvailablePlans();
-
-    if (!subscription) {
-      return NextResponse.json(
-        { error: 'Subscription not found' },
-        { status: 404 }
-      );
-    }
+    // Fetch subscription data in parallel for better performance
+    const [subscription, usageMetrics, availablePlans] = await Promise.all([
+      getSubscription(userId),
+      getUsageMetrics(userId),
+      getAvailablePlans(),
+    ]);
 
     const response: SubscriptionResponse = {
       subscription,

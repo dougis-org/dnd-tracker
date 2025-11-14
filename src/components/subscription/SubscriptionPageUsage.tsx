@@ -26,7 +26,9 @@ export function SubscriptionPageUsage({ metrics }: SubscriptionPageUsageProps) {
 }
 
 function UsageMetricRow({ metric }: { metric: UsageMetric }) {
-  const percentage = (metric.currentUsage / metric.maxAllowed) * 100;
+  // Avoid division by zero: if maxAllowed is 0 ("Unlimited"), percentage is 0
+  const percentage =
+    metric.maxAllowed === 0 ? 0 : metric.currentUsage / metric.maxAllowed;
   const barColor = getUsageBarColor(metric.currentUsage, metric.maxAllowed);
 
   return (
@@ -39,11 +41,18 @@ function UsageMetricRow({ metric }: { metric: UsageMetric }) {
           {metric.currentUsage} of {metric.maxAllowed}
         </p>
       </div>
-      <div className="w-32 bg-gray-200 rounded-full h-2">
+      <div
+        className="w-32 bg-gray-200 rounded-full h-2"
+        role="progressbar"
+        aria-valuenow={metric.currentUsage}
+        aria-valuemin={0}
+        aria-valuemax={metric.maxAllowed || 100}
+        aria-label={`${metric.metricName} usage`}
+      >
         <div
           className={`h-2 rounded-full transition-colors ${barColor}`}
           style={{
-            width: `${Math.min(percentage, 100)}%`,
+            width: `${Math.min(percentage * 100, 100)}%`,
           }}
         />
       </div>

@@ -36,11 +36,16 @@ export function PlanCard({
     <div
       data-testid="plan-card"
       role="region"
+      aria-label={`Your current ${subscription.planName} subscription`}
       className="rounded-lg border border-gray-200 bg-white shadow-md p-6"
     >
       <PlanCardHeader subscription={subscription} />
 
-      <div className="space-y-3 mb-6">
+      <div
+        role="region"
+        aria-label="Current subscription plan details"
+        className="space-y-3 mb-6"
+      >
         {isTrial ? (
           <PlanCardTrialInfo daysRemaining={trialDaysRemaining} />
         ) : (

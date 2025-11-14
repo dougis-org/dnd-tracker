@@ -1,11 +1,20 @@
 /**
  * PlanCard Component Tests (23 tests)
  * User Story 1, Phase 3 - Subscription Page
+ * Uses parameterized testing to reduce duplication
  */
 
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PlanCard } from '@/components/subscription/PlanCard';
 import { createMockSubscription } from '@fixtures/subscription-fixtures';
+import {
+  SUBSCRIPTION_TEST_SCENARIOS,
+  TRIAL_DAY_SCENARIOS,
+  STATUS_BADGE_SCENARIOS,
+  BILLING_FREQUENCY_SCENARIOS,
+  RENEWAL_DATE_SCENARIOS,
+  createRenewalDateOffset,
+} from './test-data';
 
 describe('PlanCard Component', () => {
   describe('rendering with paid subscription', () => {
@@ -25,40 +34,30 @@ describe('PlanCard Component', () => {
       expect(screen.getByText('Current Plan')).toBeInTheDocument();
     });
 
-    it('should display the renewal date in human-readable format', () => {
-      const futureDate = new Date();
-      futureDate.setDate(futureDate.getDate() + 30);
-      const subscription = createMockSubscription({
-        renewalDate: futureDate,
-      });
-      render(<PlanCard subscription={subscription} />);
-      expect(screen.getByText(/Renews/)).toBeInTheDocument();
-      // Format should match Intl.DateTimeFormat output
-      expect(
-        screen.getByText(new RegExp(futureDate.getFullYear().toString()))
-      ).toBeInTheDocument();
-    });
+    it.each(RENEWAL_DATE_SCENARIOS)(
+      'should display correct message when $name',
+      ({ getDays, expectText }) => {
+        const subscription = createMockSubscription({
+          renewalDate: createRenewalDateOffset(getDays()),
+        });
+        render(<PlanCard subscription={subscription} />);
+        expect(screen.getByText(expectText)).toBeInTheDocument();
+      }
+    );
 
-    it('should display billing frequency as "Yearly" for annual', () => {
-      const subscription = createMockSubscription({
-        billingFrequency: 'annual',
-      });
-      render(<PlanCard subscription={subscription} />);
-      expect(screen.getByText('Yearly')).toBeInTheDocument();
-    });
-
-    it('should display billing frequency as "Monthly" for monthly', () => {
-      const subscription = createMockSubscription({
-        billingFrequency: 'monthly',
-      });
-      render(<PlanCard subscription={subscription} />);
-      expect(screen.getByText('Monthly')).toBeInTheDocument();
-    });
+    it.each(BILLING_FREQUENCY_SCENARIOS)(
+      'should display billing frequency as "$expectedText" for $frequency',
+      ({ frequency, expectedText }) => {
+        const subscription = createMockSubscription({
+          billingFrequency: frequency,
+        });
+        render(<PlanCard subscription={subscription} />);
+        expect(screen.getByText(expectedText)).toBeInTheDocument();
+      }
+    );
 
     it('should render "Manage" button for paid subscriptions', () => {
-      const subscription = createMockSubscription({
-        status: 'active',
-      });
+      const subscription = SUBSCRIPTION_TEST_SCENARIOS.paidSubscription();
       render(<PlanCard subscription={subscription} />);
       const manageButton = screen.getByRole('button', { name: /Manage/ });
       expect(manageButton).toBeInTheDocument();
@@ -76,34 +75,11 @@ describe('PlanCard Component', () => {
       fireEvent.click(manageButton);
       expect(mockOnManage).toHaveBeenCalledTimes(1);
     });
-
-    it('should show "Renewing tomorrow" message when renewal is tomorrow', () => {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const subscription = createMockSubscription({
-        renewalDate: tomorrow,
-      });
-      render(<PlanCard subscription={subscription} />);
-      expect(screen.getByText(/Renewing tomorrow/)).toBeInTheDocument();
-    });
-
-    it('should show "Expired" message when renewal date is in the past', () => {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const subscription = createMockSubscription({
-        renewalDate: yesterday,
-      });
-      render(<PlanCard subscription={subscription} />);
-      expect(screen.getByText(/Expired/)).toBeInTheDocument();
-    });
   });
 
   describe('rendering with trial subscription', () => {
     it('should display "Trial" badge for trial status', () => {
-      const subscription = createMockSubscription({
-        status: 'trial',
-        trialDaysRemaining: 7,
-      });
+      const subscription = SUBSCRIPTION_TEST_SCENARIOS.trialSubscription(7);
       render(
         <PlanCard
           subscription={subscription}
@@ -113,63 +89,33 @@ describe('PlanCard Component', () => {
       expect(screen.getByText('Trial')).toBeInTheDocument();
     });
 
-    it('should display trial days remaining', () => {
-      const subscription = createMockSubscription({
-        status: 'trial',
-      });
-      render(
-        <PlanCard
-          subscription={subscription}
-          trialDaysRemaining={14}
-        />
-      );
-      expect(screen.getByText(/Trial ends in/)).toBeInTheDocument();
-      expect(screen.getByText(/14 days/)).toBeInTheDocument();
-    });
+    it.each(TRIAL_DAY_SCENARIOS)(
+      'should handle trial with $label correctly',
+      ({ days, expectSingular, expectWarning }) => {
+        const subscription = SUBSCRIPTION_TEST_SCENARIOS.trialSubscription(days);
+        render(
+          <PlanCard
+            subscription={subscription}
+            trialDaysRemaining={days}
+          />
+        );
 
-    it('should use singular "day" when 1 day remaining', () => {
-      const subscription = createMockSubscription({
-        status: 'trial',
-      });
-      render(
-        <PlanCard
-          subscription={subscription}
-          trialDaysRemaining={1}
-        />
-      );
-      expect(screen.getByText(/1 day/)).toBeInTheDocument();
-    });
+        if (expectSingular) {
+          expect(screen.getByText(/1 day/)).toBeInTheDocument();
+        } else {
+          expect(screen.getByText(new RegExp(`${days} days`))).toBeInTheDocument();
+        }
 
-    it('should show warning when 3 or fewer days remaining', () => {
-      const subscription = createMockSubscription({
-        status: 'trial',
-      });
-      render(
-        <PlanCard
-          subscription={subscription}
-          trialDaysRemaining={3}
-        />
-      );
-      expect(screen.getByText(/Your trial expires soon/)).toBeInTheDocument();
-    });
-
-    it('should not show warning when more than 3 days remaining', () => {
-      const subscription = createMockSubscription({
-        status: 'trial',
-      });
-      render(
-        <PlanCard
-          subscription={subscription}
-          trialDaysRemaining={4}
-        />
-      );
-      expect(screen.queryByText(/Your trial expires soon/)).not.toBeInTheDocument();
-    });
+        if (expectWarning) {
+          expect(screen.getByText(/Your trial expires soon/)).toBeInTheDocument();
+        } else {
+          expect(screen.queryByText(/Your trial expires soon/)).not.toBeInTheDocument();
+        }
+      }
+    );
 
     it('should render "Choose Plan" button for trial subscriptions', () => {
-      const subscription = createMockSubscription({
-        status: 'trial',
-      });
+      const subscription = SUBSCRIPTION_TEST_SCENARIOS.trialSubscription();
       render(
         <PlanCard
           subscription={subscription}
@@ -184,9 +130,7 @@ describe('PlanCard Component', () => {
 
     it('should call onChoosePlan when Choose Plan button is clicked', () => {
       const mockOnChoosePlan = jest.fn();
-      const subscription = createMockSubscription({
-        status: 'trial',
-      });
+      const subscription = SUBSCRIPTION_TEST_SCENARIOS.trialSubscription();
       render(
         <PlanCard
           subscription={subscription}
@@ -203,11 +147,12 @@ describe('PlanCard Component', () => {
   });
 
   describe('accessibility', () => {
-    it('should have role="region" for semantic structure', () => {
+    it('should have role="region" with aria-label for semantic structure', () => {
       const subscription = createMockSubscription();
       render(<PlanCard subscription={subscription} />);
       const card = screen.getByTestId('plan-card');
       expect(card).toHaveAttribute('role', 'region');
+      expect(card).toHaveAttribute('aria-label');
     });
 
     it('should have proper heading hierarchy with h2', () => {
@@ -230,21 +175,17 @@ describe('PlanCard Component', () => {
   });
 
   describe('status badge styling', () => {
-    it('should render status badge with testid matching status', () => {
-      const subscription = createMockSubscription({
-        status: 'active',
-      });
-      render(<PlanCard subscription={subscription} />);
-      expect(screen.getByTestId('status-active')).toBeInTheDocument();
-    });
-
-    it('should render paused status badge correctly', () => {
-      const subscription = createMockSubscription({
-        status: 'paused',
-      });
-      render(<PlanCard subscription={subscription} />);
-      expect(screen.getByTestId('status-paused')).toBeInTheDocument();
-    });
+    it.each(STATUS_BADGE_SCENARIOS)(
+      'should render $expectedText badge with status=$status',
+      ({ status, expectedText, testId }) => {
+        const subscription = createMockSubscription({
+          status,
+        });
+        render(<PlanCard subscription={subscription} />);
+        expect(screen.getByTestId(testId)).toBeInTheDocument();
+        expect(screen.getByText(expectedText)).toBeInTheDocument();
+      }
+    );
   });
 
   describe('edge cases', () => {
@@ -259,9 +200,7 @@ describe('PlanCard Component', () => {
     });
 
     it('should handle undefined trialDaysRemaining prop', () => {
-      const subscription = createMockSubscription({
-        status: 'active',
-      });
+      const subscription = SUBSCRIPTION_TEST_SCENARIOS.paidSubscription();
       render(<PlanCard subscription={subscription} />);
       expect(screen.getByRole('button', { name: /Manage/ })).toBeInTheDocument();
     });

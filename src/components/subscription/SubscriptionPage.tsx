@@ -91,9 +91,17 @@ export function SubscriptionPage({ onNavigate }: SubscriptionPageProps) {
       <div className="text-sm text-gray-600">
         <p>
           Questions about your subscription? Check our{' '}
-          <a href="#" className="text-blue-600 hover:underline">
-            FAQ
-          </a>{' '}
+          {onNavigate ? (
+            <button
+              type="button"
+              className="text-blue-600 hover:underline bg-transparent border-none p-0 m-0 cursor-pointer"
+              onClick={() => onNavigate('faq')}
+            >
+              FAQ
+            </button>
+          ) : (
+            <span className="text-blue-600">FAQ</span>
+          )}{' '}
           or contact support.
         </p>
       </div>

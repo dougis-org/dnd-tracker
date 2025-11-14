@@ -279,12 +279,12 @@ export function createMockPaginatedInvoices(overrides?: {
   totalCount?: number;
   invoices?: Invoice[];
 }): PaginatedInvoices {
-  const page = overrides?.page ?? 1;
-  const pageSize = overrides?.pageSize ?? 10;
-  const totalCount = overrides?.totalCount ?? 12;
-  const invoices =
-    overrides?.invoices ?? createMockInvoices(Math.min(pageSize, totalCount));
-
+  const {
+    page = 1,
+    pageSize = 10,
+    totalCount = 12,
+    invoices = createMockInvoices(Math.min(pageSize, totalCount)),
+  } = overrides || {};
   return createPaginationResponse(invoices, page, pageSize, totalCount);
 }
 
@@ -328,6 +328,27 @@ export function createMockFreeUsageMetrics(): UsageMetric[] {
       currentUsage: 0,
       maxAllowed: 0, // Signals "Unlimited" in UI
       category: 'party',
+    }),
+    createMockUsageMetric({
+      id: 'metric_encounters',
+      metricName: 'encounters',
+      currentUsage: 0,
+      maxAllowed: 0, // Signals "Unlimited" in UI
+      category: 'encounter',
+    }),
+    createMockUsageMetric({
+      id: 'metric_characters',
+      metricName: 'characters',
+      currentUsage: 0,
+      maxAllowed: 0, // Signals "Unlimited" in UI
+      category: 'character',
+    }),
+    createMockUsageMetric({
+      id: 'metric_combatSessions',
+      metricName: 'combatSessions',
+      currentUsage: 0,
+      maxAllowed: 0, // Signals "Unlimited" in UI
+      category: 'encounter',
     }),
   ];
 }

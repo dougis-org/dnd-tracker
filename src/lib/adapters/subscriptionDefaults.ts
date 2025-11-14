@@ -67,66 +67,78 @@ export function createDefaultUsageMetrics(userId: string): UsageMetric[] {
   ];
 }
 
+function createFreePlan(): Plan {
+  return {
+    id: 'plan_free',
+    name: 'Free',
+    monthlyPrice: 0,
+    annualPrice: 0,
+    features: [
+      'Up to 1 party',
+      'Up to 5 encounters',
+      'Basic character management',
+      'Limited combat tracking',
+    ],
+    usageLimits: {
+      parties: 1,
+      encounters: 5,
+      characters: 10,
+      combatSessions: 3,
+    },
+  };
+}
+
+function createSeasonedAdventurerPlan(): Plan {
+  return {
+    id: 'plan_sa',
+    name: 'Seasoned Adventurer',
+    monthlyPrice: 9.99,
+    annualPrice: 99.99,
+    features: [
+      'Up to 5 parties',
+      'Up to 50 encounters',
+      'Advanced character management',
+      'Full combat tracking',
+      'Encounter builder',
+    ],
+    usageLimits: {
+      parties: 5,
+      encounters: 50,
+      characters: 50,
+      combatSessions: 50,
+    },
+  };
+}
+
+function createMasterDMPlan(): Plan {
+  return {
+    id: 'plan_md',
+    name: 'Master DM',
+    monthlyPrice: 19.99,
+    annualPrice: 199.99,
+    features: [
+      'Unlimited parties',
+      'Unlimited encounters',
+      'Advanced character management',
+      'Full combat tracking',
+      'Encounter builder',
+      'Monster library',
+      'Advanced reporting',
+      'Priority support',
+    ],
+    usageLimits: {
+      parties: 999999,
+      encounters: 999999,
+      characters: 999999,
+      combatSessions: 999999,
+    },
+  };
+}
+
 export function createDefaultPlans(): Plan[] {
   return [
-    {
-      id: 'plan_free',
-      name: 'Free',
-      monthlyPrice: 0,
-      annualPrice: 0,
-      features: [
-        'Up to 1 party',
-        'Up to 5 encounters',
-        'Basic character management',
-        'Limited combat tracking',
-      ],
-      usageLimits: {
-        parties: 1,
-        encounters: 5,
-        characters: 10,
-        combatSessions: 3,
-      },
-    },
-    {
-      id: 'plan_sa',
-      name: 'Seasoned Adventurer',
-      monthlyPrice: 9.99,
-      annualPrice: 99.99,
-      features: [
-        'Up to 5 parties',
-        'Up to 50 encounters',
-        'Advanced character management',
-        'Full combat tracking',
-        'Encounter builder',
-      ],
-      usageLimits: {
-        parties: 5,
-        encounters: 50,
-        characters: 50,
-        combatSessions: 50,
-      },
-    },
-    {
-      id: 'plan_md',
-      name: 'Master DM',
-      monthlyPrice: 19.99,
-      annualPrice: 199.99,
-      features: [
-        'Unlimited parties',
-        'Unlimited encounters',
-        'Advanced character management',
-        'Full combat tracking',
-        'Encounter builder',
-        'Monster library',
-        'Advanced reporting',
-        'Priority support',
-      ],
-      usageLimits: {
-        parties: 999999,
-        encounters: 999999,
-        characters: 999999,
-        combatSessions: 999999,
-      },
-    },
+    createFreePlan(),
+    createSeasonedAdventurerPlan(),
+    createMasterDMPlan(),
   ];
 }
