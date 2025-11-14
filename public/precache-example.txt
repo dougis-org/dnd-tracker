@@ -1,0 +1,6 @@
+This is a test file to verify precache functionality in the service worker.
+
+When the service worker is installed, this file should be included in the precache
+and served from cache when offline.
+
+Used for QA testing of offline functionality.
