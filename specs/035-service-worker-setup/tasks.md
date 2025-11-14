@@ -31,12 +31,12 @@ Branching: Each milestone gets its own branch as described in the plan (e.g. `fe
 
 Independent Test: Disable network and verify app shell loads, `navigator.serviceWorker.controller` present, and assets served from cache.
 
-- [ ] T013 [US1] Generate precache manifest `specs/035-service-worker-setup/precache-manifest.json` listing app shell hashed assets (for use in build) — file: `specs/035-service-worker-setup/precache-manifest.json`
-- [ ] T014 [US1] Implement install/activate handlers in `public/sw.js` to precache the app shell from the manifest and claim clients — file: `public/sw.js`
-- [ ] T015 [US1] Implement registration logic in `src/lib/sw/register.ts` to register `public/sw.js`, wait for `activated` state, and expose `onUpdate` and `onReady` callbacks — file: `src/lib/sw/register.ts`
-- [ ] T016 [US1] Add unit tests for `register.ts` covering registration flow and update notifications — file: `tests/unit/sw/register.test.ts`
-- [ ] T017 [US1] Add an integration Playwright test to assert `navigator.serviceWorker.controller` after page load and that app shell assets are served from cache when offline — file: `tests/e2e/sw/app-shell-offline.spec.ts`
-- [ ] T018 [P] [US1] Add a small example precache bundle entry to the build config or `public/` for QA to use — file: `public/precache-example.txt`
+- [x] T013 [US1] Generate precache manifest `specs/035-service-worker-setup/precache-manifest.json` listing app shell hashed assets (for use in build) — file: `specs/035-service-worker-setup/precache-manifest.json`
+- [x] T014 [US1] Implement install/activate handlers in `public/sw.js` to precache the app shell from the manifest and claim clients — file: `public/sw.js`
+- [x] T015 [US1] Implement registration logic in `src/lib/sw/register.ts` to register `public/sw.js`, wait for `activated` state, and expose `onUpdate` and `onReady` callbacks — file: `src/lib/sw/register.ts`
+- [x] T016 [US1] Add unit tests for `register.ts` covering registration flow and update notifications — file: `tests/unit/sw/register.test.ts`
+- [x] T017 [US1] Add an integration Playwright test to assert `navigator.serviceWorker.controller` after page load and that app shell assets are served from cache when offline — file: `tests/e2e/sw/app-shell-offline.spec.ts`
+- [x] T018 [P] [US1] Add a small example precache bundle entry to the build config or `public/` for QA to use — file: `public/precache-example.txt`
 
 ### User Story 2 — Offline Indicator & Graceful UI (Priority: P2)
 

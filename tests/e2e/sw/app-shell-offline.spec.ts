@@ -1,14 +1,14 @@
 /**
  * E2E Tests: App Shell Offline Load (User Story 1)
- *
+ * 
  * Tests service worker registration, precaching, and offline functionality.
- *
+ * 
  * Requirements:
  * - FR-001: SW registration on startup
  * - FR-002: App shell precache
  * - SC-001: 95% activation success rate
  * - SC-002: Offline load within 2s
- *
+ * 
  * @group sw
  * @group offline
  */
@@ -74,9 +74,7 @@ test.describe('App Shell Offline Load', () => {
     // Check that precache cache exists and has entries
     const precacheExists = await page.evaluate(async () => {
       const cacheNames = await caches.keys();
-      const precacheCache = cacheNames.find((name) =>
-        name.startsWith('precache-')
-      );
+      const precacheCache = cacheNames.find((name) => name.startsWith('precache-'));
 
       if (!precacheCache) {
         return false;
@@ -91,10 +89,7 @@ test.describe('App Shell Offline Load', () => {
     expect(precacheExists).toBe(true);
   });
 
-  test('T017-4: App loads when offline after initial visit', async ({
-    page,
-    context,
-  }) => {
+  test('T017-4: App loads when offline after initial visit', async ({ page, context }) => {
     // First visit - online
     await page.goto('/');
     await page.waitForTimeout(2000); // Allow SW to activate and precache
@@ -114,10 +109,7 @@ test.describe('App Shell Offline Load', () => {
     expect(loadTime).toBeLessThan(2000);
   });
 
-  test('T017-5: Assets are served from cache when offline', async ({
-    page,
-    context,
-  }) => {
+  test('T017-5: Assets are served from cache when offline', async ({ page, context }) => {
     // First visit - cache assets
     await page.goto('/');
     await page.waitForTimeout(2000);
@@ -149,9 +141,7 @@ test.describe('App Shell Offline Load', () => {
     // Check if update check mechanism exists
     const canCheckUpdates = await page.evaluate(async () => {
       const registration = await navigator.serviceWorker.getRegistration();
-      return (
-        registration !== undefined && typeof registration.update === 'function'
-      );
+      return registration !== undefined && typeof registration.update === 'function';
     });
 
     expect(canCheckUpdates).toBe(true);

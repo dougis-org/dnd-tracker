@@ -106,6 +106,10 @@ export function getServiceWorkerState(): ServiceWorkerState {
  * Send message to active service worker
  */
 export function postMessageToSW(message: unknown): void {
+  if (typeof window === 'undefined' || !navigator.serviceWorker) {
+    return;
+  }
+  
   if (navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage(message);
   } else {
