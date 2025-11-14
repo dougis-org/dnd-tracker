@@ -13,16 +13,8 @@ import {
   getAvailablePlans,
 } from '@/lib/adapters/subscriptionAdapter';
 import type {
-  Subscription,
-  UsageMetric,
-  Plan,
+  SubscriptionResponse,
 } from '@/lib/schemas/subscriptionSchema';
-
-interface SubscriptionResponse {
-  subscription: Subscription;
-  usageMetrics: UsageMetric[];
-  availablePlans: Plan[];
-}
 
 export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {

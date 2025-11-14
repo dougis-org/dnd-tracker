@@ -34,6 +34,7 @@ export function getPlanStatusBadge(
 }
 
 export function getUsageBarColor(usage: number, max: number): string {
+  if (max === 0) return 'bg-green-500'; // Unlimited usage
   const percentage = usage / max;
   if (percentage >= 0.9) return 'bg-red-500';
   if (percentage >= 0.7) return 'bg-yellow-500';
