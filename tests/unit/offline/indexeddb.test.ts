@@ -113,7 +113,9 @@ describe('IndexedDB Wrapper', () => {
     });
 
     it('should not error when deleting non-existent item', async () => {
-      await expect(deleteItem(STORES.QUEUE, 'non-existent')).resolves.not.toThrow();
+      await expect(
+        deleteItem(STORES.QUEUE, 'non-existent')
+      ).resolves.not.toThrow();
     });
   });
 
