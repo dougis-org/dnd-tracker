@@ -138,15 +138,16 @@ describe('Offline Queue', () => {
 
     it('should skip failed operations', async () => {
       const id1 = await enqueue('OP1', {});
-      await dequeue();
-      // Mark as failed with max retries
+      // Fail operation until max retries
       for (let i = 0; i < 5; i++) {
+        await dequeue(); // Dequeue and mark in-progress
         await markFailed(id1);
       }
 
       const id2 = await enqueue('OP2', {});
       const entry = await dequeue();
 
+      // Should return id2 since id1 has maxRetriesReached
       expect(entry?.id).toBe(id2);
     });
 
