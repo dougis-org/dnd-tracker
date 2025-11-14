@@ -9,22 +9,11 @@ import {
   SubscriptionSchema,
   SubscriptionResponseSchema,
 } from '../../../src/lib/schemas/subscriptionSchema';
+import { createValidSubscription, createValidUsageMetric, createValidPlan } from './schemaTestHelpers';
 
 describe('SubscriptionSchema', () => {
   it('should validate a valid subscription with all required fields', () => {
-    const validSubscription = {
-      id: 'sub_abc123',
-      userId: 'user-123',
-      planId: 'plan_sa',
-      planName: 'Seasoned Adventurer' as const,
-      billingFrequency: 'annual' as const,
-      renewalDate: new Date('2026-11-13'),
-      status: 'active' as const,
-      trialDaysRemaining: null,
-      createdAt: new Date('2025-11-01'),
-      updatedAt: new Date('2025-11-13'),
-    };
-
+    const validSubscription = createValidSubscription();
     const result = SubscriptionSchema.safeParse(validSubscription);
     expect(result.success).toBe(true);
     if (result.success) {
@@ -33,7 +22,7 @@ describe('SubscriptionSchema', () => {
   });
 
   it('should validate a subscription with trialDaysRemaining', () => {
-    const trialSubscription = {
+    const trialSubscription = createValidSubscription({
       id: 'sub_trial',
       userId: 'user-456',
       planId: 'plan_free',
@@ -44,8 +33,7 @@ describe('SubscriptionSchema', () => {
       trialDaysRemaining: 7,
       createdAt: new Date('2025-11-06'),
       updatedAt: new Date('2025-11-13'),
-    };
-
+    });
     const result = SubscriptionSchema.safeParse(trialSubscription);
     expect(result.success).toBe(true);
     if (result.success) {
@@ -55,69 +43,34 @@ describe('SubscriptionSchema', () => {
 
   it('should reject subscription with invalid planName', () => {
     const invalidSubscription = {
-      id: 'sub_abc123',
-      userId: 'user-123',
+      ...createValidSubscription(),
       planId: 'plan_invalid',
-      planName: 'InvalidPlan',
-      billingFrequency: 'annual' as const,
-      renewalDate: new Date(),
-      status: 'active' as const,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      planName: 'InvalidPlan' as string,
     };
-
     const result = SubscriptionSchema.safeParse(invalidSubscription);
     expect(result.success).toBe(false);
   });
 
   it('should reject subscription with invalid status', () => {
     const invalidSubscription = {
-      id: 'sub_abc123',
-      userId: 'user-123',
-      planId: 'plan_sa',
-      planName: 'Seasoned Adventurer' as const,
-      billingFrequency: 'annual' as const,
-      renewalDate: new Date(),
-      status: 'suspended',
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      ...createValidSubscription(),
+      status: 'suspended' as string,
     };
-
     const result = SubscriptionSchema.safeParse(invalidSubscription);
     expect(result.success).toBe(false);
   });
 
   it('should reject subscription with negative trialDaysRemaining', () => {
-    const invalidSubscription = {
-      id: 'sub_abc123',
-      userId: 'user-123',
-      planId: 'plan_sa',
-      planName: 'Seasoned Adventurer' as const,
-      billingFrequency: 'annual' as const,
-      renewalDate: new Date(),
+    const invalidSubscription = createValidSubscription({
       status: 'trial' as const,
       trialDaysRemaining: -1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
+    });
     const result = SubscriptionSchema.safeParse(invalidSubscription);
     expect(result.success).toBe(false);
   });
 
   it('should reject subscription with empty ID', () => {
-    const invalidSubscription = {
-      id: '',
-      userId: 'user-123',
-      planId: 'plan_sa',
-      planName: 'Seasoned Adventurer' as const,
-      billingFrequency: 'annual' as const,
-      renewalDate: new Date(),
-      status: 'active' as const,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
+    const invalidSubscription = createValidSubscription({ id: '' });
     const result = SubscriptionSchema.safeParse(invalidSubscription);
     expect(result.success).toBe(false);
   });
@@ -126,38 +79,9 @@ describe('SubscriptionSchema', () => {
 describe('SubscriptionResponseSchema', () => {
   it('should validate a complete subscription response', () => {
     const validResponse = {
-      subscription: {
-        id: 'sub_abc123',
-        userId: 'user-123',
-        planId: 'plan_sa',
-        planName: 'Seasoned Adventurer' as const,
-        billingFrequency: 'annual' as const,
-        renewalDate: new Date(),
-        status: 'active' as const,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      usageMetrics: [
-        {
-          id: 'metric_parties',
-          userId: 'user-123',
-          metricName: 'parties' as const,
-          currentUsage: 2,
-          maxAllowed: 5,
-          category: 'party' as const,
-          updatedAt: new Date(),
-        },
-      ],
-      availablePlans: [
-        {
-          id: 'plan_free',
-          name: 'Free' as const,
-          monthlyPrice: 0,
-          annualPrice: 0,
-          features: ['Feature'],
-          usageLimits: { parties: 1 },
-        },
-      ],
+      subscription: createValidSubscription(),
+      usageMetrics: [createValidUsageMetric()],
+      availablePlans: [createValidPlan()],
     };
 
     const result = SubscriptionResponseSchema.safeParse(validResponse);

@@ -18,6 +18,10 @@ servers:
   - url: https://dnd-tracker.fly.dev
     description: Production
 
+tags:
+  - name: subscription
+    description: Subscription and plan management operations
+
 paths:
   /api/subscription:
     get:

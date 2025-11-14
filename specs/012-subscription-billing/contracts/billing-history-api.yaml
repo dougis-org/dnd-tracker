@@ -19,6 +19,10 @@ servers:
   - url: https://dnd-tracker.fly.dev
     description: Production
 
+tags:
+  - name: billing
+    description: Billing and invoice management operations
+
 paths:
   /api/billing/history:
     get:
