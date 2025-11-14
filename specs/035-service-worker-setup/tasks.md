@@ -9,21 +9,21 @@ Branching: Each milestone gets its own branch as described in the plan (e.g. `fe
 
 ## Phase 1 — Setup (project initialization)
 
-- [ ] T001 Create feature branch `feature/035-service-worker-setup/precache-registration` from `main` and record branch intent in `specs/035-service-worker-setup/plan.md`
-- [ ] T002 Update `specs/035-service-worker-setup/plan.md` to reference this `tasks.md` and cross-link the sub-issue list (issue #451..#455) — file: `specs/035-service-worker-setup/plan.md`
-- [ ] T003 Add an initial `specs/035-service-worker-setup/research.md` stub (if missing) and record decisions: `IndexedDB` queue, LRU eviction, 50 MB cap — file: `specs/035-service-worker-setup/research.md`
-- [ ] T004 Add `specs/035-service-worker-setup/data-model.md` stub with `OfflineQueueEntry` and `OfflineEventLog` schemas — file: `specs/035-service-worker-setup/data-model.md`
-- [ ] T005 Add `specs/035-service-worker-setup/quickstart.md` stub with manual QA steps for offline testing — file: `specs/035-service-worker-setup/quickstart.md`
+- [x] T001 Create feature branch `feature/035-precache-registration` from `main` and record branch intent in `specs/035-service-worker-setup/plan.md`
+- [x] T002 Update `specs/035-service-worker-setup/plan.md` to reference this `tasks.md` and cross-link the sub-issue list (issue #451..#455) — file: `specs/035-service-worker-setup/plan.md`
+- [x] T003 Add an initial `specs/035-service-worker-setup/research.md` stub (if missing) and record decisions: `IndexedDB` queue, LRU eviction, 50 MB cap — file: `specs/035-service-worker-setup/research.md`
+- [x] T004 Add `specs/035-service-worker-setup/data-model.md` stub with `OfflineQueueEntry` and `OfflineEventLog` schemas — file: `specs/035-service-worker-setup/data-model.md`
+- [x] T005 Add `specs/035-service-worker-setup/quickstart.md` stub with manual QA steps for offline testing — file: `specs/035-service-worker-setup/quickstart.md`
 
 ## Phase 2 — Foundational (blocking prerequisites)
 
-- [ ] T006 [P] Create `public/sw.js` placeholder with minimal install/activate/fetch handlers and comments — file: `public/sw.js`
-- [ ] T007 Create registration helper `src/lib/sw/register.ts` that registers the SW and exports lifecycle hooks (install, activate, update events) — file: `src/lib/sw/register.ts`
-- [ ] T008 Create IndexedDB wrapper `src/lib/offline/indexeddb.ts` with open/get/put/delete utilities (use idb or light wrapper) — file: `src/lib/offline/indexeddb.ts`
-- [ ] T009 Create Offline Queue API `src/lib/offline/queue.ts` with enqueue/dequeue/list/retry methods and IndexedDB persistence (FIFO, retryCount) — file: `src/lib/offline/queue.ts`
-- [ ] T010 Create a small `src/lib/offline/cache-evictor.ts` that provides size tracking and approximate LRU eviction helpers (used by SW) — file: `src/lib/offline/cache-evictor.ts`
-- [ ] T011 [P] Add unit test scaffolding for service worker helpers under `tests/unit/sw/` — file: `tests/unit/sw/register.test.ts`
-- [ ] T012 Add a `specs/035-service-worker-setup/tasks.md` entry (this file) committed to the feature branch — file: `specs/035-service-worker-setup/tasks.md`
+- [x] T006 [P] Create `public/sw.js` placeholder with minimal install/activate/fetch handlers and comments — file: `public/sw.js`
+- [x] T007 Create registration helper `src/lib/sw/register.ts` that registers the SW and exports lifecycle hooks (install, activate, update events) — file: `src/lib/sw/register.ts`
+- [x] T008 Create IndexedDB wrapper `src/lib/offline/indexeddb.ts` with open/get/put/delete utilities (use idb or light wrapper) — file: `src/lib/offline/indexeddb.ts`
+- [x] T009 Create Offline Queue API `src/lib/offline/queue.ts` with enqueue/dequeue/list/retry methods and IndexedDB persistence (FIFO, retryCount) — file: `src/lib/offline/queue.ts`
+- [x] T010 Create a small `src/lib/offline/cache-evictor.ts` that provides size tracking and approximate LRU eviction helpers (used by SW) — file: `src/lib/offline/cache-evictor.ts`
+- [x] T011 [P] Add unit test scaffolding for service worker helpers under `tests/unit/sw/` — file: `tests/unit/sw/register.test.ts`
+- [x] T012 Add a `specs/035-service-worker-setup/tasks.md` entry (this file) committed to the feature branch — file: `specs/035-service-worker-setup/tasks.md`
 
 ## Phase 3 — User Story Phases (priority order)
 

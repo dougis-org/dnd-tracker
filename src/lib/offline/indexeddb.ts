@@ -1,13 +1,11 @@
 /**
  * IndexedDB Wrapper Utilities
- *
+ * 
  * Provides lightweight wrapper around IndexedDB for offline queue and event log storage.
  * Uses promise-based API for async operations.
- *
+ * 
  * @module offline/indexeddb
  */
-
-/// <reference lib="dom" />
 
 // Browser check to ensure IndexedDB is available
 if (typeof window !== 'undefined' && !window.indexedDB) {
@@ -22,18 +20,6 @@ export const STORES = {
   QUEUE: 'offline-queue',
   EVENT_LOG: 'event-log',
 } as const;
-
-/**
- * Generic helper for IndexedDB requests
- */
-// eslint-disable-next-line no-undef
-function executeRequest<T>(request: IDBRequest): Promise<T> {
-  return new Promise((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () =>
-      reject(new Error(`IndexedDB error: ${request.error?.message}`));
-  });
-}
 
 /**
  * Open IndexedDB connection
@@ -84,41 +70,87 @@ export async function getItem<T>(
   id: string
 ): Promise<T | null> {
   const db = await openDB();
-  const transaction = db.transaction(storeName, 'readonly');
-  const store = transaction.objectStore(storeName);
-  const result = await executeRequest<T>(store.get(id));
-  return result || null;
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readonly');
+    const store = transaction.objectStore(storeName);
+    const request = store.get(id);
+
+    request.onsuccess = () => {
+      resolve(request.result || null);
+    };
+
+    request.onerror = () => {
+      reject(new Error(`Failed to get item: ${request.error?.message}`));
+    };
+  });
 }
 
 /**
  * Put item into store (insert or update)
  */
-export async function putItem<T>(storeName: string, item: T): Promise<void> {
+export async function putItem<T>(
+  storeName: string,
+  item: T
+): Promise<void> {
   const db = await openDB();
-  const transaction = db.transaction(storeName, 'readwrite');
-  const store = transaction.objectStore(storeName);
-  await executeRequest(store.put(item));
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readwrite');
+    const store = transaction.objectStore(storeName);
+    const request = store.put(item);
+
+    request.onsuccess = () => {
+      resolve();
+    };
+
+    request.onerror = () => {
+      reject(new Error(`Failed to put item: ${request.error?.message}`));
+    };
+  });
 }
 
 /**
  * Delete item from store by ID
  */
-export async function deleteItem(storeName: string, id: string): Promise<void> {
+export async function deleteItem(
+  storeName: string,
+  id: string
+): Promise<void> {
   const db = await openDB();
-  const transaction = db.transaction(storeName, 'readwrite');
-  const store = transaction.objectStore(storeName);
-  await executeRequest(store.delete(id));
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readwrite');
+    const store = transaction.objectStore(storeName);
+    const request = store.delete(id);
+
+    request.onsuccess = () => {
+      resolve();
+    };
+
+    request.onerror = () => {
+      reject(new Error(`Failed to delete item: ${request.error?.message}`));
+    };
+  });
 }
 
 /**
  * Get all items from store
  */
-export async function getAllItems<T>(storeName: string): Promise<T[]> {
+export async function getAllItems<T>(
+  storeName: string
+): Promise<T[]> {
   const db = await openDB();
-  const transaction = db.transaction(storeName, 'readonly');
-  const store = transaction.objectStore(storeName);
-  const result = await executeRequest<T[]>(store.getAll());
-  return result || [];
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readonly');
+    const store = transaction.objectStore(storeName);
+    const request = store.getAll();
+
+    request.onsuccess = () => {
+      resolve(request.result || []);
+    };
+
+    request.onerror = () => {
+      reject(new Error(`Failed to get all items: ${request.error?.message}`));
+    };
+  });
 }
 
 /**
@@ -126,7 +158,17 @@ export async function getAllItems<T>(storeName: string): Promise<T[]> {
  */
 export async function clearStore(storeName: string): Promise<void> {
   const db = await openDB();
-  const transaction = db.transaction(storeName, 'readwrite');
-  const store = transaction.objectStore(storeName);
-  await executeRequest(store.clear());
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readwrite');
+    const store = transaction.objectStore(storeName);
+    const request = store.clear();
+
+    request.onsuccess = () => {
+      resolve();
+    };
+
+    request.onerror = () => {
+      reject(new Error(`Failed to clear store: ${request.error?.message}`));
+    };
+  });
 }
