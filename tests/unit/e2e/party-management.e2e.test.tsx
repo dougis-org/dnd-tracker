@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 /**
  * E2E Tests for Party Management Feature (F006)
  * Tests critical user workflows: create, read, update, delete operations
