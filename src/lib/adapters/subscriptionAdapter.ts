@@ -34,24 +34,15 @@ export async function getSubscription(userId: string): Promise<Subscription> {
 
   try {
     const storage = getStorage();
-    console.log('[getSubscription] Got storage:', {
-      storageType: storage.constructor?.name,
-      isGlobalLocalStorage: storage === (global as any).localStorage,
-    });
     const rawData = storage.getItem(`subscription:${userId}`);
-    console.log('[getSubscription] Raw data:', rawData);
     const data = safeJsonParse(rawData);
-    console.log('[getSubscription] Parsed data:', data);
 
     const validated = validateSubscription(data);
-    console.log('[getSubscription] Validated:', validated ? 'yes' : 'no');
     if (validated) return validated;
 
     // Clear corrupted entry if it exists
     if (rawData !== null) {
-      console.log('[getSubscription] Removing corrupted entry for key:', `subscription:${userId}`);
       storage.removeItem(`subscription:${userId}`);
-      console.log('[getSubscription] After removeItem, checking:', storage.getItem(`subscription:${userId}`));
     }
     return createDefaultSubscription(userId);
   } catch (error) {

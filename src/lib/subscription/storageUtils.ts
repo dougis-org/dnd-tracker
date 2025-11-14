@@ -5,22 +5,15 @@
 export function getStorage(): Storage {
   // Browser environment
   if (typeof window !== 'undefined' && window.localStorage) {
-    console.log('[getStorage] Returning window.localStorage');
     return window.localStorage;
   }
   
   // Node/test environment (Jest)
   if (typeof global !== 'undefined' && (global as any).localStorage) {
-    console.log('[getStorage] Returning global.localStorage', {
-      isGlobalLocalStorage: (global as any).localStorage === global.localStorage,
-      hasGetItem: typeof (global as any).localStorage?.getItem === 'function',
-      hasRemoveItem: typeof (global as any).localStorage?.removeItem === 'function',
-    });
     return (global as any).localStorage;
   }
   
   // Fallback: no-op storage for SSR/environments without localStorage
-  console.log('[getStorage] Returning no-op fallback storage');
   return {
     getItem: () => null,
     setItem: () => {},
