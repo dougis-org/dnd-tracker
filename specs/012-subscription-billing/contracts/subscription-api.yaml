@@ -1,0 +1,257 @@
+openapi: 3.0.0
+info:
+  title: Subscription API (Feature 012)
+  version: '1.0.0'
+  description: |
+    Subscription management API for D&D Tracker.
+    Returns current plan, usage metrics, and available plans.
+
+    **Status**: Mock adapter (localStorage); F014 will integrate Stripe.
+    **Network Delay**: 300ms simulated in mock adapter.
+  contact:
+    name: D&D Tracker Development Team
+    email: support@dndtracker.example.com
+
+servers:
+  - url: http://localhost:3000
+    description: Local development
+  - url: https://dnd-tracker.fly.dev
+    description: Production
+
+tags:
+  - name: subscription
+    description: Subscription and plan management operations
+
+paths:
+  /api/subscription:
+    get:
+      summary: Get current subscription and available plans
+      description: |
+        Returns the authenticated user's current subscription status,
+        usage metrics for their current plan, and a list of all available plans
+        for upgrade/downgrade comparison.
+      operationId: getSubscription
+      tags:
+        - subscription
+      parameters:
+        - name: x-user-id
+          in: header
+          description: User ID (mocked; F013 will use Clerk auth)
+          required: true
+          schema:
+            type: string
+            example: user-123
+      responses:
+        '200':
+          description: Subscription data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    SubscriptionResponse:
+      type: object
+      required:
+        - subscription
+        - usageMetrics
+        - availablePlans
+      properties:
+        subscription:
+          $ref: '#/components/schemas/Subscription'
+        usageMetrics:
+          type: array
+          description: Usage metrics for the user's current plan
+          items:
+            $ref: '#/components/schemas/UsageMetric'
+        availablePlans:
+          type: array
+          description: All available subscription tiers
+          items:
+            $ref: '#/components/schemas/Plan'
+
+    Subscription:
+      type: object
+      required:
+        - id
+        - userId
+        - planId
+        - planName
+        - billingFrequency
+        - renewalDate
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          description: Unique subscription identifier
+          example: sub_abc123
+        userId:
+          type: string
+          description: User ID
+          example: user-123
+        planId:
+          type: string
+          description: Plan ID
+          example: plan_sa
+        planName:
+          type: string
+          enum:
+            - Free
+            - Seasoned Adventurer
+            - Master DM
+          description: Display name of current plan
+        billingFrequency:
+          type: string
+          enum:
+            - monthly
+            - annual
+          description: Billing cycle
+        renewalDate:
+          type: string
+          format: date-time
+          description: Next renewal date (ISO 8601)
+          example: '2026-11-13T00:00:00Z'
+        status:
+          type: string
+          enum:
+            - active
+            - trial
+            - paused
+            - canceled
+          description: Subscription status
+        trialDaysRemaining:
+          type: integer
+          nullable: true
+          description: Days remaining in trial (null if not on trial)
+          example: 7
+        createdAt:
+          type: string
+          format: date-time
+          description: Subscription creation date (ISO 8601)
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last modification date (ISO 8601)
+
+    UsageMetric:
+      type: object
+      required:
+        - id
+        - userId
+        - metricName
+        - currentUsage
+        - maxAllowed
+        - category
+        - updatedAt
+      properties:
+        id:
+          type: string
+          description: Unique metric identifier
+          example: metric_parties
+        userId:
+          type: string
+          description: User ID
+          example: user-123
+        metricName:
+          type: string
+          enum:
+            - parties
+            - encounters
+            - characters
+            - combatSessions
+          description: Type of usage metric
+        currentUsage:
+          type: integer
+          minimum: 0
+          description: Current count
+          example: 2
+        maxAllowed:
+          type: integer
+          minimum: 0
+          description: Maximum allowed (from plan)
+          example: 5
+        category:
+          type: string
+          enum:
+            - character
+            - party
+            - encounter
+          description: UI grouping category
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update (ISO 8601)
+
+    Plan:
+      type: object
+      required:
+        - id
+        - name
+        - monthlyPrice
+        - annualPrice
+        - features
+        - usageLimits
+      properties:
+        id:
+          type: string
+          description: Unique plan identifier
+          example: plan_sa
+        name:
+          type: string
+          enum:
+            - Free
+            - Seasoned Adventurer
+            - Master DM
+          description: Plan tier name
+        monthlyPrice:
+          type: number
+          minimum: 0
+          description: Monthly price in USD
+          example: 9.99
+        annualPrice:
+          type: number
+          minimum: 0
+          description: Annual price in USD
+          example: 99.99
+        features:
+          type: array
+          items:
+            type: string
+          description: List of included features
+          example:
+            - Up to 5 parties
+            - Up to 50 encounters
+            - Advanced character management
+        usageLimits:
+          type: object
+          description: Usage limits for each metric
+          example:
+            parties: 5
+            encounters: 50
+            characters: 50
+            combatSessions: 50
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: Failed to fetch subscription
