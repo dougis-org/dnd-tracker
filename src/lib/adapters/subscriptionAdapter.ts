@@ -34,14 +34,16 @@ export async function getSubscription(userId: string): Promise<Subscription> {
   await delay(NETWORK_DELAY_MS);
 
   try {
-    const data = safeJsonParse(
-      storage.getItem(`subscription:${userId}`) as string | null
-    );
+    const rawData = storage.getItem(`subscription:${userId}`);
+    const data = safeJsonParse(rawData);
 
     const validated = validateSubscription(data);
     if (validated) return validated;
 
-    storage.removeItem(`subscription:${userId}`);
+    // Clear corrupted entry if it exists
+    if (rawData !== null) {
+      storage.removeItem(`subscription:${userId}`);
+    }
     return createDefaultSubscription(userId);
   } catch (error) {
     console.error(`Error fetching subscription for user ${userId}:`, error);

@@ -1,6 +1,6 @@
 /**
  * Shared test data helpers for subscription schema tests
- * 
+ *
  * Extracts common test object creation to reduce code duplication
  */
 

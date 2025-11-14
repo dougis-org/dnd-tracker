@@ -9,7 +9,11 @@ import {
   SubscriptionSchema,
   SubscriptionResponseSchema,
 } from '../../../src/lib/schemas/subscriptionSchema';
-import { createValidSubscription, createValidUsageMetric, createValidPlan } from './schemaTestHelpers';
+import {
+  createValidSubscription,
+  createValidUsageMetric,
+  createValidPlan,
+} from './schemaTestHelpers';
 
 describe('SubscriptionSchema', () => {
   it('should validate a valid subscription with all required fields', () => {
