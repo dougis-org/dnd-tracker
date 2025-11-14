@@ -9,6 +9,9 @@ info:
     **Status**: Mock adapter (localStorage); F014 will integrate Stripe.
     **Network Delay**: 300ms simulated in mock adapter.
     **Pagination**: Client-side in mock; will be server-side in F014 (MongoDB).
+  contact:
+    name: D&D Tracker Development Team
+    email: support@dndtracker.example.com
 
 servers:
   - url: http://localhost:3000
@@ -24,6 +27,8 @@ paths:
         Returns a paginated list of invoices for the authenticated user.
         Supports client-side pagination with page and pageSize parameters.
       operationId: getBillingHistory
+      tags:
+        - billing
       parameters:
         - name: x-user-id
           in: header

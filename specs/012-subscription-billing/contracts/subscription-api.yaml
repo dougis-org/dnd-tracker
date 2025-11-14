@@ -8,6 +8,9 @@ info:
 
     **Status**: Mock adapter (localStorage); F014 will integrate Stripe.
     **Network Delay**: 300ms simulated in mock adapter.
+  contact:
+    name: D&D Tracker Development Team
+    email: support@dndtracker.example.com
 
 servers:
   - url: http://localhost:3000
@@ -24,6 +27,8 @@ paths:
         usage metrics for their current plan, and a list of all available plans
         for upgrade/downgrade comparison.
       operationId: getSubscription
+      tags:
+        - subscription
       parameters:
         - name: x-user-id
           in: header
