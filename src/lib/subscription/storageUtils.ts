@@ -2,17 +2,23 @@
  * Storage and JSON parsing utilities for subscription adapter
  */
 
+// Type for global with optional localStorage (for Jest environment)
+interface GlobalWithStorage {
+  localStorage?: Storage;
+}
+
 export function getStorage(): Storage {
   // Browser environment
   if (typeof window !== 'undefined' && window.localStorage) {
     return window.localStorage;
   }
-  
+
   // Node/test environment (Jest)
-  if (typeof global !== 'undefined' && (global as any).localStorage) {
-    return (global as any).localStorage;
+  const globalObj = global as unknown as GlobalWithStorage;
+  if (typeof global !== 'undefined' && globalObj.localStorage) {
+    return globalObj.localStorage;
   }
-  
+
   // Fallback: no-op storage for SSR/environments without localStorage
   return {
     getItem: () => null,
