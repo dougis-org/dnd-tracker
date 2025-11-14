@@ -24,10 +24,10 @@ npm test && npm run lint
 TypeScript 5.9 (repo `package.json`), Next.js 16, React 19, Node runtime compatible with Next.js 16: Follow standard conventions
 
 ## Recent Changes
+- feature/035-service-worker-setup: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - feature/011-item-catalog: Added TypeScript 5.9.2 (Next.js 16, React 19) + Next.js 16, React 19, Zod (validation), Tailwind CSS, shadcn/ui, Mongoose (present in repo but backend work out of scope for frontend MVP)
 - 007-monster-management: Added TypeScript 5.9 (repository `package.json`), Next.js 16, React 19, Node runtime compatible with Next.js 16, Zod (validation), Tailwind CSS, Mongoose (present in repo but backend work out of scope for frontend MVP), UI-first: mock adapters (in-memory/localStorage), Backend persistence: planned for follow-up (MongoDB / Mongoose indicated by repo deps), Testing: Jest + Testing Library, Playwright for E2E, design tokens / UI primitives already present (shadcn patterns)
 TypeScript 5.9.2 (Next.js 16, React 19): Follow standard conventions
-- 008-encounter-builder: Added Mongoose models, Zod schemas, API adapter, Next.js routes, and testcontainers integration
 
 <!-- MANUAL ADDITIONS START -->
 ## Tooling
