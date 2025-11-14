@@ -14,6 +14,7 @@ import {
   getUsageMetrics,
   getAvailablePlans,
   getBillingHistory,
+  initializeSubscriptionData,
 } from '../../../src/lib/adapters/subscriptionAdapter';
 import {
   createMockSubscription,
@@ -350,6 +351,57 @@ describe('Subscription Adapter', () => {
         expect(invoice.id).toBeDefined();
         expect(invoice.amount).toBeGreaterThanOrEqual(0);
       });
+    });
+  });
+
+  describe('initializeSubscriptionData', () => {
+    it('should initialize all subscription data in localStorage', async () => {
+      await initializeSubscriptionData(testUserId);
+
+      // Check subscription data
+      const subData = localStorage.getItem(`subscription:${testUserId}`);
+      expect(subData).toBeTruthy();
+      const subscription = JSON.parse(subData!);
+      expect(subscription.userId).toBe(testUserId);
+      expect(subscription.planName).toBe('Free');
+
+      // Check usage metrics
+      const metricsData = localStorage.getItem(`usage:${testUserId}`);
+      expect(metricsData).toBeTruthy();
+      const metrics = JSON.parse(metricsData!);
+      expect(Array.isArray(metrics)).toBe(true);
+      expect(metrics.length).toBeGreaterThan(0);
+
+      // Check plans
+      const plansData = localStorage.getItem('plans');
+      expect(plansData).toBeTruthy();
+      const plans = JSON.parse(plansData!);
+      expect(Array.isArray(plans)).toBe(true);
+
+      // Check billing history
+      const billingData = localStorage.getItem(`billing:${testUserId}`);
+      expect(billingData).toBeTruthy();
+      const billing = JSON.parse(billingData!);
+      expect(Array.isArray(billing)).toBe(true);
+    });
+
+    it('should not overwrite existing plans', async () => {
+      const existingPlans = [{ id: 'custom-plan', name: 'Custom' }];
+      localStorage.setItem('plans', JSON.stringify(existingPlans));
+
+      await initializeSubscriptionData(testUserId);
+
+      const plansData = localStorage.getItem('plans');
+      const plans = JSON.parse(plansData!);
+      expect(plans).toEqual(existingPlans);
+    });
+
+    it('should handle network delay', async () => {
+      const startTime = Date.now();
+      await initializeSubscriptionData(testUserId);
+      const duration = Date.now() - startTime;
+
+      expect(duration).toBeGreaterThanOrEqual(250); // Allow some tolerance
     });
   });
 });
