@@ -77,7 +77,7 @@ describe('ProfileForm', () => {
     mockUserAdapter.updateProfile.mockImplementationOnce(
       () =>
         new Promise((resolve) => {
-          // eslint-disable-next-line no-undef -- setTimeout is available in Node.js
+           
           setTimeout(() => {
             resolve(mockProfile);
           }, 100);
@@ -86,7 +86,7 @@ describe('ProfileForm', () => {
     (userAdapter.updatePreferences as jest.Mock).mockImplementationOnce(
       () =>
         new Promise((resolve) => {
-          // eslint-disable-next-line no-undef -- setTimeout is available in Node.js
+           
           setTimeout(() => {
             resolve(mockPreferences);
           }, 100);
