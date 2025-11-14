@@ -79,11 +79,19 @@ describe('Subscription Adapter', () => {
     });
 
     it('should clear corrupted localStorage entry', async () => {
+      console.log('[TEST] localStorage object:', {
+        isGlobalLocalStorage: localStorage === (global as any).localStorage,
+        hasGetItem: typeof localStorage.getItem === 'function',
+        hasRemoveItem: typeof localStorage.removeItem === 'function',
+      });
       localStorage.setItem(`subscription:${testUserId}`, '{invalid json');
+      console.log('[TEST] After setItem:', localStorage.getItem(`subscription:${testUserId}`));
 
       await getSubscription(testUserId);
 
-      expect(localStorage.getItem(`subscription:${testUserId}`)).toBeNull();
+      const finalValue = localStorage.getItem(`subscription:${testUserId}`);
+      console.log('[TEST] After getSubscription:', finalValue);
+      expect(finalValue).toBeNull();
     });
 
     it('should handle large subscription objects', async () => {
