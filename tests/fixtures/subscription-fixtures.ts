@@ -13,6 +13,7 @@ import {
   type Invoice,
   type PaginatedInvoices,
 } from '../../src/lib/schemas/subscriptionSchema';
+import { createPaginationResponse } from './pagination-helpers';
 
 /**
  * Creates a mock Subscription with default or overridden values
@@ -284,13 +285,7 @@ export function createMockPaginatedInvoices(overrides?: {
   const invoices =
     overrides?.invoices ?? createMockInvoices(Math.min(pageSize, totalCount));
 
-  return {
-    invoices,
-    totalCount,
-    pageSize,
-    currentPage: page,
-    hasNextPage: page * pageSize < totalCount,
-  };
+  return createPaginationResponse(invoices, page, pageSize, totalCount);
 }
 
 /**

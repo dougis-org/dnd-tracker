@@ -12,17 +12,13 @@
 
 import { useEffect, useState } from 'react';
 import { PlanCard } from './PlanCard';
-import type {
-  Subscription,
-  Plan,
-  UsageMetric,
-} from '@/lib/schemas/subscriptionSchema';
-
-interface SubscriptionResponse {
-  subscription: Subscription;
-  usageMetrics: UsageMetric[];
-  availablePlans: Plan[];
-}
+import { SubscriptionPageLoading } from './SubscriptionPageLoading';
+import { SubscriptionPageError } from './SubscriptionPageError';
+import { SubscriptionPageUsage } from './SubscriptionPageUsage';
+import {
+  fetchSubscriptionData,
+  type SubscriptionResponse,
+} from '@/lib/subscription/fetchers';
 
 interface SubscriptionPageProps {
   onNavigate?: (target: string) => void;
@@ -33,22 +29,11 @@ export function SubscriptionPage({ onNavigate }: SubscriptionPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSubscriptionData = async () => {
+  const handleFetch = async () => {
     try {
       setLoading(true);
       setError(null);
-
-      const response = await fetch('/api/subscription');
-
-      if (!response.ok) {
-        throw new Error(
-          response.status === 401
-            ? 'You must be logged in to view subscription details'
-            : 'Failed to load subscription information'
-        );
-      }
-
-      const result: SubscriptionResponse = await response.json();
+      const result = await fetchSubscriptionData();
       setData(result);
     } catch (err) {
       const message =
@@ -60,82 +45,31 @@ export function SubscriptionPage({ onNavigate }: SubscriptionPageProps) {
   };
 
   useEffect(() => {
-    fetchSubscriptionData();
+    handleFetch();
   }, []);
 
   const handleRetry = () => {
-    fetchSubscriptionData();
+    handleFetch();
   };
 
   const handleManage = () => {
-    if (onNavigate) {
-      onNavigate('manage-plan');
-    }
+    onNavigate?.('manage-plan');
   };
 
   const handleChoosePlan = () => {
-    if (onNavigate) {
-      onNavigate('choose-plan');
-    }
+    onNavigate?.('choose-plan');
   };
 
   if (loading) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div
-          data-testid="subscription-page-skeleton"
-          className="space-y-4"
-        >
-          <div className="h-8 bg-gray-200 rounded animate-pulse w-1/3" />
-          <div className="rounded-lg border border-gray-200 bg-white shadow-md p-6">
-            <div className="space-y-4">
-              <div className="h-6 bg-gray-200 rounded animate-pulse w-1/2" />
-              <div className="h-4 bg-gray-200 rounded animate-pulse w-1/3" />
-              <div className="h-4 bg-gray-200 rounded animate-pulse w-1/4" />
-              <div className="h-10 bg-gray-200 rounded animate-pulse w-1/4" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <SubscriptionPageLoading />;
   }
 
   if (error || !data) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div
-          data-testid="subscription-page-error"
-          className="rounded-lg border border-red-200 bg-red-50 p-6"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-red-900">
-                Unable to Load Subscription
-              </h3>
-              <p className="text-red-700 mt-2">
-                {error ||
-                  'Failed to retrieve your subscription information. Please try again.'}
-              </p>
-            </div>
-          </div>
-          <div className="mt-4">
-            <button
-              onClick={handleRetry}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
-            >
-              Retry
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    return <SubscriptionPageError error={error} onRetry={handleRetry} />;
   }
 
   return (
-    <div
-      data-testid="subscription-page"
-      className="max-w-4xl mx-auto px-4 py-8"
-    >
+    <div data-testid="subscription-page" className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">
         Subscription & Billing
       </h1>
@@ -152,42 +86,7 @@ export function SubscriptionPage({ onNavigate }: SubscriptionPageProps) {
         />
       </div>
 
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Usage</h2>
-        <div className="rounded-lg border border-gray-200 bg-white shadow-md p-6">
-          <div className="space-y-4">
-            {data.usageMetrics.map((metric) => (
-              <div key={metric.id} className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-700 font-semibold capitalize">
-                    {metric.metricName}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {metric.currentUsage} of {metric.maxAllowed}
-                  </p>
-                </div>
-                <div className="w-32 bg-gray-200 rounded-full h-2">
-                  <div
-                    className={`h-2 rounded-full transition-colors ${
-                      metric.currentUsage / metric.maxAllowed >= 0.9
-                        ? 'bg-red-500'
-                        : metric.currentUsage / metric.maxAllowed >= 0.7
-                          ? 'bg-yellow-500'
-                          : 'bg-green-500'
-                    }`}
-                    style={{
-                      width: `${Math.min(
-                        (metric.currentUsage / metric.maxAllowed) * 100,
-                        100
-                      )}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <SubscriptionPageUsage metrics={data.usageMetrics} />
 
       <div className="text-sm text-gray-600">
         <p>

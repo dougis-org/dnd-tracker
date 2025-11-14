@@ -4,180 +4,31 @@
  * Provides localStorage-backed data access for subscription and billing features.
  * Implements 300ms network delay simulation and Zod schema validation.
  * Ready to be swapped for MongoDB adapter in F014.
- *
- * Storage Keys:
- * - subscription:${userId}: Subscription object
- * - usage:${userId}: UsageMetric array
- * - plans: Plan array (shared, not per-user)
- * - billing:${userId}: Invoice array
  */
 'use client';
 
-import {
-  SubscriptionSchema,
-  PlanSchema,
-  UsageMetricSchema,
-  InvoiceSchema,
-  type Subscription,
-  type Plan,
-  type UsageMetric,
-  type Invoice,
-  type PaginatedInvoices,
+import type {
+  Subscription,
+  Plan,
+  UsageMetric,
+  Invoice,
+  PaginatedInvoices,
 } from '../schemas/subscriptionSchema';
+import {
+  delay,
+  getStorage,
+  safeJsonParse,
+} from '../subscription/storageUtils';
+import {
+  validateSubscription,
+  validateUsageMetrics,
+  validatePlans,
+  validateInvoices,
+} from '../subscription/validationHelpers';
+import { createDefaultSubscription, createDefaultUsageMetrics, createDefaultPlans } from './subscriptionDefaults';
 
 const NETWORK_DELAY_MS = 300;
-
-// Get storage safely (client-side only)
-const storage = (() => {
-  if (typeof window !== 'undefined' && window.localStorage) {
-    return window.localStorage;
-  }
-  return {
-    getItem: () => null,
-    setItem: () => {},
-    removeItem: () => {},
-    clear: () => {},
-    key: () => null,
-    length: 0,
-  } as Storage;
-})();
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function safeJsonParse(jsonString: string | null): unknown {
-  if (!jsonString) return null;
-  try {
-    return JSON.parse(jsonString);
-  } catch (error) {
-    console.error('Failed to parse JSON from localStorage:', error);
-    return null;
-  }
-}
-
-function createDefaultSubscription(userId: string): Subscription {
-  const renewalDate = new Date();
-  renewalDate.setMonth(renewalDate.getMonth() + 1);
-
-  return {
-    id: `sub_${userId}`,
-    userId,
-    planId: 'plan_free',
-    planName: 'Free',
-    billingFrequency: 'monthly',
-    renewalDate,
-    status: 'active',
-    trialDaysRemaining: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-}
-
-function createDefaultUsageMetrics(userId: string): UsageMetric[] {
-  return [
-    {
-      id: 'metric_parties',
-      userId,
-      metricName: 'parties',
-      currentUsage: 0,
-      maxAllowed: 1,
-      category: 'party',
-      updatedAt: new Date(),
-    },
-    {
-      id: 'metric_encounters',
-      userId,
-      metricName: 'encounters',
-      currentUsage: 0,
-      maxAllowed: 5,
-      category: 'encounter',
-      updatedAt: new Date(),
-    },
-    {
-      id: 'metric_characters',
-      userId,
-      metricName: 'characters',
-      currentUsage: 0,
-      maxAllowed: 10,
-      category: 'character',
-      updatedAt: new Date(),
-    },
-    {
-      id: 'metric_combatSessions',
-      userId,
-      metricName: 'combatSessions',
-      currentUsage: 0,
-      maxAllowed: 3,
-      category: 'encounter',
-      updatedAt: new Date(),
-    },
-  ];
-}
-
-function createDefaultPlans(): Plan[] {
-  return [
-    {
-      id: 'plan_free',
-      name: 'Free',
-      monthlyPrice: 0,
-      annualPrice: 0,
-      features: [
-        'Up to 1 party',
-        'Up to 5 encounters',
-        'Basic character management',
-        'Limited combat tracking',
-      ],
-      usageLimits: {
-        parties: 1,
-        encounters: 5,
-        characters: 10,
-        combatSessions: 3,
-      },
-    },
-    {
-      id: 'plan_sa',
-      name: 'Seasoned Adventurer',
-      monthlyPrice: 9.99,
-      annualPrice: 99.99,
-      features: [
-        'Up to 5 parties',
-        'Up to 50 encounters',
-        'Advanced character management',
-        'Full combat tracking',
-        'Encounter builder',
-      ],
-      usageLimits: {
-        parties: 5,
-        encounters: 50,
-        characters: 50,
-        combatSessions: 50,
-      },
-    },
-    {
-      id: 'plan_md',
-      name: 'Master DM',
-      monthlyPrice: 19.99,
-      annualPrice: 199.99,
-      features: [
-        'Unlimited parties',
-        'Unlimited encounters',
-        'Advanced character management',
-        'Full combat tracking',
-        'Encounter builder',
-        'Monster library',
-        'Advanced reporting',
-        'Priority support',
-      ],
-      usageLimits: {
-        parties: 999999,
-        encounters: 999999,
-        characters: 999999,
-        combatSessions: 999999,
-      },
-    },
-  ];
-}
+const storage = getStorage();
 
 export async function getSubscription(userId: string): Promise<Subscription> {
   await delay(NETWORK_DELAY_MS);
@@ -187,22 +38,11 @@ export async function getSubscription(userId: string): Promise<Subscription> {
       storage.getItem(`subscription:${userId}`) as string | null
     );
 
-    if (!data) {
-      return createDefaultSubscription(userId);
-    }
+    const validated = validateSubscription(data);
+    if (validated) return validated;
 
-    const result = SubscriptionSchema.safeParse(data);
-
-    if (!result.success) {
-      console.error(
-        `Invalid subscription data for user ${userId}:`,
-        result.error
-      );
-      storage.removeItem(`subscription:${userId}`);
-      return createDefaultSubscription(userId);
-    }
-
-    return result.data;
+    storage.removeItem(`subscription:${userId}`);
+    return createDefaultSubscription(userId);
   } catch (error) {
     console.error(`Error fetching subscription for user ${userId}:`, error);
     return createDefaultSubscription(userId);
@@ -217,20 +57,11 @@ export async function getUsageMetrics(userId: string): Promise<UsageMetric[]> {
       storage.getItem(`usage:${userId}`) as string | null
     );
 
-    if (!data || !Array.isArray(data) || data.length === 0) {
+    if (!Array.isArray(data) || data.length === 0) {
       return createDefaultUsageMetrics(userId);
     }
 
-    const metrics: UsageMetric[] = [];
-    for (const item of data) {
-      const result = UsageMetricSchema.safeParse(item);
-      if (result.success) {
-        metrics.push(result.data);
-      } else {
-        console.error(`Invalid usage metric:`, result.error);
-      }
-    }
-
+    const metrics = validateUsageMetrics(data);
     return metrics.length > 0 ? metrics : createDefaultUsageMetrics(userId);
   } catch (error) {
     console.error(`Error fetching usage metrics for user ${userId}:`, error);
@@ -244,20 +75,11 @@ export async function getAvailablePlans(): Promise<Plan[]> {
   try {
     const data = safeJsonParse(storage.getItem('plans') as string | null);
 
-    if (!data || !Array.isArray(data) || data.length === 0) {
+    if (!Array.isArray(data) || data.length === 0) {
       return createDefaultPlans();
     }
 
-    const plans: Plan[] = [];
-    for (const item of data) {
-      const result = PlanSchema.safeParse(item);
-      if (result.success) {
-        plans.push(result.data);
-      } else {
-        console.error(`Invalid plan:`, result.error);
-      }
-    }
-
+    const plans = validatePlans(data);
     return plans.length > 0 ? plans : createDefaultPlans();
   } catch (error) {
     console.error('Error fetching available plans:', error);
@@ -283,49 +105,49 @@ export async function getBillingHistory(
       storage.getItem(`billing:${userId}`) as string | null
     );
 
-    if (!data || !Array.isArray(data) || data.length === 0) {
-      return {
-        invoices: [],
-        totalCount: 0,
-        pageSize: safePageSize,
-        currentPage: safePage,
-        hasNextPage: false,
-      };
+    if (!Array.isArray(data) || data.length === 0) {
+      return createEmptyPaginatedInvoices(safePage, safePageSize);
     }
 
-    const invoices: Invoice[] = [];
-    for (const item of data) {
-      const result = InvoiceSchema.safeParse(item);
-      if (result.success) {
-        invoices.push(result.data);
-      } else {
-        console.error(`Invalid invoice:`, result.error);
-      }
-    }
-
-    const totalCount = invoices.length;
-    const startIndex = (safePage - 1) * safePageSize;
-    const endIndex = startIndex + safePageSize;
-    const paginatedInvoices = invoices.slice(startIndex, endIndex);
-    const hasNextPage = endIndex < totalCount;
-
-    return {
-      invoices: paginatedInvoices,
-      totalCount,
-      pageSize: safePageSize,
-      currentPage: safePage,
-      hasNextPage,
-    };
+    const invoices = validateInvoices(data);
+    return paginateInvoices(invoices, safePage, safePageSize);
   } catch (error) {
     console.error(`Error fetching billing history for user ${userId}:`, error);
-    return {
-      invoices: [],
-      totalCount: 0,
-      pageSize: safePageSize,
-      currentPage: safePage,
-      hasNextPage: false,
-    };
+    return createEmptyPaginatedInvoices(safePage, safePageSize);
   }
+}
+
+function createEmptyPaginatedInvoices(
+  page: number,
+  pageSize: number
+): PaginatedInvoices {
+  return {
+    invoices: [],
+    totalCount: 0,
+    pageSize,
+    currentPage: page,
+    hasNextPage: false,
+  };
+}
+
+function paginateInvoices(
+  invoices: Invoice[],
+  page: number,
+  pageSize: number
+): PaginatedInvoices {
+  const totalCount = invoices.length;
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedInvoices = invoices.slice(startIndex, endIndex);
+  const hasNextPage = endIndex < totalCount;
+
+  return {
+    invoices: paginatedInvoices,
+    totalCount,
+    pageSize,
+    currentPage: page,
+    hasNextPage,
+  };
 }
 
 export function initializeMockData(userId: string): void {

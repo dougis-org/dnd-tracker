@@ -11,10 +11,16 @@ import {
   createMockPlans,
 } from '@fixtures/subscription-fixtures';
 
-// Mock fetch for API calls
-global.fetch = jest.fn();
+// Mock the fetcher module
+jest.mock('@/lib/subscription/fetchers', () => ({
+  fetchSubscriptionData: jest.fn(),
+}));
 
-const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+import { fetchSubscriptionData } from '@/lib/subscription/fetchers';
+
+const mockFetchSubscriptionData = fetchSubscriptionData as jest.MockedFunction<
+  typeof fetchSubscriptionData
+>;
 
 describe('SubscriptionPage Component', () => {
   beforeEach(() => {
@@ -22,7 +28,9 @@ describe('SubscriptionPage Component', () => {
   });
 
   it('renders loading state initially', () => {
-    mockFetch.mockImplementation(() => new Promise(() => {}));
+    mockFetchSubscriptionData.mockImplementation(
+      () => new Promise(() => {})
+    );
     render(<SubscriptionPage />);
     expect(screen.getByTestId('subscription-page-skeleton')).toBeInTheDocument();
   });
@@ -32,12 +40,11 @@ describe('SubscriptionPage Component', () => {
     const usageMetrics = createMockUsageMetrics();
     const availablePlans = createMockPlans();
 
-    mockFetch.mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ subscription, usageMetrics, availablePlans }),
-        { status: 200 }
-      )
-    );
+    mockFetchSubscriptionData.mockResolvedValueOnce({
+      subscription,
+      usageMetrics,
+      availablePlans,
+    });
 
     render(<SubscriptionPage />);
     await waitFor(() => {
@@ -46,7 +53,9 @@ describe('SubscriptionPage Component', () => {
   });
 
   it('displays error on fetch failure', async () => {
-    mockFetch.mockRejectedValueOnce(new Error('Network error'));
+    mockFetchSubscriptionData.mockRejectedValueOnce(
+      new Error('Network error')
+    );
     render(<SubscriptionPage />);
     await waitFor(() => {
       expect(screen.getByTestId('subscription-page-error')).toBeInTheDocument();
@@ -54,7 +63,9 @@ describe('SubscriptionPage Component', () => {
   });
 
   it('shows retry button on error', async () => {
-    mockFetch.mockRejectedValueOnce(new Error('Network error'));
+    mockFetchSubscriptionData.mockRejectedValueOnce(
+      new Error('Network error')
+    );
     render(<SubscriptionPage />);
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /Retry/ })).toBeInTheDocument();
@@ -62,7 +73,9 @@ describe('SubscriptionPage Component', () => {
   });
 
   it('retries fetch on button click', async () => {
-    mockFetch.mockRejectedValueOnce(new Error('Network error'));
+    mockFetchSubscriptionData.mockRejectedValueOnce(
+      new Error('Network error')
+    );
     render(<SubscriptionPage />);
 
     await waitFor(() => {
@@ -73,12 +86,11 @@ describe('SubscriptionPage Component', () => {
     const usageMetrics = createMockUsageMetrics();
     const availablePlans = createMockPlans();
 
-    mockFetch.mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ subscription, usageMetrics, availablePlans }),
-        { status: 200 }
-      )
-    );
+    mockFetchSubscriptionData.mockResolvedValueOnce({
+      subscription,
+      usageMetrics,
+      availablePlans,
+    });
 
     fireEvent.click(screen.getByRole('button', { name: /Retry/ }));
 
@@ -92,36 +104,39 @@ describe('SubscriptionPage Component', () => {
     const usageMetrics = createMockUsageMetrics();
     const availablePlans = createMockPlans();
 
-    mockFetch.mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ subscription, usageMetrics, availablePlans }),
-        { status: 200 }
-      )
-    );
+    mockFetchSubscriptionData.mockResolvedValueOnce({
+      subscription,
+      usageMetrics,
+      availablePlans,
+    });
 
     render(<SubscriptionPage />);
-    await waitFor(() => {
-      expect(screen.getByText('Subscription & Billing')).toBeInTheDocument();
-      expect(screen.getByText('Current Plan')).toBeInTheDocument();
-      expect(screen.getByText('Usage')).toBeInTheDocument();
-    });
+    
+    // Wait for the component to render and fetch data
+    await waitFor(
+      () => {
+        expect(screen.getByText('Subscription & Billing')).toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
+    expect(screen.getByRole('heading', { name: /Current Plan/ })).toBeInTheDocument();
+    expect(screen.getByText('Usage')).toBeInTheDocument();
   });
 
-  it('fetches from /api/subscription endpoint', async () => {
+  it('fetches subscription data on mount', async () => {
     const subscription = createMockSubscription();
     const usageMetrics = createMockUsageMetrics();
     const availablePlans = createMockPlans();
 
-    mockFetch.mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ subscription, usageMetrics, availablePlans }),
-        { status: 200 }
-      )
-    );
+    mockFetchSubscriptionData.mockResolvedValueOnce({
+      subscription,
+      usageMetrics,
+      availablePlans,
+    });
 
     render(<SubscriptionPage />);
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledWith('/api/subscription');
+      expect(mockFetchSubscriptionData).toHaveBeenCalled();
     });
   });
 
@@ -130,12 +145,11 @@ describe('SubscriptionPage Component', () => {
     const usageMetrics = createMockUsageMetrics();
     const availablePlans = createMockPlans();
 
-    mockFetch.mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ subscription, usageMetrics, availablePlans }),
-        { status: 200 }
-      )
-    );
+    mockFetchSubscriptionData.mockResolvedValueOnce({
+      subscription,
+      usageMetrics,
+      availablePlans,
+    });
 
     const mockOnNavigate = jest.fn();
     render(<SubscriptionPage onNavigate={mockOnNavigate} />);
