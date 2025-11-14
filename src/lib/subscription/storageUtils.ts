@@ -3,9 +3,17 @@
  */
 
 export function getStorage(): Storage {
+  // Browser environment
   if (typeof window !== 'undefined' && window.localStorage) {
     return window.localStorage;
   }
+  
+  // Node/test environment (Jest)
+  if (typeof global !== 'undefined' && (global as any).localStorage) {
+    return (global as any).localStorage;
+  }
+  
+  // Fallback: no-op storage for SSR/environments without localStorage
   return {
     getItem: () => null,
     setItem: () => {},
