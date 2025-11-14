@@ -1,28 +1,28 @@
 {
-  "version": "1.0.0",
-  "generated": "2025-11-14T00:00:00.000Z",
-  "assets": [
-    {
-      "url": "/_next/static/css/app.css",
-      "revision": "placeholder-hash-1"
-    },
-    {
-      "url": "/_next/static/chunks/main.js",
-      "revision": "placeholder-hash-2"
-    },
-    {
-      "url": "/_next/static/chunks/webpack.js",
-      "revision": "placeholder-hash-3"
-    },
-    {
-      "url": "/favicon.ico",
-      "revision": "placeholder-hash-4"
-    }
-  ],
-  "notes": [
-    "This is a placeholder manifest for development.",
-    "In production, this should be generated during the build process with actual content hashes.",
-    "Use workbox-webpack-plugin or similar to generate hashed precache manifests.",
-    "App shell should include: root HTML, main JS/CSS bundles, core images (logo, icons)."
-  ]
+    "version": "1.0.0",
+    "generated": "2025-11-14T00:00:00.000Z",
+    "assets": [
+        {
+            "url": "/_next/static/css/app.css",
+            "revision": "placeholder-hash-1"
+        },
+        {
+            "url": "/_next/static/chunks/main.js",
+            "revision": "placeholder-hash-2"
+        },
+        {
+            "url": "/_next/static/chunks/webpack.js",
+            "revision": "placeholder-hash-3"
+        },
+        {
+            "url": "/favicon.ico",
+            "revision": "placeholder-hash-4"
+        }
+    ],
+    "notes": [
+        "This is a placeholder manifest for development.",
+        "In production, this should be generated during the build process with actual content hashes.",
+        "Use workbox-webpack-plugin or similar to generate hashed precache manifests.",
+        "App shell should include: root HTML, main JS/CSS bundles, core images (logo, icons)."
+    ]
 }

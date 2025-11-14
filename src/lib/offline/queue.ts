@@ -1,9 +1,9 @@
 /**
  * Offline Queue API
- * 
+ *
  * Manages queued operations while offline with IndexedDB persistence.
  * Implements FIFO queue with retry logic and exponential backoff.
- * 
+ *
  * @module offline/queue
  */
 
@@ -53,7 +53,7 @@ export async function enqueue(
 
   await putItem(STORES.QUEUE, entry);
   console.log('[Queue] Enqueued operation:', entry.id, operation);
-  
+
   return entry.id;
 }
 
@@ -63,7 +63,7 @@ export async function enqueue(
 export async function dequeue(): Promise<OfflineQueueEntry | null> {
   const entries = await list();
   const queued = entries.find((e) => e.status === 'queued');
-  
+
   if (queued) {
     // Mark as in-progress
     queued.status = 'in-progress';
@@ -72,7 +72,7 @@ export async function dequeue(): Promise<OfflineQueueEntry | null> {
     await putItem(STORES.QUEUE, queued);
     return queued;
   }
-  
+
   return null;
 }
 
@@ -96,7 +96,7 @@ export async function markSucceeded(id: string): Promise<void> {
  */
 export async function markFailed(id: string, error?: string): Promise<void> {
   const entry = await getItem<OfflineQueueEntry>(STORES.QUEUE, id);
-  
+
   if (!entry) {
     console.warn('[Queue] Entry not found for failure:', id);
     return;
@@ -113,7 +113,11 @@ export async function markFailed(id: string, error?: string): Promise<void> {
     entry.status = 'queued';
     entry.meta = { ...entry.meta, lastError: error };
     await putItem(STORES.QUEUE, entry);
-    console.warn('[Queue] Operation failed, will retry:', id, `(${entry.attempts}/${MAX_RETRY_ATTEMPTS})`);
+    console.warn(
+      '[Queue] Operation failed, will retry:',
+      id,
+      `(${entry.attempts}/${MAX_RETRY_ATTEMPTS})`
+    );
   }
 }
 
@@ -129,10 +133,12 @@ export function calculateBackoff(attempts: number): number {
  */
 export async function retryAll(): Promise<void> {
   const entries = await list();
-  const failed = entries.filter((e) => e.status === 'failed' && !e.meta?.maxRetriesReached);
-  
+  const failed = entries.filter(
+    (e) => e.status === 'failed' && !e.meta?.maxRetriesReached
+  );
+
   console.log('[Queue] Retrying failed operations:', failed.length);
-  
+
   for (const entry of failed) {
     // Reset to queued for retry
     entry.status = 'queued';

@@ -1,9 +1,9 @@
 /**
  * Service Worker Registration Helper
- * 
+ *
  * Provides utilities to register the service worker and expose lifecycle hooks.
  * Handles registration, update detection, and client-side SW state management.
- * 
+ *
  * @module sw/register
  */
 
@@ -29,7 +29,7 @@ const swState: ServiceWorkerState = {
 
 /**
  * Register the service worker and set up lifecycle callbacks
- * 
+ *
  * @param swPath - Path to service worker file (default: '/sw.js')
  * @param callbacks - Lifecycle callbacks for ready, update, error events
  * @returns Promise<ServiceWorkerRegistration | null>
@@ -67,7 +67,7 @@ export async function registerServiceWorker(
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'activated') {
               swState.isActivated = true;
-              
+
               // If this is an update, trigger update callback
               if (navigator.serviceWorker.controller) {
                 callbacks.onUpdate?.(registration);
@@ -81,11 +81,14 @@ export async function registerServiceWorker(
     }
 
     // Check for updates periodically
-    setInterval(() => {
-      registration.update().catch((err) => {
-        console.warn('[SW] Update check failed:', err);
-      });
-    }, 60 * 60 * 1000); // Check every hour
+    setInterval(
+      () => {
+        registration.update().catch((err) => {
+          console.warn('[SW] Update check failed:', err);
+        });
+      },
+      60 * 60 * 1000
+    ); // Check every hour
 
     return registration;
   } catch (error) {
@@ -109,7 +112,7 @@ export function postMessageToSW(message: unknown): void {
   if (typeof window === 'undefined' || !navigator.serviceWorker) {
     return;
   }
-  
+
   if (navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage(message);
   } else {

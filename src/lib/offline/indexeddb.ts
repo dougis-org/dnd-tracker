@@ -1,9 +1,9 @@
 /**
  * IndexedDB Wrapper Utilities
- * 
+ *
  * Provides lightweight wrapper around IndexedDB for offline queue and event log storage.
  * Uses promise-based API for async operations.
- * 
+ *
  * @module offline/indexeddb
  */
 
@@ -88,10 +88,7 @@ export async function getItem<T>(
 /**
  * Put item into store (insert or update)
  */
-export async function putItem<T>(
-  storeName: string,
-  item: T
-): Promise<void> {
+export async function putItem<T>(storeName: string, item: T): Promise<void> {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(storeName, 'readwrite');
@@ -111,10 +108,7 @@ export async function putItem<T>(
 /**
  * Delete item from store by ID
  */
-export async function deleteItem(
-  storeName: string,
-  id: string
-): Promise<void> {
+export async function deleteItem(storeName: string, id: string): Promise<void> {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(storeName, 'readwrite');
@@ -134,9 +128,7 @@ export async function deleteItem(
 /**
  * Get all items from store
  */
-export async function getAllItems<T>(
-  storeName: string
-): Promise<T[]> {
+export async function getAllItems<T>(storeName: string): Promise<T[]> {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(storeName, 'readonly');

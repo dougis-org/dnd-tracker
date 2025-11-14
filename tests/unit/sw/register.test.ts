@@ -1,9 +1,9 @@
 /**
  * Unit tests for service worker registration helper
- * 
+ *
  * Note: Full E2E tests for service worker functionality are in tests/e2e/sw/
  * These unit tests verify the TypeScript API surface and basic logic.
- * 
+ *
  * Test coverage:
  * - Module exports and TypeScript types
  * - Function availability
@@ -54,14 +54,16 @@ describe('Service Worker Registration Module', () => {
     it('should return null in non-browser environment', async () => {
       // In Jest/Node environment, window/navigator may not be fully available
       const result = await registerServiceWorker();
-      
+
       // Should either return null (unsupported) or registration (if mocked)
       expect(result === null || typeof result === 'object').toBe(true);
     });
 
     it('should accept custom SW path parameter', async () => {
       // Should not throw with custom path
-      await expect(registerServiceWorker('/custom-sw.js')).resolves.not.toThrow();
+      await expect(
+        registerServiceWorker('/custom-sw.js')
+      ).resolves.not.toThrow();
     });
 
     it('should accept callbacks parameter', async () => {
@@ -72,7 +74,9 @@ describe('Service Worker Registration Module', () => {
       };
 
       // Should not throw with callbacks
-      await expect(registerServiceWorker('/sw.js', callbacks)).resolves.not.toThrow();
+      await expect(
+        registerServiceWorker('/sw.js', callbacks)
+      ).resolves.not.toThrow();
     });
   });
 
