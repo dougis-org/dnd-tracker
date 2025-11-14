@@ -12,9 +12,7 @@ import {
   getUsageMetrics,
   getAvailablePlans,
 } from '@/lib/adapters/subscriptionAdapter';
-import type {
-  SubscriptionResponse,
-} from '@/lib/schemas/subscriptionSchema';
+import type { SubscriptionResponse } from '@/lib/schemas/subscriptionSchema';
 
 export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
