@@ -55,8 +55,16 @@ export const TRIAL_DAY_SCENARIOS = [
  * Subscription status scenarios for parameterized testing
  */
 export const STATUS_BADGE_SCENARIOS = [
-  { status: 'active' as const, expectedText: 'Current Plan', testId: 'status-active' },
-  { status: 'paused' as const, expectedText: 'Paused', testId: 'status-paused' },
+  {
+    status: 'active' as const,
+    expectedText: 'Current Plan',
+    testId: 'status-active',
+  },
+  {
+    status: 'paused' as const,
+    expectedText: 'Paused',
+    testId: 'status-paused',
+  },
   { status: 'trial' as const, expectedText: 'Trial', testId: 'status-trial' },
 ];
 
