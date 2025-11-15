@@ -1,14 +1,22 @@
 openapi: 3.0.3
+servers:
+  - url: https://api.example.com
+    description: Production API endpoint (update as appropriate)
 info:
   title: Service Worker Support / Offline Sync API (minimal)
   version: 1.0.0
   description: |
     Minimal contract for server-side acceptance of batched offline operations
     submitted by the client when connectivity is restored.
+  contact:
+    name: dnd-tracker API Team
+    email: devops@dougis-org.example
 paths:
   /sync/offline-ops:
     post:
       summary: Accept batched offline operations
+      operationId: syncOfflineOperations
+      tags: [sync]
       description: Client uploads queued operations collected while offline. Server should process idempotently and return per-item results.
       requestBody:
         required: true

@@ -7,6 +7,8 @@
  * @module offline/indexeddb
  */
 
+/// <reference lib="dom" />
+
 // Browser check to ensure IndexedDB is available
 if (typeof window !== 'undefined' && !window.indexedDB) {
   console.warn('[IndexedDB] IndexedDB not supported in this browser');
@@ -24,6 +26,7 @@ export const STORES = {
 /**
  * Generic helper for IndexedDB requests
  */
+// eslint-disable-next-line no-undef
 function executeRequest<T>(request: IDBRequest): Promise<T> {
   return new Promise((resolve, reject) => {
     request.onsuccess = () => resolve(request.result);
