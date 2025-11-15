@@ -22,6 +22,17 @@ export const STORES = {
 } as const;
 
 /**
+ * Generic helper for IndexedDB requests
+ */
+function executeRequest<T>(request: IDBRequest): Promise<T> {
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () =>
+      reject(new Error(`IndexedDB error: ${request.error?.message}`));
+  });
+}
+
+/**
  * Open IndexedDB connection
  */
 export async function openDB(): Promise<IDBDatabase> {
@@ -70,19 +81,10 @@ export async function getItem<T>(
   id: string
 ): Promise<T | null> {
   const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(storeName, 'readonly');
-    const store = transaction.objectStore(storeName);
-    const request = store.get(id);
-
-    request.onsuccess = () => {
-      resolve(request.result || null);
-    };
-
-    request.onerror = () => {
-      reject(new Error(`Failed to get item: ${request.error?.message}`));
-    };
-  });
+  const transaction = db.transaction(storeName, 'readonly');
+  const store = transaction.objectStore(storeName);
+  const result = await executeRequest<T>(store.get(id));
+  return result || null;
 }
 
 /**
@@ -90,19 +92,9 @@ export async function getItem<T>(
  */
 export async function putItem<T>(storeName: string, item: T): Promise<void> {
   const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(storeName, 'readwrite');
-    const store = transaction.objectStore(storeName);
-    const request = store.put(item);
-
-    request.onsuccess = () => {
-      resolve();
-    };
-
-    request.onerror = () => {
-      reject(new Error(`Failed to put item: ${request.error?.message}`));
-    };
-  });
+  const transaction = db.transaction(storeName, 'readwrite');
+  const store = transaction.objectStore(storeName);
+  await executeRequest(store.put(item));
 }
 
 /**
@@ -110,19 +102,9 @@ export async function putItem<T>(storeName: string, item: T): Promise<void> {
  */
 export async function deleteItem(storeName: string, id: string): Promise<void> {
   const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(storeName, 'readwrite');
-    const store = transaction.objectStore(storeName);
-    const request = store.delete(id);
-
-    request.onsuccess = () => {
-      resolve();
-    };
-
-    request.onerror = () => {
-      reject(new Error(`Failed to delete item: ${request.error?.message}`));
-    };
-  });
+  const transaction = db.transaction(storeName, 'readwrite');
+  const store = transaction.objectStore(storeName);
+  await executeRequest(store.delete(id));
 }
 
 /**
@@ -130,19 +112,10 @@ export async function deleteItem(storeName: string, id: string): Promise<void> {
  */
 export async function getAllItems<T>(storeName: string): Promise<T[]> {
   const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(storeName, 'readonly');
-    const store = transaction.objectStore(storeName);
-    const request = store.getAll();
-
-    request.onsuccess = () => {
-      resolve(request.result || []);
-    };
-
-    request.onerror = () => {
-      reject(new Error(`Failed to get all items: ${request.error?.message}`));
-    };
-  });
+  const transaction = db.transaction(storeName, 'readonly');
+  const store = transaction.objectStore(storeName);
+  const result = await executeRequest<T[]>(store.getAll());
+  return result || [];
 }
 
 /**
@@ -150,17 +123,7 @@ export async function getAllItems<T>(storeName: string): Promise<T[]> {
  */
 export async function clearStore(storeName: string): Promise<void> {
   const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(storeName, 'readwrite');
-    const store = transaction.objectStore(storeName);
-    const request = store.clear();
-
-    request.onsuccess = () => {
-      resolve();
-    };
-
-    request.onerror = () => {
-      reject(new Error(`Failed to clear store: ${request.error?.message}`));
-    };
-  });
+  const transaction = db.transaction(storeName, 'readwrite');
+  const store = transaction.objectStore(storeName);
+  await executeRequest(store.clear());
 }

@@ -2,9 +2,6 @@
  * Mock Cache API for testing cache-evictor
  */
 
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 /**
  * Mock Cache implementation
  */
@@ -17,14 +14,12 @@ export class MockCache {
   }
 
   async match(request: RequestInfo | URL): Promise<Response | undefined> {
-    const key =
-      typeof request === 'string' ? request : (request as Request).url;
+    const key = typeof request === 'string' ? request : (request as Request).url;
     return this.entries.get(key);
   }
 
   async delete(request: RequestInfo | URL): Promise<boolean> {
-    const key =
-      typeof request === 'string' ? request : (request as Request).url;
+    const key = typeof request === 'string' ? request : (request as Request).url;
     return this.entries.delete(key);
   }
 
@@ -41,11 +36,9 @@ export class MockCacheStorage {
 
   async open(name: string): Promise<Cache> {
     if (!this.caches.has(name)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.caches.set(name, new MockCache() as any);
+      this.caches.set(name, new MockCache() as unknown as Cache);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return this.caches.get(name)! as any;
+    return this.caches.get(name)!;
   }
 
   async keys(): Promise<string[]> {
@@ -74,19 +67,18 @@ export class MockCacheStorage {
  */
 export class MockBlob {
   size: number;
-
+  
   constructor(parts?: BlobPart[], options?: BlobPropertyBag) {
     this.size = this.calculateSize(parts);
   }
 
   private calculateSize(parts?: BlobPart[]): number {
     if (!parts || parts.length === 0) return 0;
-
+    
     return parts.reduce((sum: number, part: BlobPart) => {
       if (typeof part === 'string') return sum + part.length;
       if (part instanceof ArrayBuffer) return sum + part.byteLength;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ('size' in part) return sum + (part as any).size;
+      if ('size' in part) return sum + (part as typeof globalThis.Blob).size;
       return sum;
     }, 0);
   }
@@ -156,7 +148,7 @@ export class MockHeaders {
  */
 export class MockRequest {
   url: string;
-
+  
   constructor(input: string | Request) {
     this.url = typeof input === 'string' ? input : input.url;
   }
@@ -174,14 +166,11 @@ export function installCacheAPIMocks(): void {
     global.Request = MockRequest as typeof globalThis.Request;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  global.Blob = MockBlob as any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  global.Response = MockResponse as any;
+  global.Blob = MockBlob as typeof globalThis.Blob;
+  global.Response = MockResponse as typeof globalThis.Response;
 
   if (typeof global.Headers === 'undefined') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    global.Headers = MockHeaders as any;
+    global.Headers = MockHeaders as typeof globalThis.Headers;
   }
 }
 

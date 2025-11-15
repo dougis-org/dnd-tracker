@@ -14,6 +14,13 @@ import {
   type OfflineQueueEntry,
 } from '@/lib/offline/queue';
 import { clearStore, getItem, STORES } from '@/lib/offline/indexeddb';
+import {
+  failOperationNTimes,
+  enqueueMultiple,
+  findEntryWithStatus,
+  countByStatus,
+  verifyTimestampInRange,
+} from '../../../tests/helpers/queue-test-helpers';
 
 // Polyfill structuredClone for Node < 17
 if (typeof global.structuredClone === 'undefined') {
@@ -23,7 +30,9 @@ if (typeof global.structuredClone === 'undefined') {
 // Mock crypto.randomUUID
 if (typeof crypto.randomUUID === 'undefined') {
   let counter = 0;
-  crypto.randomUUID = () => `test-uuid-${++counter}`;
+  crypto.randomUUID = () =>
+    `test-uuid-${++counter}-0000-0000-0000-000000000000` as `${string}-${string}-${string}-${string}-${string}`
+;
 }
 
 describe('Offline Queue', () => {
@@ -96,25 +105,22 @@ describe('Offline Queue', () => {
       expect(entry?.status).toBe('queued');
       expect(entry?.attempts).toBe(0);
       expect(entry?.lastAttemptAt).toBeNull();
-      // createdAt is ISO string - verify format and range
       expect(entry?.createdAt).toMatch(
         /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
       );
-      const createdTime = new Date(entry!.createdAt).getTime();
-      expect(createdTime).toBeGreaterThanOrEqual(beforeEnqueue);
-      expect(createdTime).toBeLessThanOrEqual(afterEnqueue);
+      expect(
+        verifyTimestampInRange(entry!.createdAt, beforeEnqueue, afterEnqueue)
+      ).toBe(true);
     });
   });
 
   describe('dequeue', () => {
     it('should dequeue next queued operation', async () => {
-      await enqueue('OP1', { order: 1 });
-      await enqueue('OP2', { order: 2 });
+      await enqueueMultiple(2);
 
       const entry = await dequeue();
 
       expect(entry).not.toBeNull();
-      // Verify it dequeued one of the operations (order not guaranteed by getAllItems)
       expect(entry?.operation).toMatch(/OP[12]/);
       expect(entry?.status).toBe('in-progress');
       expect(entry?.attempts).toBe(1);
@@ -138,16 +144,11 @@ describe('Offline Queue', () => {
 
     it('should skip failed operations', async () => {
       const id1 = await enqueue('OP1', {});
-      // Fail operation until max retries
-      for (let i = 0; i < 5; i++) {
-        await dequeue(); // Dequeue and mark in-progress
-        await markFailed(id1);
-      }
+      await failOperationNTimes(id1, 5);
 
       const id2 = await enqueue('OP2', {});
       const entry = await dequeue();
 
-      // Should return id2 since id1 has maxRetriesReached
       expect(entry?.id).toBe(id2);
     });
 
@@ -171,27 +172,20 @@ describe('Offline Queue', () => {
     });
 
     it('should return all queue entries', async () => {
-      await enqueue('OP1', {});
-      await enqueue('OP2', {});
-      await enqueue('OP3', {});
+      await enqueueMultiple(3);
 
       const entries = await list();
       expect(entries).toHaveLength(3);
     });
 
     it('should include entries in all statuses', async () => {
-      await enqueue('OP1', {});
-      await enqueue('OP2', {});
-      const dequeued = await dequeue(); // Marks first as in-progress
+      await enqueueMultiple(2);
+      const dequeued = await dequeue();
 
       const entries = await list();
       expect(entries).toHaveLength(2);
-      expect(
-        entries.find((e: OfflineQueueEntry) => e.id === dequeued?.id)?.status
-      ).toBe('in-progress');
-      expect(
-        entries.filter((e: OfflineQueueEntry) => e.status === 'queued').length
-      ).toBe(1);
+      expect(findEntryWithStatus(entries, 'in-progress')?.id).toBe(dequeued?.id);
+      expect(countByStatus(entries, 'queued')).toBe(1);
     });
   });
 
@@ -228,17 +222,12 @@ describe('Offline Queue', () => {
 
     it('should mark as failed after max retries', async () => {
       const id = await enqueue('TEST_OP', {});
-
-      // Exhaust all retry attempts
-      for (let i = 0; i < 5; i++) {
-        await dequeue();
-        await markFailed(id, `Attempt ${i + 1} failed`);
-      }
+      await failOperationNTimes(id, 5);
 
       const entries = await list();
-      const entry = entries.find((e: OfflineQueueEntry) => e.id === id);
+      const entry = findEntryWithStatus(entries, 'failed');
 
-      expect(entry?.status).toBe('failed');
+      expect(entry?.id).toBe(id);
       expect(entry?.attempts).toBe(5);
       expect(entry?.meta?.maxRetriesReached).toBe(true);
     });
@@ -283,50 +272,29 @@ describe('Offline Queue', () => {
 
   describe('retryAll', () => {
     it('should reset failed operations to queued', async () => {
-      await enqueue('OP1', {});
-      await enqueue('OP2', {});
+      const ids = await enqueueMultiple(2);
 
-      // Fail operations a few times (but not max)
-      await dequeue(); // Dequeues first entry
-      const firstEntry = await list();
-      await markFailed(firstEntry[0].id);
-      await dequeue();
-      const secondEntry = await list();
-      await markFailed(
-        secondEntry.find((e: OfflineQueueEntry) => e.status === 'in-progress')!
-          .id
-      );
-      await dequeue();
-      const thirdEntry = await list();
-      await markFailed(
-        thirdEntry.find((e: OfflineQueueEntry) => e.status === 'in-progress')!
-          .id
-      );
+      // Fail both operations a few times (but not max)
+      for (const id of ids) {
+        await dequeue();
+        await markFailed(id);
+      }
 
-      // One entry should now be failed
       await retryAll();
 
       const entries = await list();
-      // After retryAll, failed entries without maxRetriesReached should be queued
-      expect(
-        entries.filter((e: OfflineQueueEntry) => e.status === 'queued').length
-      ).toBeGreaterThan(0);
+      expect(countByStatus(entries, 'queued')).toBeGreaterThan(0);
     });
 
     it('should not affect queued or in-progress operations', async () => {
-      await enqueue('OP1', {});
-      await enqueue('OP2', {});
-      const dequeued = await dequeue(); // Mark first as in-progress
+      await enqueueMultiple(2);
+      const dequeued = await dequeue();
 
       await retryAll();
 
       const entries = await list();
-      expect(
-        entries.find((e: OfflineQueueEntry) => e.id === dequeued?.id)?.status
-      ).toBe('in-progress');
-      expect(
-        entries.filter((e: OfflineQueueEntry) => e.status === 'queued').length
-      ).toBe(1);
+      expect(findEntryWithStatus(entries, 'in-progress')?.id).toBe(dequeued?.id);
+      expect(countByStatus(entries, 'queued')).toBe(1);
     });
 
     it('should handle empty queue gracefully', async () => {
