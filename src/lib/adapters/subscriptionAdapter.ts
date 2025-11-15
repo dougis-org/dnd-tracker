@@ -28,20 +28,22 @@ import {
 } from './subscriptionDefaults';
 
 const NETWORK_DELAY_MS = 300;
-const storage = getStorage();
 
 export async function getSubscription(userId: string): Promise<Subscription> {
   await delay(NETWORK_DELAY_MS);
 
   try {
-    const data = safeJsonParse(
-      storage.getItem(`subscription:${userId}`) as string | null
-    );
+    const storage = getStorage();
+    const rawData = storage.getItem(`subscription:${userId}`);
+    const data = safeJsonParse(rawData);
 
     const validated = validateSubscription(data);
     if (validated) return validated;
 
-    storage.removeItem(`subscription:${userId}`);
+    // Clear corrupted entry if it exists
+    if (rawData !== null) {
+      storage.removeItem(`subscription:${userId}`);
+    }
     return createDefaultSubscription(userId);
   } catch (error) {
     console.error(`Error fetching subscription for user ${userId}:`, error);
@@ -53,6 +55,7 @@ export async function getUsageMetrics(userId: string): Promise<UsageMetric[]> {
   await delay(NETWORK_DELAY_MS);
 
   try {
+    const storage = getStorage();
     const data = safeJsonParse(
       storage.getItem(`usage:${userId}`) as string | null
     );
@@ -73,6 +76,7 @@ export async function getAvailablePlans(): Promise<Plan[]> {
   await delay(NETWORK_DELAY_MS);
 
   try {
+    const storage = getStorage();
     const data = safeJsonParse(storage.getItem('plans') as string | null);
 
     if (!Array.isArray(data) || data.length === 0) {
@@ -98,6 +102,7 @@ export async function getBillingHistory(
   const safePageSize = Math.max(1, Math.min(100, pageSize));
 
   try {
+    const storage = getStorage();
     const data = safeJsonParse(
       storage.getItem(`billing:${userId}`) as string | null
     );
@@ -147,16 +152,24 @@ function paginateInvoices(
   };
 }
 
-export function initializeMockData(userId: string): void {
+export async function initializeSubscriptionData(
+  userId: string
+): Promise<void> {
+  await delay(NETWORK_DELAY_MS);
+
   try {
+    const storage = getStorage();
     const subscription = createDefaultSubscription(userId);
+    const metrics = createDefaultUsageMetrics(userId);
+    const plans = createDefaultPlans();
+
     storage.setItem(`subscription:${userId}`, JSON.stringify(subscription));
 
-    const metrics = createDefaultUsageMetrics(userId);
+    // Usage metrics
     storage.setItem(`usage:${userId}`, JSON.stringify(metrics));
 
     if (!storage.getItem('plans')) {
-      const plans = createDefaultPlans();
+      // Plans are shared across all users
       storage.setItem('plans', JSON.stringify(plans));
     }
 
