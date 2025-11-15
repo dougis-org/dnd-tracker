@@ -47,6 +47,14 @@ export default [
         Storage: 'readonly',
         localStorage: 'readonly',
         sessionStorage: 'readonly',
+        indexedDB: 'readonly',
+        IDBDatabase: 'readonly',
+        IDBOpenDBRequest: 'readonly',
+        IDBTransaction: 'readonly',
+        IDBObjectStore: 'readonly',
+        crypto: 'readonly',
+        caches: 'readonly',
+        ServiceWorkerRegistration: 'readonly',
         global: 'readonly',
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
@@ -82,6 +90,28 @@ export default [
       'object-shorthand': 'error',
       'prefer-template': 'error',
       'no-undef': 'error', // Keep enabled to catch global variable typos
+    },
+  },
+  // Service Worker specific configuration
+  {
+    files: ['public/sw.js'],
+    languageOptions: {
+      globals: {
+        self: 'readonly',
+        caches: 'readonly',
+        clients: 'readonly',
+        importScripts: 'readonly',
+        skipWaiting: 'readonly',
+        console: 'readonly',
+        fetch: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        Headers: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'off', // SW uses global constants
     },
   },
 ];
