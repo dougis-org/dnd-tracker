@@ -31,8 +31,7 @@ if (typeof global.structuredClone === 'undefined') {
 if (typeof crypto.randomUUID === 'undefined') {
   let counter = 0;
   crypto.randomUUID = () =>
-    `test-uuid-${++counter}-0000-0000-0000-000000000000` as `${string}-${string}-${string}-${string}-${string}`
-;
+    `test-uuid-${++counter}-0000-0000-0000-000000000000` as `${string}-${string}-${string}-${string}-${string}`;
 }
 
 describe('Offline Queue', () => {
@@ -184,7 +183,9 @@ describe('Offline Queue', () => {
 
       const entries = await list();
       expect(entries).toHaveLength(2);
-      expect(findEntryWithStatus(entries, 'in-progress')?.id).toBe(dequeued?.id);
+      expect(findEntryWithStatus(entries, 'in-progress')?.id).toBe(
+        dequeued?.id
+      );
       expect(countByStatus(entries, 'queued')).toBe(1);
     });
   });
@@ -293,7 +294,9 @@ describe('Offline Queue', () => {
       await retryAll();
 
       const entries = await list();
-      expect(findEntryWithStatus(entries, 'in-progress')?.id).toBe(dequeued?.id);
+      expect(findEntryWithStatus(entries, 'in-progress')?.id).toBe(
+        dequeued?.id
+      );
       expect(countByStatus(entries, 'queued')).toBe(1);
     });
 
