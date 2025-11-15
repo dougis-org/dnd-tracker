@@ -16,7 +16,7 @@ import {
 export function validateSubscription(data: unknown): Subscription | null {
   const result = SubscriptionSchema.safeParse(data);
   if (!result.success) {
-    console.error('Invalid subscription data:', result.error);
+    // Don't log result.error as it may not exist in all environments
     return null;
   }
   return result.data;
