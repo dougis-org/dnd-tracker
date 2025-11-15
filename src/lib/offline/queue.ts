@@ -147,3 +147,68 @@ export async function retryAll(): Promise<void> {
     await putItem(STORES.QUEUE, entry);
   }
 }
+
+/**
+ * Process the queue - attempt to execute operations
+ */
+export async function processQueue(): Promise<void> {
+  let entry = await dequeue();
+
+  while (entry) {
+    try {
+      // Attempt to execute the operation
+      await executeOperation(entry);
+
+      // Mark as succeeded
+      await markSucceeded(entry.id);
+    } catch (error) {
+      // Mark as failed
+      await markFailed(entry.id, (error as Error).message);
+    }
+
+    // Get next entry
+    entry = await dequeue();
+  }
+}
+
+/**
+ * Execute a queued operation (placeholder - integrate with actual API)
+ */
+async function executeOperation(entry: OfflineQueueEntry): Promise<void> {
+  // This would integrate with the actual API endpoints
+  // For now, simulate API call
+  console.log('[Queue] Executing operation:', entry.operation, entry.payload);
+
+  // Simulate network request
+  if (navigator.onLine) {
+    // In real implementation, make actual API call to /sync/offline-ops
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // Simulate random success/failure
+        if (Math.random() > 0.3) {
+          resolve(void 0);
+        } else {
+          reject(new Error('Simulated network error'));
+        }
+      }, 100);
+    });
+  } else {
+    throw new Error('Offline - cannot execute operation');
+  }
+}
+
+/**
+ * Start queue processing on online event
+ */
+export function startQueueProcessing(): void {
+  // Process queue immediately if online
+  if (navigator.onLine) {
+    processQueue();
+  }
+
+  // Listen for online events
+  window.addEventListener('online', () => {
+    console.log('[Queue] Online detected, processing queue');
+    processQueue();
+  });
+}

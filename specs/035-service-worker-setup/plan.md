@@ -13,6 +13,8 @@ Implement service worker registration, app-shell precaching, runtime caching str
   - `feature/035-offline-banner` (Issue #454)
   - `feature/035-playwright-tests` (Issue #455)
 
+  **Status:** Sub-issue #451 (PR #456) has been merged to `main` on 2025-11-15 by @dougis. Proceed with the remaining milestones in priority order (runtime caching → offline queue → offline banner → tests & CI).
+
 ## 2. Assumptions & Open Questions
 
 - Assumptions:

@@ -42,20 +42,20 @@ Independent Test: Disable network and verify app shell loads, `navigator.service
 
 Independent Test: Simulate offline/online transitions and assert banner appears within 2s.
 
-- [ ] T019 [US2] Create `src/components/OfflineBanner/OfflineBanner.tsx` component (UI + retry button + compact sync progress) — file: `src/components/OfflineBanner/OfflineBanner.tsx`
-- [ ] T020 [US2] Add styles and small storybook (if project uses it) or a test harness page `src/app/offline-demo/page.tsx` to manually test banner behavior — file: `src/app/offline-demo/page.tsx`
-- [ ] T021 [US2] Wire banner to service worker lifecycle via `src/lib/sw/register.ts` (postMessage handlers) and to `src/lib/offline/queue.ts` for sync status display — file: `src/components/OfflineBanner/OfflineBanner.tsx`
-- [ ] T022 [US2] Add unit tests for banner behavior (appear/disappear on offline/online) — file: `tests/unit/components/offline-banner.test.tsx`
-- [ ] T023 [P] [US2] Add Playwright test to simulate offline/online and verify banner timing, retry flow, and sync summary UI — file: `tests/e2e/sw/offline-banner.spec.ts`
+- [x] T019 [US2] Create `src/components/OfflineBanner/OfflineBanner.tsx` component (UI + retry button + compact sync progress) — file: `src/components/OfflineBanner/OfflineBanner.tsx`
+- [x] T020 [US2] Add styles and small storybook (if project uses it) or a test harness page `src/app/offline-demo/page.tsx` to manually test banner behavior — file: `src/app/offline-demo/page.tsx`
+- [x] T021 [US2] Wire banner to service worker lifecycle via `src/lib/sw/register.ts` (postMessage handlers) and to `src/lib/offline/queue.ts` for sync status display — file: `src/components/OfflineBanner/OfflineBanner.tsx`
+- [x] T022 [US2] Add unit tests for banner behavior (appear/disappear on offline/online) — file: `tests/unit/components/offline-banner.test.tsx`
+- [x] T023 [P] [US2] Add Playwright test to simulate offline/online and verify banner timing, retry flow, and sync summary UI — file: `tests/e2e/sw/offline-banner.spec.ts`
 
 ### User Story 3 — Runtime Caching & Performance (Priority: P3)
 
 Independent Test: Verify key static assets are served from cache on repeat visits and page load time improves.
 
-- [ ] T024 [US3] Implement runtime caching strategies in `public/sw.js` (cache-first for static assets, network-first for mutable endpoints) and integrate `cache-evictor` — file: `public/sw.js`
-- [ ] T025 [US3] Add runtime cache naming strategy and versioning helpers in `src/lib/sw/strategies.ts` — file: `src/lib/sw/strategies.ts`
-- [ ] T026 [US3] Add unit tests that simulate fetch events and validate caching/eviction decisions — file: `tests/unit/sw/runtime-cache.test.ts`
-- [ ] T027 [P] [US3] Add a Playwright performance check that measures first vs repeat load times for key routes (baseline and repeat) — file: `tests/e2e/sw/perf-repeat-load.spec.ts`
+- [x] T024 [US3] Implement runtime caching strategies in `public/sw.js` (cache-first for static assets, network-first for mutable endpoints) and integrate `cache-evictor` — file: `public/sw.js`
+- [x] T025 [US3] Add runtime cache naming strategy and versioning helpers in `src/lib/sw/strategies.ts` — file: `src/lib/sw/strategies.ts`
+- [x] T026 [US3] Add unit tests that simulate fetch events and validate caching/eviction decisions — file: `tests/unit/sw/runtime-cache.test.ts`
+- [x] T027 [P] [US3] Add a Playwright performance check that measures first vs repeat load times for key routes (baseline and repeat) — file: `tests/e2e/sw/perf-repeat-load.spec.ts`
 
 ## Phase 4 — Offline Queue & Sync (blocking for queued-op UX acceptance)
 
@@ -105,3 +105,25 @@ Each of the above branches should target `main` and create a focused PR that ref
 - Foundational & queue tasks: 12 tasks (T006-T012, T028-T032)
 - Parallel opportunities: listed in "Parallel Execution Examples"
 - Suggested MVP scope: Ship Phase 1 + Foundational + User Story 1 (T001-T018)
+
+---
+
+## Post-merge Next Steps (after PR #456 merged)
+
+The precache & registration milestone (Issue #451 / PR #456) is merged. Prioritize the remaining milestones in this order: runtime caching (Issue #452), offline queue & retry (Issue #453), offline banner & UX (Issue #454), and Playwright tests / CI (Issue #455).
+
+- [ ] T039 Create feature branch `feature/035-runtime-caching` (Issue #452) and scaffold runtime caching handlers in `public/sw.js` and `src/lib/sw/strategies.ts`.
+- [ ] T040 Add unit tests for runtime caching strategies (`tests/unit/sw/runtime-cache.test.ts`) and tie `cache-evictor` integration tests.
+- [ ] T041 Create feature branch `feature/035-offline-queue` (Issue #453) and implement queue consumer (consumer that batches to `/sync/offline-ops`), mark as P1 for backend contract alignment.
+- [ ] T042 Increase unit coverage for `src/lib/sw/register.ts` to >=80% by adding more registration/error path tests (`tests/unit/sw/register.test.ts`).
+- [ ] T043 Create feature branch `feature/035-offline-banner` (Issue #454) to implement `OfflineBanner` and wire it to SW lifecycle events.
+- [ ] T044 Create feature branch `feature/035-playwright-sw-tests` (Issue #455) to add Playwright scenarios validating offline load, queue processing on reconnect, and update flow.
+- [ ] T045 Run full Codacy analysis and CI (lint, type-check, tests, Playwright) for merged PRs and opened sub-issue branches; address any issues found.
+
+Suggested immediate actions (next 24–48h):
+
+- Create the `feature/035-runtime-caching` branch and assign a primary owner.
+- Draft unit tests for runtime caching rules (cache-first static, network-first API) so implementation can be TDD-driven.
+- Start `feature/035-offline-queue` with a consumer skeleton and a failing test for batching to `/sync/offline-ops`.
+
+If you want, I can now create the branches for T039–T044, scaffold the runtime-cache test files, and open the follow-up issues — tell me which steps to take next and I will proceed.
