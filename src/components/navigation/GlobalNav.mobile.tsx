@@ -5,7 +5,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X } from 'lucide-react'
+import { ChevronDown, Menu, X } from 'lucide-react'
 import type { Route } from 'next'
 import { NAVIGATION_ITEMS, type NavigationItem } from '@/lib/navigation'
 import { Button } from '@/components/ui/button'
@@ -218,6 +218,9 @@ function MobileNavItemButton({
         onClick={() => onToggleSubmenu(item.label)}
       >
         {item.label}
+         <span className="ml-1" aria-hidden>
+          <ChevronDown className="h-4 w-4" />
+        </span>
       </button>
       <MobileSubmenu
         label={item.label}
