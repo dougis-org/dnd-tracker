@@ -10,6 +10,7 @@ import type { ComponentPropsWithoutRef, PropsWithChildren } from 'react'
 type AnchorProps = PropsWithChildren<
   Omit<ComponentPropsWithoutRef<'a'>, 'href'> & { href: AnchorHref }
 >
+// Match layout tests where next/link is mocked to keep tests deterministic
 jest.mock('next/link', () => ({
   __esModule: true,
   default: ({ children, href, ...rest }: AnchorProps) => {
