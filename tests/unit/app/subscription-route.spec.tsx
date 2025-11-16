@@ -1,6 +1,14 @@
 import { render, screen } from '@testing-library/react'
 import SubscriptionPage from '@/app/subscription/page'
 import { buildBreadcrumbSegments } from '@/lib/navigation'
+import { createMockSubscription, createMockUsageMetrics, createMockPlans } from '@fixtures/subscription-fixtures'
+
+// Mock fetcher module used by SubscriptionPage so the route test is deterministic
+jest.mock('@/lib/subscription/fetchers', () => ({
+  fetchSubscriptionData: jest.fn(),
+}))
+
+import { fetchSubscriptionData } from '@/lib/subscription/fetchers'
 
 // Reuse typed link mock pattern from help-route to avoid `any` in tests
 type AnchorHref = string | { pathname: string }
@@ -20,7 +28,18 @@ jest.mock('next/link', () => ({
 }))
 
 describe('Subscription route', () => {
-  it('renders the subscription page and breadcrumb metadata', async () => {
+  it('renders the subscription page and breadcrumb metadata', () => {
+    // Provide mock response so SubscriptionPage fetcher resolves immediately
+    const subscription = createMockSubscription()
+    const usageMetrics = createMockUsageMetrics()
+    const availablePlans = createMockPlans()
+
+    ;(fetchSubscriptionData as jest.MockedFunction<typeof fetchSubscriptionData>).mockResolvedValueOnce({
+      subscription,
+      usageMetrics,
+      availablePlans,
+    })
+
     render(<SubscriptionPage />)
 
     const breadcrumb = buildBreadcrumbSegments('/subscription')
