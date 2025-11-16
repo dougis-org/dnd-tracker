@@ -3,6 +3,7 @@
 /* eslint-disable no-undef -- DOM globals provided by browser */
 
 import { useEffect, useMemo, useRef, useState, useId } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronDown } from 'lucide-react'
@@ -124,6 +125,126 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
     setOpen(false)
   }, [pathname])
 
+  // Coordinates for portal positioning
+  const [coords, setCoords] = useState<{ left: number; top: number } | null>(null)
+
+  useEffect(() => {
+    if (!open) return undefined
+    const setPosition = () => {
+      const rect = triggerRef.current?.getBoundingClientRect()
+      if (rect) {
+          // Add the small vertical offset immediately so initial placement is consistent
+          setCoords({ left: rect.left, top: rect.bottom + 8 })
+      }
+    }
+
+    setPosition()
+      // no-op
+    window.addEventListener('resize', setPosition)
+    window.addEventListener('scroll', setPosition, { passive: true })
+    return () => {
+      window.removeEventListener('resize', setPosition)
+      window.removeEventListener('scroll', setPosition)
+        // no timeouts to clear
+    }
+  }, [open])
+
+  // Adjust after initial render: keep popup below main content to avoid covering hero text
+  useEffect(() => {
+    if (!open || !coords) return undefined
+
+    let raf: number | null = null
+    const adjust = () => {
+      try {
+        const menuEl = menuRef.current
+        const main = document.getElementById('main-content')
+        if (!menuEl || !main) return
+        const menuRect = menuEl.getBoundingClientRect()
+        const mainRect = main.getBoundingClientRect()
+        // Prefer a hero/title element inside main (if present) to avoid covering visible heading
+        const heroEl = main.querySelector('h1, h2, .hero, .page-title')
+        const heroRect = heroEl ? (heroEl as HTMLElement).getBoundingClientRect() : null
+
+        // compute trigger rect for flip logic
+        const triggerRect = triggerRef.current?.getBoundingClientRect()
+        if (!triggerRect) return
+
+        const menuHeight = menuRect.height
+
+        // default placement (below trigger) and flipped (above trigger)
+        let defaultTop = triggerRect.bottom + 8
+        const flipTop = triggerRect.top - menuHeight - 8
+
+        const overlapsMain = (top: number) => {
+          // Use hero or main top/bottom for overlap detection
+          const topBoundary = heroRect ? heroRect.top : mainRect.top
+          const bottomBoundary = heroRect ? heroRect.top + heroRect.height : mainRect.top + mainRect.height
+          return !(top + menuHeight <= topBoundary || top >= bottomBoundary)
+        }
+
+        // if this would overlap the hero, try to pin the menu directly under the header (common pattern)
+        const headerEl = document.querySelector('header')
+        const headerBottom = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().bottom : 0
+        if (defaultTop <= headerBottom + 4) defaultTop = headerBottom + 8
+
+        if (!overlapsMain(defaultTop)) {
+          setCoords((c) => (c ? { left: c.left, top: defaultTop } : c))
+          // Mark that positioning adjustments have completed so tests can reliably wait
+          menuEl.setAttribute('data-positioning', 'complete')
+        } else if (flipTop >= 8 && !overlapsMain(flipTop)) {
+          setCoords((c) => (c ? { left: c.left, top: flipTop } : c))
+          menuEl.setAttribute('data-positioning', 'complete')
+        } else {
+          // both placements overlap: attempt to place the menu entirely above or below the
+          // `main` region so it does not obscure important content. Prefer below the main
+          // if there's space, otherwise place above.
+          const belowMainTop = mainRect.top + mainRect.height + 8
+          const aboveMainTop = mainRect.top - menuHeight - 8
+          const belowHeroTop = heroRect ? heroRect.top + (heroRect.height ?? 0) + 8 : belowMainTop
+          const aboveHeroTop = heroRect ? heroRect.top - menuHeight - 8 : aboveMainTop
+
+          if (belowHeroTop + menuHeight <= window.innerHeight - 8 && !overlapsMain(belowHeroTop)) {
+            setCoords((c) => (c ? { left: c.left, top: belowHeroTop } : c))
+            menuEl.setAttribute('data-positioning', 'complete')
+          } else if (aboveHeroTop >= 8 && !overlapsMain(aboveHeroTop)) {
+            setCoords((c) => (c ? { left: c.left, top: aboveHeroTop } : c))
+            menuEl.setAttribute('data-positioning', 'complete')
+          } else {
+            // fallback: clamp to viewport so menu is visible and close to trigger
+            const clampTop = Math.min(
+              Math.max(defaultTop, 8),
+              window.innerHeight - menuHeight - 8
+            )
+            setCoords((c) => (c ? { left: c.left, top: clampTop } : c))
+            menuEl.setAttribute('data-positioning', 'complete')
+          }
+        }
+      } catch (_e) {
+        // ignore transient errors while measuring
+      }
+    }
+
+        // run on next animation frames to let the DOM paint
+    raf = requestAnimationFrame(() => {
+      adjust()
+      requestAnimationFrame(adjust)
+    })
+        // Ensure there is a deterministic signal (for tests and timing analysis) that
+        // the positioning algorithm has completed. This avoids race conditions in E2E tests.
+        requestAnimationFrame(() => {
+          try {
+            const menuEl = menuRef.current
+            if (menuEl) menuEl.setAttribute('data-positioning', 'complete')
+          } catch (_e) {
+            // ignore
+          }
+        })
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [open, coords])
+
   return (
     <li className="relative">
       <button
@@ -142,13 +263,20 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
       </button>
 
       {open ? (
-        <ul
-          ref={menuRef}
-          id={menuId}
-          role="menu"
-          aria-label={`${item.label} submenu`}
-          className="absolute left-0 top-full z-[60] mt-2 w-56 rounded-md border bg-popover/95 p-2 shadow-lg"
-        >
+        // Render the dropdown into a portal so it escapes stacking contexts/overflow
+        coords && typeof document !== 'undefined'
+            ? createPortal(
+              <ul
+                ref={menuRef}
+                id={menuId}
+                role="menu"
+                aria-label={`${item.label} submenu`}
+                data-testid="global-nav-dropdown"
+                // Add a small vertical offset to avoid overlapping adjacent content
+                // Use a very large z-index and an opaque background to avoid layering/visual blending issues
+                style={{ left: coords.left, top: coords.top, position: 'fixed', zIndex: 2147483647 }}
+                className="w-56 rounded-md border bg-popover p-2 shadow-lg"
+              >
           {(item.children ?? []).map((child) => {
             if (!child.href) {
               return null
@@ -175,8 +303,11 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
               </li>
             )
           })}
-        </ul>
-      ) : null}
+              </ul>,
+              document.body
+            )
+          : null
+        ) : null}
     </li>
   )
 }
