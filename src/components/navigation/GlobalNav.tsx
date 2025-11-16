@@ -147,7 +147,8 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
           id={menuId}
           role="menu"
           aria-label={`${item.label} submenu`}
-          className="absolute left-0 top-full z-[60] mt-2 w-56 rounded-md border bg-popover/95 p-2 shadow-lg"
+          className="absolute left-0 top-full z-60 mt-2 w-56 rounded-md border bg-background p-2 shadow-lg"
+          style={{ backgroundColor: 'hsl(var(--background))' }}
         >
           {(item.children ?? []).map((child) => {
             if (!child.href) {
@@ -158,20 +159,20 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
 
             return (
               <li key={child.href} role="none">
-                <Link
-                  href={toLink(child.href)}
-                  role="menuitem"
-                  aria-current={childActive ? 'page' : undefined}
-                  className={cn(
-                    LINK_CLASS,
-                    childActive
-                      ? 'bg-muted/80 text-foreground'
-                      : INACTIVE_CLASS
-                  )}
-                  onClick={() => setOpen(false)}
-                >
-                  {child.label}
-                </Link>
+          <Link
+            href={toLink(child.href)}
+            role="menuitem"
+            aria-current={childActive ? 'page' : undefined}
+            className={cn(
+              LINK_CLASS,
+              childActive
+          ? 'bg-muted text-foreground'
+          : INACTIVE_CLASS
+            )}
+            onClick={() => setOpen(false)}
+          >
+            {child.label}
+          </Link>
               </li>
             )
           })}
