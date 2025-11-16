@@ -3,10 +3,10 @@
 @layer base {
   :root {
     /* Default (light) theme background — light gray */
-    --background: 210 8% 95%; /* #f2f4f8 */
+    --background: 211 13% 87%; /* swapped from main-body */
     /* Opaque copy used for utility backgrounds (keeps components solid) */
-    --background-opaque: 210 8% 95%;
-    --background-main-body: 211 13% 87%;
+    --background-opaque: 211 13% 87%;
+    --background-main-body: 210 8% 95%; /* swapped from background, was #f2f4f8 */
     /* Map Tailwind background tokens to our opaque background variable so utilities like bg-background are solid */
     --color-background-100: hsl(var(--background-opaque));
     --color-background-200: hsl(var(--background-opaque));
