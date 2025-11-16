@@ -33,6 +33,11 @@ function setupWebApiGlobals() {
         this.status = init?.status || 200;
         this.headers = new Map(Object.entries(init?.headers || {}));
         this.statusText = init?.statusText || '';
+        this.type = init?.type || 'basic';
+      }
+
+      get ok() {
+        return this.status >= 200 && this.status < 300;
       }
     };
 
@@ -50,6 +55,16 @@ function setupWebApiGlobals() {
       }
       entries() {
         return this.map.entries();
+      }
+    };
+
+  global.Event =
+    global.Event ||
+    class MockEvent {
+      constructor(type, options = {}) {
+        this.type = type;
+        this.bubbles = options.bubbles || false;
+        this.cancelable = options.cancelable || false;
       }
     };
 }

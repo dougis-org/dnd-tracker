@@ -1,3 +1,5 @@
+'use client';
+
 import { OfflineBanner } from '@/components/OfflineBanner/OfflineBanner';
 
 /* global alert */

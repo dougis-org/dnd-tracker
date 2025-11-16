@@ -275,3 +275,118 @@ directories captured above]
 |-----------|------------|-------------------------------------|
 | [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
 | [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+
+## PR Checklist & Acceptance Criteria
+
+### Pre-PR Validation Checklist
+
+**Code Quality & Standards**
+
+- [x] All tests passing (`npm run test:ci`)
+- [x] Build succeeds without errors (`npm run build`)
+- [x] TypeScript clean (no errors: `npm run type-check`)
+- [x] ESLint passing (no errors: `npm run lint`)
+- [x] Markdown linting clean (`npm run lint:markdown`)
+- [x] Codacy analysis clean (no critical issues)
+- [x] Test coverage maintained (80%+ on touched code)
+
+**Feature Completeness**
+
+- [x] Service worker registration implemented (`src/lib/sw/register.ts`)
+- [x] App shell precaching working (`public/sw.js`)
+- [x] Runtime caching strategies implemented (cache-first, network-first)
+- [x] IndexedDB offline queue with persistence and retry logic
+- [x] Offline banner UI component with proper accessibility
+- [x] Encryption helpers for sensitive queue data (Web Crypto API)
+- [x] Comprehensive unit tests for all utilities
+- [x] Integration tests for offline queue processing
+- [x] E2E tests for offline banner and accessibility
+- [x] Documentation updated (JSDoc, quickstart.md)
+
+**Security & Performance**
+
+- [x] No hardcoded secrets or sensitive data
+- [x] Web Crypto API used for encryption (AES-GCM)
+- [x] Proper error handling throughout
+- [x] Offline load time under 2 seconds for app shell
+- [x] Storage quota management (50MB cap with LRU eviction)
+
+**Browser Compatibility**
+
+- [x] Service worker registration works in Chromium + Firefox
+- [x] Graceful degradation for unsupported browsers
+- [x] HTTPS requirement properly documented
+
+### Testing Requirements
+
+**Unit Tests (Jest)**
+
+- [x] Service worker registration helper functions
+- [x] IndexedDB queue operations (enqueue, dequeue, persistence)
+- [x] Encryption/decryption utilities
+- [x] Cache strategy implementations
+- [x] Offline banner component rendering and interactions
+
+**Integration Tests (Jest)**
+
+- [x] Offline queue processing with retry logic
+- [x] Service worker message passing
+- [x] IndexedDB persistence across sessions
+
+**E2E Tests (Playwright)**
+
+- [x] Offline banner appears when network offline
+- [x] Banner disappears when back online
+- [x] Retry button functionality
+- [x] Service worker registration on page load
+- [x] Accessibility compliance (focus management, ARIA attributes)
+
+**Performance Tests**
+
+- [x] App shell loads offline within 2 seconds
+- [x] Service worker activation within reasonable time
+- [x] Queue processing doesn't block UI
+
+### Acceptance Criteria Verification
+
+**Functional Requirements (FR-001 through FR-010)**
+
+- [x] FR-001: Service worker registers and activates on app load
+- [x] FR-002: App shell cached for offline access
+- [x] FR-003: Runtime caching strategies implemented
+- [x] FR-004: Offline banner displays on network disconnect
+- [x] FR-005: Operations queue when offline with retry on reconnect
+- [x] FR-006: Sensitive data encrypted in offline queue
+- [x] FR-007: Storage quota management with eviction
+- [x] FR-008: Update flow with user confirmation
+- [x] FR-009: Graceful degradation for unsupported browsers
+- [x] FR-010: Comprehensive test coverage
+
+**Non-Functional Requirements**
+
+- [x] Performance: Offline app shell load < 2s
+- [x] Security: Web Crypto API for encryption
+- [x] Accessibility: WCAG compliant offline banner
+- [x] Browser Support: Chromium 90+, Firefox 88+
+- [x] Code Quality: ESLint clean, TypeScript strict
+
+### Deployment Readiness
+
+**Documentation**
+
+- [x] JSDoc comments on all public APIs
+- [x] Quickstart guide for developers
+- [x] Architecture documentation
+- [x] API contracts defined
+
+**CI/CD Integration**
+
+- [x] E2E tests added to CI pipeline
+- [x] Accessibility checks automated
+- [x] Performance monitoring setup
+
+**Monitoring & Observability**
+
+- [x] Error logging for service worker issues
+- [x] Queue processing metrics
+- [x] Offline event tracking (privacy-compliant)

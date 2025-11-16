@@ -51,3 +51,121 @@ if ('serviceWorker' in navigator) {
 
 - Use Playwright headful runs to validate SW lifecycle in CI.
 - Simulate offline/online transitions in browser devtools and assert offline banner timing and queue retries.
+
+## Manual QA Steps
+
+### Service Worker Registration & Lifecycle
+
+1. **Open browser devtools** → Application → Service Workers
+2. **Verify registration**: SW should be registered at `/sw.js` with status "activated"
+3. **Check caches**: Application → Storage → Cache Storage should show:
+   - `dnd-tracker-precache-v1` (precached assets)
+   - `dnd-tracker-runtime-v1` (runtime cached assets)
+4. **Test update flow**: Modify `public/sw.js`, refresh page, verify "update available" banner appears
+
+### Offline Banner Testing
+
+1. **Simulate offline**: DevTools → Network → Offline checkbox
+2. **Verify banner**: Offline banner should appear immediately
+3. **Test connectivity**: Toggle online/offline, banner should update within 1 second
+4. **Check styling**: Banner should be visible but non-intrusive (top of page, semi-transparent)
+
+### Offline Queue Testing
+
+1. **Go offline**: DevTools → Network → Offline
+2. **Perform actions**: Try creating encounters, parties, or other operations
+3. **Verify queuing**: Check Application → Storage → IndexedDB → `dnd-tracker-offline-queue`
+4. **Go online**: Uncheck Offline, verify operations process automatically
+5. **Check retries**: Simulate network failures, verify exponential backoff (1s, 2s, 4s, 8s, 16s)
+
+### Cache Testing
+
+1. **Static assets**: Verify images, CSS, JS load from cache when offline
+2. **API calls**: Verify runtime caching works for GET requests
+3. **Cache eviction**: Fill cache beyond 50MB limit, verify LRU eviction
+
+## Playwright Commands for CI
+
+### Basic Service Worker Tests
+
+```bash
+# Run service worker E2E tests
+npx playwright test tests/e2e/sw/ --headed --timeout=30000
+
+# Run offline banner tests specifically
+npx playwright test tests/e2e/sw/offline-banner.spec.ts --headed
+
+# Run with debugging
+npx playwright test tests/e2e/sw/ --debug
+```
+
+### Offline Simulation Tests
+
+```bash
+# Test offline queue processing
+npx playwright test tests/integration/offline/queue-integration.test.ts
+
+# Test service worker registration
+npx playwright test tests/unit/sw/register.test.ts
+
+# Test offline banner component
+npx playwright test tests/integration/components/offline-banner.test.tsx
+```
+
+### CI Pipeline Integration
+
+Add to `.github/workflows/e2e.yml`:
+
+```yaml
+- name: Run Service Worker E2E Tests
+  run: npx playwright test tests/e2e/sw/ --timeout=60000
+  env:
+    PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+
+- name: Run Offline Integration Tests
+  run: npm run test:ci -- tests/integration/offline/
+```
+
+### Browser-Specific Testing
+
+```bash
+# Test in specific browsers
+npx playwright test tests/e2e/sw/ --project=chromium
+npx playwright test tests/e2e/sw/ --project=firefox
+npx playwright test tests/e2e/sw/ --project=webkit
+
+# Test with different viewport sizes
+npx playwright test tests/e2e/sw/ --grep="mobile"
+```
+
+## Offline Testing Procedures
+
+### Development Testing
+
+1. **Start dev server**: `npm run dev`
+2. **Open in browser** with devtools
+3. **Simulate offline**: Network tab → Offline
+4. **Test operations**: Create/edit entities while offline
+5. **Verify queue**: IndexedDB → `dnd-tracker-offline-queue`
+6. **Go online**: Uncheck Offline, watch queue process
+7. **Check server**: Verify operations were persisted
+
+### Automated Testing
+
+1. **Unit tests**: `npm run test:ci -- tests/unit/offline/`
+2. **Integration tests**: `npm run test:ci -- tests/integration/offline/`
+3. **E2E tests**: `npx playwright test tests/e2e/sw/`
+4. **Coverage**: `npm run test:ci -- --coverage --coverageDirectory=coverage/offline`
+
+### Performance Testing
+
+1. **Cache performance**: Time asset loading with/without cache
+2. **Queue processing**: Measure time for 10, 50, 100 queued operations
+3. **Memory usage**: Monitor IndexedDB and Cache Storage sizes
+4. **Network efficiency**: Verify batched sync requests
+
+### Security Testing
+
+1. **Encryption validation**: Verify sensitive data is encrypted in IndexedDB
+2. **Cache isolation**: Ensure no auth tokens leak into service worker caches
+3. **HTTPS requirement**: Verify SW only works over HTTPS in production

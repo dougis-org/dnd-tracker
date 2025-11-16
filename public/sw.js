@@ -29,7 +29,14 @@ const PRECACHE_URLS = [
   // Note: In production, use workbox or similar to inject actual hashed URLs
 ];
 
-// Install event - precache app shell
+/**
+ * Install Event Handler
+ *
+ * Precaches the app shell assets during service worker installation.
+ * This ensures core app assets are available offline immediately.
+ *
+ * @param {ExtendableEvent} event - The install event
+ */
 self.addEventListener('install', (event) => {
   console.log('[SW] Install event - precaching app shell');
 
@@ -54,7 +61,14 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event - cleanup and claim clients
+/**
+ * Activate Event Handler
+ *
+ * Cleans up old caches and claims all clients immediately.
+ * Notifies clients that the service worker is ready.
+ *
+ * @param {ExtendableEvent} event - The activate event
+ */
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activate event - cleaning up old caches');
 
@@ -86,7 +100,16 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - apply caching strategies
+/**
+ * Fetch Event Handler
+ *
+ * Applies appropriate caching strategies based on request type:
+ * - Static assets: cache-first strategy
+ * - API requests: network-first strategy
+ * - Other requests: network with cache fallback
+ *
+ * @param {FetchEvent} event - The fetch event
+ */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -114,8 +137,12 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-// Helper functions for caching strategies
-
+/**
+ * Determines if a request is for a static asset
+ *
+ * @param {Request} request - The request to check
+ * @returns {boolean} True if the request is for a static asset
+ */
 function isStaticAsset(request) {
   const url = request.url;
   return (
@@ -132,11 +159,26 @@ function isStaticAsset(request) {
   );
 }
 
+/**
+ * Determines if a request is for an API endpoint
+ *
+ * @param {Request} request - The request to check
+ * @returns {boolean} True if the request is for an API endpoint
+ */
 function isApiRequest(request) {
   const url = request.url;
   return url.includes('/api/') || url.includes('/sync/');
 }
 
+/**
+ * Cache-First Caching Strategy
+ *
+ * Tries cache first, falls back to network. Caches successful network responses.
+ * Best for static assets that don't change frequently.
+ *
+ * @param {Request} request - The request to handle
+ * @returns {Promise<Response>} The response from cache or network
+ */
 async function cacheFirst(request) {
   try {
     // Try cache first
@@ -159,6 +201,15 @@ async function cacheFirst(request) {
   }
 }
 
+/**
+ * Network-First Caching Strategy
+ *
+ * Tries network first, falls back to cache. Caches successful network responses.
+ * Best for API requests that need fresh data but can serve stale data when offline.
+ *
+ * @param {Request} request - The request to handle
+ * @returns {Promise<Response>} The response from network or cache
+ */
 async function networkFirst(request) {
   try {
     // Try network first
@@ -180,6 +231,15 @@ async function networkFirst(request) {
   }
 }
 
+/**
+ * Network with Cache Fallback Strategy
+ *
+ * Tries network first, falls back to cache. Does not cache responses.
+ * Best for dynamic content that should be fresh but can serve stale data.
+ *
+ * @param {Request} request - The request to handle
+ * @returns {Promise<Response>} The response from network or cache
+ */
 async function networkWithCacheFallback(request) {
   try {
     return await fetch(request);
@@ -192,7 +252,13 @@ async function networkWithCacheFallback(request) {
   }
 }
 
-// Message event - handle client commands
+/**
+ * Message Event Handler
+ *
+ * Handles messages from the main thread, such as update commands.
+ *
+ * @param {MessageEvent} event - The message event
+ */
 self.addEventListener('message', (event) => {
   console.log('[SW] Message received:', event.data);
 

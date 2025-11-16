@@ -7,8 +7,6 @@
  * @module offline/encryption
  */
 
-/* global btoa, atob, CryptoKey, TextEncoder, TextDecoder */
-
 const ALGORITHM = 'AES-GCM';
 const KEY_LENGTH = 256;
 const IV_LENGTH = 12; // 96 bits

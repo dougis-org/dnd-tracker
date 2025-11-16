@@ -1,12 +1,11 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { OfflineBanner } from '@/components/OfflineBanner/OfflineBanner';
-
 // Mock the service worker registration
-const mockRegisterServiceWorker = jest.fn();
-
-jest.mock('@/lib/sw/register', () => ({
-  registerServiceWorker: mockRegisterServiceWorker,
+jest.mock('../../../src/lib/sw/register', () => ({
+  registerServiceWorker: jest.fn(),
 }));
+
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { OfflineBanner } from '../../../src/components/OfflineBanner/OfflineBanner';
+import { registerServiceWorker, ServiceWorkerCallbacks } from '../../../src/lib/sw/register';
 
 describe('OfflineBanner', () => {
   beforeEach(() => {
@@ -37,13 +36,13 @@ describe('OfflineBanner', () => {
     expect(screen.getByText(/you're offline/i)).toBeInTheDocument();
   });
 
-  it('should show retry button when offline', () => {
+  it('should show retry button when offline and onRetry is provided', () => {
     Object.defineProperty(navigator, 'onLine', {
       writable: true,
       value: false,
     });
 
-    render(<OfflineBanner />);
+    render(<OfflineBanner onRetry={() => {}} />);
 
     const retryButton = screen.getByRole('button', { name: /retry/i });
     expect(retryButton).toBeInTheDocument();
@@ -94,7 +93,9 @@ describe('OfflineBanner', () => {
     });
 
     // Trigger online event
-    window.dispatchEvent(new window.Event('online'));
+    act(() => {
+      window.dispatchEvent(new window.Event('online'));
+    });
 
     await waitFor(() => {
       expect(screen.queryByText(/you're offline/i)).not.toBeInTheDocument();
@@ -104,23 +105,32 @@ describe('OfflineBanner', () => {
   it('should register service worker on mount', () => {
     render(<OfflineBanner />);
 
-    expect(mockRegisterServiceWorker).toHaveBeenCalledWith('/sw.js', {
+    expect(registerServiceWorker).toHaveBeenCalledWith('/sw.js', {
       onUpdate: expect.any(Function),
       onReady: expect.any(Function),
     });
   });
 
   it('should handle update available event', () => {
-    let updateCallback: (() => void) | undefined;
+    let updateCallback: ((registration: ServiceWorkerRegistration) => void) | undefined;
 
-    mockRegisterServiceWorker.mockImplementation((path, callbacks) => {
-      updateCallback = callbacks.onUpdate;
+    // Mock navigator.onLine as true to show update banner
+    Object.defineProperty(navigator, 'onLine', {
+      writable: true,
+      value: true,
+    });
+
+    (registerServiceWorker as jest.MockedFunction<typeof registerServiceWorker>).mockImplementation((swPath?: string, callbacks?: ServiceWorkerCallbacks) => {
+      updateCallback = callbacks?.onUpdate;
+      return Promise.resolve(null);
     });
 
     render(<OfflineBanner />);
 
     // Simulate update available
-    updateCallback?.();
+    act(() => {
+      updateCallback?.({} as ServiceWorkerRegistration);
+    });
 
     expect(screen.getByText(/update available/i)).toBeInTheDocument();
   });
