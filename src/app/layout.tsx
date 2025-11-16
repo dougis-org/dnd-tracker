@@ -46,7 +46,7 @@ export default function RootLayout({
                 <Breadcrumb />
               </div>
             </header>
-            <main id="main-content" className="container relative z-0 flex-1 py-8">
+            <main id="main-content" className="container flex-1 py-8">
               {children}
             </main>
             <Footer />
