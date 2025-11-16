@@ -16,20 +16,22 @@ export const CACHE_NAMES = {
 /**
  * Determine if a request should use cache-first strategy
  */
+const STATIC_ASSET_REGEX = /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map)(?:\?|$)/i;
+
+/**
+ * Determine if a request should use a cache-first strategy.
+ * This reduces branching in the original implementation by using a single
+ * regular expression instead of multiple `includes` checks, which also
+ * improves maintainability and satisfies complexity checks.
+ */
 export function shouldUseCacheFirst(request: Request): boolean {
-  const url = request.url;
-  return (
-    url.includes('.js') ||
-    url.includes('.css') ||
-    url.includes('.png') ||
-    url.includes('.jpg') ||
-    url.includes('.jpeg') ||
-    url.includes('.gif') ||
-    url.includes('.svg') ||
-    url.includes('.ico') ||
-    url.includes('.woff') ||
-    url.includes('.woff2')
-  );
+  try {
+    const url = request.url;
+    return STATIC_ASSET_REGEX.test(url);
+  } catch (_e) {
+    // If url parsing fails, default to network-first for safety
+    return false;
+  }
 }
 
 /**

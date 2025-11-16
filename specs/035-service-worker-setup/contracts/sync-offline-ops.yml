@@ -11,6 +11,9 @@ servers:
     description: Production server
   - url: http://localhost:3000
     description: Development server
+tags:
+  - name: Offline Sync
+    description: Endpoints that support syncing operations recorded while offline
 
 paths:
   /sync/offline-ops:

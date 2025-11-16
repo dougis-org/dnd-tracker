@@ -1,3 +1,5 @@
+/* eslint-env serviceworker */
+
 /**
  * Service Worker: App Shell Precaching & Runtime Caching
  *
@@ -143,20 +145,16 @@ self.addEventListener('fetch', (event) => {
  * @param {Request} request - The request to check
  * @returns {boolean} True if the request is for a static asset
  */
+const STATIC_ASSET_REGEX = /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map)(?:\?|$)/i;
+
 function isStaticAsset(request) {
-  const url = request.url;
-  return (
-    url.includes('.js') ||
-    url.includes('.css') ||
-    url.includes('.png') ||
-    url.includes('.jpg') ||
-    url.includes('.jpeg') ||
-    url.includes('.gif') ||
-    url.includes('.svg') ||
-    url.includes('.ico') ||
-    url.includes('.woff') ||
-    url.includes('.woff2')
-  );
+  try {
+    const url = request.url;
+    return STATIC_ASSET_REGEX.test(url);
+  } catch (err) {
+    // If URL parsing fails for any reason, prefer network-first behavior
+    return false;
+  }
 }
 
 /**
@@ -180,14 +178,14 @@ function isApiRequest(request) {
  * @returns {Promise<Response>} The response from cache or network
  */
 async function cacheFirst(request) {
-  try {
-    // Try cache first
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
+  // Try cache first
+  const cachedResponse = await caches.match(request);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
 
-    // Fetch from network and cache
+  // Fetch from network and cache; catch only the network operation
+  try {
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
       const cache = await caches.open(RUNTIME_CACHE_NAME);
@@ -195,7 +193,7 @@ async function cacheFirst(request) {
     }
     return networkResponse;
   } catch (error) {
-    console.error('[SW] Cache-first failed:', error);
+    console.error('[SW] Cache-first network fetch failed:', error);
     // Return offline page or error
     return new Response('Offline', { status: 503 });
   }

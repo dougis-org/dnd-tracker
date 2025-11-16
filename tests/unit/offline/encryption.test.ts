@@ -9,6 +9,9 @@ declare global {
   var CryptoKey: typeof CryptoKey;
 }
 
+// 12-byte IV used across tests to keep expectations deterministic
+const DEFAULT_IV = Uint8Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+
 // Mock Web Crypto API
 const mockCrypto = {
   subtle: {
@@ -65,9 +68,7 @@ describe('encryption utilities', () => {
     jest.clearAllMocks();
 
     // Setup default mocks
-    mockCrypto.getRandomValues.mockReturnValue(
-      new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
-    );
+    mockCrypto.getRandomValues.mockReturnValue(DEFAULT_IV);
     mockCrypto.subtle.generateKey.mockResolvedValue({} as CryptoKey);
     mockCrypto.subtle.exportKey.mockResolvedValue(new Uint8Array([1, 2, 3, 4]));
     mockCrypto.subtle.importKey.mockResolvedValue({} as CryptoKey);
@@ -163,7 +164,7 @@ describe('encryption utilities', () => {
       expect(mockCrypto.subtle.decrypt).toHaveBeenCalledWith(
         {
           name: 'AES-GCM',
-          iv: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+          iv: DEFAULT_IV,
         },
         mockKey,
         new Uint8Array([5, 6, 7, 8])
