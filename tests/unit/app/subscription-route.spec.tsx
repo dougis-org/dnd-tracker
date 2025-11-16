@@ -5,8 +5,10 @@ import { buildBreadcrumbSegments } from '@/lib/navigation'
 // Reuse typed link mock pattern from help-route to avoid `any` in tests
 type AnchorHref = string | { pathname: string }
 
-type AnchorProps = React.PropsWithChildren<
-  Omit<React.ComponentPropsWithoutRef<'a'>, 'href'> & { href: AnchorHref }
+import type { ComponentPropsWithoutRef, PropsWithChildren } from 'react'
+
+type AnchorProps = PropsWithChildren<
+  Omit<ComponentPropsWithoutRef<'a'>, 'href'> & { href: AnchorHref }
 >
 jest.mock('next/link', () => ({
   __esModule: true,
