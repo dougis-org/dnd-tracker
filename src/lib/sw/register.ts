@@ -44,6 +44,30 @@ export interface ServiceWorkerCallbacks {
 }
 
 /**
+ * Handle updatefound state changes for a registration
+ */
+function handleUpdateFound(
+  registration: ServiceWorkerRegistration,
+  callbacks: ServiceWorkerCallbacks
+): void {
+  const newWorker = registration.installing;
+  if (!newWorker) return;
+
+  newWorker.addEventListener('statechange', () => {
+    if (newWorker.state === 'activated') {
+      swState.isActivated = true;
+
+      // If this is an update, trigger update callback
+      if (navigator.serviceWorker.controller) {
+        callbacks.onUpdate?.(registration);
+      } else {
+        callbacks.onReady?.(registration);
+      }
+    }
+  });
+}
+
+/**
  * Service worker state tracking interface
  *
  * @interface ServiceWorkerState
@@ -130,21 +154,7 @@ export async function registerServiceWorker(
     } else {
       // Listen for activation
       registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing;
-        if (newWorker) {
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'activated') {
-              swState.isActivated = true;
-
-              // If this is an update, trigger update callback
-              if (navigator.serviceWorker.controller) {
-                callbacks.onUpdate?.(registration);
-              } else {
-                callbacks.onReady?.(registration);
-              }
-            }
-          });
-        }
+        handleUpdateFound(registration, callbacks);
       });
     }
 

@@ -30,22 +30,18 @@ export async function generateKey(): Promise<CryptoKey> {
  */
 export async function exportKey(key: CryptoKey): Promise<string> {
   const exported = await crypto.subtle.exportKey('raw', key);
-  return btoa(String.fromCharCode(...new Uint8Array(exported)));
+  return uint8ArrayToBase64(new Uint8Array(exported));
 }
 
 /**
  * Import key from base64 string
  */
 export async function importKey(keyData: string): Promise<CryptoKey> {
-  const keyBytes = new Uint8Array(
-    atob(keyData)
-      .split('')
-      .map((c) => c.charCodeAt(0))
-  );
+  const keyBytes = base64ToUint8Array(keyData);
 
   return crypto.subtle.importKey(
     'raw',
-    keyBytes,
+    keyBytes.buffer as ArrayBuffer,
     ALGORITHM,
     false, // not extractable
     ['encrypt', 'decrypt']
@@ -72,8 +68,8 @@ export async function encrypt(
   );
 
   return {
-    encrypted: btoa(String.fromCharCode(...new Uint8Array(encrypted))),
-    iv: btoa(String.fromCharCode(...iv)),
+    encrypted: uint8ArrayToBase64(new Uint8Array(encrypted)),
+    iv: uint8ArrayToBase64(iv),
   };
 }
 
@@ -85,27 +81,36 @@ export async function decrypt(
   iv: string,
   key: CryptoKey
 ): Promise<string> {
-  const encrypted = new Uint8Array(
-    atob(encryptedData)
-      .split('')
-      .map((c) => c.charCodeAt(0))
-  );
-  const ivBytes = new Uint8Array(
-    atob(iv)
-      .split('')
-      .map((c) => c.charCodeAt(0))
-  );
+  const encrypted = base64ToUint8Array(encryptedData);
+  const ivBytes = base64ToUint8Array(iv);
 
   const decrypted = await crypto.subtle.decrypt(
     {
       name: ALGORITHM,
-      iv: ivBytes,
+      iv: ivBytes.buffer as ArrayBuffer,
     },
     key,
-    encrypted
+    encrypted.buffer as ArrayBuffer
   );
 
   return new TextDecoder().decode(decrypted);
+}
+
+function base64ToUint8Array(base64: string): Uint8Array {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+function uint8ArrayToBase64(bytes: Uint8Array): string {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
 }
 
 /**

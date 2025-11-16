@@ -10,7 +10,7 @@ test.describe('Offline Banner', () => {
 
     // Initially should not show offline banner (assuming online)
     // Use more specific locator to avoid matching page title
-    await expect(page.locator('text=/you\'re offline/i')).not.toBeVisible();
+    await expect(page.locator("text=/you're offline/i")).not.toBeVisible();
 
     // Simulate offline
     await context.setOffline(true);
@@ -126,12 +126,14 @@ test.describe('Offline Banner', () => {
 
       // Check button can receive focus programmatically
       await retryButton.focus();
-      const isFocused = await retryButton.evaluate(el => el === document.activeElement);
+      const isFocused = await retryButton.evaluate(
+        (el) => el === document.activeElement
+      );
       expect(isFocused).toBe(true);
 
       // Check for proper ARIA attributes if any
       const ariaLabel = await retryButton.getAttribute('aria-label');
-      const hasAccessibleName = ariaLabel || await retryButton.textContent();
+      const hasAccessibleName = ariaLabel || (await retryButton.textContent());
       expect(hasAccessibleName).toBeTruthy();
     });
 
@@ -146,12 +148,16 @@ test.describe('Offline Banner', () => {
       await expect(page.locator("text=/you're offline/i")).toBeVisible();
 
       // Check for proper ARIA attributes on banner
-      const banner = page.locator('[data-testid="offline-banner"], [role="banner"], [aria-live]');
+      const banner = page.locator(
+        '[data-testid="offline-banner"], [role="banner"], [aria-live]'
+      );
       await expect(banner).toBeVisible();
 
       // Banner should be announced to screen readers
       const hasAriaLive = await banner.evaluate((el) => {
-        return el.hasAttribute('aria-live') || el.getAttribute('role') === 'alert';
+        return (
+          el.hasAttribute('aria-live') || el.getAttribute('role') === 'alert'
+        );
       });
       expect(hasAriaLive).toBe(true);
     });

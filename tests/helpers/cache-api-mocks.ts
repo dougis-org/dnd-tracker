@@ -17,14 +17,12 @@ export class MockCache {
   }
 
   async match(request: RequestInfo | URL): Promise<Response | undefined> {
-    const key =
-      typeof request === 'string' ? request : (request as Request).url;
+    const key = getKeyFromRequest(request);
     return this.entries.get(key);
   }
 
   async delete(request: RequestInfo | URL): Promise<boolean> {
-    const key =
-      typeof request === 'string' ? request : (request as Request).url;
+    const key = getKeyFromRequest(request);
     return this.entries.delete(key);
   }
 
@@ -67,6 +65,10 @@ export class MockCacheStorage {
     }
     return undefined;
   }
+}
+
+function getKeyFromRequest(request: RequestInfo | URL): string {
+  return typeof request === 'string' ? request : (request as Request).url;
 }
 
 /**
@@ -166,23 +168,26 @@ export class MockRequest {
  * Install all Cache API mocks globally
  */
 export function installCacheAPIMocks(): void {
-  if (typeof global.caches === 'undefined') {
-    (global as Record<string, unknown>).caches = new MockCacheStorage();
-  }
+  setGlobalIfMissing('caches', new MockCacheStorage());
+  setGlobalIfMissing('Request', MockRequest);
 
-  if (typeof global.Request === 'undefined') {
-    global.Request = MockRequest as typeof globalThis.Request;
-  }
-
+  // Ensure other globals are set for tests
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  global.Blob = MockBlob as any;
+  setGlobal('Blob', MockBlob as any);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  global.Response = MockResponse as any;
+  setGlobal('Response', MockResponse as any);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setGlobalIfMissing('Headers', MockHeaders as any);
+}
 
-  if (typeof global.Headers === 'undefined') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    global.Headers = MockHeaders as any;
+function setGlobalIfMissing(key: string, value: unknown): void {
+  if (typeof (global as Record<string, unknown>)[key] === 'undefined') {
+    (global as Record<string, unknown>)[key] = value;
   }
+}
+
+function setGlobal(key: string, value: unknown): void {
+  (global as Record<string, unknown>)[key] = value;
 }
 
 /**

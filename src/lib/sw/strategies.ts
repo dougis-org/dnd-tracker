@@ -16,7 +16,8 @@ export const CACHE_NAMES = {
 /**
  * Determine if a request should use cache-first strategy
  */
-const STATIC_ASSET_REGEX = /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map)(?:\?|$)/i;
+const STATIC_ASSET_REGEX =
+  /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|map)(?:\?|$)/i;
 
 /**
  * Determine if a request should use a cache-first strategy.

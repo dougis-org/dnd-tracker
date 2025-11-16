@@ -10,6 +10,9 @@
 import { putItem, getAllItems, deleteItem, STORES } from './indexeddb';
 import { encryptFields, decryptFields, generateKey } from './encryption';
 
+// Maximum number of retries for queued operations before being marked failed
+const MAX_RETRY = 3;
+
 export interface QueuedOperation {
   id: string;
   type: 'create' | 'update' | 'delete';
@@ -56,36 +59,50 @@ export async function processQueue(): Promise<void> {
   const pendingOps = operations.filter((op) => op.status === 'pending');
 
   for (const op of pendingOps) {
-    try {
-      // Decrypt data before sending
-      const encryptionKey = await generateKey(); // In real app, use stored key
-      const sensitiveFields = getSensitiveFields(op.type);
-      const decryptedData = await decryptFields(
-        op.data,
-        sensitiveFields,
-        encryptionKey
-      );
+    // Use a helper to handle the operation so we keep the main loop small
+    await handleQueuedOperation(op);
+  }
+}
 
-      // Execute the operation
-      await executeOperation({
-        ...op,
-        data: decryptedData,
-      });
+async function decryptAndExecute(op: QueuedOperation): Promise<void> {
+  // Decrypt data before sending
+  const encryptionKey = await generateKey(); // In real app, use stored key
+  const sensitiveFields = getSensitiveFields(op.type);
+  const decryptedData = await decryptFields(
+    op.data,
+    sensitiveFields,
+    encryptionKey
+  );
 
-      // Mark as completed and remove
-      await deleteItem(STORES.QUEUE, op.id);
-    } catch (error) {
-      op.retryCount++;
-      op.lastError = (error as Error).message;
+  // Perform the API call
+  await executeOperation({ ...op, data: decryptedData });
+}
 
-      if (op.retryCount >= 3) {
-        op.status = 'failed';
-        await putItem(STORES.QUEUE, op);
-      } else {
-        op.status = 'pending'; // Will retry later
-        await putItem(STORES.QUEUE, op);
-      }
-    }
+async function updateRetryOrFail(
+  op: QueuedOperation,
+  err: unknown
+): Promise<void> {
+  op.retryCount++;
+  op.lastError = (err as Error).message;
+  // Mark failed when we reach the maximum retry threshold
+  if (op.retryCount >= MAX_RETRY) {
+    op.status = 'failed';
+  } else {
+    op.status = 'pending'; // Will retry later
+  }
+
+  await putItem(STORES.QUEUE, op);
+}
+
+async function handleQueuedOperation(op: QueuedOperation): Promise<void> {
+  try {
+    await decryptAndExecute(op);
+
+    // Remove on success
+    await deleteItem(STORES.QUEUE, op.id);
+  } catch (err) {
+    // Extract retry logic to a helper
+    await updateRetryOrFail(op, err);
   }
 }
 
@@ -142,28 +159,24 @@ export async function clearQueue(): Promise<void> {
  * Get sensitive fields that should be encrypted based on operation type
  */
 function getSensitiveFields(type: string): string[] {
-  // Customize based on your data model
-  switch (type) {
-    case 'create':
-    case 'update':
-      return ['email', 'password', 'ssn', 'creditCard'];
-    default:
-      return [];
-  }
+  // Map of operation types to fields that must be encrypted
+  const map: Record<string, string[]> = {
+    create: ['email', 'password', 'ssn', 'creditCard'],
+    update: ['email', 'password', 'ssn', 'creditCard'],
+  };
+
+  return map[type] ?? [];
 }
 
 /**
  * Get HTTP method for operation type
  */
 function getHttpMethod(type: string): string {
-  switch (type) {
-    case 'create':
-      return 'POST';
-    case 'update':
-      return 'PUT';
-    case 'delete':
-      return 'DELETE';
-    default:
-      return 'POST';
-  }
+  const map: Record<string, string> = {
+    create: 'POST',
+    update: 'PUT',
+    delete: 'DELETE',
+  };
+
+  return map[type] ?? 'POST';
 }
