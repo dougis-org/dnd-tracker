@@ -6,6 +6,7 @@
     --background: 210 8% 95%; /* #f2f4f8 */
     /* Opaque copy used for utility backgrounds (keeps components solid) */
     --background-opaque: 210 8% 95%;
+    --background-main-body: 211 13% 87%;
     /* Map Tailwind background tokens to our opaque background variable so utilities like bg-background are solid */
     --color-background-100: hsl(var(--background-opaque));
     --color-background-200: hsl(var(--background-opaque));
@@ -83,5 +84,11 @@
   } */
   a:hover, a:hover span {
     color: var(--link-hover);
+    }
+    #main-content {
+      background: hsl(var(--background-main-body));
+    }
+    footer {
+      background: hsl(var(--background-main-body));
     }
 }

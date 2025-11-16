@@ -39,18 +39,18 @@ export default function RootLayout({
           </a>
           <div className="flex min-h-screen flex-col">
             <header className="relative z-40 border-b bg-background">
-              <div className="container relative z-50 flex items-center justify-between gap-4 py-4">
+              <div className="container relative z-50 flex items-center justify-between gap-4 py-3 px-3 md:px-4">
                 <GlobalNav />
                 <GlobalNavMobile />
                 <nav className="flex items-center gap-4">
                   <ThemeToggle />
                 </nav>
               </div>
-              <div className="container relative z-30 py-2">
-                <Breadcrumb />
-              </div>
             </header>
-            <main id="main-content" className="container flex-1 py-8">
+            <main id="main-content" className="container flex-auto py-3 max-w-4/4">
+              <div className="container relative z-30 py-0 pl-6">
+                <Breadcrumb />
+              </div>              
               {children}
             </main>
             <Footer />
