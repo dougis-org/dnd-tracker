@@ -148,7 +148,7 @@ function DesktopNavMenu({ item, pathname }: DesktopNavMenuProps) {
           role="menu"
           aria-label={`${item.label} submenu`}
           className="absolute left-0 top-full z-60 mt-2 w-56 rounded-md border bg-background p-2 shadow-lg"
-          style={{ backgroundColor: 'hsl(var(--background))' }}
+          style={{ backgroundColor: 'hsl(var(--background-opaque))' }}
         >
           {(item.children ?? []).map((child) => {
             if (!child.href) {

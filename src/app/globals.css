@@ -2,7 +2,13 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    /* Default (light) theme background — light gray */
+    --background: 210 8% 95%; /* #f2f4f8 */
+    /* Opaque copy used for utility backgrounds (keeps components solid) */
+    --background-opaque: 210 8% 95%;
+    /* Map Tailwind background tokens to our opaque background variable so utilities like bg-background are solid */
+    --color-background-100: hsl(var(--background-opaque));
+    --color-background-200: hsl(var(--background-opaque));
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -25,7 +31,14 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    /* Dark theme background — matches #4d545da5 with alpha */
+    /* --background format supports alpha: 'h s% l% / alpha' */
+    --background: 214.3 9.4% 33.35% / 0.647; /* approx hsl for #4d545d with alpha 0.647 */
+    /* Keep an opaque version for UI elements that shouldn't inherit alpha */
+    --background-opaque: 214.3 9.4% 33.35%; /* no alpha */
+    /* Make Tailwind background tokens follow our dark background variable */
+    --color-background-100: hsl(var(--background-opaque));
+    --color-background-200: hsl(var(--background-opaque));
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
@@ -52,7 +65,15 @@
     border-color: hsl(var(--border));
   }
   body {
+    /* Fallback for older browsers */
+    background-color: #f2f4f8;
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+  }
+
+  /* Fallback for older browsers when using .dark mode */
+  .dark body {
+    /* Fallback uses the actual hex with alpha (keeps the user's requested color) */
+    background-color: #4d545da5;
   }
 }
