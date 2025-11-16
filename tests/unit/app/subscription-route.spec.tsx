@@ -2,11 +2,16 @@ import { render, screen } from '@testing-library/react'
 import SubscriptionPage from '@/app/subscription/page'
 import { buildBreadcrumbSegments } from '@/lib/navigation'
 
+type AnchorHref = string | { pathname: string }
+
+type AnchorProps = React.PropsWithChildren<
+  Omit<React.ComponentPropsWithoutRef<'a'>, 'href'> & { href: AnchorHref }
+>
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ children, href }: any) => {
+  default: ({ children, href, ...rest }: AnchorProps) => {
     const resolvedHref = typeof href === 'string' ? href : href.pathname
-    return <a href={resolvedHref}>{children}</a>
+    return <a href={resolvedHref} {...rest}>{children}</a>
   },
 }))
 
