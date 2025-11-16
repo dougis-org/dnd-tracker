@@ -21,9 +21,9 @@ export const StatCard: React.FC<StatCardProps> = ({ label, value, detailUrl }) =
 
   const content = (
     <>
-      <div className="text-sm font-medium text-slate-600 dark:text-slate-400">{label}</div>
-      <div className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-50">
-        {hasValue ? formatValue(value as number | string) : <span className="text-sm text-slate-500 dark:text-slate-400">No data</span>}
+      <div className="text-sm font-medium">{label}</div>
+      <div className="mt-1 text-2xl font-semibold ">
+        {hasValue ? formatValue(value as number | string) : <span className="text-sm">No data</span>}
       </div>
     </>
   )

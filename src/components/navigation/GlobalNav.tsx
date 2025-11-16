@@ -210,7 +210,7 @@ export function GlobalNav() {
   return (
     <nav aria-label="Primary" className="hidden md:flex">
       <div className="flex w-full items-center justify-between gap-6">
-        <ul aria-label="Primary navigation left cluster" className="flex items-center gap-2">
+        <ul aria-label="Primary navigation left cluster" className="flex items-center gap-2" >
           {clusters.left.map(renderNavItem)}
         </ul>
         <ul aria-label="Primary navigation right cluster" className="ml-auto flex items-center gap-2">

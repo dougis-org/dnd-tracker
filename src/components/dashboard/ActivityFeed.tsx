@@ -19,7 +19,7 @@ export function ActivityFeed({ items = [] }: { items?: ActivityItem[] }) {
               {it.description}
             </Link>
           ) : (
-            <span className="text-sm text-slate-700 dark:text-slate-300">{it.description}</span>
+            <span className="text-sm ">{it.description}</span>
           )}
         </li>
       ))}

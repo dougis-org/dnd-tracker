@@ -35,9 +35,11 @@
   .dark {
     /* Dark theme background — matches #4d545da5 with alpha */
     /* --background format supports alpha: 'h s% l% / alpha' */
-    --background: 214.3 9.4% 33.35% / 0.647; /* approx hsl for #4d545d with alpha 0.647 */
+    --background: 214.3 9.4% 33.35% / 0.647; /* approx hsl for #4d545d with 
+    alpha 0.647 */
     /* Keep an opaque version for UI elements that shouldn't inherit alpha */
     --background-opaque: 214.3 9.4% 33.35%; /* no alpha */
+    --background-main-body: 214.3 9.4% 33.35% / 0.647; /* swapped from background, was #2c3034 */
     /* Make Tailwind background tokens follow our dark background variable */
     --color-background-100: hsl(var(--background-opaque));
     --color-background-200: hsl(var(--background-opaque));
