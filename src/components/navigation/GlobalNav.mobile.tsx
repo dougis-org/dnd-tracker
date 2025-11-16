@@ -298,6 +298,7 @@ function MobileNavPanel({ open, pathname, onClose, panelRef, items }: MobileNavP
         aria-modal="true"
         aria-label="Primary navigation"
         className="absolute inset-y-0 right-0 flex w-80 max-w-full flex-col gap-6 border-l bg-background p-6 shadow-lg"
+        style={{ backgroundColor: 'hsl(var(--background-opaque))' }}
       >
         <div className="flex items-center justify-between">
           <p className="text-base font-semibold">Explore the app</p>
