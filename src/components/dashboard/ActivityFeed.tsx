@@ -15,7 +15,7 @@ export function ActivityFeed({ items = [] }: { items?: ActivityItem[] }) {
       {items.map((it) => (
         <li key={it.id} className="p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
           {it.targetUrl ? (
-            <Link href={{ pathname: it.targetUrl }} className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+            <Link href={{ pathname: it.targetUrl }} className="text-sm font-medium transition-colors">
               {it.description}
             </Link>
           ) : (

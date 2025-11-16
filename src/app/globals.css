@@ -29,7 +29,8 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
-    --link-hover: hsla(203, 19%, 54%, 0.856); 
+    --link-hover: hsla(203, 19%, 54%, 0.856);
+    --border: 214.3 9.4% 33.35%;
   }
 
   .dark {
@@ -58,7 +59,7 @@
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
+    --border: 210 8% 66%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
     --link-hover: hsla(203, 19%, 69%, 0.856); 
@@ -92,5 +93,9 @@
     }
     footer {
       background: hsl(var(--background-main-body));
+    }
+
+    .card-border {
+      border-color: hsl(var(--border));
     }
 }
