@@ -10,15 +10,21 @@ export interface NavigationItem {
 
 export const NAVIGATION_ITEMS: NavigationItem[] = [
   {
-    label: 'Dashboard',
-    href: '/dashboard',
+    label: 'Home',
+    href: '/',
     alignment: 'left',
     mobileOrder: 1,
   },
   {
-    label: 'Collections',
+    label: 'Dashboard',
+    href: '/dashboard',
     alignment: 'left',
     mobileOrder: 2,
+  },
+  {
+    label: 'Collections',
+    alignment: 'left',
+    mobileOrder: 3,
     children: [
       { label: 'Characters', href: '/characters' },
       { label: 'Parties', href: '/parties' },
@@ -31,12 +37,12 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     label: 'Combat',
     href: '/combat',
     alignment: 'left',
-    mobileOrder: 3,
+    mobileOrder: 4,
   },
   {
     label: 'User',
     alignment: 'right',
-    mobileOrder: 4,
+    mobileOrder: 5,
     children: [
       { label: 'Profile', href: '/profile' },
       { label: 'Settings', href: '/settings' },
@@ -47,13 +53,13 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     label: 'Pricing',
     href: '/pricing',
     alignment: 'right',
-    mobileOrder: 5,
+    mobileOrder: 6,
   },
   {
     label: 'Help',
     href: '/help',
     alignment: 'right',
-    mobileOrder: 6,
+    mobileOrder: 7,
   },
 ]
 

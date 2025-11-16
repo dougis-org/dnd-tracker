@@ -5,6 +5,7 @@ import './globals.css'
 import { Breadcrumb, Footer, GlobalNav, GlobalNavMobile } from '@/components'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import { cn } from '@/lib/utils'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -41,6 +42,9 @@ export default function RootLayout({
               <div className="container relative z-50 flex items-center justify-between gap-4 py-4">
                 <GlobalNav />
                 <GlobalNavMobile />
+                <nav className="flex items-center gap-4">
+                  <ThemeToggle />
+                </nav>
               </div>
               <div className="container relative z-30 py-2">
                 <Breadcrumb />
