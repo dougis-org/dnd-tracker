@@ -13,9 +13,9 @@ export function ActivityFeed({ items = [] }: { items?: ActivityItem[] }) {
   return (
     <ul className="space-y-3">
       {items.map((it) => (
-        <li key={it.id} className="p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+        <li key={it.id} className="p-3 rounded-lg border card shadow-sm">
           {it.targetUrl ? (
-            <Link href={{ pathname: it.targetUrl }} className="text-sm font-medium transition-colors">
+            <Link href={{ pathname: it.targetUrl }} className="text-sm font-semibold transition-colors">
               {it.description}
             </Link>
           ) : (

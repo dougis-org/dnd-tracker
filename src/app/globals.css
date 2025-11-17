@@ -85,17 +85,20 @@
   /* a.hover\:text-link-hover:hover span{
     color: hsl(var(--link-hover));
   } */
-  a:hover, a:hover span {
+  a:hover, a:hover span, .card-border:hover {
     color: var(--link-hover);
-    }
-    #main-content {
-      background: hsl(var(--background-main-body));
-    }
-    footer {
-      background: hsl(var(--background-main-body));
-    }
+  }
+  #main-content {
+    background: hsl(var(--background-main-body));
+  }
+  footer {
+    background: hsl(var(--background-main-body));
+  }
 
-    .card-border {
-      border-color: hsl(var(--border));
-    }
+  .card-border {
+    border-color: hsl(var(--border));
+  }
+  .card-border:hover {
+    border-color: var(--link-hover);
+  }
 }

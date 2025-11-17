@@ -28,13 +28,13 @@ export const StatCard: React.FC<StatCardProps> = ({ label, value, detailUrl }) =
     </>
   )
 
-  const baseClasses = 'p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm transition-all'
+  const baseClasses = 'p-4 rounded-lg border card shadow-sm transition-all'
 
   if (detailUrl) {
     return (
       <a
         href={detailUrl}
-        className={`block ${baseClasses} hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950`}
+        className={`block ${baseClasses} card-border hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 `}
         aria-label={`${label} details`}
       >
         {content}
