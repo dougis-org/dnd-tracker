@@ -1,7 +1,6 @@
 /* eslint-disable no-redeclare */
 /* eslint-env serviceworker */
 /* global self, caches, fetch, Response, console */
- 
 
 /**
  * Service Worker: App Shell Precaching & Runtime Caching
