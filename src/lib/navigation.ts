@@ -12,8 +12,10 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   {
     label: 'Home',
     href: '/',
-    alignment: 'left',
-    mobileOrder: 1,
+    // Intentionally do not set `alignment` or `mobileOrder` for Home.
+    // This keeps Home distinct from the main navigation clusters which are
+    // used for desktop left/right clusters and mobile ordering. Tests and
+    // usage expect 'Home' to not be included in the list of cluster items.
   },
   {
     label: 'Dashboard',

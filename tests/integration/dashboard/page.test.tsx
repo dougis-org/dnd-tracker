@@ -2,21 +2,15 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import DashboardPage from '@/app/dashboard/page'
 
-// Mock the MainLayout component
-jest.mock('@/components/layouts/MainLayout', () => {
-  return {
-    MainLayout: ({ children }: { children: React.ReactNode }) => (
-      <div data-testid="main-layout">{children}</div>
-    ),
-  }
-})
+// Pages use the shared RootLayout in Next.js; tests should assert page content
+// directly. Avoid mocking MainLayout here because RootLayout is applied at
+// runtime by Next and we prefer to test the page content itself.
 
 describe('Dashboard Page', () => {
   it('should render the dashboard page with all sections', () => {
     render(<DashboardPage />)
 
-    // Verify main layout is rendered
-    expect(screen.getByTestId('main-layout')).toBeInTheDocument()
+    // Root layout isn't available in unit render; verify page content directly
 
     // Verify page title
     expect(screen.getByRole('heading', { level: 1, name: /dashboard/i })).toBeInTheDocument()

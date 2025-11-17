@@ -11,6 +11,13 @@ const ALGORITHM = 'AES-GCM';
 const KEY_LENGTH = 256;
 const IV_LENGTH = 12; // 96 bits
 
+// BufferSource is a DOM type; some lint rules / TS configs treat it oddly in
+// Node test environments. Define a local alias to avoid lint/no-undef errors
+// while still giving us the type-safety we want.
+// BufferSourceLocal removed — casting to `any` is used where necessary in this
+// Node/Jest environment to avoid type mismatches between DOM BufferSource
+// variants and the Node runtime. Keep casts minimal and targeted.
+
 /**
  * Generate a new encryption key
  */
@@ -39,9 +46,16 @@ export async function exportKey(key: CryptoKey): Promise<string> {
 export async function importKey(keyData: string): Promise<CryptoKey> {
   const keyBytes = base64ToUint8Array(keyData);
 
+  // Web Crypto allows ArrayBuffer or ArrayBufferView. Tests and mocks in
+  // our suite assert a Uint8Array is passed; use the typed view to keep
+  // expectations stable across environments.
+  // Keep the typed value but cast to any to satisfy TypeScript types in the
+  // Node/Jest environment — runtime will still get Uint8Array as expected.
+  // @ts-ignore
   return crypto.subtle.importKey(
     'raw',
-    keyBytes.buffer as ArrayBuffer,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    keyBytes as any,
     ALGORITHM,
     false, // not extractable
     ['encrypt', 'decrypt']
@@ -82,15 +96,22 @@ export async function decrypt(
   key: CryptoKey
 ): Promise<string> {
   const encrypted = base64ToUint8Array(encryptedData);
+
   const ivBytes = base64ToUint8Array(iv);
 
+  // Pass Uint8Array (ArrayBufferView) — our tests mock the subtle.decrypt
+  // call expecting a Uint8Array for both iv and data. Passing the typed
+  // view keeps the interface consistent between runtime and test.
+  // @ts-ignore
   const decrypted = await crypto.subtle.decrypt(
     {
       name: ALGORITHM,
-      iv: ivBytes.buffer as ArrayBuffer,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      iv: ivBytes as any,
     },
     key,
-    encrypted.buffer as ArrayBuffer
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    encrypted as any
   );
 
   return new TextDecoder().decode(decrypted);
