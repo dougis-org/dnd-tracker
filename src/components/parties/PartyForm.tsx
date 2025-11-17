@@ -167,68 +167,69 @@ export function PartyForm({
 
       {/* Members Section */}
       <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">Members</h2>
-            <button
-              type="button"
-              onClick={() => setShowMemberForm(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Add Member
-            </button>
-          </div>
-
-          {showMemberForm && (
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <MemberForm
-                member={editingMember}
-                onSubmit={handleMemberSubmit}
-                onCancel={() => {
-                  setShowMemberForm(false);
-                  setEditingMemberId(null);
-                }}
-              />
-            </div>
-          )}
-
-          {members.length > 0 ? (
-            <div className="space-y-3">
-              {members.map((member) => (
-                <div
-                  key={member.id}
-                  className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
-                >
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      {member.characterName}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Level {member.level} {member.class} {member.race}
-                    </p>
-                  </div>
-                  <div className="space-x-2">
-                    <button
-                      type="button"
-                      onClick={() => handleEditMember(member.id)}
-                      className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDeletingMemberId(member.id)}
-                      className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-600">No members added yet.</p>
-          )}
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-gray-900">Members</h2>
+          <button
+            type="button"
+            onClick={() => setShowMemberForm(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Add Member
+          </button>
         </div>
+
+        {showMemberForm && (
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <MemberForm
+              member={editingMember}
+              onSubmit={handleMemberSubmit}
+              onCancel={() => {
+                setShowMemberForm(false);
+                setEditingMemberId(null);
+              }}
+            />
+          </div>
+        )}
+
+        {members.length > 0 ? (
+          <div className="space-y-3">
+            {members.map((member) => (
+              <div
+                key={member.id}
+                className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
+              >
+                <div>
+                  <p className="font-medium text-gray-900">
+                    {member.characterName}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Level {member.level} {member.class} {member.race}
+                  </p>
+                </div>
+                <div className="space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => handleEditMember(member.id)}
+                    className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeletingMemberId(member.id)}
+                    className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-600">No members added yet.</p>
+        )}
+      </div>
+
       {/* Form Buttons */}
       <div className="flex justify-end space-x-4">
         <button
