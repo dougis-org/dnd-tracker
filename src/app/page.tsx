@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { NotImplementedPage } from '@/components/NotImplementedPage';
 
 // Dynamic import of landing page with ssr disabled
 const LandingPage = dynamic(() => import('@/app/(landing)/page'), {
@@ -11,12 +10,12 @@ const LandingPage = dynamic(() => import('@/app/(landing)/page'), {
 
 export default function Home() {
   // Guard: only show landing page in development (NODE_ENV !== 'production')
-  const isProduction = process.env.NODE_ENV === 'production';
-  const featureLandingEnabled = process.env.NEXT_PUBLIC_FEATURE_LANDING === 'true';
+  // const isProduction = process.env.NODE_ENV === 'production';
+  // const featureLandingEnabled = process.env.NEXT_PUBLIC_FEATURE_LANDING === 'true';
+  return <LandingPage />;
+  // if (!isProduction && featureLandingEnabled) {
+  //   return <LandingPage />;
+  // }
 
-  if (!isProduction && featureLandingEnabled) {
-    return <LandingPage />;
-  }
-
-  return <NotImplementedPage />;
+  // return <NotImplementedPage />;
 }

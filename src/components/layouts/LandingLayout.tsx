@@ -1,5 +1,4 @@
 import React from 'react';
-import { Footer } from '@/components/Footer';
 
 interface LandingLayoutProps {
   children: React.ReactNode;
@@ -22,9 +21,6 @@ export function LandingLayout({ children }: LandingLayoutProps) {
     <div className="min-h-screen flex flex-col">
       {/* Content area - note: app layout provides the main#main-content wrapper */}
       <div className="flex-1 w-full">{children}</div>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }
