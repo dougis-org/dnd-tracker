@@ -52,28 +52,31 @@ export async function openDB(): Promise<IDBDatabase> {
 
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
-
-      // Create offline queue store
-      if (!db.objectStoreNames.contains(STORES.QUEUE)) {
-        const queueStore = db.createObjectStore(STORES.QUEUE, {
-          keyPath: 'id',
-          autoIncrement: false,
-        });
-        queueStore.createIndex('status', 'status', { unique: false });
-        queueStore.createIndex('createdAt', 'createdAt', { unique: false });
-      }
-
-      // Create event log store
-      if (!db.objectStoreNames.contains(STORES.EVENT_LOG)) {
-        const logStore = db.createObjectStore(STORES.EVENT_LOG, {
-          keyPath: 'id',
-          autoIncrement: false,
-        });
-        logStore.createIndex('level', 'level', { unique: false });
-        logStore.createIndex('createdAt', 'createdAt', { unique: false });
-      }
+      createObjectStores(db);
     };
   });
+}
+
+function createObjectStores(db: IDBDatabase): void {
+  // Create offline queue store
+  if (!db.objectStoreNames.contains(STORES.QUEUE)) {
+    const queueStore = db.createObjectStore(STORES.QUEUE, {
+      keyPath: 'id',
+      autoIncrement: false,
+    });
+    queueStore.createIndex('status', 'status', { unique: false });
+    queueStore.createIndex('createdAt', 'createdAt', { unique: false });
+  }
+
+  // Create event log store
+  if (!db.objectStoreNames.contains(STORES.EVENT_LOG)) {
+    const logStore = db.createObjectStore(STORES.EVENT_LOG, {
+      keyPath: 'id',
+      autoIncrement: false,
+    });
+    logStore.createIndex('level', 'level', { unique: false });
+    logStore.createIndex('createdAt', 'createdAt', { unique: false });
+  }
 }
 
 /**
