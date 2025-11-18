@@ -53,8 +53,12 @@ test.describe('Character Management E2E', () => {
     // Start at list
     await page.goto('/characters');
 
-    // Navigate to new - use link on page
-    await page.click('a[href="/characters/new"]');
+    // Wait for content to load
+    await page.waitForSelector('a[href="/characters/new"], a:has-text("Create a character")', { timeout: 5000 });
+
+    // Navigate to new - try both href and text selectors
+    const newLink = page.locator('a[href="/characters/new"], a:has-text("Create a character")').first();
+    await newLink.click();
 
     await expect(page).toHaveURL('/characters/new');
 
