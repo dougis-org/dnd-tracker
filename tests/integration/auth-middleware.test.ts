@@ -8,7 +8,12 @@ describe('Auth Protection', () => {
   const PUBLIC_ROUTES = ['/', '/sign-in', '/sign-up', '/about']
 
   function isProtectedRoute(pathname: string): boolean {
-    return PROTECTED_ROUTES.some((route) => pathname.startsWith(route))
+    // Match exact route or nested routes (e.g., /dashboard or /dashboard/*)
+    return PROTECTED_ROUTES.some((route) => {
+      if (pathname === route) return true
+      const nestedPath = `${route}/`
+      return pathname.startsWith(nestedPath)
+    })
   }
 
   describe('Protected Routes Identification', () => {

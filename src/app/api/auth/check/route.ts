@@ -3,7 +3,12 @@ import { NextResponse, type NextRequest } from 'next/server'
 const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
 
 function isProtectedRoute(pathname: string): boolean {
-  return PROTECTED_ROUTES.some((route) => pathname.startsWith(route))
+  // Match exact route or nested routes (e.g., /dashboard or /dashboard/*)
+  return PROTECTED_ROUTES.some((route) => {
+    if (pathname === route) return true
+    const nestedPath = `${route}/`
+    return pathname.startsWith(nestedPath)
+  })
 }
 
 export async function GET(request: NextRequest) {
