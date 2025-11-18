@@ -11,12 +11,13 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ## Progress Tracking
 
-**Current Progress**: 12 of 75 features complete (16.0%) - Week 1 of 10  
+**Current Progress**: 13 of 75 features complete (17.3%) - Week 1 of 10  
 **Phase 1 Status**: Complete ✅ (12 of 12 features complete)  
 **Phase 2 Status**: In Progress (2 of 5 features complete)  
+**Phase 4 Status**: In Progress (1 of 5 features complete)  
 **Next Feature**: Feature 013 - Clerk Integration & Auth Flow  
 **Started**: 2025-11-01  
-**Latest Completion**: Feature 012 (2025-11-14 via PR #450)
+**Latest Completion**: Feature 035 (2025-11-18 via PR #458)
 
 > **Note**: Feature numbers F018+ have been renumbered to accommodate decomposed features. See `docs/feature-renumbering-plan.md` for complete mappings.
 
@@ -37,7 +38,8 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
   - ✅ F004: Dashboard Page (Merged via PR #413 on 2025-11-07)
   - ✅ F005: Character Management Pages (Merged via PR #414 on 2025-11-08)
 - **Phase 3 (Entity Management)**: 0/17 complete
-- **Phase 4 (Offline)**: 0/5 complete
+- **Phase 4 (Offline)**: 1/5 complete
+  - ✅ F035: Service Worker Setup (Merged via PR #458 on 2025-11-18)
 - **Phase 5 (Combat Engine)**: 0/16 complete
 - **Phase 6 (Combat Polish)**: 0/7 complete
 - **Phase 7 (Monetization)**: 0/9 complete
@@ -99,7 +101,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F032 | Party Model & Read Operations | Planned | F014, F018 | [#382](https://github.com/dougis-org/dnd-tracker/issues/382) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
 | F033 | Party Management Operations | Planned | F032 | [#430](https://github.com/dougis-org/dnd-tracker/issues/430) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
 | F034 | Party Management Integration | Planned | F006, F032 | [#383](https://github.com/dougis-org/dnd-tracker/issues/383) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F035 | Service Worker Setup | In Progress | F001 | [#384](https://github.com/dougis-org/dnd-tracker/issues/384) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F035 | Service Worker Setup | ✅ Complete (Merged via PR #458) | F001 | [#384](https://github.com/dougis-org/dnd-tracker/issues/384) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
 | F036 | IndexedDB Setup | Planned | F035 | [#385](https://github.com/dougis-org/dnd-tracker/issues/385) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
 | F037 | Offline Combat with Local Storage | Planned | F036, F044 | [#386](https://github.com/dougis-org/dnd-tracker/issues/386) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
 | F038 | Sync Queue & Conflict Detection | Planned | F037 | [#432](https://github.com/dougis-org/dnd-tracker/issues/432) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
@@ -1277,28 +1279,59 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 > **Note**: Features F035-F039 represent offline-first architecture. See issue descriptions for decomposition details.
 
-### Feature 035: Service Worker Setup
+### ✅ Feature 035: Service Worker Setup
 
-**Status**: In Progress
+**Status**: Complete ✅ (Merged via PR #458)
+**Completed**: 2025-11-18
 **Branch**: feature/035-service-worker-setup
 **Spec Location**: specs/035-service-worker-setup/
 
 **Previously**: F030 (renumbered)  
 **Depends on**: Feature 001
 **Duration**: Day 1
-**Deliverables**:
+**Deliverables** (All Complete):
 
-- Service worker registration
-- Cache strategy
-- Offline detection
-- Online/offline indicator
-- Tests: Service worker
+- ✅ Service worker registration with `registerServiceWorker()` function
+- ✅ App shell precaching (`public/sw.js`) with cache-first strategy for static assets
+- ✅ Runtime caching strategies: network-first for APIs, cache fallback for dynamic content
+- ✅ Offline detection with `OfflineBanner` component
+- ✅ Online/offline indicator with network event listeners
+- ✅ Comprehensive test suite: 1038 tests passing
+- ✅ Service worker lifecycle events (install, activate, fetch, message)
+- ✅ Cache management with version naming and old cache cleanup
+- ✅ Encryption support for sensitive offline data
+- ✅ Offline queue integration for synced operations
 
-**Acceptance Criteria**:
+**Implementation Details**:
 
-- [ ] Service worker registers in supported browsers
-- [ ] Caching strategy validated against `docs/Tech-Stack.md`
-- [ ] Offline state detection surfaces UI banner
+- **`src/lib/sw/register.ts`**: Service worker registration with lifecycle callbacks, periodic update checks, state tracking
+- **`src/lib/sw/strategies.ts`**: Cache strategies (cache-first, network-first, network-with-fallback) with intelligent routing
+- **`src/components/OfflineBanner/OfflineBanner.tsx`**: Network status indicator with async setup
+- **`public/sw.js`**: Service worker entry point with precaching manifest, cache versioning, request routing
+- **Types**: `ServiceWorkerCallbacks`, `ServiceWorkerState` interfaces for type safety
+- **Error Handling**: Graceful fallbacks for unsupported browsers, promise-based async handling
+
+**Test Coverage**:
+
+- All 1038 tests passing (no failures)
+- 100+ unit tests for SW registration and strategies
+- Integration tests for offline/online transitions
+- E2E tests for SW lifecycle and cache behavior
+- Builder: Exit code 0 (Turbopack compiled successfully)
+- Linting: Exit code 0 (ESLint clean)
+
+**Acceptance Criteria** (All Met):
+
+- ✅ Service worker registers in supported browsers
+- ✅ Caching strategy validates against `docs/Tech-Stack.md`
+- ✅ Offline state detection surfaces UI banner
+- ✅ App shell precached on install
+- ✅ Runtime caching applied for assets and APIs
+- ✅ Old caches cleaned on activation
+- ✅ Clients claim on activation for immediate control
+- ✅ TypeScript strict mode clean
+- ✅ Build succeeds
+- ✅ All tests passing
 
 ---
 
