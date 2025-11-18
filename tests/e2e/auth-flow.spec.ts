@@ -3,76 +3,65 @@
  * Tests sign-up, sign-in, and profile access flows
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
+
+// Test data
+const testPages = {
+  home: 'http://localhost:3002',
+  signIn: 'http://localhost:3002/sign-in',
+  signUp: 'http://localhost:3002/sign-up',
+  profile: 'http://localhost:3002/profile',
+}
 
 test.describe('Authentication Flows (E2E)', () => {
   test.beforeEach(async ({ page }) => {
-    // Clear any existing cookies before each test
-    await page.context().clearCookies();
-  });
+    // Clear cookies for clean state
+    await page.context().clearCookies()
+  })
 
   test('should navigate to sign-in page', async ({ page }) => {
-    await page.goto('http://localhost:3002/sign-in');
+    await page.goto(testPages.signIn)
 
-    // Check that we're on the sign-in page
-    expect(page.url()).toContain('/sign-in');
-
-    // Check for sign-in form elements (Clerk components)
-    // Note: Exact selectors depend on Clerk's component structure
-    // This is a basic smoke test
-    const body = await page.textContent('body');
-    expect(body).toBeDefined();
-  });
+    expect(page.url()).toContain('/sign-in')
+    const body = await page.textContent('body')
+    expect(body).toBeDefined()
+  })
 
   test('should navigate to sign-up page', async ({ page }) => {
-    await page.goto('http://localhost:3002/sign-up');
+    await page.goto(testPages.signUp)
 
-    // Check that we're on the sign-up page
-    expect(page.url()).toContain('/sign-up');
-
-    // Check for sign-up form elements
-    const body = await page.textContent('body');
-    expect(body).toBeDefined();
-  });
+    expect(page.url()).toContain('/sign-up')
+    const body = await page.textContent('body')
+    expect(body).toBeDefined()
+  })
 
   test('should redirect unauthenticated users from protected routes', async ({
     page,
   }) => {
-    // Try to access a protected route without authentication
-    await page.goto('http://localhost:3002/profile', {
-      waitUntil: 'networkidle',
-    });
+    await page.goto(testPages.profile, { waitUntil: 'networkidle' })
 
-    // Should be redirected to sign-in
-    expect(page.url()).toContain('/sign-in');
-  });
+    // Unauthenticated users redirected to sign-in
+    expect(page.url()).toContain('/sign-in')
+  })
 
-  test('should show sign-in links in navigation', async ({ page }) => {
-    await page.goto('http://localhost:3002');
+  test('should render navigation on home page', async ({ page }) => {
+    await page.goto(testPages.home)
 
-    // Navigation should be present and working
-    const body = await page.textContent('body');
-    expect(body).toBeDefined();
-
-    // Note: Full authentication flow testing would require:
-    // 1. Valid Clerk test credentials
-    // 2. Proper Clerk SDK initialization in test environment
-    // 3. Mock/test Clerk session management
-    // These are covered by integration tests and Clerk's own test suite
-  });
+    const body = await page.textContent('body')
+    expect(body).toBeDefined()
+  })
 
   test('should navigate between sign-in and sign-up pages', async ({
     page,
   }) => {
-    // Start on sign-in page
-    await page.goto('http://localhost:3002/sign-in');
-    expect(page.url()).toContain('/sign-in');
+    await page.goto(testPages.signIn)
+    expect(page.url()).toContain('/sign-in')
 
-    // Navigate to sign-up (if link exists)
-    const signUpLink = page.locator('a[href="/sign-up"]');
+    // Navigate to sign-up if link exists
+    const signUpLink = page.locator('a[href="/sign-up"]')
     if (await signUpLink.isVisible()) {
-      await signUpLink.click();
-      expect(page.url()).toContain('/sign-up');
+      await signUpLink.click()
+      expect(page.url()).toContain('/sign-up')
     }
-  });
-});
+  })
+})

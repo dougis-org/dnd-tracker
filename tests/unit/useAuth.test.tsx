@@ -13,74 +13,58 @@ jest.mock('@clerk/nextjs', () => ({
   useUser: jest.fn(),
 }))
 
+// Test fixtures
+const createMockUser = (overrides = {}) => ({
+  id: 'user_test_123',
+  fullName: 'John Doe',
+  firstName: 'John',
+  lastName: 'Doe',
+  imageUrl: 'https://example.com/avatar.jpg',
+  primaryEmailAddress: {
+    emailAddress: 'john@example.com',
+  },
+  ...overrides,
+})
+
+// Test helpers
+const mockAuthState = (authenticated = false, loading = false, user = null) => {
+  ;(ClerkReact.useAuth as jest.Mock).mockReturnValue({
+    userId: authenticated ? 'user_test_123' : null,
+    isLoaded: !loading,
+  })
+  ;(ClerkReact.useUser as jest.Mock).mockReturnValue({
+    user,
+    isLoaded: !loading,
+  })
+}
+
 describe('useAuth hook', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  describe('when user is not authenticated', () => {
+  describe('unauthenticated state', () => {
     beforeEach(() => {
-      ;(ClerkReact.useAuth as jest.Mock).mockReturnValue({
-        userId: null,
-        isLoaded: true,
-      })
-      ;(ClerkReact.useUser as jest.Mock).mockReturnValue({
+      mockAuthState()
+    })
+
+    it('should return isAuthenticated false, user null, isLoading false', () => {
+      const { result } = renderHook(() => useAuth())
+      expect(result.current).toEqual({
+        isAuthenticated: false,
         user: null,
-        isLoaded: true,
+        isLoading: false,
       })
-    })
-
-    it('should return isAuthenticated as false', () => {
-      const { result } = renderHook(() => useAuth())
-
-      expect(result.current.isAuthenticated).toBe(false)
-    })
-
-    it('should return user as null', () => {
-      const { result } = renderHook(() => useAuth())
-
-      expect(result.current.user).toBeNull()
-    })
-
-    it('should return isLoading as false when loaded', () => {
-      const { result } = renderHook(() => useAuth())
-
-      expect(result.current.isLoading).toBe(false)
     })
   })
 
-  describe('when user is authenticated', () => {
+  describe('authenticated state', () => {
     beforeEach(() => {
-      const mockUser = {
-        id: 'user_test_123',
-        fullName: 'John Doe',
-        firstName: 'John',
-        lastName: 'Doe',
-        imageUrl: 'https://example.com/avatar.jpg',
-        primaryEmailAddress: {
-          emailAddress: 'john@example.com',
-        },
-      }
-
-      ;(ClerkReact.useAuth as jest.Mock).mockReturnValue({
-        userId: 'user_test_123',
-        isLoaded: true,
-      })
-      ;(ClerkReact.useUser as jest.Mock).mockReturnValue({
-        user: mockUser,
-        isLoaded: true,
-      })
+      mockAuthState(true, false, createMockUser())
     })
 
-    it('should return isAuthenticated as true', () => {
+    it('should return user profile with transformed data', () => {
       const { result } = renderHook(() => useAuth())
-
-      expect(result.current.isAuthenticated).toBe(true)
-    })
-
-    it('should return user profile with correct data', () => {
-      const { result } = renderHook(() => useAuth())
-
       expect(result.current.user).toEqual({
         clerkId: 'user_test_123',
         email: 'john@example.com',
@@ -89,97 +73,41 @@ describe('useAuth hook', () => {
         lastName: 'Doe',
         avatarUrl: 'https://example.com/avatar.jpg',
       })
-    })
-
-    it('should return isLoading as false when loaded', () => {
-      const { result } = renderHook(() => useAuth())
-
+      expect(result.current.isAuthenticated).toBe(true)
       expect(result.current.isLoading).toBe(false)
     })
   })
 
-  describe('during loading', () => {
+  describe('loading state', () => {
     beforeEach(() => {
-      ;(ClerkReact.useAuth as jest.Mock).mockReturnValue({
-        userId: undefined,
-        isLoaded: false,
+      mockAuthState(false, true)
+    })
+
+    it('should return isLoading true, user null, isAuthenticated false', () => {
+      const { result } = renderHook(() => useAuth())
+      expect(result.current).toEqual({
+        isAuthenticated: false,
+        user: null,
+        isLoading: true,
       })
-      ;(ClerkReact.useUser as jest.Mock).mockReturnValue({
-        user: undefined,
-        isLoaded: false,
-      })
-    })
-
-    it('should return isLoading as true', () => {
-      const { result } = renderHook(() => useAuth())
-
-      expect(result.current.isLoading).toBe(true)
-    })
-
-    it('should return isAuthenticated as false while loading', () => {
-      const { result } = renderHook(() => useAuth())
-
-      expect(result.current.isAuthenticated).toBe(false)
-    })
-
-    it('should return user as null while loading', () => {
-      const { result } = renderHook(() => useAuth())
-
-      expect(result.current.user).toBeNull()
     })
   })
 
   describe('edge cases', () => {
-    it('should handle missing email gracefully', () => {
-      const mockUser = {
-        id: 'user_test_456',
-        fullName: 'Jane Doe',
-        firstName: 'Jane',
-        lastName: 'Doe',
-        imageUrl: 'https://example.com/avatar2.jpg',
-        primaryEmailAddress: null,
-      }
-
-      ;(ClerkReact.useAuth as jest.Mock).mockReturnValue({
-        userId: 'user_test_456',
-        isLoaded: true,
-      })
-      ;(ClerkReact.useUser as jest.Mock).mockReturnValue({
-        user: mockUser,
-        isLoaded: true,
-      })
+    it('should handle missing email', () => {
+      const mockUser = createMockUser({ primaryEmailAddress: null })
+      mockAuthState(true, false, mockUser)
 
       const { result } = renderHook(() => useAuth())
-
       expect(result.current.user?.email).toBe('')
-      expect(result.current.user?.name).toBe('Jane Doe')
     })
 
-    it('should handle missing avatar URL gracefully', () => {
-      const mockUser = {
-        id: 'user_test_789',
-        fullName: 'Bob Smith',
-        firstName: 'Bob',
-        lastName: 'Smith',
-        imageUrl: null,
-        primaryEmailAddress: {
-          emailAddress: 'bob@example.com',
-        },
-      }
-
-      ;(ClerkReact.useAuth as jest.Mock).mockReturnValue({
-        userId: 'user_test_789',
-        isLoaded: true,
-      })
-      ;(ClerkReact.useUser as jest.Mock).mockReturnValue({
-        user: mockUser,
-        isLoaded: true,
-      })
+    it('should handle missing avatar', () => {
+      const mockUser = createMockUser({ imageUrl: null })
+      mockAuthState(true, false, mockUser)
 
       const { result } = renderHook(() => useAuth())
-
       expect(result.current.user?.avatarUrl).toBeNull()
-      expect(result.current.user?.email).toBe('bob@example.com')
     })
   })
 })

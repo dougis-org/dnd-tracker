@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 /**
  * useAuth client-side hook
@@ -6,8 +6,24 @@
  * Built on Clerk's useAuth() hook with additional helpers
  */
 
-import { useAuth as useClerkAuth, useUser } from '@clerk/nextjs';
-import type { Session, UserProfile } from '@/types/auth';
+import { useAuth as useClerkAuth, useUser } from '@clerk/nextjs'
+import type { Session, UserProfile } from '@/types/auth'
+
+/**
+ * Transform Clerk user to UserProfile type
+ */
+function transformClerkUserToProfile(clerkUser: ReturnType<typeof useUser>['user']): UserProfile | null {
+  if (!clerkUser) return null
+
+  return {
+    clerkId: clerkUser.id,
+    email: clerkUser.primaryEmailAddress?.emailAddress || '',
+    name: clerkUser.fullName || null,
+    avatarUrl: clerkUser.imageUrl || null,
+    firstName: clerkUser.firstName || null,
+    lastName: clerkUser.lastName || null,
+  }
+}
 
 /**
  * Custom useAuth hook that combines Clerk's useAuth and useUser hooks
@@ -23,32 +39,14 @@ import type { Session, UserProfile } from '@/types/auth';
  * return <Dashboard username={user.name} />
  */
 export function useAuth(): Session {
-  // Clerk's hooks are stable and safe to call
-  const clerkAuth = useClerkAuth();
-  const { user: clerkUser, isLoaded } = useUser();
-
-  // Determine if user is authenticated
-  const isAuthenticated = !!clerkAuth?.userId;
-
-  // Transform Clerk user to our UserProfile type
-  let userProfile: UserProfile | null = null;
-
-  if (isAuthenticated && clerkUser) {
-    userProfile = {
-      clerkId: clerkUser.id,
-      email: clerkUser.primaryEmailAddress?.emailAddress || '',
-      name: clerkUser.fullName || null,
-      avatarUrl: clerkUser.imageUrl || null,
-      firstName: clerkUser.firstName || null,
-      lastName: clerkUser.lastName || null,
-    };
-  }
+  const clerkAuth = useClerkAuth()
+  const { user: clerkUser, isLoaded } = useUser()
 
   return {
-    isAuthenticated,
-    user: userProfile,
+    isAuthenticated: !!clerkAuth?.userId,
+    user: clerkAuth?.userId ? transformClerkUserToProfile(clerkUser) : null,
     isLoading: !isLoaded,
-  };
+  }
 }
 
 /**
@@ -56,8 +54,8 @@ export function useAuth(): Session {
  * @returns {boolean} true if the user is authenticated
  */
 export function useIsAuthenticated(): boolean {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated;
+  const { isAuthenticated } = useAuth()
+  return isAuthenticated
 }
 
 /**
@@ -65,6 +63,6 @@ export function useIsAuthenticated(): boolean {
  * @returns {UserProfile | null} The current user profile or null if not authenticated
  */
 export function useCurrentUser(): UserProfile | null {
-  const { user } = useAuth();
-  return user;
+  const { user } = useAuth()
+  return user
 }

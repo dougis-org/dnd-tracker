@@ -3,71 +3,57 @@
  * Tests that authenticated sessions persist across page refreshes and sign-out clears sessions
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
+
+// Helpers for session tests
+const testURLs = {
+  home: 'http://localhost:3002',
+  profile: '/profile',
+  signIn: '/sign-in',
+  sessionApi: 'http://localhost:3002/api/auth/session',
+  signOutApi: 'http://localhost:3002/api/auth/sign-out',
+}
 
 test.describe('Session Persistence (E2E)', () => {
   test('should maintain session across page refresh', async ({ page }) => {
-    // Navigate to home page
-    await page.goto('http://localhost:3002');
+    await page.goto(testURLs.home)
+    const initialUrl = page.url()
 
-    // Take initial screenshot for baseline
-    const initialUrl = page.url();
-    expect(initialUrl).toBeDefined();
+    expect(initialUrl).toBeDefined()
 
-    // Refresh the page
-    await page.reload();
+    // Refresh and verify URL unchanged
+    await page.reload()
+    expect(page.url()).toBe(initialUrl)
 
-    // URL should remain the same
-    expect(page.url()).toBe(initialUrl);
+    // Page content should load
+    const bodyText = await page.textContent('body')
+    expect(bodyText).toBeDefined()
+  })
 
-    // Page should load successfully
-    const body = await page.textContent('body');
-    expect(body).toBeDefined();
-  });
+  test('should handle unauthenticated profile redirect', async ({ page }) => {
+    await page.goto(testURLs.home)
+    const profileLink = page.locator(`a[href="${testURLs.profile}"]`)
 
-  test('should clear session on sign-out', async ({ page }) => {
-    // This test checks that sign-out is available and functional
-    // Full sign-out testing requires authenticated session setup
-
-    await page.goto('http://localhost:3002');
-
-    // Navigate to a page where sign-out button might be visible
-    const profileLink = page.locator('a[href="/profile"]');
     if (await profileLink.isVisible()) {
-      await profileLink.click();
-
-      // If redirected to sign-in, we're not authenticated (expected)
-      if (page.url().includes('/sign-in')) {
-        expect(page.url()).toContain('/sign-in');
-      }
+      await profileLink.click()
+      // Unauthenticated users should be redirected to sign-in
+      expect(page.url()).toContain(testURLs.signIn)
     }
-  });
+  })
 
-  test('should handle session refresh correctly', async ({ page }) => {
-    // Verify that the session endpoint exists and responds
-    const response = await page.request.get(
-      'http://localhost:3002/api/auth/session'
-    );
+  test('should validate session API endpoint', async ({ page }) => {
+    const response = await page.request.get(testURLs.sessionApi)
 
-    // Session endpoint should return 200
-    expect(response.ok).toBe(true);
+    expect(response.ok).toBe(true)
+    const data = await response.json()
+    expect(data).toHaveProperty('isAuthenticated')
+  })
 
-    // Response should be valid JSON
-    const data = await response.json();
-    expect(data).toHaveProperty('isAuthenticated');
-  });
+  test('should validate sign-out API endpoint', async ({ page }) => {
+    const response = await page.request.post(testURLs.signOutApi)
 
-  test('should handle sign-out endpoint correctly', async ({ page }) => {
-    // Verify that the sign-out endpoint exists
-    const response = await page.request.post(
-      'http://localhost:3002/api/auth/sign-out'
-    );
-
-    // Sign-out endpoint should return 200
-    expect(response.ok).toBe(true);
-
-    // Response should be valid JSON
-    const data = await response.json();
-    expect(data).toHaveProperty('success');
-  });
-});
+    expect(response.ok).toBe(true)
+    const data = await response.json()
+    expect(data).toHaveProperty('success')
+  })
+})
