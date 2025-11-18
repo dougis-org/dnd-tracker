@@ -3,9 +3,8 @@
  * Helper functions for route protection, session checks, and redirect logic
  */
 
-import { auth } from '@clerk/nextjs/server'
-import type { NextRequest } from 'next/server'
-import type { ProtectedRouteConfig } from '@/types/auth'
+import { auth } from '@clerk/nextjs/server';
+import type { ProtectedRouteConfig } from '@/types/auth';
 
 /**
  * List of routes that require authentication
@@ -15,7 +14,7 @@ export const protectedRoutes: ProtectedRouteConfig = {
   protectedRoutes: ['/dashboard', '/subscription', '/profile'],
   signInUrl: '/sign-in',
   afterSignInUrl: '/dashboard',
-}
+};
 
 /**
  * Checks if a given pathname requires authentication
@@ -24,8 +23,8 @@ export const protectedRoutes: ProtectedRouteConfig = {
  */
 export function isProtectedRoute(pathname: string): boolean {
   return protectedRoutes.protectedRoutes.some((route) =>
-    pathname.startsWith(route),
-  )
+    pathname.startsWith(route)
+  );
 }
 
 /**
@@ -35,11 +34,11 @@ export function isProtectedRoute(pathname: string): boolean {
  * @returns The validated return URL, or null if invalid
  */
 export function validateReturnUrl(returnUrl?: string | null): string | null {
-  if (!returnUrl) return null
+  if (!returnUrl) return null;
 
   // Reject absolute URLs to other domains
   if (returnUrl.startsWith('http://') || returnUrl.startsWith('https://')) {
-    return null
+    return null;
   }
 
   // Reject sign-in/sign-up URLs to prevent loops
@@ -48,15 +47,15 @@ export function validateReturnUrl(returnUrl?: string | null): string | null {
     returnUrl.startsWith('/sign-up') ||
     returnUrl === '/'
   ) {
-    return null
+    return null;
   }
 
   // Ensure the URL is a valid path
   if (!returnUrl.startsWith('/')) {
-    return null
+    return null;
   }
 
-  return returnUrl
+  return returnUrl;
 }
 
 /**
@@ -65,14 +64,14 @@ export function validateReturnUrl(returnUrl?: string | null): string | null {
  * @returns The full sign-in redirect URL
  */
 export function buildSignInRedirect(returnUrl?: string | null): string {
-  const validatedReturnUrl = validateReturnUrl(returnUrl)
-  const base = protectedRoutes.signInUrl
+  const validatedReturnUrl = validateReturnUrl(returnUrl);
+  const base = protectedRoutes.signInUrl;
 
   if (validatedReturnUrl) {
-    return `${base}?return_to=${encodeURIComponent(validatedReturnUrl)}`
+    return `${base}?return_to=${encodeURIComponent(validatedReturnUrl)}`;
   }
 
-  return base
+  return base;
 }
 
 /**
@@ -82,11 +81,11 @@ export function buildSignInRedirect(returnUrl?: string | null): string {
  */
 export async function getAuthSession() {
   try {
-    const session = await auth()
-    return session
+    const session = await auth();
+    return session;
   } catch (error) {
-    console.error('Error getting auth session:', error)
-    return null
+    console.error('Error getting auth session:', error);
+    return null;
   }
 }
 
@@ -97,10 +96,10 @@ export async function getAuthSession() {
  */
 export async function isRequestAuthenticated(): Promise<boolean> {
   try {
-    const session = await auth()
-    return !!session?.userId
+    const session = await auth();
+    return !!session?.userId;
   } catch {
-    return false
+    return false;
   }
 }
 
@@ -110,9 +109,9 @@ export async function isRequestAuthenticated(): Promise<boolean> {
  */
 export async function getUserIdFromRequest(): Promise<string | null> {
   try {
-    const session = await auth()
-    return session?.userId || null
+    const session = await auth();
+    return session?.userId || null;
   } catch {
-    return null
+    return null;
   }
 }

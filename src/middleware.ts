@@ -3,49 +3,51 @@
  * Enforces protected routes and redirects unauthenticated users to sign-in
  */
 
-import { auth } from '@clerk/nextjs/server'
-import { NextResponse, type NextRequest } from 'next/server'
-import { isProtectedRoute, buildSignInRedirect } from '@/lib/auth/middleware'
+import { auth } from '@clerk/nextjs/server';
+import { NextResponse, type NextRequest } from 'next/server';
+import { buildSignInRedirect } from '@/lib/auth/middleware';
 
 /**
  * Protected routes that require authentication
  * This middleware will redirect unauthenticated users to /sign-in
  */
-const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
+const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile'];
 
 /**
  * Middleware function - runs on every request
  * Checks authentication for protected routes and handles redirects
  */
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+  const { pathname } = request.nextUrl;
 
   // Check if the current route is protected
-  const isProtected = PROTECTED_ROUTES.some((route) => pathname.startsWith(route))
+  const isProtected = PROTECTED_ROUTES.some((route) =>
+    pathname.startsWith(route)
+  );
 
   if (!isProtected) {
     // Route is not protected, allow the request
-    return NextResponse.next()
+    return NextResponse.next();
   }
 
   try {
     // Get the authenticated session
-    const { userId } = await auth()
+    const { userId } = await auth();
 
     if (!userId) {
       // User is not authenticated, redirect to sign-in
-      const signInUrl = buildSignInRedirect(pathname)
-      return NextResponse.redirect(new URL(signInUrl, request.url))
+      const signInUrl = buildSignInRedirect(pathname);
+      return NextResponse.redirect(`${request.nextUrl.origin}${signInUrl}`);
     }
 
     // User is authenticated, allow the request
-    return NextResponse.next()
+    return NextResponse.next();
   } catch (error) {
-    console.error('Middleware auth check error:', error)
+    console.error('Middleware auth check error:', error);
 
     // On error, redirect to sign-in for safety
-    const signInUrl = buildSignInRedirect(pathname)
-    return NextResponse.redirect(new URL(signInUrl, request.url))
+    const signInUrl = buildSignInRedirect(pathname);
+    return NextResponse.redirect(`${request.nextUrl.origin}${signInUrl}`);
   }
 }
 
@@ -62,4 +64,4 @@ export const config = {
     // - public folder
     '/((?!_next/static|_next/image|favicon.ico|public).*)',
   ],
-}
+};

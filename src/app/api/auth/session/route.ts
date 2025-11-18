@@ -4,10 +4,10 @@
  * Server-side endpoint for integration tests and SSR pages
  */
 
-import { auth } from '@clerk/nextjs/server'
-import { NextResponse } from 'next/server'
-import { sessionResponseSchema } from '@/lib/auth/validation'
-import type { UserProfile } from '@/types/auth'
+import { auth } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+import { sessionResponseSchema } from '@/lib/auth/validation';
+import type { UserProfile } from '@/types/auth';
 
 /**
  * GET handler - returns current user session
@@ -16,16 +16,16 @@ import type { UserProfile } from '@/types/auth'
 export async function GET() {
   try {
     // Get the authenticated session from Clerk
-    const { userId } = await auth()
+    const { userId } = await auth();
 
     // If not authenticated, return minimal response
     if (!userId) {
       const response = {
         isAuthenticated: false,
         user: null,
-      }
+      };
 
-      return NextResponse.json(response, { status: 200 })
+      return NextResponse.json(response, { status: 200 });
     }
 
     // Build a minimal user profile from the auth session
@@ -38,17 +38,17 @@ export async function GET() {
       avatarUrl: null,
       firstName: null,
       lastName: null,
-    }
+    };
 
     // Validate response against schema
     const response = sessionResponseSchema.parse({
       isAuthenticated: true,
       user: userProfile,
-    })
+    });
 
-    return NextResponse.json(response, { status: 200 })
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.error('Error in GET /api/auth/session:', error)
+    console.error('Error in GET /api/auth/session:', error);
 
     // Return error response
     return NextResponse.json(
@@ -57,7 +57,7 @@ export async function GET() {
         message:
           error instanceof Error ? error.message : 'Unknown error occurred',
       },
-      { status: 500 },
-    )
+      { status: 500 }
+    );
   }
 }

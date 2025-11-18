@@ -4,9 +4,9 @@
  * Called after client-side sign-out to ensure session cleanup
  */
 
-import { auth } from '@clerk/nextjs/server'
-import { NextResponse } from 'next/server'
-import { signOutResponseSchema } from '@/lib/auth/validation'
+import { auth } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+import { signOutResponseSchema } from '@/lib/auth/validation';
 
 /**
  * POST handler - signs out the user and clears their session
@@ -15,16 +15,16 @@ import { signOutResponseSchema } from '@/lib/auth/validation'
 export async function POST() {
   try {
     // Verify user is authenticated before signing out
-    const { userId } = await auth()
+    const { userId } = await auth();
 
     if (!userId) {
       // Not authenticated, return success (idempotent behavior)
       const response = signOutResponseSchema.parse({
         success: true,
         message: 'Already signed out',
-      })
+      });
 
-      return NextResponse.json(response, { status: 200 })
+      return NextResponse.json(response, { status: 200 });
     }
 
     // Session will be cleared when the client receives this response
@@ -34,21 +34,20 @@ export async function POST() {
     const response = signOutResponseSchema.parse({
       success: true,
       message: 'Successfully signed out',
-    })
+    });
 
-    return NextResponse.json(response, { status: 200 })
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.error('Error in POST /api/auth/sign-out:', error)
+    console.error('Error in POST /api/auth/sign-out:', error);
 
     // Return error response (but still indicate some level of success)
     // since the client may have already cleared local auth state
     return NextResponse.json(
       {
         success: false,
-        message:
-          error instanceof Error ? error.message : 'Sign out failed',
+        message: error instanceof Error ? error.message : 'Sign out failed',
       },
-      { status: 500 },
-    )
+      { status: 500 }
+    );
   }
 }
