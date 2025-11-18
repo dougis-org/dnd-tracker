@@ -1,0 +1,245 @@
+openapi: 3.0.0
+info:
+  title: dnd-tracker Auth API
+  description: Authentication endpoints for Clerk integration (Feature 013)
+  version: 1.0.0
+  contact:
+    name: dnd-tracker Team
+servers:
+  - url: http://localhost:3000
+    description: Local development
+  - url: https://dnd-tracker.fly.dev
+    description: Production (Fly.io)
+
+paths:
+  /api/auth/session:
+    get:
+      summary: Get current session and user profile
+      description: Returns authenticated user profile or null if not signed in. Uses Clerk-managed HTTP-only cookies for authentication.
+      operationId: getSession
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: Session retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+              examples:
+                authenticated:
+                  summary: Authenticated user
+                  value:
+                    user:
+                      id: user_abc123def456
+                      email: player@example.com
+                      firstName: Alice
+                      lastName: Player
+                      imageUrl: https://api.clerk.com/avatars/user_abc123.jpg
+                      createdAt: '2025-11-17T10:00:00Z'
+                      lastSignInAt: '2025-11-17T15:30:00Z'
+                    isAuthenticated: true
+                unauthenticated:
+                  summary: Unauthenticated user
+                  value:
+                    user: null
+                    isAuthenticated: false
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/sign-out:
+    post:
+      summary: Sign out the current user
+      description: Clears Clerk session (HTTP-only cookie) and returns redirect URL.
+      operationId: signOut
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: Sign-out successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignOutResponse'
+              example:
+                success: true
+                redirectUrl: /sign-in
+        '401':
+          description: Not signed in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: unauthorized
+                message: Not signed in
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sign-in:
+    get:
+      summary: Render Clerk sign-in page
+      description: Returns Clerk-hosted sign-in page with email/password and social provider options (Google, GitHub, Discord).
+      operationId: renderSignIn
+      tags:
+        - Authentication UI
+      responses:
+        '200':
+          description: Sign-in page rendered
+          content:
+            text/html:
+              example: '<html><body>Clerk Sign-In Form</body></html>'
+
+  /sign-up:
+    get:
+      summary: Render Clerk sign-up page
+      description: Returns Clerk-hosted sign-up page with email/password and social provider options (Google, GitHub, Discord).
+      operationId: renderSignUp
+      tags:
+        - Authentication UI
+      responses:
+        '200':
+          description: Sign-up page rendered
+          content:
+            text/html:
+              example: '<html><body>Clerk Sign-Up Form</body></html>'
+
+  /profile:
+    get:
+      summary: Render user profile page
+      description: Protected route. Returns user profile page. Unauthenticated requests redirected to /sign-in by middleware.
+      operationId: getProfile
+      tags:
+        - Protected Resources
+      security:
+        - clerkSession: []
+      responses:
+        '200':
+          description: Profile page rendered
+          content:
+            text/html:
+              example: '<html><body>User Profile</body></html>'
+        '307':
+          description: Redirect to sign-in (unauthenticated)
+
+components:
+  schemas:
+    AuthUser:
+      type: object
+      description: Authenticated user profile from Clerk
+      required:
+        - id
+        - email
+        - createdAt
+      properties:
+        id:
+          type: string
+          description: Clerk user ID
+          example: user_abc123def456
+        email:
+          type: string
+          format: email
+          description: Primary email address
+          example: player@example.com
+        firstName:
+          type: string
+          nullable: true
+          description: First name
+          example: Alice
+        lastName:
+          type: string
+          nullable: true
+          description: Last name
+          example: Player
+        imageUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: Avatar or gravatar URL
+          example: https://api.clerk.com/avatars/user_abc123.jpg
+        createdAt:
+          type: string
+          format: date-time
+          description: Account creation date
+          example: '2025-11-17T10:00:00Z'
+        lastSignInAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Last successful sign-in
+          example: '2025-11-17T15:30:00Z'
+
+    SessionResponse:
+      type: object
+      description: Current session response
+      required:
+        - user
+        - isAuthenticated
+      properties:
+        user:
+          $ref: '#/components/schemas/AuthUser'
+          nullable: true
+          description: Current user or null if not authenticated
+        isAuthenticated:
+          type: boolean
+          description: True if user is authenticated
+          example: true
+
+    SignOutResponse:
+      type: object
+      description: Sign-out response
+      required:
+        - success
+        - redirectUrl
+      properties:
+        success:
+          type: boolean
+          description: True if sign-out successful
+          example: true
+        redirectUrl:
+          type: string
+          description: URL to redirect to after sign-out
+          example: /sign-in
+
+    ErrorResponse:
+      type: object
+      description: Error response
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Error code
+          example: unauthorized
+        message:
+          type: string
+          description: User-friendly error message (no sensitive details)
+          example: Not signed in
+        details:
+          type: object
+          nullable: true
+          description: Additional error context (server-side only)
+
+  securitySchemes:
+    clerkSession:
+      type: apiKey
+      in: cookie
+      name: __session
+      description: Clerk-managed HTTP-only session cookie
+
+tags:
+  - name: Authentication
+    description: Auth endpoints
+  - name: Authentication UI
+    description: Clerk UI pages (sign-in, sign-up)
+  - name: Protected Resources
+    description: Routes requiring authentication
