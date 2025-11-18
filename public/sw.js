@@ -43,26 +43,7 @@ const PRECACHE_URLS = [
  */
 self.addEventListener('install', (event) => {
   console.log('[SW] Install event - precaching app shell');
-
-  event.waitUntil(
-    (async () => {
-      try {
-        const cache = await caches.open(PRECACHE_NAME);
-        await cache.addAll(PRECACHE_URLS);
-        console.log(
-          '[SW] App shell precached:',
-          PRECACHE_URLS.length,
-          'assets'
-        );
-
-        // Skip waiting to activate immediately
-        await self.skipWaiting();
-      } catch (error) {
-        console.error('[SW] Precache failed:', error);
-        throw error;
-      }
-    })()
-  );
+  event.waitUntil(handleInstall());
 });
 
 /**
@@ -75,33 +56,7 @@ self.addEventListener('install', (event) => {
  */
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activate event - cleaning up old caches');
-
-  event.waitUntil(
-    (async () => {
-      // Delete old caches
-      const cacheNames = await caches.keys();
-      const cachesToDelete = cacheNames.filter((name) => {
-        return name !== PRECACHE_NAME && name !== RUNTIME_CACHE_NAME;
-      });
-
-      await Promise.all(
-        cachesToDelete.map((name) => {
-          console.log('[SW] Deleting old cache:', name);
-          return caches.delete(name);
-        })
-      );
-
-      // Claim all clients immediately
-      await self.clients.claim();
-      console.log('[SW] Service worker activated and claimed clients');
-
-      // Notify clients that SW is ready
-      const clients = await self.clients.matchAll();
-      clients.forEach((client) => {
-        client.postMessage({ type: 'SW_ACTIVATED' });
-      });
-    })()
-  );
+  event.waitUntil(handleActivate());
 });
 
 /**
@@ -115,15 +70,7 @@ self.addEventListener('activate', (event) => {
  * @param {FetchEvent} event - The fetch event
  */
 self.addEventListener('fetch', (event) => {
-  const { request } = event;
-
-  if (!shouldHandleRequest(request)) {
-    return;
-  }
-
-  const strategy = chooseStrategy(request);
-
-  event.respondWith(strategy(request));
+  handleFetch(event);
 });
 
 function shouldHandleRequest(request) {
@@ -191,21 +138,14 @@ function isApiRequest(request) {
 async function cacheFirst(request) {
   // Try cache first
   const cachedResponse = await caches.match(request);
-  if (cachedResponse) {
-    return cachedResponse;
-  }
+  if (cachedResponse) return cachedResponse;
 
-  // Fetch from network and cache; catch only the network operation
   try {
     const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
-      const cache = await caches.open(RUNTIME_CACHE_NAME);
-      cache.put(request, networkResponse.clone());
-    }
+    await cachePutIfOk(request, networkResponse);
     return networkResponse;
   } catch (error) {
     console.error('[SW] Cache-first network fetch failed:', error);
-    // Return offline page or error
     return new Response('Offline', { status: 503 });
   }
 }
@@ -220,23 +160,16 @@ async function cacheFirst(request) {
  * @returns {Promise<Response>} The response from network or cache
  */
 async function networkFirst(request) {
-  // Use promise chaining to avoid `try {}` blocks that trigger some static analyzers
-  return fetch(request)
-    .then(async (networkResponse) => {
-      if (networkResponse.ok) {
-        const cache = await caches.open(RUNTIME_CACHE_NAME);
-        cache.put(request, networkResponse.clone());
-      }
-      return networkResponse;
-    })
-    .catch(async (error) => {
-      console.log('[SW] Network failed, trying cache:', error);
-      const cachedResponse = await caches.match(request);
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      throw error;
-    });
+  try {
+    const networkResponse = await fetch(request);
+    await cachePutIfOk(request, networkResponse);
+    return networkResponse;
+  } catch (error) {
+    console.log('[SW] Network failed, trying cache:', error);
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) return cachedResponse;
+    throw error;
+  }
 }
 
 /**
@@ -249,13 +182,13 @@ async function networkFirst(request) {
  * @returns {Promise<Response>} The response from network or cache
  */
 async function networkWithCacheFallback(request) {
-  return fetch(request).catch(async (error) => {
+  try {
+    return await fetch(request);
+  } catch (error) {
     const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
+    if (cachedResponse) return cachedResponse;
     throw error;
-  });
+  }
 }
 
 /**
@@ -268,8 +201,60 @@ async function networkWithCacheFallback(request) {
 self.addEventListener('message', (event) => {
   console.log('[SW] Message received:', event.data);
 
-  // TODO: Handle commands like SKIP_WAITING, CHECK_UPDATE, etc.
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });
+
+// --- Helper functions to reduce inline complexity ---
+
+async function handleInstall() {
+  try {
+    const cache = await caches.open(PRECACHE_NAME);
+    await cache.addAll(PRECACHE_URLS);
+    console.log('[SW] App shell precached:', PRECACHE_URLS.length, 'assets');
+    await self.skipWaiting();
+  } catch (error) {
+    console.error('[SW] Precache failed:', error);
+    throw error;
+  }
+}
+
+async function handleActivate() {
+  // Delete old caches
+  const cacheNames = await caches.keys();
+  const cachesToDelete = cacheNames.filter((name) => {
+    return name !== PRECACHE_NAME && name !== RUNTIME_CACHE_NAME;
+  });
+
+  await Promise.all(
+    cachesToDelete.map((name) => {
+      console.log('[SW] Deleting old cache:', name);
+      return caches.delete(name);
+    })
+  );
+
+  await self.clients.claim();
+  console.log('[SW] Service worker activated and claimed clients');
+
+  const clients = await self.clients.matchAll();
+  clients.forEach((client) => client.postMessage({ type: 'SW_ACTIVATED' }));
+}
+
+async function handleFetch(event) {
+  const { request } = event;
+  if (!shouldHandleRequest(request)) return;
+  const strategy = chooseStrategy(request);
+  event.respondWith(strategy(request));
+}
+
+async function cachePutIfOk(request, response) {
+  if (!response || !response.ok) return;
+  try {
+    const cache = await caches.open(RUNTIME_CACHE_NAME);
+    await cache.put(request, response.clone());
+  } catch (e) {
+    // Non-fatal; cache best-effort
+    console.warn('[SW] cachePutIfOk failed:', e);
+  }
+}
