@@ -13,7 +13,7 @@ const customJestConfig = {
     '^@test-helpers/(.*)$': '<rootDir>/tests/test-helpers/$1',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(bson|mongodb)/)',
+    'node_modules/(?!(bson|mongodb|@clerk)/)',
   ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
