@@ -148,11 +148,10 @@ export function startQueueProcessing(): void {
  * Clear all operations from the queue
  */
 export async function clearQueue(): Promise<void> {
-  // Note: clearStore is not exported, so we'll delete all items
   const operations = await getAllItems<QueuedOperation>(STORES.QUEUE);
-  for (const op of operations) {
-    await deleteItem(STORES.QUEUE, op.id);
-  }
+  await Promise.all(
+    operations.map((op) => deleteItem(STORES.QUEUE, op.id))
+  );
 }
 
 /**

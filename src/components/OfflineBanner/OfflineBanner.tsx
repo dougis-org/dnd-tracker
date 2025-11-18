@@ -9,6 +9,34 @@ interface OfflineBannerProps {
   pendingOperations?: number;
 }
 
+/**
+ * Setup online/offline event listeners
+ */
+function setupNetworkListeners(
+  onOnline: () => void,
+  onOffline: () => void
+): () => void {
+  window.addEventListener('online', onOnline);
+  window.addEventListener('offline', onOffline);
+
+  return () => {
+    window.removeEventListener('online', onOnline);
+    window.removeEventListener('offline', onOffline);
+  };
+}
+
+/**
+ * Setup service worker registration
+ */
+function setupServiceWorker(
+  onUpdate: () => void,
+  onReady: () => void
+): void {
+  registerServiceWorker('/sw.js', { onUpdate, onReady }).catch((error) => {
+    console.error('Failed to register service worker:', error);
+  });
+}
+
 export function OfflineBanner({ onRetry, pendingOperations = 0 }: OfflineBannerProps) {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -17,19 +45,10 @@ export function OfflineBanner({ onRetry, pendingOperations = 0 }: OfflineBannerP
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    const cleanup = setupNetworkListeners(handleOnline, handleOffline);
+    setupServiceWorker(() => setUpdateAvailable(true), () => {});
 
-    // Register service worker
-    registerServiceWorker('/sw.js', {
-      onUpdate: () => setUpdateAvailable(true),
-      onReady: () => {},
-    });
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
+    return cleanup;
   }, []);
 
   if (isOnline && !updateAvailable) {

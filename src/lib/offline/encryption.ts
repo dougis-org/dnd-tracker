@@ -135,6 +135,42 @@ function uint8ArrayToBase64(bytes: Uint8Array): string {
 }
 
 /**
+ * Encrypt a single field within an object
+ */
+async function encryptField(
+  value: unknown,
+  key: CryptoKey
+): Promise<{ encrypted: string; iv: string; __encrypted: true } | unknown> {
+  if (value && typeof value === 'string') {
+    const { encrypted, iv } = await encrypt(value, key);
+    return { encrypted, iv, __encrypted: true };
+  }
+  return value;
+}
+
+/**
+ * Decrypt a single field within an object
+ */
+async function decryptField(
+  fieldValue: unknown,
+  key: CryptoKey
+): Promise<string | unknown> {
+  if (
+    fieldValue &&
+    typeof fieldValue === 'object' &&
+    (fieldValue as { __encrypted?: boolean }).__encrypted
+  ) {
+    const { encrypted, iv } = fieldValue as {
+      encrypted: string;
+      iv: string;
+      __encrypted: boolean;
+    };
+    return decrypt(encrypted, iv, key);
+  }
+  return fieldValue;
+}
+
+/**
  * Encrypt sensitive fields in an object
  */
 export async function encryptFields(
@@ -145,14 +181,7 @@ export async function encryptFields(
   const result = { ...obj };
 
   for (const field of sensitiveFields) {
-    if (result[field] && typeof result[field] === 'string') {
-      const { encrypted, iv } = await encrypt(result[field] as string, key);
-      result[field] = {
-        encrypted,
-        iv,
-        __encrypted: true,
-      };
-    }
+    result[field] = await encryptField(result[field], key);
   }
 
   return result;
@@ -169,19 +198,7 @@ export async function decryptFields(
   const result = { ...obj };
 
   for (const field of sensitiveFields) {
-    const fieldValue = result[field];
-    if (
-      fieldValue &&
-      typeof fieldValue === 'object' &&
-      (fieldValue as { __encrypted?: boolean }).__encrypted
-    ) {
-      const { encrypted, iv } = fieldValue as {
-        encrypted: string;
-        iv: string;
-        __encrypted: boolean;
-      };
-      result[field] = await decrypt(encrypted, iv, key);
-    }
+    result[field] = await decryptField(result[field], key);
   }
 
   return result;

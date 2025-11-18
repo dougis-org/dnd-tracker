@@ -18,6 +18,41 @@ Object.defineProperty(window, 'caches', {
   writable: true,
 });
 
+// Test data
+const STATIC_ASSET_REQUESTS = [
+  new Request('/static/app.js'),
+  new Request('/styles/main.css'),
+  new Request('/images/logo.png'),
+  new Request('/fonts/icon.woff2'),
+];
+
+const NON_STATIC_REQUESTS = [
+  new Request('/api/users'),
+  new Request('/dashboard'),
+  new Request('/sync/offline-ops'),
+];
+
+const API_REQUESTS = [
+  new Request('/api/users'),
+  new Request('/api/posts'),
+  new Request('/sync/offline-ops'),
+];
+
+const NON_API_REQUESTS = [
+  new Request('/static/app.js'),
+  new Request('/dashboard'),
+  new Request('/images/logo.png'),
+];
+
+/**
+ * Helper to test multiple requests against a condition
+ */
+function testRequestCondition(requests: Request[], condition: (r: Request) => boolean, expected: boolean) {
+  requests.forEach((request) => {
+    expect(condition(request)).toBe(expected);
+  });
+}
+
 describe('Service Worker Strategies', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -33,54 +68,21 @@ describe('Service Worker Strategies', () => {
 
   describe('shouldUseCacheFirst', () => {
     it('should return true for static assets', () => {
-      const requests = [
-        new Request('/static/app.js'),
-        new Request('/styles/main.css'),
-        new Request('/images/logo.png'),
-        new Request('/fonts/icon.woff2'),
-      ];
-
-      requests.forEach((request) => {
-        expect(shouldUseCacheFirst(request)).toBe(true);
-      });
+      testRequestCondition(STATIC_ASSET_REQUESTS, shouldUseCacheFirst, true);
     });
 
     it('should return false for non-static assets', () => {
-      const requests = [
-        new Request('/api/users'),
-        new Request('/dashboard'),
-        new Request('/sync/offline-ops'),
-      ];
-
-      requests.forEach((request) => {
-        expect(shouldUseCacheFirst(request)).toBe(false);
-      });
+      testRequestCondition(NON_STATIC_REQUESTS, shouldUseCacheFirst, false);
     });
   });
 
   describe('shouldUseNetworkFirst', () => {
     it('should return true for API requests', () => {
-      const requests = [
-        new Request('/api/users'),
-        new Request('/api/posts'),
-        new Request('/sync/offline-ops'),
-      ];
-
-      requests.forEach((request) => {
-        expect(shouldUseNetworkFirst(request)).toBe(true);
-      });
+      testRequestCondition(API_REQUESTS, shouldUseNetworkFirst, true);
     });
 
     it('should return false for non-API requests', () => {
-      const requests = [
-        new Request('/static/app.js'),
-        new Request('/dashboard'),
-        new Request('/images/logo.png'),
-      ];
-
-      requests.forEach((request) => {
-        expect(shouldUseNetworkFirst(request)).toBe(false);
-      });
+      testRequestCondition(NON_API_REQUESTS, shouldUseNetworkFirst, false);
     });
   });
 

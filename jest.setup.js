@@ -15,65 +15,89 @@ setupLocalStorage();
 function setupWebApiGlobals() {
   if (typeof global === 'undefined') return;
 
-  global.Request =
-    global.Request ||
-    class MockRequest {
-      constructor(input, init) {
-        this.url = typeof input === 'string' ? input : input?.url;
-        this.method = init?.method || 'GET';
-        this.headers = new Map(Object.entries(init?.headers || {}));
-      }
-    };
+  global.Request = global.Request || createMockRequest();
+  global.Response = global.Response || createMockResponse();
+  global.Headers = global.Headers || createMockHeaders();
+  global.Event = global.Event || createMockEvent();
+}
 
-  global.Response =
-    global.Response ||
-    class MockResponse {
-      constructor(body, init) {
-        this.body = body;
-        this.status = init?.status || 200;
-        this.headers = new Map(Object.entries(init?.headers || {}));
-        this.statusText = init?.statusText || '';
-        this.type = init?.type || 'basic';
-      }
+/**
+ * Create mock Request class
+ */
+function createMockRequest() {
+  return class MockRequest {
+    constructor(input, init) {
+      this.url = typeof input === 'string' ? input : input?.url;
+      this.method = init?.method || 'GET';
+      this.headers = new Map(Object.entries(init?.headers || {}));
+    }
+  };
+}
 
-      get ok() {
-        return this.status >= 200 && this.status < 300;
-      }
-    };
+/**
+ * Create mock Response class
+ */
+function createMockResponse() {
+  return class MockResponse {
+    constructor(body, init) {
+      this.body = body;
+      this.status = init?.status || 200;
+      this.headers = new Map(Object.entries(init?.headers || {}));
+      this.statusText = init?.statusText || '';
+      this.type = init?.type || 'basic';
+    }
 
-  global.Headers =
-    global.Headers ||
-    class MockHeaders {
-      constructor(init = {}) {
-        this.map = new Map(Object.entries(init));
-      }
-      get(name) {
-        return this.map.get(name);
-      }
-      set(name, value) {
-        this.map.set(name, value);
-      }
-      entries() {
-        return this.map.entries();
-      }
-    };
+    get ok() {
+      return this.status >= 200 && this.status < 300;
+    }
+  };
+}
 
-  global.Event =
-    global.Event ||
-    class MockEvent {
-      constructor(type, options = {}) {
-        this.type = type;
-        this.bubbles = options.bubbles || false;
-        this.cancelable = options.cancelable || false;
-      }
-    };
+/**
+ * Create mock Headers class
+ */
+function createMockHeaders() {
+  return class MockHeaders {
+    constructor(init = {}) {
+      this.map = new Map(Object.entries(init));
+    }
+    get(name) {
+      return this.map.get(name);
+    }
+    set(name, value) {
+      this.map.set(name, value);
+    }
+    entries() {
+      return this.map.entries();
+    }
+  };
+}
+
+/**
+ * Create mock Event class
+ */
+function createMockEvent() {
+  return class MockEvent {
+    constructor(type, options = {}) {
+      this.type = type;
+      this.bubbles = options.bubbles || false;
+      this.cancelable = options.cancelable || false;
+    }
+  };
 }
 
 /**
  * Setup database-related mocks
  */
 function setupDatabaseMocks() {
-  // Mock bson ObjectId for tests
+  mockBson();
+  mockMongooseIfServer();
+}
+
+/**
+ * Mock bson ObjectId for tests
+ */
+function mockBson() {
   jest.mock('bson', () => ({
     ObjectId: class MockObjectId {
       constructor() {
@@ -84,8 +108,12 @@ function setupDatabaseMocks() {
       }
     },
   }));
+}
 
-  // Mock mongoose to prevent connection attempts in tests
+/**
+ * Mock mongoose only in server environment
+ */
+function mockMongooseIfServer() {
   if (typeof window === 'undefined') {
     jest.mock('mongoose', () => createMongooseMock());
   }

@@ -80,20 +80,29 @@ export async function cleanupOldCaches(currentCaches: string[]): Promise<void> {
 export async function getCacheSize(cacheName: string): Promise<number> {
   try {
     const cache = await caches.open(cacheName);
-    const keys = await cache.keys();
-    let totalSize = 0;
-
-    for (const request of keys) {
-      const response = await cache.match(request);
-      if (response) {
-        const blob = await response.blob();
-        totalSize += blob.size;
-      }
-    }
-
-    return totalSize;
+    return calculateCacheSize(cache);
   } catch (error) {
     console.error('[SW] Failed to get cache size:', error);
     return 0;
   }
+}
+
+/**
+ * Calculate total size of items in cache
+ */
+async function calculateCacheSize(
+  cache: { keys(): Promise<readonly Request[]>; match(request: Request): Promise<Response | undefined> }
+): Promise<number> {
+  const keys = await cache.keys();
+  let totalSize = 0;
+
+  for (const request of keys) {
+    const response = await cache.match(request);
+    if (response) {
+      const blob = await response.blob();
+      totalSize += blob.size;
+    }
+  }
+
+  return totalSize;
 }
