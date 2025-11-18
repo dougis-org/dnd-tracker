@@ -4,7 +4,7 @@
  */
 
 import { renderHook } from '@testing-library/react'
-import { useAuth } from '@/components/auth/useAuth'
+import { useAuth, useIsAuthenticated, useCurrentUser } from '@/components/auth/useAuth'
 import * as ClerkReact from '@clerk/nextjs'
 
 // Mock Clerk's useAuth and useUser hooks
@@ -108,6 +108,49 @@ describe('useAuth hook', () => {
 
       const { result } = renderHook(() => useAuth())
       expect(result.current.user?.avatarUrl).toBeNull()
+    })
+  })
+})
+
+describe('useIsAuthenticated hook', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('should return false when user is not authenticated', () => {
+    mockAuthState(false)
+    const { result } = renderHook(() => useIsAuthenticated())
+    expect(result.current).toBe(false)
+  })
+
+  it('should return true when user is authenticated', () => {
+    mockAuthState(true, false, createMockUser())
+    const { result } = renderHook(() => useIsAuthenticated())
+    expect(result.current).toBe(true)
+  })
+})
+
+describe('useCurrentUser hook', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('should return null when user is not authenticated', () => {
+    mockAuthState(false)
+    const { result } = renderHook(() => useCurrentUser())
+    expect(result.current).toBeNull()
+  })
+
+  it('should return user profile when authenticated', () => {
+    mockAuthState(true, false, createMockUser())
+    const { result } = renderHook(() => useCurrentUser())
+    expect(result.current).toEqual({
+      clerkId: 'user_test_123',
+      email: 'john@example.com',
+      name: 'John Doe',
+      firstName: 'John',
+      lastName: 'Doe',
+      avatarUrl: 'https://example.com/avatar.jpg',
     })
   })
 })
