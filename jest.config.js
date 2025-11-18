@@ -11,9 +11,11 @@ const customJestConfig = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@fixtures/(.*)$': '<rootDir>/tests/fixtures/$1',
     '^@test-helpers/(.*)$': '<rootDir>/tests/test-helpers/$1',
+    '^@clerk/nextjs$': '<rootDir>/tests/mocks/clerk-nextjs.js',
+    '^@clerk/nextjs/server$': '<rootDir>/tests/mocks/clerk-nextjs-server.js',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(bson|mongodb|@clerk)/)',
+    'node_modules/(?!(bson|mongodb)/)',
   ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
