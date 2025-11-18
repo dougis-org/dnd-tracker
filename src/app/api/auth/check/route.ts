@@ -1,4 +1,3 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextResponse, type NextRequest } from 'next/server'
 
 const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
@@ -12,6 +11,8 @@ export async function GET(request: NextRequest) {
   const pathname = searchParams.get('path') || '/'
 
   try {
+    // Dynamically import auth to avoid circular dependencies in tests
+    const { auth } = await import('@clerk/nextjs/server')
     const { userId } = await auth()
     const requiresAuth = isProtectedRoute(pathname)
     const isAuthenticated = !!userId
