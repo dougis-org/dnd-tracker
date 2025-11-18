@@ -28,13 +28,15 @@ function setupNetworkListeners(
 /**
  * Setup service worker registration
  */
-function setupServiceWorker(
+async function setupServiceWorker(
   onUpdate: () => void,
   onReady: () => void
-): void {
-  registerServiceWorker('/sw.js', { onUpdate, onReady }).catch((error) => {
+): Promise<void> {
+  try {
+    await registerServiceWorker('/sw.js', { onUpdate, onReady });
+  } catch (error) {
     console.error('Failed to register service worker:', error);
-  });
+  }
 }
 
 export function OfflineBanner({ onRetry, pendingOperations = 0 }: OfflineBannerProps) {
@@ -46,6 +48,8 @@ export function OfflineBanner({ onRetry, pendingOperations = 0 }: OfflineBannerP
     const handleOffline = () => setIsOnline(false);
 
     const cleanup = setupNetworkListeners(handleOnline, handleOffline);
+    
+    // Call async setupServiceWorker without awaiting (fire and forget)
     setupServiceWorker(() => setUpdateAvailable(true), () => {});
 
     return cleanup;
