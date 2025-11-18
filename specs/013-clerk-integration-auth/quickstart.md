@@ -39,11 +39,13 @@ In your Clerk Dashboard, enable social sign-in providers:
 ### Step 4: Configure Environment Variables
 
 1. Copy `.env.example` to `.env.local`:
+
    ```bash
    cp .env.example .env.local
    ```
 
 2. Fill in the Clerk keys in `.env.local`:
+
    ```
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YOUR_KEY_HERE
    CLERK_SECRET_KEY=sk_test_YOUR_SECRET_HERE
@@ -195,6 +197,7 @@ Update Clerk Dashboard with your production domain:
 ### Issue: Social login not working
 
 **Solution**:
+
 1. Verify OAuth credentials are set in Clerk Dashboard
 2. Confirm redirect URIs match your app's domain
 3. Check browser console for Clerk SDK errors
@@ -202,6 +205,7 @@ Update Clerk Dashboard with your production domain:
 ### Issue: "Session not persisting" after refresh
 
 **Solution**:
+
 1. Verify cookies are not blocked in browser settings
 2. Check that `ClerkProvider` wraps the entire app in `layout.tsx`
 3. Confirm Clerk SDK scripts load without errors (check Network tab)
@@ -209,6 +213,7 @@ Update Clerk Dashboard with your production domain:
 ### Issue: "Failed to sign out" or sign-out loop
 
 **Solution**:
+
 1. Verify `/api/auth/sign-out` endpoint exists and is working
 2. Check browser console for JavaScript errors
 3. Confirm CORS/cookie settings allow cross-origin requests if needed

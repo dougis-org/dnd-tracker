@@ -47,6 +47,7 @@ Feature 013 has been fully implemented following the speckit.implement workflow.
 ### Phase 3: User Stories (13/13 Complete) ✅
 
 **User Story 1: Sign Up & Sign In (5/5)**
+
 - [x] **T012** Create src/app/(auth)/sign-in/page.tsx
 - [x] **T013** Create src/app/(auth)/sign-up/page.tsx
 - [x] **T014** Add unit tests for useAuth hook
@@ -54,12 +55,14 @@ Feature 013 has been fully implemented following the speckit.implement workflow.
 - [x] **T016** Wire GlobalNav to show authenticated state
 
 **User Story 2: Protected Routes & Redirects (4/4)**
+
 - [x] **T017** Implement src/middleware.ts for route protection
 - [x] **T018** Create src/app/profile/page.tsx (protected)
 - [x] **T019** Add integration tests for middleware
 - [x] **T020** Implement post-auth redirect handling
 
 **User Story 3: Session Persistence & Sign Out (4/4)**
+
 - [x] **T021** Create src/components/auth/SignOutButton.tsx
 - [x] **T022** Ensure server-side session cleanup on sign-out
 - [x] **T023** Add E2E tests for session persistence
@@ -153,6 +156,7 @@ Feature 013 has been fully implemented following the speckit.implement workflow.
 ## Testing Evidence
 
 ### Unit Tests
+
 ```
 tests/unit/useAuth.test.tsx (185 lines)
 ✅ Tests useAuth hook with mocked Clerk
@@ -162,6 +166,7 @@ tests/unit/useAuth.test.tsx (185 lines)
 ```
 
 ### Integration Tests
+
 ```
 tests/integration/auth-middleware.test.ts (102 lines)
 ✅ Tests isProtectedRoute() with nested paths
@@ -171,6 +176,7 @@ tests/integration/auth-middleware.test.ts (102 lines)
 ```
 
 ### E2E Tests
+
 ```
 tests/e2e/auth-flow.spec.ts (71 lines)
 ✅ Tests navigation to /sign-in and /sign-up
@@ -186,24 +192,28 @@ tests/e2e/session.spec.ts (72 lines)
 ### Local Verification Steps
 
 1. **TypeScript Compilation**
+
    ```bash
    npm run type-check
    # ✅ PASS — No errors
    ```
 
 2. **ESLint** (built into type-check)
+
    ```bash
    npm run lint
    # ✅ PASS — 0 issues
    ```
 
 3. **Unit & Integration Tests** (ready to run)
+
    ```bash
    npm test -- tests/unit/useAuth.test.tsx tests/integration/auth-middleware.test.ts
    # ✅ Ready — All test files created and valid
    ```
 
 4. **E2E Tests** (ready to run)
+
    ```bash
    npm run e2e
    # ✅ Ready — Playwright config supports auth tests
@@ -299,13 +309,15 @@ feature/013-clerk-integration-auth
 1. Follow `specs/013-clerk-integration-auth/quickstart.md`
 2. Set up Clerk account and retrieve API keys
 3. Add to .env.local:
+
    ```
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
    CLERK_SECRET_KEY=sk_test_...
    ```
+
 4. Run `npm install` (Clerk deps already in package.json)
 5. Run local dev server: `npm run dev`
-6. Visit http://localhost:3000/sign-in
+6. Visit <http://localhost:3000/sign-in>
 
 ### Key Files for Maintenance
 
@@ -319,6 +331,7 @@ feature/013-clerk-integration-auth
 ### Common Troubleshooting
 
 See `specs/013-clerk-integration-auth/quickstart.md` for:
+
 - Environment variable setup errors
 - Social provider configuration
 - Testing with mock credentials
@@ -408,4 +421,3 @@ Modified Files: 3 (layout.tsx, GlobalNav.tsx, package.json, .env.example)
 ---
 
 **Ready for PR Submission** ✅
-

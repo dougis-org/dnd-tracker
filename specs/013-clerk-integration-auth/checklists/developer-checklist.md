@@ -127,6 +127,7 @@ This checklist tracks implementation of the Clerk-based authentication system an
 To verify the implementation works correctly:
 
 1. **Setup local environment**:
+
    ```bash
    cp .env.example .env.local
    # Add Clerk test keys to .env.local
@@ -150,6 +151,7 @@ To verify the implementation works correctly:
    - Verify return path is preserved
 
 5. **Run tests**:
+
    ```bash
    npm run test              # Unit and integration tests
    npm run test:e2e          # E2E tests
@@ -186,11 +188,13 @@ To verify the implementation works correctly:
 ### Testing Coverage
 
 Current test coverage:
+
 - Unit tests: `useAuth` hook and middleware utilities
 - Integration tests: Middleware redirect behavior
 - E2E tests: Basic auth flow smoke tests
 
 To improve coverage:
+
 - Mock Clerk components for full authentication flow testing
 - Add tests for social provider flows (Google, GitHub)
 - Add performance tests for session checks
