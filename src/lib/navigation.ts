@@ -21,12 +21,12 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     label: 'Dashboard',
     href: '/dashboard',
     alignment: 'left',
-    mobileOrder: 2,
+    mobileOrder: 1,
   },
   {
     label: 'Collections',
     alignment: 'left',
-    mobileOrder: 3,
+    mobileOrder: 2,
     children: [
       { label: 'Characters', href: '/characters' },
       { label: 'Parties', href: '/parties' },
@@ -39,12 +39,12 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     label: 'Combat',
     href: '/combat',
     alignment: 'left',
-    mobileOrder: 4,
+    mobileOrder: 3,
   },
   {
     label: 'User',
     alignment: 'right',
-    mobileOrder: 5,
+    mobileOrder: 4,
     children: [
       { label: 'Profile', href: '/profile' },
       { label: 'Settings', href: '/settings' },
@@ -55,13 +55,13 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     label: 'Pricing',
     href: '/pricing',
     alignment: 'right',
-    mobileOrder: 6,
+    mobileOrder: 5,
   },
   {
     label: 'Help',
     href: '/help',
     alignment: 'right',
-    mobileOrder: 7,
+    mobileOrder: 6,
   },
 ];
 

@@ -12,9 +12,7 @@ const customJestConfig = {
     '^@fixtures/(.*)$': '<rootDir>/tests/fixtures/$1',
     '^@test-helpers/(.*)$': '<rootDir>/tests/test-helpers/$1',
   },
-  transformIgnorePatterns: [
-    'node_modules/(?!(bson|mongodb)/)',
-  ],
+  transformIgnorePatterns: ['node_modules/(?!(bson|mongodb)/)'],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',

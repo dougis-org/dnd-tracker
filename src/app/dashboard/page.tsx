@@ -1,7 +1,10 @@
+'use client'
+
 import React from 'react'
 import { StatCard } from '@/components/dashboard/StatCard'
 import { QuickActions } from '@/components/dashboard/QuickActions'
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed'
+import { ProtectedRouteGuard } from '@/components/auth/ProtectedRouteGuard'
 
 const widgets = [
   { id: 'active_parties', label: 'Active Parties', value: 3, detailUrl: '/parties' },
@@ -19,6 +22,7 @@ const recentActivity = [
 
 export default function DashboardPage() {
   return (
+    <ProtectedRouteGuard>
       <section className="container mx-auto px-4 md:px-6 py-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-8">Dashboard</h1>
 
@@ -39,6 +43,6 @@ export default function DashboardPage() {
           </aside>
         </div>
       </section>
+    </ProtectedRouteGuard>
   )
 }
-

@@ -6,6 +6,8 @@ import { useEffect, useMemo, useRef, useState, useId } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronDown } from 'lucide-react'
+import { useAuth } from '@/components/auth/useAuth'
+import { SignOutButton } from '@/components/auth/SignOutButton'
 import { NAVIGATION_ITEMS, type NavigationItem } from '@/lib/navigation'
 import { cn } from '@/lib/utils'
 
@@ -199,6 +201,7 @@ function useNavClusters(items: NavigationItem[]) {
 export function GlobalNav() {
   const pathname = usePathname()
   const clusters = useNavClusters(NAVIGATION_ITEMS)
+  const { isAuthenticated, user } = useAuth()
 
   const renderNavItem = (item: NavigationItem) =>
     item.children ? (
@@ -215,6 +218,20 @@ export function GlobalNav() {
         </ul>
         <ul aria-label="Primary navigation right cluster" className="ml-auto flex items-center gap-2">
           {clusters.right.map(renderNavItem)}
+          {/* Auth Status Display */}
+          {isAuthenticated && user && (
+            <li className="flex items-center gap-2 pl-2 border-l border-border">
+              <span className="text-sm text-muted-foreground">{user.name || user.email}</span>
+              <SignOutButton variant="ghost" size="sm" />
+            </li>
+          )}
+          {!isAuthenticated && (
+            <li className="flex items-center gap-2 pl-2 border-l border-border">
+              <Link href="/sign-in" className="inline-flex items-center rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                Sign In
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </nav>

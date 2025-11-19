@@ -21,6 +21,8 @@
         "deploy": "flyctl deploy"
     },
     "dependencies": {
+        "@clerk/nextjs": "^6.35.2",
+        "@clerk/react": "^5.54.0",
         "@radix-ui/react-slot": "^1.2.3",
         "bson": "^5.4.0",
         "class-variance-authority": "^0.7.0",

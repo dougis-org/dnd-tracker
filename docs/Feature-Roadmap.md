@@ -681,6 +681,9 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 ### Feature 013: Clerk Integration & Auth Flow
 
 **Status**: In Progress
+**Branch**: feature/013-clerk-integration-auth
+**Spec Location**: `specs/013-clerk-integration-auth/`
+
 **Depends on**: Feature 001
 **Duration**: Day 2
 **Deliverables**:
