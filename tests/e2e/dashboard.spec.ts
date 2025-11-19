@@ -13,6 +13,6 @@ test('dashboard shows widgets and quick actions', async ({ page }) => {
   await newParty.click();
 
   // Expect NotImplemented fallback after clicking an unimplemented route
-  // Look for the span with "On the roadmap" text
-  await expect(page.locator('span')).toContainText('On the roadmap');
+  // Look for the text 'On the roadmap' using user-centric selector
+  await expect(page.getByText('On the roadmap')).toBeVisible();
 });

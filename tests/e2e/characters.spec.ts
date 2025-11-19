@@ -26,9 +26,11 @@ test.describe('Character Management E2E', () => {
 
     await expect(page).toHaveURL('/characters/new');
 
-    // Should see form elements - use first label to avoid strict mode
-    await expect(page.locator('label').first()).toContainText(/Name/i);
-    await expect(page.locator('button[type="submit"]')).toContainText(/Create/i);
+    // Should see form elements - use getByLabel for best practices
+    await expect(page.getByLabel('Name')).toBeVisible();
+    await expect(page.locator('button[type="submit"]')).toContainText(
+      /Create/i
+    );
   });
 
   test('can navigate to character detail page', async ({ page }) => {
@@ -39,33 +41,42 @@ test.describe('Character Management E2E', () => {
     await page.waitForSelector('article', { timeout: 5000 });
 
     // Click first character link inside article
-    const firstCharLink = page.locator('article a[href*="/characters/"]').first();
+    const firstCharLink = page
+      .locator('article a[href*="/characters/"]')
+      .first();
     await firstCharLink.click();
 
     // Should be on detail page
     await expect(page.url()).toMatch(/\/characters\/[a-zA-Z0-9-]+/);
 
-    // Should see character details
-    await expect(page.locator('body')).toContainText(/HP|AC/i);
+    // Should see character details in article with stat format
+    await expect(page.locator('article')).toContainText(/(HP|AC)\s+\d+/i);
   });
 
   test('full flow: list → new → create → list → detail', async ({ page }) => {
     // Start at list
     await page.goto('/characters');
 
+    const newCharacterLinkSelector = 'a[href="/characters/new"], a:has-text("Create a character")';
+
     // Wait for content to load
-    await page.waitForSelector('a[href="/characters/new"], a:has-text("Create a character")', { timeout: 5000 });
+    await page.waitForSelector(
+      newCharacterLinkSelector,
+      { timeout: 5000 }
+    );
 
     // Navigate to new - try both href and text selectors
-    const newLink = page.locator('a[href="/characters/new"], a:has-text("Create a character")').first();
+    const newLink = page
+      .locator(newCharacterLinkSelector)
+      .first();
     await newLink.click();
 
     await expect(page).toHaveURL('/characters/new');
 
-    // Fill form using input IDs
-    await page.fill('#name', 'E2E Test Character');
-    await page.fill('#class', 'Paladin');
-    await page.fill('#race', 'Human');
+    // Fill form using getByLabel for best practices
+    await page.getByLabel('Name').fill('E2E Test Character');
+    await page.getByLabel('Class').fill('Paladin');
+    await page.getByLabel('Race').fill('Human');
 
     // Submit
     await page.click('button[type="submit"]');
@@ -73,7 +84,7 @@ test.describe('Character Management E2E', () => {
     // Should navigate to detail page
     await page.waitForURL(/\/characters\/[a-zA-Z0-9-]+/, { timeout: 5000 });
 
-    // Should see the new character
-    await expect(page.locator('body')).toContainText('E2E Test Character');
+    // Should see the new character in heading
+    await expect(page.locator('h1, h2')).toContainText('E2E Test Character');
   });
 });
