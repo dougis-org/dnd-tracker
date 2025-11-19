@@ -48,7 +48,7 @@ test.describe('Encounter Creation (User Story 1)', () => {
       .filter({ hasText: /add|create/i })
       .first();
     if (
-      await addBtn.count().then((c: number) => c > 0) &&
+      (await addBtn.count().then((c: number) => c > 0)) &&
       (await addBtn.isVisible())
     ) {
       // Test finds and can interact with button
@@ -63,9 +63,12 @@ test.describe('Encounter Creation (User Story 1)', () => {
       await nameInput.fill('Valid Encounter');
 
       // Look for save button
-      const saveBtn = page.locator('button').filter({ hasText: /save/i }).first();
+      const saveBtn = page
+        .locator('button')
+        .filter({ hasText: /save/i })
+        .first();
       if (
-        await saveBtn.count().then((c: number) => c > 0) &&
+        (await saveBtn.count().then((c: number) => c > 0)) &&
         (await saveBtn.isVisible())
       ) {
         await saveBtn.click();
@@ -80,7 +83,7 @@ test.describe('Encounter Creation (User Story 1)', () => {
     // Try to save without name
     const saveBtn = page.locator('button').filter({ hasText: /save/i }).first();
     if (
-      await saveBtn.count().then((c: number) => c > 0) &&
+      (await saveBtn.count().then((c: number) => c > 0)) &&
       (await saveBtn.isVisible())
     ) {
       await saveBtn.click();
