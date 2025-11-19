@@ -88,9 +88,9 @@ test.describe('Profile & Settings Pages', () => {
     await validator.navigateTo('profile');
 
     // Find email field and fill with invalid value
-    const emailField = structure.formFields.find((f) => f.name === 'email');
+    const emailField = structure.formFields?.find((f) => f.name === 'email');
     if (emailField) {
-      await validator.fillField(emailField.name, 'invalid-email');
+      await validator.fillField(emailField, 'invalid-email');
 
       // Trigger validation by blurring
       const emailInput = page.locator(`input[name="${emailField.name}"]`);
