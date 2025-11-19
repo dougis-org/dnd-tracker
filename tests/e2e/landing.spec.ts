@@ -1,8 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { PageValidator } from './test-data/page-validator';
-import {
-  PAGE_STRUCTURES,
-} from './test-data/page-structure-map';
+import { PAGE_STRUCTURES } from './test-data/page-structure-map';
 
 test.describe('Landing Page (T018)', () => {
   test.beforeEach(async ({ page }) => {
@@ -67,7 +65,9 @@ test.describe('Landing Page (T018)', () => {
     expect(headlineText?.toLowerCase()).toContain('campaign');
 
     // Check CTA button exists
-    const ctaButton = page.locator('button, a', { hasText: /Start Free/i }).first();
+    const ctaButton = page
+      .locator('button, a', { hasText: /Start Free/i })
+      .first();
     await expect(ctaButton).toBeVisible();
   });
 

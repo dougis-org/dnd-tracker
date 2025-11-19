@@ -79,8 +79,20 @@ export const PAGE_STRUCTURES: Record<string, PageStructure> = {
     path: '/',
     heading: /d&d tracker|master your campaigns/i,
     expectedText: [/d&d tracker/i, /campaign/i],
-    sections: ['Hero', 'Features', 'Interactive Demo', 'Testimonials', 'Pricing'],
-    ariaLabels: ['Hero', 'Features', 'Interactive Demo', 'Testimonials', 'Pricing'],
+    sections: [
+      'Hero',
+      'Features',
+      'Interactive Demo',
+      'Testimonials',
+      'Pricing',
+    ],
+    ariaLabels: [
+      'Hero',
+      'Features',
+      'Interactive Demo',
+      'Testimonials',
+      'Pricing',
+    ],
     buttons: ['Start Free', 'Learn More'],
   },
 
