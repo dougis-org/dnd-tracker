@@ -31,7 +31,7 @@ export class PageValidator {
   async validateHeading(structure: PageStructure): Promise<void> {
     if (!structure.heading) return;
 
-    const level = structure.heading_level || 1;
+    const level = structure.headingLevel || 1;
     const heading = this.page.locator(`h${level}`).first();
     await expect(heading).toBeVisible();
     await expect(heading).toContainText(structure.heading);

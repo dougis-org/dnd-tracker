@@ -19,7 +19,7 @@ export interface FormField {
 export interface PageStructure {
   path: string;
   heading?: string | RegExp;
-  heading_level?: number;
+  headingLevel?: number;
   expectedText?: (string | RegExp)[];
   formFields?: FormField[];
   buttons?: string[];
@@ -69,7 +69,7 @@ export const PAGE_STRUCTURES: Record<string, PageStructure> = {
   subscription: {
     path: '/subscription',
     heading: /subscription|billing/i,
-    heading_level: 1,
+    headingLevel: 1,
     expectedText: [/subscription|billing/i, /plan|pricing/i],
     sections: ['Plans', 'Payment', 'Billing History'],
     buttons: ['Subscribe', 'Upgrade', 'Manage Subscription'],
@@ -99,7 +99,7 @@ export const PAGE_STRUCTURES: Record<string, PageStructure> = {
   encounterCreate: {
     path: '/encounters/new',
     heading: /create.*encounter|new encounter/i,
-    heading_level: 1,
+    headingLevel: 1,
     formFields: [
       {
         name: 'name',
@@ -114,7 +114,7 @@ export const PAGE_STRUCTURES: Record<string, PageStructure> = {
   itemCatalog: {
     path: '/items',
     heading: /item catalog/i,
-    heading_level: 1,
+    headingLevel: 1,
     expectedText: [/item catalog/i, /search/i],
     formFields: [
       {
