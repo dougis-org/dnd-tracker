@@ -3,168 +3,98 @@
  * Tests the auth verification endpoint used by ProtectedRouteGuard
  */
 
+const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
+
+function isProtectedRoute(pathname: string): boolean {
+  return PROTECTED_ROUTES.some((route) => {
+    if (pathname === route) return true
+    const nestedPath = `${route}/`
+    return pathname.startsWith(nestedPath)
+  })
+}
+
 describe('Auth Check Route Handler', () => {
-  describe('Route identification', () => {
-    it('should identify /dashboard as protected', () => {
-      const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
-      const isProtected = PROTECTED_ROUTES.some((route) => {
-        if ('/dashboard' === route) return true
-        const nestedPath = `${route}/`
-        return '/dashboard'.startsWith(nestedPath)
-      })
-      expect(isProtected).toBe(true)
-    })
-
-    it('should identify /dashboard/characters as protected nested route', () => {
-      const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
-      const isProtected = PROTECTED_ROUTES.some((route) => {
-        if ('/dashboard/characters' === route) return true
-        const nestedPath = `${route}/`
-        return '/dashboard/characters'.startsWith(nestedPath)
-      })
-      expect(isProtected).toBe(true)
-    })
-
-    it('should not identify /dashboard-info as protected', () => {
-      const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
-      const isProtected = PROTECTED_ROUTES.some((route) => {
-        if ('/dashboard-info' === route) return true
-        const nestedPath = `${route}/`
-        return '/dashboard-info'.startsWith(nestedPath)
-      })
-      expect(isProtected).toBe(false)
-    })
-
-    it('should not identify public routes as protected', () => {
-      const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
-      const publicRoutes = ['/', '/sign-in', '/sign-up', '/landing']
-
-      for (const route of publicRoutes) {
-        const isProtected = PROTECTED_ROUTES.some((pRoute) => {
-          if (route === pRoute) return true
-          const nestedPath = `${pRoute}/`
-          return route.startsWith(nestedPath)
-        })
-        expect(isProtected).toBe(false)
-      }
+  describe.each([
+    { pathname: '/dashboard', expected: true },
+    { pathname: '/dashboard/characters', expected: true },
+    { pathname: '/subscription/billing', expected: true },
+    { pathname: '/profile/settings', expected: true },
+    { pathname: '/dashboard-info', expected: false },
+    { pathname: '/', expected: false },
+    { pathname: '/sign-in', expected: false },
+    { pathname: '/sign-up', expected: false },
+  ])('Route protection: $pathname', ({ pathname, expected }) => {
+    it(`should ${expected ? '' : 'not '}identify as protected`, () => {
+      expect(isProtectedRoute(pathname)).toBe(expected)
     })
   })
 
-  describe('Redirect URL generation', () => {
-    it('should generate proper sign-in redirect with return path', () => {
-      const pathname = '/dashboard'
+  describe.each([
+    { pathname: '/dashboard', encoded: '%2Fdashboard' },
+    { pathname: '/dashboard/test/123', encoded: '%2Fdashboard%2Ftest%2F123' },
+    { pathname: '/dashboard?tab=settings', encoded: '%2Fdashboard%3Ftab%3Dsettings' },
+  ])('Redirect URL generation: $pathname', ({ pathname, encoded }) => {
+    it('should properly encode redirect URL', () => {
       const redirectUrl = `/sign-in?redirect_url=${encodeURIComponent(pathname)}`
-
       expect(redirectUrl).toContain('/sign-in')
-      expect(redirectUrl).toContain('redirect_url=%2Fdashboard')
-    })
-
-    it('should encode special characters in redirect URL', () => {
-      const pathname = '/dashboard/test/123'
-      const encoded = encodeURIComponent(pathname)
-
-      expect(encoded).toBe('%2Fdashboard%2Ftest%2F123')
-    })
-
-    it('should handle query parameters in pathname', () => {
-      const pathname = '/dashboard?tab=settings'
-      const encoded = encodeURIComponent(pathname)
-
-      expect(encoded).toContain('%3F')
-      expect(encoded).toContain('tab%3Dsettings')
+      expect(redirectUrl).toContain(encoded)
     })
   })
 
-  describe('Auth state validation', () => {
-    it('should treat null userId as unauthenticated', () => {
-      const userId = null
-      const isAuthenticated = !!userId
-
-      expect(isAuthenticated).toBe(false)
-    })
-
-    it('should treat valid userId as authenticated', () => {
-      const userId = 'user_12345'
-      const isAuthenticated = !!userId
-
-      expect(isAuthenticated).toBe(true)
+  describe.each([
+    { userId: null, expected: false },
+    { userId: 'user_123', expected: true },
+    { userId: '', expected: false },
+  ])('Auth state validation: userId=$userId', ({ userId, expected }) => {
+    it(`should ${expected ? '' : 'not '}be authenticated`, () => {
+      expect(!!userId).toBe(expected)
     })
   })
 
-  describe('Response construction', () => {
-    it('should return correct response for authenticated user on public route', () => {
-      const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
-      const pathname = '/'
-      const userId = 'user_123'
+  describe.each([
+    {
+      pathname: '/',
+      userId: 'user_123',
+      expectAuth: true,
+      expectProtected: false,
+      expectRedirect: false,
+    },
+    {
+      pathname: '/dashboard',
+      userId: 'user_123',
+      expectAuth: true,
+      expectProtected: true,
+      expectRedirect: false,
+    },
+    {
+      pathname: '/dashboard',
+      userId: null,
+      expectAuth: false,
+      expectProtected: true,
+      expectRedirect: true,
+    },
+    {
+      pathname: '/sign-in',
+      userId: null,
+      expectAuth: false,
+      expectProtected: false,
+      expectRedirect: false,
+    },
+  ])(
+    'Response construction: pathname=$pathname, userId=$userId',
+    ({ pathname, userId, expectAuth, expectProtected, expectRedirect }) => {
+      it('should return correct response', () => {
+        const requiresAuth = isProtectedRoute(pathname)
+        const isAuthenticated = !!userId
+        const redirectUrl =
+          requiresAuth && !isAuthenticated
+            ? `/sign-in?redirect_url=${encodeURIComponent(pathname)}`
+            : null
 
-      const requiresAuth = PROTECTED_ROUTES.some((route) => {
-        if (pathname === route) return true
-        const nestedPath = `${route}/`
-        return pathname.startsWith(nestedPath)
+        expect(isAuthenticated).toBe(expectAuth)
+        expect(requiresAuth).toBe(expectProtected)
+        expect(!!redirectUrl).toBe(expectRedirect)
       })
-      const isAuthenticated = !!userId
-
-      const response = {
-        isAuthenticated,
-        userId,
-        requiresAuth,
-        redirectUrl: null,
-      }
-
-      expect(response).toEqual({
-        isAuthenticated: true,
-        userId: 'user_123',
-        requiresAuth: false,
-        redirectUrl: null,
-      })
-    })
-
-    it('should return correct response for unauthenticated user on protected route', () => {
-      const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
-      const pathname = '/dashboard'
-      const userId = null
-
-      const requiresAuth = PROTECTED_ROUTES.some((route) => {
-        if (pathname === route) return true
-        const nestedPath = `${route}/`
-        return pathname.startsWith(nestedPath)
-      })
-      const isAuthenticated = !!userId
-
-      const redirectUrl = requiresAuth && !isAuthenticated
-        ? `/sign-in?redirect_url=${encodeURIComponent(pathname)}`
-        : null
-
-      expect(isAuthenticated).toBe(false)
-      expect(requiresAuth).toBe(true)
-      expect(redirectUrl).toContain('/sign-in')
-    })
-
-    it('should return correct response for authenticated user on protected route', () => {
-      const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
-      const pathname = '/dashboard'
-      const userId = 'user_123'
-
-      const requiresAuth = PROTECTED_ROUTES.some((route) => {
-        if (pathname === route) return true
-        const nestedPath = `${route}/`
-        return pathname.startsWith(nestedPath)
-      })
-      const isAuthenticated = !!userId
-
-      const response = {
-        isAuthenticated,
-        userId,
-        requiresAuth,
-        redirectUrl: null,
-      }
-
-      expect(response).toEqual({
-        isAuthenticated: true,
-        userId: 'user_123',
-        requiresAuth: true,
-        redirectUrl: null,
-      })
-    })
-  })
+    }
+  )
 })

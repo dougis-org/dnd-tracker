@@ -1,140 +1,81 @@
 /**
- * Integration tests for authentication protection
- * Tests auth check logic and protected route behavior
+ * Integration tests for auth middleware protection logic
+ * Tests the isProtectedRoute function independently of the actual middleware
  */
 
-describe('Auth Protection', () => {
-  const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile']
-  const PUBLIC_ROUTES = ['/', '/sign-in', '/sign-up', '/about']
+const PROTECTED_ROUTES = ['/dashboard', '/subscription', '/profile', '/settings']
+const PUBLIC_ROUTES = ['/', '/sign-in', '/sign-up', '/landing']
 
-  function isProtectedRoute(pathname: string): boolean {
-    // Match exact route or nested routes (e.g., /dashboard or /dashboard/*)
-    return PROTECTED_ROUTES.some((route) => {
-      if (pathname === route) return true
-      const nestedPath = `${route}/`
-      return pathname.startsWith(nestedPath)
-    })
-  }
+function isProtectedRoute(pathname: string): boolean {
+  return PROTECTED_ROUTES.some((route) => {
+    if (pathname === route) return true
+    const nestedPath = `${route}/`
+    return pathname.startsWith(nestedPath)
+  })
+}
 
-  describe('Protected Routes Identification', () => {
-    it('should identify protected routes', () => {
-      for (const route of PROTECTED_ROUTES) {
+describe('Auth Middleware Route Protection Logic', () => {
+  describe.each(PROTECTED_ROUTES)(
+    'Protected route: %s',
+    (route) => {
+      it('should be identified as protected', () => {
         expect(isProtectedRoute(route)).toBe(true)
-      }
-    })
+      })
 
-    it('should identify nested protected routes', () => {
-      const nestedRoutes = ['/dashboard/characters', '/subscription/billing', '/profile/settings']
-      for (const route of nestedRoutes) {
-        expect(isProtectedRoute(route)).toBe(true)
-      }
-    })
+      it('should protect nested paths', () => {
+        expect(isProtectedRoute(`${route}/sub`)).toBe(true)
+        expect(isProtectedRoute(`${route}/sub/deep`)).toBe(true)
+      })
+    }
+  )
 
-    it('should identify public routes', () => {
-      for (const route of PUBLIC_ROUTES) {
+  describe.each(PUBLIC_ROUTES)(
+    'Public route: %s',
+    (route) => {
+      it('should not be protected', () => {
         expect(isProtectedRoute(route)).toBe(false)
-      }
-    })
+      })
+    }
+  )
 
-    it('should not identify unrelated paths as protected', () => {
-      const unrelatedPaths = ['/dashboard-info', '/profile-page', '/subscriptions']
-      for (const path of unrelatedPaths) {
-        expect(isProtectedRoute(path)).toBe(false)
-      }
-    })
-  })
+  describe.each([
+    { pathname: '/dashboard-info', shouldProtect: false },
+    { pathname: '/dashboards', shouldProtect: false },
+    { pathname: '/dashboard_settings', shouldProtect: false },
+    { pathname: '/other', shouldProtect: false },
+  ])(
+    'Similar-named route: $pathname',
+    ({ pathname, shouldProtect }) => {
+      it(`should ${shouldProtect ? '' : 'not '}protect`, () => {
+        expect(isProtectedRoute(pathname)).toBe(shouldProtect)
+      })
+    }
+  )
 
-  describe('Redirect URL Generation', () => {
-    it('should generate proper sign-in redirect URL with return path', () => {
-      const pathname = '/dashboard'
-      const redirectUrl = `/sign-in?redirect_url=${encodeURIComponent(pathname)}`
-
-      expect(redirectUrl).toContain('/sign-in')
-      expect(redirectUrl).toContain('redirect_url=%2Fdashboard')
-    })
-
-    it('should encode special characters in redirect URL', () => {
-      const pathname = '/dashboard/test/123'
-      const encoded = encodeURIComponent(pathname)
-
-      expect(encoded).toBe('%2Fdashboard%2Ftest%2F123')
-    })
-
-    it('should not include redirect for public routes', () => {
-      const requiresAuth = isProtectedRoute('/')
-      expect(requiresAuth).toBe(false)
+  describe('Route identification edge cases', () => {
+    it.each([
+      ['', false],
+      ['/', false],
+      ['/d', false],
+      ['/dashboard', true],
+      ['/dashboard/', true],
+      ['/dashboard/x', true],
+    ])('pathname "%s" should be %s protected', (pathname, expected) => {
+      expect(isProtectedRoute(pathname)).toBe(expected)
     })
   })
 
-  describe('Auth State Validation', () => {
-    it('should treat null userId as unauthenticated', () => {
-      const userId = null
-      const isAuthenticated = !!userId
-
-      expect(isAuthenticated).toBe(false)
+  describe('Multiple route matching', () => {
+    it('should match only the relevant protected route', () => {
+      const pathname = '/subscription/plans'
+      expect(isProtectedRoute(pathname)).toBe(true)
+      expect(PROTECTED_ROUTES.some((r) => pathname.startsWith(r))).toBe(true)
     })
 
-    it('should treat valid userId as authenticated', () => {
-      const userId = 'user_123'
-      const isAuthenticated = !!userId
-
-      expect(isAuthenticated).toBe(true)
-    })
-  })
-
-  describe('Route Protection Logic', () => {
-    it('should allow authenticated users to protected routes', () => {
-      const pathname = '/dashboard'
-      const userId = 'user_123'
-      const requiresAuth = isProtectedRoute(pathname)
-      const isAuthenticated = !!userId
-
-      const canAccess = !requiresAuth || isAuthenticated
-
-      expect(canAccess).toBe(true)
-    })
-
-    it('should deny unauthenticated users to protected routes', () => {
-      const pathname = '/dashboard'
-      const userId = null
-      const requiresAuth = isProtectedRoute(pathname)
-      const isAuthenticated = !!userId
-
-      const shouldRedirect = requiresAuth && !isAuthenticated
-
-      expect(shouldRedirect).toBe(true)
-    })
-
-    it('should allow unauthenticated users to public routes', () => {
-      const pathname = '/sign-in'
-      const userId = null
-      const requiresAuth = isProtectedRoute(pathname)
-      const isAuthenticated = !!userId
-
-      const canAccess = !requiresAuth || isAuthenticated
-
-      expect(canAccess).toBe(true)
-    })
-  })
-
-  describe('Edge Cases', () => {
-    it('should handle empty pathname as public', () => {
-      expect(isProtectedRoute('')).toBe(false)
-    })
-
-    it('should handle root path as public', () => {
-      expect(isProtectedRoute('/')).toBe(false)
-    })
-
-    it('should be case-sensitive for route matching', () => {
-      expect(isProtectedRoute('/Dashboard')).toBe(false)
-      expect(isProtectedRoute('/DASHBOARD')).toBe(false)
-    })
-
-    it('should match exact protected route prefixes', () => {
+    it('should not cross-match between routes', () => {
       expect(isProtectedRoute('/dashboard')).toBe(true)
-      expect(isProtectedRoute('/dashboard/')).toBe(true)
-      expect(isProtectedRoute('/dashboard/chars')).toBe(true)
+      expect(isProtectedRoute('/profile')).toBe(true)
+      expect(isProtectedRoute('/dashboard-profile')).toBe(false)
     })
   })
 })
