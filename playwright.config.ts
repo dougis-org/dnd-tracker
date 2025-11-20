@@ -5,7 +5,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // Run tests in parallel where possible. Use half of available CPUs on CI
+  // (e.g. '50%') so we don't overload hosted runners; locally leave Playwright
+  // to choose a sensible default (undefined).
+  workers: process.env.CI ? '50%' : undefined,
   reporter: 'html',
   // NOTE: E2E tests use port 3002 to avoid conflicts with the standard development server (port 3000).
   // If you are running the development server on port 3000, E2E tests will start a separate instance on port 3002.
