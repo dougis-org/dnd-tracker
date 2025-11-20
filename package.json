@@ -1,6 +1,6 @@
 {
     "name": "dnd-tracker",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "private": true,
     "scripts": {
         "dev": "next dev",
@@ -9,7 +9,7 @@
         "start": "next start",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-pattern 'specs/**'",
         "lint:fix": "npm run lint -- --fix",
-        "lint:markdown": "markdownlint '**/*.md' --ignore node_modules --ignore test-results/**",
+        "lint:markdown": "markdownlint '**/*.md' --ignore 'node_modules' --ignore 'test-results/**' --ignore 'playwright-report/**'",
         "lint:markdown:fix": "npm run lint:markdown -- --fix",
         "type-check": "tsc --noEmit",
         "test": "jest --watch",
