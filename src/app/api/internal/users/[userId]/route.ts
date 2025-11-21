@@ -1,19 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { connectToMongo } from '@/lib/db/connection'
-import UserModel from '@/lib/models/user'
-import { validateUpdateUser, formatValidationErrors } from '@/lib/schemas/webhook.schema'
+import { NextRequest, NextResponse } from 'next/server';
+import { connectToMongo } from '@/lib/db/connection';
+import UserModel from '@/lib/models/user';
+import {
+  validateUpdateUser,
+  formatValidationErrors,
+} from '@/lib/schemas/webhook.schema';
 
 /**
  * Structured logging helper
  */
-function logStructured(level: 'info' | 'warn' | 'error', message: string, data?: Record<string, unknown>) {
+function logStructured(
+  level: 'info' | 'warn' | 'error',
+  message: string,
+  data?: Record<string, unknown>
+) {
   const log = {
     level,
     timestamp: new Date().toISOString(),
     message,
     ...data,
-  }
-  console.log(JSON.stringify(log))
+  };
+  console.log(JSON.stringify(log));
 }
 
 /**
@@ -26,26 +33,26 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
-  const startTime = Date.now()
+  const startTime = Date.now();
 
   try {
-    const { userId } = await params
+    const { userId } = await params;
 
     // Connect to MongoDB
-    await connectToMongo()
+    await connectToMongo();
 
     // Find user (exclude soft-deleted)
     const user = await UserModel.findOne({
       userId,
       deletedAt: null,
-    })
+    });
 
     if (!user) {
       logStructured('warn', 'User not found', {
         endpoint: '/api/internal/users/[userId]',
         method: 'GET',
         userId,
-      })
+      });
       return NextResponse.json(
         {
           success: false,
@@ -54,7 +61,7 @@ export async function GET(
           },
         },
         { status: 404 }
-      )
+      );
     }
 
     logStructured('info', 'User retrieved', {
@@ -62,7 +69,7 @@ export async function GET(
       method: 'GET',
       userId,
       duration_ms: Date.now() - startTime,
-    })
+    });
 
     return NextResponse.json(
       {
@@ -78,12 +85,12 @@ export async function GET(
         },
       },
       { status: 200 }
-    )
+    );
   } catch (err) {
     logStructured('error', 'Get user error', {
       error: err instanceof Error ? err.message : String(err),
       duration_ms: Date.now() - startTime,
-    })
+    });
 
     return NextResponse.json(
       {
@@ -93,7 +100,7 @@ export async function GET(
         },
       },
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -113,22 +120,22 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
-  const startTime = Date.now()
+  const startTime = Date.now();
 
   try {
-    const { userId } = await params
+    const { userId } = await params;
 
     // Parse request body
-    let payload: unknown
+    let payload: unknown;
     try {
-      payload = await req.json()
+      payload = await req.json();
     } catch (err) {
       logStructured('warn', 'Failed to parse request body', {
         endpoint: '/api/internal/users/[userId]',
         method: 'PATCH',
         userId,
         error: err instanceof Error ? err.message : String(err),
-      })
+      });
       return NextResponse.json(
         {
           success: false,
@@ -137,19 +144,19 @@ export async function PATCH(
           },
         },
         { status: 400 }
-      )
+      );
     }
 
     // Validate schema
-    const validation = validateUpdateUser(payload)
+    const validation = validateUpdateUser(payload);
     if (!validation.success) {
-      const details = formatValidationErrors(validation.error)
+      const details = formatValidationErrors(validation.error);
       logStructured('warn', 'Update user validation failed', {
         endpoint: '/api/internal/users/[userId]',
         method: 'PATCH',
         userId,
         details,
-      })
+      });
       return NextResponse.json(
         {
           success: false,
@@ -159,26 +166,26 @@ export async function PATCH(
           },
         },
         { status: 400 }
-      )
+      );
     }
 
-    const updateData = validation.data
+    const updateData = validation.data;
 
     // Connect to MongoDB
-    await connectToMongo()
+    await connectToMongo();
 
     // Find and update user (exclude soft-deleted)
     const user = await UserModel.findOne({
       userId,
       deletedAt: null,
-    })
+    });
 
     if (!user) {
       logStructured('warn', 'User not found', {
         endpoint: '/api/internal/users/[userId]',
         method: 'PATCH',
         userId,
-      })
+      });
       return NextResponse.json(
         {
           success: false,
@@ -187,25 +194,25 @@ export async function PATCH(
           },
         },
         { status: 404 }
-      )
+      );
     }
 
     // Apply updates (only displayName and metadata, userId/email are immutable)
     if (updateData.displayName !== undefined) {
-      user.displayName = updateData.displayName
+      user.displayName = updateData.displayName;
     }
     if (updateData.metadata !== undefined) {
-      user.metadata = updateData.metadata
+      user.metadata = updateData.metadata;
     }
 
-    await user.save()
+    await user.save();
 
     logStructured('info', 'User updated', {
       endpoint: '/api/internal/users/[userId]',
       method: 'PATCH',
       userId,
       duration_ms: Date.now() - startTime,
-    })
+    });
 
     return NextResponse.json(
       {
@@ -221,12 +228,12 @@ export async function PATCH(
         },
       },
       { status: 200 }
-    )
+    );
   } catch (err) {
     logStructured('error', 'Update user error', {
       error: err instanceof Error ? err.message : String(err),
       duration_ms: Date.now() - startTime,
-    })
+    });
 
     return NextResponse.json(
       {
@@ -236,7 +243,7 @@ export async function PATCH(
         },
       },
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -250,26 +257,26 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
-  const startTime = Date.now()
+  const startTime = Date.now();
 
   try {
-    const { userId } = await params
+    const { userId } = await params;
 
     // Connect to MongoDB
-    await connectToMongo()
+    await connectToMongo();
 
     // Find user (exclude already soft-deleted)
     const user = await UserModel.findOne({
       userId,
       deletedAt: null,
-    })
+    });
 
     if (!user) {
       logStructured('warn', 'User not found', {
         endpoint: '/api/internal/users/[userId]',
         method: 'DELETE',
         userId,
-      })
+      });
       return NextResponse.json(
         {
           success: false,
@@ -278,26 +285,26 @@ export async function DELETE(
           },
         },
         { status: 404 }
-      )
+      );
     }
 
     // Soft-delete user
-    user.deletedAt = new Date()
-    await user.save()
+    user.deletedAt = new Date();
+    await user.save();
 
     logStructured('info', 'User deleted', {
       endpoint: '/api/internal/users/[userId]',
       method: 'DELETE',
       userId,
       duration_ms: Date.now() - startTime,
-    })
+    });
 
-    return new NextResponse(null, { status: 204 })
+    return new NextResponse(null, { status: 204 });
   } catch (err) {
     logStructured('error', 'Delete user error', {
       error: err instanceof Error ? err.message : String(err),
       duration_ms: Date.now() - startTime,
-    })
+    });
 
     return NextResponse.json(
       {
@@ -307,6 +314,6 @@ export async function DELETE(
         },
       },
       { status: 500 }
-    )
+    );
   }
 }

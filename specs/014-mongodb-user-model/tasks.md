@@ -25,40 +25,40 @@ Feature: MongoDB-backed User model, Webhook receiver, and internal CRUD endpoint
 
 ## Phase 3: User Story 1 (P1) - Core Data Model & Unit Tests
 
-- [ ] T007 Write unit tests for User model validation (schema, uniqueness, immutability): `tests/unit/models/user.unit.test.ts`
-- [ ] T008 Implement User model to pass T007 tests: `src/lib/models/user.ts`
-- [ ] T009 Write unit tests for UserEvent model: `tests/unit/models/user.unit.test.ts`
+- [X] T007 Write unit tests for User model validation (schema, uniqueness, immutability): `tests/unit/models/user.unit.test.ts`
+- [X] T008 Implement User model to pass T007 tests: `src/lib/models/user.ts`
+- [X] T009 Write unit tests for UserEvent model: `tests/unit/models/user.unit.test.ts`
 
 ---
 
 ## Phase 3: User Story 2 (P2) - Webhook Receiver & Event Persistence
 
-- [ ] T010 Write integration tests for webhook receiver (all event types, signature validation): `tests/integration/user.integration.test.ts`
-- [ ] T011 Implement POST /api/webhooks/user-events endpoint: `src/app/api/webhooks/user-events/route.ts`
-- [ ] T012 Implement timestamp-based conflict resolution and soft-delete logic: `src/app/api/webhooks/user-events/route.ts`
-- [ ] T013 Add structured logging to webhook endpoint (INFO/WARN/ERROR): `src/app/api/webhooks/user-events/route.ts`
+- [X] T010 Write integration tests for webhook receiver (all event types, signature validation): `tests/integration/user.integration.test.ts`
+- [X] T011 Implement POST /api/webhooks/user-events endpoint: `src/app/api/webhooks/user-events/route.ts`
+- [X] T012 Implement timestamp-based conflict resolution and soft-delete logic: `src/app/api/webhooks/user-events/route.ts`
+- [X] T013 Add structured logging to webhook endpoint (INFO/WARN/ERROR): `src/app/api/webhooks/user-events/route.ts`
 
 ---
 
 ## Phase 3: User Story 3 (P3) - Internal CRUD Endpoints
 
-- [ ] T014 Write integration tests for POST /api/internal/users (create, duplicate, validation): `tests/integration/user.integration.test.ts`
-- [ ] T015 Implement POST /api/internal/users and GET /api/internal/users/:userId: `src/app/api/internal/users/route.ts`
-- [ ] T016 Implement PATCH and DELETE /api/internal/users/:userId: `src/app/api/internal/users/[userId]/route.ts`
+- [X] T014 Write integration tests for POST /api/internal/users (create, duplicate, validation): `tests/integration/user.integration.test.ts`
+- [X] T015 Implement POST /api/internal/users and GET /api/internal/users/:userId: `src/app/api/internal/users/route.ts`
+- [X] T016 Implement PATCH and DELETE /api/internal/users/:userId: `src/app/api/internal/users/[userId]/route.ts`
 
 ---
 
 ## Phase 4: Error Handling & Validation
 
-- [ ] T017 [P] Write error handling tests (400, 401, 404, 409, 413, 500): `tests/integration/user.error-handling.test.ts`
-- [ ] T018 Implement comprehensive error handling in all endpoints: `src/app/api/internal/users/route.ts`, `src/app/api/internal/users/[userId]/route.ts`, `src/app/api/webhooks/user-events/route.ts`
-- [ ] T019 [P] Add payload size validation and timeout handling: `src/app/api/webhooks/user-events/route.ts`
+- [X] T017 [P] Write error handling tests (400, 401, 404, 409, 413, 500): `tests/integration/user.error-handling.test.ts`
+- [X] T018 Implement comprehensive error handling in all endpoints: `src/app/api/internal/users/route.ts`, `src/app/api/internal/users/[userId]/route.ts`, `src/app/api/webhooks/user-events/route.ts`
+- [X] T019 [P] Add payload size validation and timeout handling: `src/app/api/webhooks/user-events/route.ts`
 
 ---
 
 ## Phase 5: Observability & Testing
 
-- [ ] T020 [P] Write structured logging tests (INFO/WARN/ERROR): `tests/unit/logging.test.ts`
+- [X] T020 [P] Write structured logging tests (INFO/WARN/ERROR): `tests/unit/logging.test.ts`
 - [ ] T021 Run full test suite and verify 80%+ coverage: `npm run test:ci -- --coverage`
 - [ ] T022 Perform manual testing of all endpoints (create, read, update, delete, webhook): N/A (manual)
 

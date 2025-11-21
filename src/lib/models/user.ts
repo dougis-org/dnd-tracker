@@ -1,18 +1,18 @@
-import mongoose, { Schema, Document } from 'mongoose'
+import mongoose, { Schema, Document } from 'mongoose';
 
 /**
  * User document interface - represents a persistent user record
  * Synced via Clerk webhook events
  */
 export interface UserDoc extends Document {
-  _id: mongoose.Types.ObjectId
-  userId: string
-  email: string
-  displayName: string
-  metadata?: Record<string, unknown>
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
+  _id: mongoose.Types.ObjectId;
+  userId: string;
+  email: string;
+  displayName: string;
+  metadata?: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
 }
 
 /**
@@ -20,18 +20,18 @@ export interface UserDoc extends Document {
  * Provides audit trail and replay capability
  */
 export interface UserEventDoc extends Document {
-  _id: mongoose.Types.ObjectId
-  eventId?: string
-  eventType: 'created' | 'updated' | 'deleted'
-  userId?: string
-  payload: Record<string, unknown>
-  source?: string
-  signature?: string
-  signatureValid?: boolean | null
-  receivedAt: Date
-  processedAt?: Date
-  status: 'stored' | 'processed' | 'failed'
-  error?: string
+  _id: mongoose.Types.ObjectId;
+  eventId?: string;
+  eventType: 'created' | 'updated' | 'deleted';
+  userId?: string;
+  payload: Record<string, unknown>;
+  source?: string;
+  signature?: string;
+  signatureValid?: boolean | null;
+  receivedAt: Date;
+  processedAt?: Date;
+  status: 'stored' | 'processed' | 'failed';
+  error?: string;
 }
 
 /**
@@ -78,10 +78,10 @@ const UserSchema = new Schema<UserDoc>(
   {
     timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' },
   }
-)
+);
 
 // Compound index for efficient soft-delete filtering
-UserSchema.index({ deletedAt: 1, updatedAt: -1 })
+UserSchema.index({ deletedAt: 1, updatedAt: -1 });
 
 /**
  * UserEvent Schema - immutable event log for webhook payloads
@@ -136,30 +136,30 @@ const UserEventSchema = new Schema<UserEventDoc>(
     error: String,
   },
   { _id: true }
-)
+);
 
 // Compound indexes for efficient querying
-UserEventSchema.index({ eventType: 1, receivedAt: -1 })
-UserEventSchema.index({ status: 1, receivedAt: -1 })
-UserEventSchema.index({ userId: 1, receivedAt: -1 })
+UserEventSchema.index({ eventType: 1, receivedAt: -1 });
+UserEventSchema.index({ status: 1, receivedAt: -1 });
+UserEventSchema.index({ userId: 1, receivedAt: -1 });
 
 /**
  * Export models with safe registration
  * Prevents "Cannot overwrite model" errors in tests by checking if model exists
  */
-let UserModel: mongoose.Model<UserDoc>
+let UserModel: mongoose.Model<UserDoc>;
 try {
-  UserModel = mongoose.model<UserDoc>('User')
+  UserModel = mongoose.model<UserDoc>('User');
 } catch {
-  UserModel = mongoose.model<UserDoc>('User', UserSchema)
+  UserModel = mongoose.model<UserDoc>('User', UserSchema);
 }
 
-let UserEventModel: mongoose.Model<UserEventDoc>
+let UserEventModel: mongoose.Model<UserEventDoc>;
 try {
-  UserEventModel = mongoose.model<UserEventDoc>('UserEvent')
+  UserEventModel = mongoose.model<UserEventDoc>('UserEvent');
 } catch {
-  UserEventModel = mongoose.model<UserEventDoc>('UserEvent', UserEventSchema)
+  UserEventModel = mongoose.model<UserEventDoc>('UserEvent', UserEventSchema);
 }
 
-export default UserModel
-export { UserEventModel }
+export default UserModel;
+export { UserEventModel };

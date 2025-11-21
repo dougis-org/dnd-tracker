@@ -1,19 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { connectToMongo } from '@/lib/db/connection'
-import UserModel from '@/lib/models/user'
-import { validateCreateUser, formatValidationErrors } from '@/lib/schemas/webhook.schema'
+import { NextRequest, NextResponse } from 'next/server';
+import { connectToMongo } from '@/lib/db/connection';
+import UserModel from '@/lib/models/user';
+import {
+  validateCreateUser,
+  formatValidationErrors,
+} from '@/lib/schemas/webhook.schema';
 
 /**
  * Structured logging helper
  */
-function logStructured(level: 'info' | 'warn' | 'error', message: string, data?: Record<string, unknown>) {
+function logStructured(
+  level: 'info' | 'warn' | 'error',
+  message: string,
+  data?: Record<string, unknown>
+) {
   const log = {
     level,
     timestamp: new Date().toISOString(),
     message,
     ...data,
-  }
-  console.log(JSON.stringify(log))
+  };
+  console.log(JSON.stringify(log));
 }
 
 /**
@@ -31,19 +38,19 @@ function logStructured(level: 'info' | 'warn' | 'error', message: string, data?:
  * Response: 201 Created with user object
  */
 export async function POST(req: NextRequest) {
-  const startTime = Date.now()
+  const startTime = Date.now();
 
   try {
     // Parse request body
-    let payload: unknown
+    let payload: unknown;
     try {
-      payload = await req.json()
+      payload = await req.json();
     } catch (err) {
       logStructured('warn', 'Failed to parse request body', {
         endpoint: '/api/internal/users',
         method: 'POST',
         error: err instanceof Error ? err.message : String(err),
-      })
+      });
       return NextResponse.json(
         {
           success: false,
@@ -52,18 +59,18 @@ export async function POST(req: NextRequest) {
           },
         },
         { status: 400 }
-      )
+      );
     }
 
     // Validate schema
-    const validation = validateCreateUser(payload)
+    const validation = validateCreateUser(payload);
     if (!validation.success) {
-      const details = formatValidationErrors(validation.error)
+      const details = formatValidationErrors(validation.error);
       logStructured('warn', 'Create user validation failed', {
         endpoint: '/api/internal/users',
         method: 'POST',
         details,
-      })
+      });
       return NextResponse.json(
         {
           success: false,
@@ -73,13 +80,13 @@ export async function POST(req: NextRequest) {
           },
         },
         { status: 400 }
-      )
+      );
     }
 
-    const userData = validation.data
+    const userData = validation.data;
 
     // Connect to MongoDB
-    await connectToMongo()
+    await connectToMongo();
 
     // Create user
     try {
@@ -88,14 +95,14 @@ export async function POST(req: NextRequest) {
         email: userData.email,
         displayName: userData.displayName || '',
         metadata: userData.metadata || {},
-      })
+      });
 
       logStructured('info', 'User created', {
         endpoint: '/api/internal/users',
         method: 'POST',
         userId: user.userId,
         duration_ms: Date.now() - startTime,
-      })
+      });
 
       return NextResponse.json(
         {
@@ -111,21 +118,24 @@ export async function POST(req: NextRequest) {
           },
         },
         { status: 201 }
-      )
+      );
     } catch (err) {
       // Handle duplicate key errors
-      const mongoErr = err as { code?: number; keyPattern?: { [key: string]: number } }
+      const mongoErr = err as {
+        code?: number;
+        keyPattern?: { [key: string]: number };
+      };
 
       if (mongoErr.code === 11000) {
-        const keyPattern = mongoErr.keyPattern || {}
-        const field = Object.keys(keyPattern)[0] || 'unknown'
+        const keyPattern = mongoErr.keyPattern || {};
+        const field = Object.keys(keyPattern)[0] || 'unknown';
 
         logStructured('warn', 'Duplicate key error', {
           endpoint: '/api/internal/users',
           method: 'POST',
           field,
           userId: userData.userId,
-        })
+        });
 
         return NextResponse.json(
           {
@@ -136,16 +146,16 @@ export async function POST(req: NextRequest) {
             },
           },
           { status: 409 }
-        )
+        );
       }
 
-      throw err
+      throw err;
     }
   } catch (err) {
     logStructured('error', 'Create user error', {
       error: err instanceof Error ? err.message : String(err),
       duration_ms: Date.now() - startTime,
-    })
+    });
 
     return NextResponse.json(
       {
@@ -155,6 +165,6 @@ export async function POST(req: NextRequest) {
         },
       },
       { status: 500 }
-    )
+    );
   }
 }
