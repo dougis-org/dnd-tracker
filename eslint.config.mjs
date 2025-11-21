@@ -73,6 +73,8 @@ export default [
         expect: 'readonly',
         beforeEach: 'readonly',
         afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
         jest: 'readonly',
         HTMLFormElement: 'readonly',
         HTMLInputElement: 'readonly',
