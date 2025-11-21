@@ -10,6 +10,7 @@
 Feature 014 adds persistent MongoDB-backed user data storage and a webhook receiver to ingest external user lifecycle events. This enables profile, permissions, and downstream integration features. The implementation is greenfield with full test coverage (TDD-first), proper error handling, and production-ready logging.
 
 **Key Deliverables**:
+
 - Two MongoDB collections: `users` (core records) and `user_events` (audit trail)
 - Internal CRUD API endpoints for user management (`/api/internal/users/*`)
 - Webhook receiver endpoint for external event ingestion (`/api/webhooks/user-events`)
@@ -188,7 +189,7 @@ describe('Internal User CRUD API', () => {
 
 #### 2.2 Implement User CRUD Endpoints
 
-**Files**: 
+**Files**:
 
 - `src/app/api/internal/users/route.ts` (POST, GET list)
 - `src/app/api/internal/users/[userId]/route.ts` (GET, PATCH, DELETE)
@@ -230,6 +231,7 @@ describe('Webhook Receiver', () => {
 **File**: `src/app/api/webhooks/user-events/route.ts`
 
 Implement webhook receiver to pass tests:
+
 - Validate signature (optional, skip if `WEBHOOK_SECRET` not set)
 - Validate payload with Zod
 - Store event immediately in `user_events` collection
@@ -268,6 +270,7 @@ describe('Webhook Event Schema', () => {
 **File**: `src/lib/schemas/webhook.schema.ts`
 
 Implement all schemas from `contracts.md`:
+
 - `createUserSchema`
 - `updateUserSchema`
 - `webhookEventSchema`
@@ -301,6 +304,7 @@ describe('Error Handling', () => {
 #### 4.2 Implement Error Handling
 
 Update all API routes and webhook handler to:
+
 - Catch and handle database errors (E11000 duplicate key, connection errors, etc.)
 - Convert Zod validation errors to 400 responses with field-level details
 - Validate signature and return 401 on failure
@@ -333,6 +337,7 @@ describe('Structured Logging', () => {
 #### 5.2 Add Structured Logging to All Endpoints
 
 Update all API route handlers and webhook to include:
+
 - INFO log: successful operations
 - WARN log: validation failures, signature mismatches, late-arriving events
 - ERROR log: system failures, DB errors
@@ -350,6 +355,7 @@ npm run test:ci -- --coverage
 ```
 
 Verify:
+
 - All tests pass (unit + integration)
 - 80%+ coverage on all new files
 - No TypeScript errors
@@ -543,17 +549,20 @@ docs/feature-014-mongodb-user-model.md   (ADD migration verification steps)
 ### Monitoring & Observability
 
 **Metrics to Track**:
+
 - Webhook endpoint latency (target ≤3s)
 - Webhook event count (created, updated, deleted)
 - Error rate (validation failures, DB errors, timeouts)
 - Late-arriving event count
 
 **Logs to Monitor**:
+
 - ERROR logs: Database errors, system failures
 - WARN logs: Signature validation failures, late-arriving events
 - INFO logs: Successful operations (volume baseline)
 
 **Alerts**:
+
 - Webhook latency exceeds 5 seconds (P95)
 - Error rate exceeds 5%
 - Database connection failures

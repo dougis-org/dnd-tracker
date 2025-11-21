@@ -16,6 +16,7 @@ Provide a persistent MongoDB-backed `User` model and a webhook receiver to inges
 - Provide migration steps to create collections and indexes in Atlas.
 
 Non-goals:
+
 - Full auth integration (Clerk already implemented separately).
 - Public UI changes or feature flags (user model is enabled by default).
 
@@ -81,6 +82,7 @@ Include an optional script `scripts/migrations/create-user-indexes.js` as part o
 ## Key Entities & Data Model (example)
 
 User (users)
+
 - `userId`: string, primary unique id (from auth provider)
 - `email`: string, unique
 - `displayName`: string
@@ -90,6 +92,7 @@ User (users)
 - `deletedAt`: date|null
 
 UserEvent (user_events)
+
 - `eventId`: generated id
 - `eventType`: string
 - `payload`: object (raw)

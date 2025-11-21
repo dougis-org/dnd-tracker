@@ -8,10 +8,12 @@
 ## Overview
 
 This document defines the HTTP API contracts for Feature 014:
+
 - **Internal CRUD endpoints** (`/api/internal/users/*`) — Server-side only, no public exposure
 - **Webhook receiver** (`/api/webhooks/user-events`) — External system POST endpoint
 
 All endpoints:
+
 - Return JSON responses
 - Use proper HTTP status codes (201, 200, 204, 400, 401, 404, 409, 413, 500, 504)
 - Accept and validate request bodies with Zod schemas
@@ -42,6 +44,7 @@ Content-Type: application/json
 ```
 
 **Request Schema** (Zod):
+
 ```typescript
 export const createUserSchema = z.object({
   userId: z.string().min(1).max(255),
@@ -195,6 +198,7 @@ Content-Type: application/json
 ```
 
 **Request Schema** (Zod):
+
 ```typescript
 export const updateUserSchema = z.object({
   displayName: z.string().min(1).max(255).optional(),
@@ -309,6 +313,7 @@ X-Webhook-Signature: sha256=abc123def456...
 ```
 
 **Request Schema** (Zod):
+
 ```typescript
 export const webhookEventSchema = z.object({
   eventType: z.enum(['created', 'updated', 'deleted']),
@@ -326,6 +331,7 @@ export type WebhookEventRequest = z.infer<typeof webhookEventSchema>
 ```
 
 **Signature Validation**:
+
 - Header: `X-Webhook-Signature: sha256=<hex>`
 - Compute: `HMAC-SHA256(request_body, WEBHOOK_SECRET)`
 - Validation: If `WEBHOOK_SECRET` set, validate header; if not set, skip validation
@@ -427,6 +433,7 @@ Content-Type: application/json
 ## Webhook Event Processing Logic
 
 ### created Event
+
 1. Validate request and signature
 2. Store event in `user_events` collection with `status: 'stored'`
 3. Insert new user into `users` collection
@@ -434,6 +441,7 @@ Content-Type: application/json
 5. Log at INFO level on success, WARN on validation failure
 
 ### updated Event
+
 1. Validate request and signature
 2. Store event in `user_events` collection with `status: 'stored'`
 3. Fetch current user by `userId`
@@ -443,6 +451,7 @@ Content-Type: application/json
 5. Return 200 immediately (fire-and-forget)
 
 ### deleted Event
+
 1. Validate request and signature
 2. Store event in `user_events` collection with `status: 'stored'`
 3. Fetch current user by `userId`
@@ -530,6 +539,7 @@ All endpoints log structured messages:
 ```
 
 Levels:
+
 - **INFO**: Successful operations
 - **WARN**: Validation failures, late-arriving events, signature mismatches
 - **ERROR**: System failures, database errors

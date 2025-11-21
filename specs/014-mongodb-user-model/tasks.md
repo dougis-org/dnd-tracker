@@ -75,6 +75,7 @@ Feature: MongoDB-backed User model, Webhook receiver, and internal CRUD endpoint
 ## Dependencies & Execution Order
 
 **Sequential Critical Path**:
+
 1. T001, T003, T006 (parallel setup)
 2. T002 (verification)
 3. T004 (connection helper, required by all)
@@ -86,6 +87,7 @@ Feature: MongoDB-backed User model, Webhook receiver, and internal CRUD endpoint
 9. T023-T025 (documentation, verification)
 
 **Parallelizable Groups**:
+
 - **Group 1** (Setup): T001, T003 (env files)
 - **Group 2** (Schemas & Connection): T004, T006 (can run after T002)
 - **Group 4** (Validation & Logging): T017, T020 (test-first)

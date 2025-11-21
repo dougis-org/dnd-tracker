@@ -8,6 +8,7 @@
 ## Overview
 
 This quickstart guide walks through:
+
 1. Setting up MongoDB connection
 2. Initializing User and UserEvent models
 3. Creating internal CRUD endpoints
@@ -559,6 +560,7 @@ describe('User CRUD & Webhook', () => {
 ## Step 8: Local Testing
 
 ### Test User Creation
+
 ```bash
 curl -X POST http://localhost:3000/api/internal/users \
   -H "Content-Type: application/json" \
@@ -570,6 +572,7 @@ curl -X POST http://localhost:3000/api/internal/users \
 ```
 
 ### Test Webhook
+
 ```bash
 curl -X POST http://localhost:3000/api/webhooks/user-events \
   -H "Content-Type: application/json" \

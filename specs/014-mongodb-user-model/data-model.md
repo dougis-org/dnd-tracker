@@ -14,6 +14,7 @@ Feature 014 introduces two core MongoDB collections: `users` for persistent user
 ## Collection: `users`
 
 ### Purpose
+
 Persistent user records synchronized via Clerk webhook events. Stores core profile data, metadata, and lifecycle timestamps.
 
 ### Schema Definition
@@ -81,21 +82,25 @@ export interface UserDoc extends Document {
 ### Query Examples
 
 #### Active Users Only (Default)
+
 ```javascript
 db.users.find({ deletedAt: null })
 ```
 
 #### Including Deleted Users (Admin)
+
 ```javascript
 db.users.find({})  // No filter for deletedAt
 ```
 
 #### Lookup by userId
+
 ```javascript
 db.users.findOne({ userId: "user_123" })
 ```
 
 #### Lookup by Email
+
 ```javascript
 db.users.findOne({ email: "user@example.com" })
 ```
@@ -105,6 +110,7 @@ db.users.findOne({ email: "user@example.com" })
 ## Collection: `user_events`
 
 ### Purpose
+
 Immutable event log for all webhook payloads received and processed. Provides audit trail, replay capability, and debugging support.
 
 ### Schema Definition
@@ -378,6 +384,7 @@ db.users.insertOne({ userId: "user2", email: "dup@example.com", displayName: "Us
 ## Data Model Relationships
 
 ### User ↔ UserEvent
+
 - **Relationship**: One-to-many (one user may have multiple events, though events are immutable history)
 - **Cardinality**: 1:N
 - **Foreign Key**: `user_events.userId` → `users.userId` (referential, not enforced in MongoDB)
@@ -389,20 +396,24 @@ db.users.insertOne({ userId: "user2", email: "dup@example.com", displayName: "Us
 ## Design Decisions Rationale
 
 ### Why Soft-Delete?
+
 - Preserves audit trail and data integrity
 - Allows user recovery / GDPR right-to-be-forgotten (latter handled separately, not in this feature)
 - Maintains referential integrity without cascading deletes
 
 ### Why Timestamp-Based Conflict Resolution?
+
 - Handles distributed, eventually-consistent webhook delivery
 - Prevents late-arriving updates from overwriting recent data
 - Logs conflicts for operational debugging
 
 ### Why Immutable Fields?
+
 - Prevents accidental mutation of auth provider identity
 - Maintains consistency with Clerk source of truth
 
 ### Why Separate user_events Collection?
+
 - Decouples event audit trail from operational user records
 - Enables high-volume event ingestion without impacting user queries
 - Supports compliance and replay scenarios

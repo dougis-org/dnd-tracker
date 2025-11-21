@@ -48,11 +48,13 @@ MongoDB Collections:
 ### Indexes
 
 **User Collection**:
+
 - Unique index on `userId`
 - Unique index on `email`
 - Compound index on `(deletedAt, updatedAt)` for efficient soft-delete filtering
 
 **UserEvent Collection**:
+
 - Index on `eventType` for fast event filtering
 - Index on `receivedAt` for time-series queries
 - Compound index on `(userId, status)` for user audit trails
@@ -80,11 +82,13 @@ X-Webhook-Signature: sha256=<hmac_hash>
 ```
 
 **Response**: `200 OK` (fire-and-forget)
+
 - Events stored immediately
 - User upsert/soft-delete processed asynchronously
 - Returns event ID for tracking
 
 **Error Codes**:
+
 - `400` - Validation error (malformed JSON, missing fields)
 - `401` - Signature validation failed
 - `413` - Payload exceeds 1MB limit
@@ -107,10 +111,12 @@ Content-Type: application/json
 ```
 
 **Response**: `201 Created`
+
 - Returns full user object with timestamps
 - Enforces unique userId and email constraints
 
 **Error Codes**:
+
 - `400` - Validation error
 - `409` - Duplicate userId or email
 
@@ -121,9 +127,11 @@ GET /api/internal/users/user_123
 ```
 
 **Response**: `200 OK`
+
 - Returns user object (excludes soft-deleted by default)
 
 **Error Codes**:
+
 - `404` - User not found
 
 #### Update User
@@ -139,11 +147,13 @@ Content-Type: application/json
 ```
 
 **Response**: `200 OK`
+
 - Updates displayName and metadata
 - userId and email are immutable
 - Updates updatedAt timestamp
 
 **Error Codes**:
+
 - `400` - Validation error
 - `404` - User not found
 
@@ -154,11 +164,13 @@ DELETE /api/internal/users/user_123
 ```
 
 **Response**: `204 No Content`
+
 - Sets deletedAt timestamp (soft-delete)
 - User excluded from default queries
 - Event stored in user_events collection
 
 **Error Codes**:
+
 - `404` - User not found
 
 ## Key Features
@@ -295,9 +307,11 @@ npm test -- tests/integration/user.integration.test.ts
 
 3. **Webhook Configuration**
    - Configure external system (Clerk) to send webhooks to:
+
      ```
      https://[your-domain]/api/webhooks/user-events
      ```
+
    - Set HMAC secret to match WEBHOOK_SECRET env var
 
 ### Index Creation
