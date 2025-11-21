@@ -7,10 +7,8 @@ import crypto from 'crypto'
 describe('Error Handling & Validation', () => {
   describe('Webhook Signature Validation (401)', () => {
     it('should reject invalid HMAC-SHA256 signature', () => {
-      // eslint-disable-next-line @typescript-eslint/no-hardcoded-secrets
-      const correctSecret = 'secret123'
-      // eslint-disable-next-line @typescript-eslint/no-hardcoded-secrets
-      const wrongSecret = 'wrongsecret'
+      const correctSecret = 'test-secret-correct'
+      const wrongSecret = 'test-secret-wrong'
       const payload = JSON.stringify({ userId: 'user_123', eventType: 'created' })
 
       const correctSig = crypto.createHmac('sha256', correctSecret).update(payload).digest('hex')
