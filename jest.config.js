@@ -5,14 +5,24 @@ const createJestConfig = nextJest({
 });
 
 const customJestConfig = {
+  // Run the Node pre-test mocks before any modules import mongoose/bson
+  setupFiles: ['<rootDir>/jest.setup-node-mocks.js'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testEnvironment: 'node',
+  // Default to jsdom for DOM tests and @testing-library/user-event
+  testEnvironment: 'jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@fixtures/(.*)$': '<rootDir>/tests/fixtures/$1',
     '^@test-helpers/(.*)$': '<rootDir>/tests/test-helpers/$1',
   },
-  transformIgnorePatterns: ['node_modules/(?!(bson|mongodb|mongoose)/)'],
+  // Allow transforming ESM modules in node_modules (bson, mongodb, mongoose)
+  transformIgnorePatterns: ['/node_modules/(?!bson|mongodb|mongoose)'],
+  // Ensure .mjs modules in node_modules (e.g., bson) are transformed by babel-jest
+  // Use babel-jest to transform JS/TS/MJS files (including ESM in node_modules)
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
+  },
+  // No explicit extensionsToTreatAsEsm necessary; Jest treats .mjs as ESM by default
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',

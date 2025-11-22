@@ -1,5 +1,21 @@
 import '@testing-library/jest-dom';
 
+// Ensure navigator and clipboard exist for user-event and DOM interactions in tests
+if (typeof global.navigator === 'undefined') {
+  global.navigator = {
+    userAgent: 'node.js',
+    clipboard: {
+      writeText: jest.fn(),
+      readText: jest.fn().mockResolvedValue(''),
+    },
+  };
+} else if (!global.navigator.clipboard) {
+  global.navigator.clipboard = {
+    writeText: jest.fn(),
+    readText: jest.fn().mockResolvedValue(''),
+  };
+}
+
 // Setup Web API globals for Next.js server code
 setupWebApiGlobals();
 
@@ -115,7 +131,47 @@ function mockBson() {
  */
 function mockMongooseIfServer() {
   if (typeof window === 'undefined') {
-    jest.mock('mongoose', () => createMongooseMock());
+    jest.mock('mongoose', () => {
+      const Schema = jest.fn(function () {
+        return {
+          methods: {},
+          statics: {},
+          index: jest.fn(),
+          pre: jest.fn(),
+          post: jest.fn(),
+        };
+      });
+
+      Schema.Types = {
+        ObjectId: jest.fn(),
+        Mixed: jest.fn(),
+        String: String,
+        Number: Number,
+        Boolean: Boolean,
+        Date: Date,
+        Array: Array,
+      };
+
+      const mockModel = jest.fn((...args) => ({
+        find: jest.fn(),
+        findById: jest.fn(),
+        create: jest.fn(),
+        updateOne: jest.fn(),
+        deleteOne: jest.fn(),
+        findAllByOwner: jest.fn(),
+        _name: args[0],
+      }));
+
+      return {
+        Schema,
+        Document: jest.fn(),
+        model: mockModel,
+        Types: {
+          ObjectId: jest.fn((id) => id),
+        },
+        connect: jest.fn(),
+      };
+    });
   }
 }
 
@@ -156,44 +212,4 @@ function setupLocalStorage() {
 /**
  * Create mongoose mock object
  */
-function createMongooseMock() {
-  const Schema = jest.fn(function () {
-    return {
-      methods: {},
-      statics: {},
-      index: jest.fn(),
-      pre: jest.fn(),
-      post: jest.fn(),
-    };
-  });
-
-  Schema.Types = {
-    ObjectId: jest.fn(),
-    Mixed: jest.fn(),
-    String: String,
-    Number: Number,
-    Boolean: Boolean,
-    Date: Date,
-    Array: Array,
-  };
-
-  const mockModel = jest.fn((...args) => ({
-    find: jest.fn(),
-    findById: jest.fn(),
-    create: jest.fn(),
-    updateOne: jest.fn(),
-    deleteOne: jest.fn(),
-    findAllByOwner: jest.fn(),
-    _name: args[0],
-  }));
-
-  return {
-    Schema,
-    Document: jest.fn(),
-    model: mockModel,
-    Types: {
-      ObjectId: jest.fn((id) => id),
-    },
-    connect: jest.fn(),
-  };
-}
+// Note: createMongooseMock is inlined in mockMongooseIfServer to avoid jest.mock factory referencing
