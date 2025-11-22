@@ -334,10 +334,12 @@ describe('Feature 014 Integration Tests - CRUD Endpoints', () => {
       // Simulate conflict resolution: skip update if event timestamp <= current updatedAt
       if (now > user.updatedAt) {
         // Update would be applied
-        expect(now).toBeGreaterThan(user.updatedAt);
+        expect(now.getTime()).toBeGreaterThan(user.updatedAt.getTime());
       } else {
         // Update would be skipped (late-arriving)
-        expect(lateEvent.receivedAt).toBeLessThanOrEqual(user.updatedAt);
+        expect(lateEvent.receivedAt.getTime()).toBeLessThanOrEqual(
+          user.updatedAt.getTime()
+        );
       }
     });
 
