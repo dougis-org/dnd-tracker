@@ -135,7 +135,7 @@ const UserEventSchema = new Schema<UserEventDoc>(
     },
     error: String,
   },
-  { _id: true }
+  { _id: true, collection: 'user_events' }
 );
 
 // Compound indexes for efficient querying

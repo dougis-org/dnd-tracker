@@ -5,23 +5,7 @@ import {
   validateUpdateUser,
   formatValidationErrors,
 } from '@/lib/schemas/webhook.schema';
-
-/**
- * Structured logging helper
- */
-function logStructured(
-  level: 'info' | 'warn' | 'error',
-  message: string,
-  data?: Record<string, unknown>
-) {
-  const log = {
-    level,
-    timestamp: new Date().toISOString(),
-    message,
-    ...data,
-  };
-  console.log(JSON.stringify(log));
-}
+import { logStructured } from '@/lib/utils/logger';
 
 /**
  * GET /api/internal/users/[userId]

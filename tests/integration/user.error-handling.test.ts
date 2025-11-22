@@ -7,7 +7,9 @@ import crypto from 'crypto'
 describe('Error Handling & Validation', () => {
   describe('Webhook Signature Validation (401)', () => {
     it('should reject invalid HMAC-SHA256 signature', () => {
+      // codacy-disable-next-line
       const correctSecret = 'test-secret-correct'
+      // codacy-disable-next-line
       const wrongSecret = 'test-secret-wrong'
       const payload = JSON.stringify({ userId: 'user_123', eventType: 'created' })
 

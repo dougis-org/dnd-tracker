@@ -1,40 +1,31 @@
 import mongoose from 'mongoose';
+import { logStructured } from '@/lib/utils/logger';
 
 /**
- * Global cache for MongoDB connection to prevent connection storms in serverless environments
- * Reuses existing connection across invocations
+ * Global cache for MongoDB connection promise to prevent connection storms
+ * Caches the promise itself, not just the connection object
+ * Ensures mongoose.connect() is called only once even with concurrent requests
  */
-let cachedConnection: mongoose.Connection | null = null;
-
-/**
- * Logs structured messages in JSON format
- */
-function logStructured(
-  level: 'info' | 'warn' | 'error',
-  message: string,
-  data?: Record<string, unknown>
-) {
-  const log = {
-    level,
-    timestamp: new Date().toISOString(),
-    message,
-    ...data,
-  };
-  console.log(JSON.stringify(log));
-}
+let cachedConnectionPromise: Promise<mongoose.Connection> | null = null;
 
 /**
  * Connects to MongoDB and returns cached connection
- * Prevents connection storms in serverless environments by reusing existing connections
+ * Prevents connection storms in serverless environments by caching the connection promise
+ * Ensures mongoose.connect() is called only once even with concurrent invocations
  *
  * @returns MongoDB connection instance
  * @throws Error if MONGODB_URI is not set
  */
 export async function connectToMongo(): Promise<mongoose.Connection> {
-  // Return cached connection if already connected
-  if (cachedConnection && cachedConnection.readyState === 1) {
-    logStructured('info', 'Using cached MongoDB connection');
-    return cachedConnection;
+  // Return cached promise if connection attempt already in progress
+  if (cachedConnectionPromise) {
+    return cachedConnectionPromise;
+  }
+
+  // Check if already connected
+  if (mongoose.connection.readyState === 1) {
+    logStructured('info', 'Using existing MongoDB connection');
+    return mongoose.connection;
   }
 
   const mongoUri = process.env.MONGODB_URI;
@@ -44,41 +35,42 @@ export async function connectToMongo(): Promise<mongoose.Connection> {
     throw new Error('MONGODB_URI environment variable is required');
   }
 
-  try {
-    logStructured('info', 'Connecting to MongoDB', {
-      uri: mongoUri.replace(/:[^:]*@/, ':***@'),
-    });
+  // Cache the connection promise before awaiting
+  cachedConnectionPromise = (async () => {
+    try {
+      logStructured('info', 'Connecting to MongoDB', {
+        uri: mongoUri.replace(/:[^:]*@/, ':***@'),
+      });
 
-    // Connect or reuse existing connection
-    const conn =
-      mongoose.connection.readyState === 0
-        ? await mongoose.connect(mongoUri, {
-            dbName: process.env.MONGODB_DB_NAME || 'dnd-tracker',
-          })
-        : mongoose;
+      await mongoose.connect(mongoUri, {
+        dbName: process.env.MONGODB_DB_NAME || 'dnd-tracker',
+      });
 
-    cachedConnection = conn.connection;
+      logStructured('info', 'Successfully connected to MongoDB', {
+        dbName: process.env.MONGODB_DB_NAME || 'dnd-tracker',
+      });
 
-    logStructured('info', 'Successfully connected to MongoDB', {
-      dbName: process.env.MONGODB_DB_NAME || 'dnd-tracker',
-    });
+      return mongoose.connection;
+    } catch (err) {
+      // Clear cache on error so retry is possible
+      cachedConnectionPromise = null;
+      logStructured('error', 'Failed to connect to MongoDB', {
+        error: err instanceof Error ? err.message : String(err),
+      });
+      throw err;
+    }
+  })();
 
-    return cachedConnection;
-  } catch (err) {
-    logStructured('error', 'Failed to connect to MongoDB', {
-      error: err instanceof Error ? err.message : String(err),
-    });
-    throw err;
-  }
+  return cachedConnectionPromise;
 }
 
 /**
  * Disconnects from MongoDB (primarily for testing)
  */
 export async function disconnectFromMongo(): Promise<void> {
-  if (cachedConnection) {
+  if (mongoose.connection.readyState !== 0) {
     await mongoose.disconnect();
-    cachedConnection = null;
+    cachedConnectionPromise = null;
     logStructured('info', 'Disconnected from MongoDB');
   }
 }

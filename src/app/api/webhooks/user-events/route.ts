@@ -1,27 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { connectToMongo } from '@/lib/db/connection';
-import UserModel, { UserEventModel } from '@/lib/models/user';
+import UserModel, { UserEventModel, type UserEventDoc } from '@/lib/models/user';
 import {
   validateWebhookEvent,
   formatValidationErrors,
+  type WebhookEventRequest,
 } from '@/lib/schemas/webhook.schema';
+import { logStructured } from '@/lib/utils/logger';
 
 /**
- * Structured logging helper
+ * Compare two buffers using timing-safe equality
  */
-function logStructured(
-  level: 'info' | 'warn' | 'error',
-  message: string,
-  data?: Record<string, unknown>
-) {
-  const log = {
-    level,
-    timestamp: new Date().toISOString(),
-    message,
-    ...data,
-  };
-  console.log(JSON.stringify(log));
+function compareSignatures(hash: string, expectedHash: string): boolean {
+  const bufferHash = Buffer.from(hash);
+  const bufferExpected = Buffer.from(expectedHash);
+
+  if (bufferHash.length !== bufferExpected.length) {
+    logStructured(
+      'warn',
+      'Webhook signature validation failed - hash length mismatch'
+    );
+    return false;
+  }
+
+  try {
+    return crypto.timingSafeEqual(bufferHash, bufferExpected);
+  } catch (err) {
+    logStructured('error', 'Webhook signature validation failed', {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return false;
+  }
 }
 
 /**
@@ -33,12 +43,10 @@ function validateSignature(
   secret: string | undefined
 ): boolean {
   if (!secret) {
-    // Secret not set: signature validation disabled
     if (process.env.NODE_ENV !== 'test') {
       logStructured(
         'warn',
-        'WEBHOOK_SECRET not set - signature validation disabled',
-        {}
+        'WEBHOOK_SECRET not set - signature validation disabled'
       );
     }
     return true;
@@ -53,14 +61,10 @@ function validateSignature(
   }
 
   const parts = signature.split('=');
-  const algorithm = parts[0];
-  const hash = parts[1];
-
-  if (algorithm !== 'sha256') {
+  if (parts.length !== 2 || parts[0] !== 'sha256') {
     logStructured(
       'warn',
-      'Webhook signature validation failed - unsupported algorithm',
-      { algorithm }
+      'Webhook signature validation failed - invalid format'
     );
     return false;
   }
@@ -69,24 +73,15 @@ function validateSignature(
   hmac.update(body);
   const expectedHash = hmac.digest('hex');
 
-  const bufferHash = Buffer.from(hash);
-  const bufferExpected = Buffer.from(expectedHash);
-
-  let valid = false;
-  try {
-    valid = crypto.timingSafeEqual(bufferHash, bufferExpected);
-  } catch {
-    valid = false;
-  }
-
-  if (!valid) {
+  if (!compareSignatures(parts[1], expectedHash)) {
     logStructured(
       'warn',
       'Webhook signature validation failed - hash mismatch'
     );
+    return false;
   }
 
-  return valid;
+  return true;
 }
 
 /**
@@ -255,97 +250,10 @@ export async function POST(req: NextRequest) {
       duration_ms: Date.now() - startTime,
     });
 
-    // Process event asynchronously (don't block response)
-    try {
-      if (event.eventType === 'created') {
-        // Create new user
-        await UserModel.create({
-          userId: event.user.userId,
-          email: event.user.email || '',
-          displayName: event.user.displayName || '',
-          metadata: event.user.metadata || {},
-        });
-
-        logStructured('info', 'User created from webhook', {
-          userId: event.user.userId,
-        });
-      } else if (event.eventType === 'updated') {
-        // Update existing user (timestamp-based conflict resolution)
-        const currentUser = await UserModel.findOne({
-          userId: event.user.userId,
-        });
-
-        if (currentUser) {
-          if (eventTimestamp > currentUser.updatedAt) {
-            // Update is newer, apply changes
-            if (event.user.displayName) {
-              currentUser.displayName = event.user.displayName;
-            }
-            if (event.user.metadata) {
-              currentUser.metadata = event.user.metadata;
-            }
-            await currentUser.save();
-
-            logStructured('info', 'User updated from webhook', {
-              userId: event.user.userId,
-            });
-          } else {
-            // Late-arriving event, skip upsert but store event
-            logStructured(
-              'warn',
-              'Webhook update skipped - late-arriving event',
-              {
-                userId: event.user.userId,
-                eventTimestamp: eventTimestamp.toISOString(),
-                currentUpdatedAt: currentUser.updatedAt.toISOString(),
-              }
-            );
-          }
-        } else {
-          // User doesn't exist, create it
-          await UserModel.create({
-            userId: event.user.userId,
-            email: event.user.email || '',
-            displayName: event.user.displayName || '',
-            metadata: event.user.metadata || {},
-          });
-
-          logStructured('info', 'User created from webhook (updated event)', {
-            userId: event.user.userId,
-          });
-        }
-      } else if (event.eventType === 'deleted') {
-        // Soft-delete user
-        const user = await UserModel.findOne({ userId: event.user.userId });
-
-        if (user) {
-          user.deletedAt = eventTimestamp;
-          await user.save();
-
-          logStructured('info', 'User soft-deleted from webhook', {
-            userId: event.user.userId,
-          });
-        }
-      }
-
-      // Mark event as processed
-      storedEvent.status = 'processed';
-      storedEvent.processedAt = new Date();
-      await storedEvent.save();
-    } catch (err) {
-      // Log processing error but don't block response
-      logStructured('error', 'Failed to process webhook event', {
-        eventId: storedEvent._id,
-        error: err instanceof Error ? err.message : String(err),
-      });
-
-      // Mark event as failed
-      storedEvent.status = 'failed';
-      storedEvent.error = err instanceof Error ? err.message : String(err);
-      await storedEvent.save();
-    }
-
     // Return success immediately (fire-and-forget)
+    // Process event asynchronously in background
+    void processWebhookEvent(event, storedEvent, eventTimestamp);
+
     return NextResponse.json(
       {
         success: true,
@@ -369,5 +277,104 @@ export async function POST(req: NextRequest) {
       },
       { status: 500 }
     );
+  }
+}
+
+/**
+ * Process webhook event asynchronously (background task)
+ * Does not block webhook response
+ */
+async function processWebhookEvent(
+  event: WebhookEventRequest,
+  storedEvent: UserEventDoc,
+  eventTimestamp: Date
+): Promise<void> {
+  try {
+    if (event.eventType === 'created') {
+      // Create new user
+      await UserModel.create({
+        userId: event.user.userId,
+        email: event.user.email || '',
+        displayName: event.user.displayName || '',
+        metadata: event.user.metadata || {},
+      });
+
+      logStructured('info', 'User created from webhook', {
+        userId: event.user.userId,
+      });
+    } else if (event.eventType === 'updated') {
+      // Update existing user (timestamp-based conflict resolution)
+      const currentUser = await UserModel.findOne({
+        userId: event.user.userId,
+      });
+
+      if (currentUser) {
+        if (eventTimestamp > currentUser.updatedAt) {
+          // Update is newer, apply changes
+          if (event.user.displayName !== undefined) {
+            currentUser.displayName = event.user.displayName;
+          }
+          if (event.user.metadata !== undefined) {
+            currentUser.metadata = event.user.metadata;
+          }
+          await currentUser.save();
+
+          logStructured('info', 'User updated from webhook', {
+            userId: event.user.userId,
+          });
+        } else {
+          // Late-arriving event, skip upsert but store event
+          logStructured(
+            'warn',
+            'Webhook update skipped - late-arriving event',
+            {
+              userId: event.user.userId,
+              eventTimestamp: eventTimestamp.toISOString(),
+              currentUpdatedAt: currentUser.updatedAt.toISOString(),
+            }
+          );
+        }
+      } else {
+        // User doesn't exist, create it
+        await UserModel.create({
+          userId: event.user.userId,
+          email: event.user.email || '',
+          displayName: event.user.displayName || '',
+          metadata: event.user.metadata || {},
+        });
+
+        logStructured('info', 'User created from webhook (updated event)', {
+          userId: event.user.userId,
+        });
+      }
+    } else if (event.eventType === 'deleted') {
+      // Soft-delete user
+      const user = await UserModel.findOne({ userId: event.user.userId });
+
+      if (user) {
+        user.deletedAt = eventTimestamp;
+        await user.save();
+
+        logStructured('info', 'User soft-deleted from webhook', {
+          userId: event.user.userId,
+        });
+      }
+    }
+
+    // Mark event as processed
+    storedEvent.status = 'processed';
+    storedEvent.processedAt = new Date();
+    await storedEvent.save();
+  } catch (err) {
+    // Log processing error but don't block response
+    logStructured('error', 'Failed to process webhook event', {
+      eventId: storedEvent._id,
+      error: err instanceof Error ? err.message : String(err),
+    });
+
+    // Mark event as failed
+    storedEvent.status = 'failed';
+    storedEvent.error = err instanceof Error ? err.message : String(err);
+    await storedEvent.save();
   }
 }

@@ -5,23 +5,7 @@ import {
   validateCreateUser,
   formatValidationErrors,
 } from '@/lib/schemas/webhook.schema';
-
-/**
- * Structured logging helper
- */
-function logStructured(
-  level: 'info' | 'warn' | 'error',
-  message: string,
-  data?: Record<string, unknown>
-) {
-  const log = {
-    level,
-    timestamp: new Date().toISOString(),
-    message,
-    ...data,
-  };
-  console.log(JSON.stringify(log));
-}
+import { logStructured } from '@/lib/utils/logger';
 
 /**
  * POST /api/internal/users
@@ -93,7 +77,7 @@ export async function POST(req: NextRequest) {
       const user = await UserModel.create({
         userId: userData.userId,
         email: userData.email,
-        displayName: userData.displayName || '',
+        displayName: userData.displayName,
         metadata: userData.metadata || {},
       });
 

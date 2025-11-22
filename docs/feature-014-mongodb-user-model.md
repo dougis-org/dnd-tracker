@@ -57,7 +57,10 @@ MongoDB Collections:
 
 - Index on `eventType` for fast event filtering
 - Index on `receivedAt` for time-series queries
-- Compound index on `(userId, status)` for user audit trails
+- Index on `status` for finding failed/pending events
+- Compound index on `(eventType, receivedAt)` for filtering by event type + recency
+- Compound index on `(status, receivedAt)` for finding failed/pending events by recency
+- Compound index on `(userId, receivedAt)` for user audit trails
 
 ## API Endpoints
 
