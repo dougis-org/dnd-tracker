@@ -16,7 +16,10 @@ const customJestConfig = {
     '^@test-helpers/(.*)$': '<rootDir>/tests/test-helpers/$1',
   },
   // Allow transforming ESM modules in node_modules (bson, mongodb, mongoose)
-  transformIgnorePatterns: ['/node_modules/(?!bson|mongodb|mongoose)'],
+  // Use a more permissive pattern that matches nested node_modules paths
+  // e.g. node_modules/mongodb/node_modules/bson
+  transformIgnorePatterns: ['node_modules/(?!(mongodb|bson|mongoose)/)'],
+  extensionsToTreatAsEsm: ['.mjs'],
   // Ensure .mjs modules in node_modules (e.g., bson) are transformed by babel-jest
   // Use babel-jest to transform JS/TS/MJS files (including ESM in node_modules)
   transform: {
