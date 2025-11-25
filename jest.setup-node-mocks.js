@@ -1,3 +1,5 @@
+/* eslint-env node, jest */
+
 // CommonJS pre-test mocks to load before any module imports
 
 // This ensures mongoose/bson are mocked so Jest doesn't attempt to parse ESM .mjs files
@@ -186,21 +188,26 @@ jest.mock('mongoose', () => {
       findAllByOwner: jest.fn(),
       _name: name,
       collection: {
-        getIndexes: async () => ({
-          // Common User indexes
-          userId_1: { key: { userId: 1 }, unique: true },
-          email_1: { key: { email: 1 }, unique: true },
-          'updatedAt_-1': { key: { updatedAt: -1 } },
-          'deletedAt_1_updatedAt_-1': { key: { deletedAt: 1, updatedAt: -1 } },
-          // UserEvent indexes
-          eventType_1: { key: { eventType: 1 } },
-          'receivedAt_-1': { key: { receivedAt: -1 } },
-          'eventType_1_receivedAt_-1': {
-            key: { eventType: 1, receivedAt: -1 },
-          },
-          'status_1_receivedAt_-1': { key: { status: 1, receivedAt: -1 } },
-          'userId_1_receivedAt_-1': { key: { userId: 1, receivedAt: -1 } },
-        }),
+        getIndexes: async () => {
+          const indexes = {
+            // Common User indexes
+            userId_1: { key: { userId: 1 }, unique: true },
+            email_1: { key: { email: 1 }, unique: true },
+            'updatedAt_-1': { key: { updatedAt: -1 } },
+            'deletedAt_1_updatedAt_-1': {
+              key: { deletedAt: 1, updatedAt: -1 },
+            },
+            // UserEvent indexes
+            eventType_1: { key: { eventType: 1 } },
+            'receivedAt_-1': { key: { receivedAt: -1 } },
+            'eventType_1_receivedAt_-1': {
+              key: { eventType: 1, receivedAt: -1 },
+            },
+            'status_1_receivedAt_-1': { key: { status: 1, receivedAt: -1 } },
+            'userId_1_receivedAt_-1': { key: { userId: 1, receivedAt: -1 } },
+          };
+          return indexes;
+        },
       },
     };
   });
