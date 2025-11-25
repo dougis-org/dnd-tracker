@@ -4,9 +4,10 @@
  * Called after client-side sign-out to ensure session cleanup
  */
 
-import { auth } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-import { signOutResponseSchema } from '@/lib/auth/validation';
+import { auth } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
+import { signOutResponseSchema } from '@/lib/auth/validation'
+import { mockAuthEnabledServer } from '@/lib/auth/authConfig'
 
 /**
  * POST handler - signs out the user and clears their session
@@ -14,8 +15,17 @@ import { signOutResponseSchema } from '@/lib/auth/validation';
  */
 export async function POST() {
   try {
+    if (mockAuthEnabledServer) {
+      const response = signOutResponseSchema.parse({
+        success: true,
+        message: 'Mock sign-out complete',
+      })
+
+      return NextResponse.json(response, { status: 200 })
+    }
+
     // Verify user is authenticated before signing out
-    const { userId } = await auth();
+    const { userId } = await auth()
 
     if (!userId) {
       // Not authenticated, return success (idempotent behavior)

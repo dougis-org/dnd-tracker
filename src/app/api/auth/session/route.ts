@@ -4,10 +4,12 @@
  * Server-side endpoint for integration tests and SSR pages
  */
 
-import { auth } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-import { sessionResponseSchema } from '@/lib/auth/validation';
-import type { UserProfile } from '@/types/auth';
+import { auth } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
+import { sessionResponseSchema } from '@/lib/auth/validation'
+import type { UserProfile } from '@/types/auth'
+import { mockAuthEnabledServer } from '@/lib/auth/authConfig'
+import { mockUserProfile } from '@/lib/auth/mockSession'
 
 /**
  * GET handler - returns current user session
@@ -15,8 +17,17 @@ import type { UserProfile } from '@/types/auth';
  */
 export async function GET() {
   try {
+    if (mockAuthEnabledServer) {
+      const response = sessionResponseSchema.parse({
+        isAuthenticated: true,
+        user: mockUserProfile,
+      })
+
+      return NextResponse.json(response, { status: 200 })
+    }
+
     // Get the authenticated session from Clerk
-    const { userId } = await auth();
+    const { userId } = await auth()
 
     // If not authenticated, return minimal response
     if (!userId) {

@@ -7,11 +7,47 @@
  */
 
 import { SignIn } from '@clerk/nextjs'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { mockAuthEnabledClient } from '@/lib/auth/authConfig'
+import { setMockAuthState } from '@/lib/auth/mockAuthClient'
 
 export default function SignInPage() {
   const searchParams = useSearchParams()
-  const returnTo = searchParams.get('return_to')
+  const router = useRouter()
+  const redirectUrl =
+    searchParams.get('redirect_url') || searchParams.get('return_to') || '/'
+
+  if (mockAuthEnabledClient) {
+    const handleMockSignIn = () => {
+      setMockAuthState('signed-in')
+      router.push(redirectUrl)
+      router.refresh()
+    }
+
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="w-full max-w-md space-y-4 rounded-lg border border-border bg-card p-6 shadow-lg">
+          <h1 className="text-center text-3xl font-bold">Mock Sign In</h1>
+          <p className="text-center text-muted-foreground">
+            Mock authentication is enabled. Continue as the default demo user to
+            explore protected areas of the app.
+          </p>
+          <Button
+            className="w-full"
+            size="lg"
+            data-testid="mock-sign-in-button"
+            onClick={handleMockSignIn}
+          >
+            Continue as Mock User
+          </Button>
+          <p className="text-center text-xs text-muted-foreground">
+            You&apos;ll be redirected to {redirectUrl}
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -44,7 +80,7 @@ export default function SignInPage() {
                 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
             },
           }}
-          redirectUrl={returnTo || '/'}
+          redirectUrl={redirectUrl}
           signUpUrl="/sign-up"
         />
       </div>

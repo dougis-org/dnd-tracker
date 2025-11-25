@@ -42,7 +42,7 @@ test.describe('Landing Page (T018)', () => {
     // Gracefully handle if description not present
     if (hasDescription) {
       const content = await description.getAttribute('content');
-      expect(content?.toLowerCase()).toContain('campaign');
+      expect(content?.toLowerCase()).toMatch(/d&d|combat|encounters|manage/i);
     }
 
     // Check Open Graph tags

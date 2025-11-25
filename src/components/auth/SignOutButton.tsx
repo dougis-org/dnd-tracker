@@ -10,6 +10,8 @@ import { useClerk } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { mockAuthEnabledClient } from '@/lib/auth/authConfig'
+import { setMockAuthState } from '@/lib/auth/mockAuthClient'
 
 interface SignOutButtonProps {
   className?: string
@@ -22,15 +24,37 @@ export function SignOutButton({
   variant = 'ghost',
   size = 'sm',
 }: SignOutButtonProps) {
-  const { signOut } = useClerk()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+
+  if (mockAuthEnabledClient) {
+    const handleMockSignOut = async () => {
+      setIsLoading(true)
+      setMockAuthState('signed-out')
+      router.push('/sign-in')
+      router.refresh()
+      setIsLoading(false)
+    }
+
+    return (
+      <Button
+        onClick={handleMockSignOut}
+        disabled={isLoading}
+        variant={variant}
+        size={size}
+        className={className}
+      >
+        {isLoading ? 'Signing out...' : 'Sign Out'}
+      </Button>
+    )
+  }
+
+  const { signOut } = useClerk()
 
   const handleSignOut = async () => {
     try {
       setIsLoading(true)
 
-      // Call server-side sign-out endpoint to clear session
       try {
         await fetch('/api/auth/sign-out', {
           method: 'POST',
@@ -38,13 +62,10 @@ export function SignOutButton({
         })
       } catch (error) {
         console.error('Error calling server sign-out endpoint:', error)
-        // Continue with client-side sign-out even if server call fails
       }
 
-      // Sign out using Clerk client SDK
       await signOut({ redirectUrl: '/' })
 
-      // Ensure we redirect to home page
       router.push('/')
       router.refresh()
     } catch (error) {
