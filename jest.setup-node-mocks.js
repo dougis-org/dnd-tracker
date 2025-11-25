@@ -1,4 +1,6 @@
 /* eslint-env node, jest */
+/* eslint no-redeclare: "off" */
+/* global jest, process */
 
 // CommonJS pre-test mocks to load before any module imports
 
