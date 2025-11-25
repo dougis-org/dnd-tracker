@@ -13,9 +13,9 @@ import {
 } from '@/lib/db/connection';
 import { createMockRequest } from '@test-helpers/request-helpers';
 
-let UserModel: any;
-let UserEventModel: any;
-let POST: any;
+let UserModel: unknown;
+let UserEventModel: unknown;
+let POST: (req: Request) => Promise<Response> | unknown;
 
 // Helper - poll for a predicate until timeout
 async function waitFor<T>(
