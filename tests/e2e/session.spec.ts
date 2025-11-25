@@ -4,6 +4,7 @@
  */
 
 import { test, expect } from '@playwright/test'
+import { mockSignOut } from './test-data/mock-auth'
 
 // Helpers for session tests
 const testURLs = {
@@ -15,6 +16,10 @@ const testURLs = {
 }
 
 test.describe('Session Persistence (E2E)', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockSignOut(page)
+  })
+
   test('should maintain session across page refresh', async ({ page }) => {
     await page.goto(testURLs.home)
     const initialUrl = page.url()
@@ -44,7 +49,7 @@ test.describe('Session Persistence (E2E)', () => {
   test('should validate session API endpoint', async ({ page }) => {
     const response = await page.request.get(testURLs.sessionApi)
 
-    expect(response.ok).toBe(true)
+    expect(response.ok()).toBe(true)
     const data = await response.json()
     expect(data).toHaveProperty('isAuthenticated')
   })
@@ -52,7 +57,7 @@ test.describe('Session Persistence (E2E)', () => {
   test('should validate sign-out API endpoint', async ({ page }) => {
     const response = await page.request.post(testURLs.signOutApi)
 
-    expect(response.ok).toBe(true)
+    expect(response.ok()).toBe(true)
     const data = await response.json()
     expect(data).toHaveProperty('success')
   })

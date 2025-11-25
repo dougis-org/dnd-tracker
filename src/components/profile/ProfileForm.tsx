@@ -115,11 +115,13 @@ export default function ProfileForm({
   };
 
   return (
-    <Card data-testid={testId}>
-      <CardHeader>
-        <CardTitle>User Profile</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <div>
+      <h1 className="text-4xl font-bold mb-8">Profile</h1>
+      <Card data-testid={testId}>
+        <CardHeader>
+          <CardTitle>User Profile</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
         {/* Save Message */}
         {saveMessage && (
           <div
@@ -137,6 +139,7 @@ export default function ProfileForm({
         <div className="space-y-2">
           <label className="text-sm font-medium">Name</label>
           <Input
+            name="name"
             value={profile.name}
             onChange={handleProfileChange('name')}
             onBlur={handleBlur('name')}
@@ -150,6 +153,7 @@ export default function ProfileForm({
         <div className="space-y-2">
           <label className="text-sm font-medium">Email</label>
           <Input
+            name="email"
             type="email"
             value={profile.email}
             onChange={handleProfileChange('email')}
@@ -207,6 +211,7 @@ export default function ProfileForm({
           {isSaving ? 'Saving...' : 'Save Changes'}
         </Button>
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 }

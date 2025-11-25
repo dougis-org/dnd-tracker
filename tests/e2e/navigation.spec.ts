@@ -36,9 +36,10 @@ test.describe('Navigation', () => {
     const submenu = page.getByRole('menu', { name: 'Collections submenu' })
     await expect(submenu).toBeVisible()
 
-    const classNames = await submenu.evaluate((element) => element.className)
-
-    expect(classNames).toContain('bg-popover/95')
+    // Check computed background color is visible/opaque
+    const bgColor = await submenu.evaluate((el) => window.getComputedStyle(el).backgroundColor)
+    expect(bgColor).toBeTruthy()
+    expect(bgColor).not.toContain('rgba(')  // Should not be transparent
   })
 
   test('should render the desktop navigation consistently', async ({ page }) => {

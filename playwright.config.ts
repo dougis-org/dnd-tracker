@@ -21,9 +21,9 @@ export default defineConfig({
   ],
   // The web server for E2E tests runs on port 3002 to avoid interfering with local development on port 3000.
   webServer: {
-    command: 'PORT=3002 NEXT_PUBLIC_FEATURE_LANDING=true npm run dev',
+    command: 'PORT=3002 NEXT_PUBLIC_FEATURE_LANDING=true NEXT_PUBLIC_ENABLE_MOCK_AUTH=true npm run dev',
     url: 'http://localhost:3002',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },
-});
+})

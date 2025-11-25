@@ -7,12 +7,12 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  getSubscription,
-  getUsageMetrics,
-  getAvailablePlans,
-} from '@/lib/adapters/subscriptionAdapter';
 import type { SubscriptionResponse } from '@/lib/schemas/subscriptionSchema';
+import {
+  createDefaultSubscription,
+  createDefaultUsageMetrics,
+  createDefaultPlans,
+} from '@/lib/adapters/subscriptionDefaults';
 
 export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
@@ -20,12 +20,11 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     // For MVP, use a mock userId
     const userId = 'user-123';
 
-    // Fetch subscription data in parallel for better performance
-    const [subscription, usageMetrics, availablePlans] = await Promise.all([
-      getSubscription(userId),
-      getUsageMetrics(userId),
-      getAvailablePlans(),
-    ]);
+    // Since subscriptionAdapter is client-only, return mock data for now
+    // This will be replaced with real server-side fetching in a future feature
+    const subscription = createDefaultSubscription(userId);
+    const usageMetrics = createDefaultUsageMetrics(userId);
+    const availablePlans = createDefaultPlans();
 
     const response: SubscriptionResponse = {
       subscription,

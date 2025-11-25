@@ -8,7 +8,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@clerk/nextjs'
+import { useAuth } from '@/components/auth/useAuth'
 
 interface ProtectedRouteGuardProps {
   children: React.ReactNode
@@ -32,28 +32,24 @@ export function ProtectedRouteGuard({
   children,
   requiredRole,
 }: ProtectedRouteGuardProps) {
-  const { isLoaded, userId } = useAuth()
+  const session = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    // Wait for auth to load
-    if (!isLoaded) return
+    if (session.isLoading) return
 
-    // Redirect if not authenticated
-    if (!userId) {
-      router.push(`/sign-in?redirect_url=${encodeURIComponent(window.location.pathname)}`)
+    if (!session.isAuthenticated) {
+      const redirectUrl = `/sign-in?redirect_url=${encodeURIComponent(window.location.pathname)}`
+      router.replace(redirectUrl)
       return
     }
 
-    // TODO: Add role-based access control if needed
     if (requiredRole) {
-      // Handle role checking if required
       console.warn('Role-based access control not yet implemented')
     }
-  }, [isLoaded, userId, router, requiredRole])
+  }, [session.isLoading, session.isAuthenticated, router, requiredRole])
 
-  // Show loading state while auth is being checked
-  if (!isLoaded) {
+  if (session.isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -61,8 +57,7 @@ export function ProtectedRouteGuard({
     )
   }
 
-  // Don't render children if not authenticated (prevent flash)
-  if (!userId) {
+  if (!session.isAuthenticated) {
     return null
   }
 
