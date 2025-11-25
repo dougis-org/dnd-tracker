@@ -33,17 +33,52 @@ module.exports = async function globalTeardown() {
       // them to avoid lingering handles.
       try {
         // Best-effort: if stdio has pending write callbacks, writing an empty
-        // string with a callback will give Node a chance to flush.
-        if (process.stdout && process.stdout.write) {
-          process.stdout.write('', () => {
-            console.log('globalTeardown: flushed stdout');
-          });
+        // string with a callback will give Node a chance to flush. Repeat a
+        // few times to allow asynchronous I/O to complete. As a last resort
+        // we'll destroy stdio handles to force exit if writes stall.
+        async function flushStdio() {
+          const maxAttempts = 10;
+          for (let i = 0; i < maxAttempts; i += 1) {
+            try {
+              const pendingStdout = process.stdout && process.stdout._writableState && process.stdout._writableState.pendingcb;
+              const pendingStderr = process.stderr && process.stderr._writableState && process.stderr._writableState.pendingcb;
+              if (!pendingStdout && !pendingStderr) {
+                console.log('globalTeardown: no pending stdio write callbacks');
+                return;
+              }
+              if (process.stdout && process.stdout.write) {
+                // write and wait for the callback (batching may combine writes)
+                await new Promise((res) => {
+                  process.stdout.write('', () => res());
+                });
+              }
+              if (process.stderr && process.stderr.write) {
+                await new Promise((res) => {
+                  process.stderr.write('', () => res());
+                });
+              }
+              // Give Node a chance to process write callbacks
+              await new Promise((res) => setTimeout(res, 50));
+            } catch (_err) {
+              // ignore per-iteration failures
+            }
+          }
+          // If still pending, attempt to destroy stdio streams to break the
+          // event loop binding; it's safe during teardown since tests are
+          // finished and we're forcing the process to exit if necessary.
+          try {
+            if (process.stdout && typeof process.stdout.destroy === 'function') {
+              try { process.stdout.destroy(); } catch { /* ignored */ }
+            }
+            if (process.stderr && typeof process.stderr.destroy === 'function') {
+              try { process.stderr.destroy(); } catch { /* ignored */ }
+            }
+            console.log('globalTeardown: destroyed stdio handles as last resort');
+          } catch (_err) {
+            // ignore
+          }
         }
-        if (process.stderr && process.stderr.write) {
-          process.stderr.write('', () => {
-            console.log('globalTeardown: flushed stderr');
-          });
-        }
+        await flushStdio();
         // Destroy other socket-like handles that weren't closed by stop
         // commands. Skip stdio fds to avoid interfering with logging.
         handles.forEach((h) => {
@@ -77,11 +112,17 @@ module.exports = async function globalTeardown() {
      
     console.error('globalTeardown error:', err);
   }
-  // If we've reached this point and Jest still hasn't exited due to open
-  // handles, force exit to avoid hanging CI. This is a last-resort safety
-  // measure; ideally we'd find the root cause of open handles above.
+  // After attempts to gracefully close/destroy any open handles, only force
+  // exit if there are still active handles. This avoids masking resource
+  // leaks unless absolutely necessary.
   try {
-    process.exit(0);
+    const remainingHandles = process._getActiveHandles().filter(Boolean);
+    if (remainingHandles.length > 0) {
+      console.log('globalTeardown: remaining handles; forcing process.exit(0)');
+      process.exit(0);
+    } else {
+      console.log('globalTeardown: no remaining handles; not forcing exit');
+    }
   } catch (err) {
     /* ignore */
   }
