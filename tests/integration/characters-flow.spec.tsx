@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 /**
  * Integration tests for character management components
  * T031: Verify components work together within shared CharacterProvider
@@ -16,7 +17,8 @@ jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 
-// Extract detail harness - initialize store in useEffect
+// (pragma moved to top of file)
+import React from 'react'
 function CharacterDetailHarness({ characterId }: { characterId: string }) {
   const store = useCharacterStore();
   const [initialized, setInitialized] = useState(false);

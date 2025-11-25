@@ -19,7 +19,7 @@ const customJestConfig = {
   // Use a more permissive pattern that matches nested node_modules paths
   // e.g. node_modules/mongodb/node_modules/bson
   transformIgnorePatterns: ['node_modules/(?!(mongodb|bson|mongoose)/)'],
-  extensionsToTreatAsEsm: ['.mjs'],
+
   // Ensure .mjs modules in node_modules (e.g., bson) are transformed by babel-jest
   // Use babel-jest to transform JS/TS/MJS files (including ESM in node_modules)
   transform: {
@@ -32,10 +32,10 @@ const customJestConfig = {
     '!src/**/*.stories.{js,jsx,ts,tsx}',
     '!src/**/__tests__/**',
   ],
-  testMatch: [
-    '<rootDir>/tests/unit/**/*.{spec,test}.{js,jsx,ts,tsx}',
-    '<rootDir>/tests/integration/**/*.{spec,test}.{js,jsx,ts,tsx}',
-  ],
+  // Run unit tests only under the default jest config. Integration tests
+  // should be executed using `jest.integration.config.js` which uses a
+  // node environment and real database connections.
+  testMatch: ['<rootDir>/tests/unit/**/*.{spec,test}.{js,jsx,ts,tsx}'],
   testPathIgnorePatterns: [
     '<rootDir>/tests/e2e/',
     '<rootDir>/tests/unit/encounter/encounter.model.test.ts',

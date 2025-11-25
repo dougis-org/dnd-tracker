@@ -10,13 +10,15 @@ const customJestConfig = {
   setupFiles: ['<rootDir>/jest.integration.env.js'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'node',
+  globalSetup: '<rootDir>/tests/test-helpers/global-mongo-setup.js',
+  globalTeardown: '<rootDir>/tests/test-helpers/global-mongo-teardown.js',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@fixtures/(.*)$': '<rootDir>/tests/fixtures/$1',
     '^@test-helpers/(.*)$': '<rootDir>/tests/test-helpers/$1',
   },
   transformIgnorePatterns: ['node_modules/(?!(mongodb|bson|mongoose)/)'],
-  extensionsToTreatAsEsm: ['.mjs'],
+
   transform: {
     '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
   },

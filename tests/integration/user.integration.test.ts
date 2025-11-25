@@ -175,9 +175,12 @@ describe('Feature 014 Integration Tests - CRUD Endpoints', () => {
         displayName: 'Test',
       });
 
-      expect(() => {
-        user.userId = 'new_user_id';
-      }).toThrow();
+      // In Mongoose, assigning to an immutable field does not throw during
+      // assignment — it prevents modification when saving. Ensure the value
+      // remains unchanged after save to confirm immutability semantics.
+      user.userId = 'new_user_id';
+      const updated = await user.save();
+      expect(updated.userId).toBe('immutable_test');
     });
 
     it('should prevent email modification (immutable)', async () => {
@@ -187,9 +190,11 @@ describe('Feature 014 Integration Tests - CRUD Endpoints', () => {
         displayName: 'Test',
       });
 
-      expect(() => {
-        user.email = 'newemail@example.com';
-      }).toThrow();
+      // Email is treated as immutable by the schema; update and ensure save
+      // does not change the email.
+      user.email = 'newemail@example.com';
+      const updated = await user.save();
+      expect(updated.email).toBe('immutable@example.com');
     });
 
     it('should update updatedAt timestamp on modification', async () => {
@@ -387,7 +392,8 @@ describe('Feature 014 Integration Tests - CRUD Endpoints', () => {
 
   describe('Cryptographic Utilities', () => {
     it('should generate valid HMAC-SHA256 signatures', () => {
-      const secret = 'testsecretkey'; // Test constant
+      const secret =
+        process.env.TEST_HMAC_SECRET || crypto.randomBytes(16).toString('hex');
       const payload = JSON.stringify({
         userId: 'user_123',
         eventType: 'created',
@@ -404,8 +410,11 @@ describe('Feature 014 Integration Tests - CRUD Endpoints', () => {
     });
 
     it('should detect invalid HMAC signatures', () => {
-      const correctSecret = 'correctsecret'; // Test constant
-      const wrongSecret = 'wrongsecret'; // Test constant
+      const correctSecret =
+        process.env.CORRECT_HMAC_SECRET ||
+        crypto.randomBytes(16).toString('hex');
+      const wrongSecret =
+        process.env.WRONG_HMAC_SECRET || crypto.randomBytes(16).toString('hex');
       const payload = 'test payload';
 
       const correctHash = crypto

@@ -9,8 +9,13 @@ let POST: (req: Request) => Promise<Response> | unknown;
 // Mock database operations to avoid touching real DB during unit tests
 jest.mock('@/lib/models/user', () => ({
   __esModule: true,
-  default: {},
-  UserEventModel: { create: jest.fn().mockResolvedValue({ _id: 'storedId' }) },
+  // Mock UserModel default export with create mock
+  default: { create: jest.fn().mockResolvedValue({ _id: 'user_stored' }) },
+  // Mock UserEventModel with create and findByIdAndUpdate
+  UserEventModel: {
+    create: jest.fn().mockResolvedValue({ _id: 'storedId' }),
+    findByIdAndUpdate: jest.fn().mockResolvedValue({}),
+  },
 }));
 
 jest.mock('@/lib/db/connection', () => ({

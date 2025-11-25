@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
-import { logStructured } from '@/lib/utils/logger';
+// Use a relative import here to ensure this module can be imported by the
+// Node-based jest global setup/teardown scripts which don't always resolve
+// the TS path alias (`@`). Using a relative path is more resilient to runtime
+// contexts like globalSetup/globalTeardown.
+import { logStructured } from '../utils/logger';
 
 /**
  * Global cache for MongoDB connection promise to prevent connection storms
@@ -44,6 +48,10 @@ export async function connectToMongo(): Promise<mongoose.Connection> {
 
       await mongoose.connect(mongoUri, {
         dbName: process.env.MONGODB_DB_NAME || 'dnd-tracker',
+        // For integration tests running against containers, prefer direct
+        // connections to avoid the driver attempting to resolve internal
+        // container hostnames (which are unreachable from host)
+        directConnection: !!process.env.JEST_INTEGRATION,
       });
 
       logStructured('info', 'Successfully connected to MongoDB', {

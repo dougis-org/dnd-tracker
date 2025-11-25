@@ -1,7 +1,15 @@
-import { describe, it, expect } from '@jest/globals'
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals'
+import { connectToMongo, disconnectFromMongo } from '@/lib/db/connection';
 
 // T015: Integration test for API route skeleton
 describe('Encounters API route (T015)', () => {
+  beforeAll(async () => {
+    await connectToMongo();
+  });
+
+  afterAll(async () => {
+    await disconnectFromMongo();
+  });
   it('should respond to GET /api/encounters (route skeleton)', () => {
     // Route module should export GET and POST handlers
     const route = require('../../../src/app/api/encounters/route')

@@ -5,6 +5,7 @@ import UserModel, {
   UserEventModel,
   type UserEventDoc,
 } from '@/lib/models/user';
+import { execOrAwait } from '@/lib/utils/exec-or-await';
 import {
   validateWebhookEvent,
   formatValidationErrors,
@@ -310,6 +311,9 @@ async function processWebhookEvent(
   storedEvent: UserEventDoc,
   eventTimestamp: Date
 ): Promise<void> {
+  // Use shared helper execOrAwait from utils to support both Mongoose Query
+  // objects (which expose .exec) and Promise/thenables returned by test
+  // mocks or alternative implementations.
   try {
     if (event.eventType === 'created') {
       // Create new user
@@ -382,24 +386,24 @@ async function processWebhookEvent(
       }
     }
 
-    // Mark event as processed
-    storedEvent.status = 'processed';
-    storedEvent.processedAt = new Date();
-    if (storedEvent && typeof (storedEvent as { save?: unknown }).save === 'function') {
-      await (storedEvent as { save: () => Promise<unknown> }).save();
-    } else {
-      // If save isn't a function in this environment (e.g., mocked model
-      // returned a plain object), just log and continue; we still want
-      // processing to proceed without throwing in tests.
-      logStructured(
-        'warn',
-        'storedEvent.save is not a function - skipping save',
-        {
-          eventId: storedEvent?._id,
-          type: typeof storedEvent,
-        }
-      );
-    }
+      // Mark event as processed using model update (avoids issues when
+      // storedEvent is from a different mongoose context or was removed
+      // by concurrent cleanup). Use findByIdAndUpdate to avoid throwing
+      // DocumentNotFound error when saving instance directly.
+      try {
+        const updateQuery = UserEventModel.findByIdAndUpdate(storedEvent._id, {
+          status: 'processed',
+          processedAt: new Date(),
+        });
+        await execOrAwait(updateQuery);
+      } catch (err) {
+        // If updating the model fails (e.g., document deleted), log and
+        // continue. We don't want background processing to crash tests.
+        logStructured('warn', 'Failed to mark webhook event processed', {
+          eventId: storedEvent._id,
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
   } catch (err) {
     // Log processing error but don't block response
     logStructured('error', 'Failed to process webhook event', {
@@ -410,18 +414,20 @@ async function processWebhookEvent(
     // Mark event as failed
     storedEvent.status = 'failed';
     storedEvent.error = err instanceof Error ? err.message : String(err);
-    if (storedEvent && typeof (storedEvent as { save?: unknown }).save === 'function') {
-      await (storedEvent as { save: () => Promise<unknown> }).save();
-    } else {
-      logStructured(
-        'warn',
-        'storedEvent.save is not a function while marking failed',
-        {
+      // Mark event as failed via update query so we avoid DocumentNotFound
+      // exceptions when the saved document is not present in the DB anymore.
+      try {
+        const updateQuery = UserEventModel.findByIdAndUpdate(storedEvent._id, {
+          status: 'failed',
+          error: err instanceof Error ? err.message : String(err),
+        });
+        await execOrAwait(updateQuery);
+      } catch (updateErr) {
+        logStructured('warn', 'storedEvent.save is not a function while marking failed', {
           eventId: storedEvent?._id,
           type: typeof storedEvent,
-          error: err instanceof Error ? err.message : String(err),
-        }
-      );
-    }
+          error: updateErr instanceof Error ? updateErr.message : String(updateErr),
+        });
+      }
   }
 }
