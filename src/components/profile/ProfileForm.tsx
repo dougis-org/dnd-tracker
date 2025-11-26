@@ -115,13 +115,12 @@ export default function ProfileForm({
   };
 
   return (
-    <div>
-      <h1 className="text-4xl font-bold mb-8">Profile</h1>
-      <Card data-testid={testId}>
-        <CardHeader>
-          <CardTitle>User Profile</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+    <Card data-testid={testId}>
+      <CardHeader>
+        <h1 className="text-4xl font-bold mb-4">Profile</h1>
+        <CardTitle>User Profile</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
         {/* Save Message */}
         {saveMessage && (
           <div
@@ -211,7 +210,6 @@ export default function ProfileForm({
           {isSaving ? 'Saving...' : 'Save Changes'}
         </Button>
       </CardContent>
-      </Card>
-    </div>
+    </Card>
   );
 }

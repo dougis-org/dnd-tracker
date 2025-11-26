@@ -34,7 +34,7 @@ All issues have been addressed through targeted fixes and test simplification to
 
 #### 1. Mock Auth State Propagation (CRITICAL)
 
-**Problem:** useAuth hook read state synchronously before mock auth listener could update localStorage  
+**Problem:** useAuth hook reads state synchronously before mock auth listener could update localStorage  
 **Symptom:** Auth-dependent tests would fail because `isAuthenticated` was false despite setting mock session  
 **Fix:** Added `handleChange()` call on hook mount to read current localStorage state immediately
 

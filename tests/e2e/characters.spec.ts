@@ -37,13 +37,12 @@ test.describe('Character Management E2E', () => {
     // First go to list to get a character ID from seed data
     await page.goto('/characters');
 
-    // Wait for characters to load
-    await page.waitForTimeout(1000);
-    await page.waitForLoadState('networkidle');
+    // Wait for character links to appear
+    await page.waitForSelector('a[href*="/characters/char-"]', { timeout: 5000 });
 
     // Try to find and click character link
     const link = page.locator('a[href*="/characters/char-"]').first();
-    const linkVisible = await link.isVisible().catch(() => false);
+    const linkVisible = await link.isVisible({ timeout: 1000 }).catch(() => false);
 
     if (linkVisible) {
       await link.click();
@@ -62,20 +61,17 @@ test.describe('Character Management E2E', () => {
     await page.goto('/characters');
 
     // Wait for seed characters to load
-    await page.waitForTimeout(1000);
-    await page.waitForLoadState('networkidle');
     await expect(page.locator('body')).toContainText(/Aelith|Borin|Lirael/i, { timeout: 5000 });
 
     // Navigate to new character page
     await page.goto('/characters/new');
 
     // Wait for form to load
-    await page.waitForTimeout(500);
-    await page.waitForLoadState('networkidle');
+    await page.getByLabel('Name').waitFor({ state: 'visible', timeout: 5000 });
 
     // Verify form exists with input fields
     const nameField = page.getByLabel('Name');
-    const nameExists = await nameField.isVisible().catch(() => false);
+    const nameExists = (await nameField.count()) > 0 && await nameField.isVisible({ timeout: 1000 }).catch(() => false);
 
     if (nameExists) {
       // Fill form

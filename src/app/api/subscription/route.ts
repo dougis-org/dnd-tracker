@@ -20,8 +20,9 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     // For MVP, use a mock userId
     const userId = 'user-123';
 
-    // Since subscriptionAdapter is client-only, return mock data for now
-    // This will be replaced with real server-side fetching in a future feature
+    // TODO [Technical Debt]: subscriptionAdapter is currently client-only and cannot be used in SSR/server routes.
+    // See issue #45: Refactor subscriptionAdapter to support server-side usage and replace mock data with real fetching.
+    // Temporary workaround: return mock data for MVP. Planned for Feature 030 (Item Model & API with MongoDB / Mongoose).
     const subscription = createDefaultSubscription(userId);
     const usageMetrics = createDefaultUsageMetrics(userId);
     const availablePlans = createDefaultPlans();

@@ -36,10 +36,15 @@ test.describe('Navigation', () => {
     const submenu = page.getByRole('menu', { name: 'Collections submenu' })
     await expect(submenu).toBeVisible()
 
-    // Check computed background color is visible/opaque
+    // Check computed background color is visible/opaque (alpha === 1)
     const bgColor = await submenu.evaluate((el) => window.getComputedStyle(el).backgroundColor)
     expect(bgColor).toBeTruthy()
-    expect(bgColor).not.toContain('rgba(')  // Should not be transparent
+    // If rgba, alpha must be 1; if rgb, always opaque
+    if (bgColor.startsWith('rgba(')) {
+      const match = bgColor.match(/^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*([0-9.]+)\s*\)$/)
+      expect(match).toBeTruthy()
+      expect(Number(match![1])).toBe(1)
+    }
   })
 
   test('should render the desktop navigation consistently', async ({ page }) => {

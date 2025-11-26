@@ -123,10 +123,7 @@ test.describe('Profile & Settings Pages', () => {
 
     await validator.navigateTo('settings');
 
-    // Wait for page to render fully
-    await page.waitForTimeout(500);
-
-    // Verify page has expected sections
+    // Wait for page to render fully by waiting for heading to be visible
     const heading = page.locator('h1, h2, h3, h4, h5, h6');
     await expect(heading.first()).toBeVisible({ timeout: 5000 });
     const headingCount = await heading.count();
@@ -183,18 +180,22 @@ test.describe('Profile & Settings Pages', () => {
 
     await validator.navigateTo('settings');
 
-    // Wait for page to render
-    await page.waitForTimeout(1000);
-
     // Look for checkboxes - settings may not have notification toggles if incomplete
-    const checkbox = page.locator('input[type="checkbox"]').first();
-    const checkboxExists = await checkbox.isVisible().catch(() => false);
+    const checkboxes = page.locator('input[type="checkbox"]');
+    const checkboxCount = await checkboxes.count();
+    let checkboxExists = false;
+    if (checkboxCount > 0) {
+      const checkbox = checkboxes.first();
+      checkboxExists = await checkbox.isVisible({ timeout: 1000 }).catch(() => false);
+    }
 
     if (!checkboxExists) {
       // If no checkboxes, verify page loaded successfully instead
       await expect(page.locator('h1, h2').first()).toBeVisible();
       return;
     }
+
+    const checkbox = checkboxes.first();
 
     // Get initial state
     const initialState = await checkbox.isChecked();
@@ -208,7 +209,7 @@ test.describe('Profile & Settings Pages', () => {
 
     // Try to save
     const saveButton = page.locator('button:has-text("Save")').first();
-    if (await saveButton.isVisible()) {
+    if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
       await saveButton.click();
 
       // Wait for success message
