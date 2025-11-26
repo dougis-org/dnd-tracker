@@ -1,8 +1,11 @@
+/**
+ * @jest-environment jsdom
+ */
+
 // Mock the service worker registration
 jest.mock('../../../src/lib/sw/register', () => ({
   registerServiceWorker: jest.fn(),
 }));
-
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { OfflineBanner } from '../../../src/components/OfflineBanner/OfflineBanner';
 import { registerServiceWorker, ServiceWorkerCallbacks } from '../../../src/lib/sw/register';

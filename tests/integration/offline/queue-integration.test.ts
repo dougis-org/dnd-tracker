@@ -1,10 +1,10 @@
+/** @jest-environment jsdom */
 /**
  * Integration test for offline queue processing
  *
  * Tests the complete flow of queuing operations while offline,
  * then processing them when connectivity is restored.
  */
-
 import {
   queueOperation,
   processQueue,
@@ -213,9 +213,14 @@ describe('Offline Queue Integration', () => {
     startQueueProcessing();
     setOfflineState(true);
 
-    const operation = createTestOperation('online-event-op', 'create', '/api/posts', {
-      title: 'Test Post',
-    });
+    const operation = createTestOperation(
+      'online-event-op',
+      'create',
+      '/api/posts',
+      {
+        title: 'Test Post',
+      }
+    );
 
     await queueOperation(operation);
 
