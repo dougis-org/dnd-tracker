@@ -25,14 +25,19 @@ function levelToNumber(level: LoggerLevel) {
 }
 
 function getEnvLevel(): LoggerLevel {
-  const env = (process.env.LOG_LEVEL || process.env.LOGLEVEL || '') as string;
-  const verbose = process.env.VERBOSE === 'true' || process.env.TEST_VERBOSE === 'true';
-  if (env) {
-    const normalized = env.toLowerCase();
-    if (normalized === 'error' || normalized === 'warn' || normalized === 'info') {
-      return normalized as LoggerLevel;
-    }
+  const env = (
+    process.env.LOG_LEVEL ||
+    process.env.LOGLEVEL ||
+    ''
+  ).toLowerCase();
+  const verbose =
+    process.env.VERBOSE === 'true' || process.env.TEST_VERBOSE === 'true';
+  const validLevels: LoggerLevel[] = ['error', 'warn', 'info'];
+
+  if (env && validLevels.includes(env as LoggerLevel)) {
+    return env as LoggerLevel;
   }
+
   if (verbose) return 'info';
   if (process.env.NODE_ENV === 'test') return 'warn';
   return 'info';

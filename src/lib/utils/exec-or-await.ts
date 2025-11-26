@@ -5,16 +5,29 @@
  * If the object is thenable (Promise-like), await it.
  * Otherwise, return the value synchronously.
  */
-export async function execOrAwait<T>(maybeQuery: any): Promise<T> {
+export async function execOrAwait<T>(
+  maybeQuery: unknown
+): Promise<T> {
   if (!maybeQuery) {
     return maybeQuery as T;
   }
-  if (typeof maybeQuery.exec === 'function') {
-    return await maybeQuery.exec();
+  // Type guard: check if has .exec() method (Mongoose Query)
+  if (
+    typeof maybeQuery === 'object' &&
+    maybeQuery !== null &&
+    'exec' in maybeQuery &&
+    typeof (maybeQuery as { exec?: unknown }).exec === 'function'
+  ) {
+    return await ((maybeQuery as { exec: () => Promise<T> }).exec());
   }
-  // If it's thenable (Promise-like)
-  if (typeof maybeQuery.then === 'function') {
-    return await maybeQuery;
+  // Type guard: check if thenable (Promise-like)
+  if (
+    typeof maybeQuery === 'object' &&
+    maybeQuery !== null &&
+    'then' in maybeQuery &&
+    typeof (maybeQuery as { then?: unknown }).then === 'function'
+  ) {
+    return await (maybeQuery as Promise<T>);
   }
   return maybeQuery as T;
 }
