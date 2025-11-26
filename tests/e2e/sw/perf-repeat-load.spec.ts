@@ -18,9 +18,8 @@ test.describe('Service Worker Performance', () => {
     await page.waitForTimeout(2000);
 
     // Second load should work
-    let loadTime2 = loadTime1;
     try {
-      loadTime2 = await measureLoadTime(page);
+      await measureLoadTime(page);
     } catch {
       console.log('[TEST] Repeat load failed (expected without full SW)');
     }
