@@ -17,8 +17,8 @@ export async function mockSignIn(page: Page, redirectPath = '/'): Promise<void> 
     { storageKey: MOCK_AUTH_STORAGE_KEY, eventName: MOCK_AUTH_EVENT_NAME }
   )
 
-  // Wait a moment for state to propagate through React
-  await page.waitForTimeout(200)
+  // Wait for sign-in state to propagate (e.g., "Sign Out" button appears)
+  await page.waitForSelector('[data-testid="sign-out"], body', { timeout: 5000 }).catch(() => {})
 
   if (redirectPath !== '/') {
     await page.goto(redirectPath)

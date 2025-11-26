@@ -116,7 +116,12 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-bold">Settings</h1>
+      <Card>
+        <CardHeader>
+          <h1 className="text-4xl font-bold mb-4">Settings</h1>
+          <CardTitle>Manage Your Settings</CardTitle>
+        </CardHeader>
+      </Card>
       <div className="flex gap-2 border-b">
         <button
           onClick={() => setActiveSection('account')}
