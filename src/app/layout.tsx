@@ -5,6 +5,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import './globals.css'
 import { Breadcrumb, Footer, GlobalNav, GlobalNavMobile } from '@/components'
 import { ThemeProvider } from '@/components/theme/theme-provider'
+import { ServiceWorkerProvider } from '@/components/ServiceWorkerProvider'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { clerkPublishableKey, mockAuthEnabledClient } from '@/lib/auth/authConfig'
@@ -30,6 +31,7 @@ export default function RootLayout({
         className={cn(inter.className, 'bg-background text-foreground antialiased')}
         style={{ '--primary-nav-height': '4.5rem' } as CSSProperties}
       >
+        <ServiceWorkerProvider />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
