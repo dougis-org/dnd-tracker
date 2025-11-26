@@ -26,6 +26,8 @@ const customJestConfig = {
     '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
   },
   // No explicit extensionsToTreatAsEsm necessary; Jest treats .mjs as ESM by default
+  // However, Next.js may set it, so we explicitly set to empty to avoid jest validation error
+  extensionsToTreatAsEsm: [],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',

@@ -22,6 +22,9 @@ const customJestConfig = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
   },
+  // Explicitly set to empty array to avoid Jest validation error
+  // (Jest treats .mjs as ESM by default and doesn't need explicit configuration)
+  extensionsToTreatAsEsm: [],
   testMatch: ['<rootDir>/tests/integration/**/*.{spec,test}.{js,jsx,ts,tsx}'],
 };
 
