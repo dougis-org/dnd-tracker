@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 const { startMongoContainer } = require('./mongo-testcontainers');
 const mongoose = require('mongoose');
 
