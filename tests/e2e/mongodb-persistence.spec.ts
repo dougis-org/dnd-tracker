@@ -266,7 +266,7 @@ test.describe('MongoDB Data Persistence', () => {
 
       // Verify the webhook event data persisted by checking the created user
       // (The webhook processes asynchronously but creates/updates the user)
-      const usersResponse = await request.get('/api/internal/users', {
+      const _usersResponse = await request.get('/api/internal/users', {
         // We can't query directly, but we can verify via the health check that the collection exists
       });
 

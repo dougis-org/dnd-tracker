@@ -3,7 +3,7 @@ import { execOrAwait } from '@/lib/utils/exec-or-await';
 describe('execOrAwait helper', () => {
   test('calls exec() on objects with exec function', async () => {
     const value = { id: '123' };
-    const q = { exec: jest.fn().mockResolvedValue(value) } as any;
+    const q = { exec: jest.fn().mockResolvedValue(value) } as { exec: jest.Mock };
     const res = await execOrAwait(q);
     expect(q.exec).toHaveBeenCalled();
     expect(res).toEqual(value);
@@ -18,7 +18,7 @@ describe('execOrAwait helper', () => {
 
   test('returns non-thenable values directly', async () => {
     const value = 42;
-    const res = await execOrAwait(value as any);
+    const res = await execOrAwait(value as unknown);
     expect(res).toBe(42);
   });
 });
