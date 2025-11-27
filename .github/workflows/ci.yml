@@ -23,6 +23,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Clean TypeScript cache
+        run: rm -rf .next .turbo tsconfig.tsbuildinfo
+
       - name: Run TypeScript type check
         run: npm run type-check
 
@@ -48,6 +51,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Clean build caches
+        run: rm -rf .next .turbo tsconfig.tsbuildinfo
 
       - name: Build application
         run: npm run build
