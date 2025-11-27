@@ -15,6 +15,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Clean all caches
+        run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -22,9 +25,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Clean TypeScript cache
-        run: rm -rf .next .turbo tsconfig.tsbuildinfo
 
       - name: Run TypeScript type check
         run: npm run type-check
@@ -44,6 +44,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Clean all caches
+        run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -51,9 +54,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Clean build caches
-        run: rm -rf .next .turbo tsconfig.tsbuildinfo
 
       - name: Build application
         run: npm run build
@@ -85,6 +85,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Clean all caches
+        run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -115,6 +118,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Clean all caches
+        run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
