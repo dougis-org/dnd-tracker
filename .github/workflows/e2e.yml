@@ -79,16 +79,14 @@ jobs:
           timeout 60 bash -c 'until curl -f http://localhost:3000 > /dev/null 2>&1; do sleep 2; done'
 
       - name: Run Service Worker E2E Tests
-        run: npx playwright test tests/e2e/sw/ --timeout=60000
+        run: npx playwright test tests/e2e/sw/ --timeout=60000 --base-url http://localhost:3000
         env:
           NODE_ENV: test
-          BASE_URL: http://localhost:3000
 
       - name: Run Offline Banner E2E Tests
-        run: npx playwright test tests/e2e/sw/offline-banner.spec.ts --timeout=30000
+        run: npx playwright test tests/e2e/sw/offline-banner.spec.ts --timeout=30000 --base-url http://localhost:3000
         env:
           NODE_ENV: test
-          BASE_URL: http://localhost:3000
 
       - name: Upload service worker test results
         uses: actions/upload-artifact@v4
