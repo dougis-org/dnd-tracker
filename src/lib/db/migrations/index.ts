@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import UserModel, { UserEventModel } from '../models/user';
+import * as mongodb from 'mongodb';
+import UserModel, { UserEventModel } from '../../models/user';
 import { logStructured } from '../../utils/logger';
 
 /**
@@ -20,7 +21,7 @@ const migrations: Migration[] = [
     name: 'create-user-and-event-collections',
     version: 1,
     description: 'Create User and UserEvent collections with indexes',
-    up: async (db: mongoose.Connection) => {
+    up: async (_db: mongoose.Connection) => {
       logStructured('info', 'Running migration: create-user-and-event-collections');
 
       try {
@@ -52,7 +53,7 @@ const migrations: Migration[] = [
 /**
  * Get or create migrations collection
  */
-async function getMigrationsCollection(db: mongoose.Connection): Promise<any> {
+async function getMigrationsCollection(db: mongoose.Connection): Promise<mongodb.Collection> {
   try {
     return db.collection('_migrations');
   } catch (err) {
@@ -67,7 +68,7 @@ async function getMigrationsCollection(db: mongoose.Connection): Promise<any> {
  * Check if migration has been run
  */
 async function hasMigrationRun(
-  migrationsCol: any,
+  migrationsCol: mongodb.Collection,
   migrationName: string
 ): Promise<boolean> {
   const record = await migrationsCol.findOne({ name: migrationName });
@@ -78,7 +79,7 @@ async function hasMigrationRun(
  * Record migration as completed
  */
 async function recordMigration(
-  migrationsCol: any,
+  migrationsCol: mongodb.Collection,
   migration: Migration
 ): Promise<void> {
   await migrationsCol.insertOne({

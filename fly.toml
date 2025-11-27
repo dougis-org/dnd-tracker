@@ -28,5 +28,5 @@ cpu_kind = 'shared'
 cpus = 1
 
 [deploy]
-release_command = 'echo "Deploy starting..."'
+release_command = 'npm run migrate'
 

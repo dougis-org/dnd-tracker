@@ -11,16 +11,15 @@ import { logStructured } from '@/lib/utils/logger';
  * 3. Indexes are created
  * 4. Database is writable (for monitoring/alerting systems)
  */
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   const startTime = Date.now();
 
   try {
     // Check MongoDB connection
-    await connectToMongo();
+    const connection = await connectToMongo();
 
     // Verify collections exist
-    const db = await connectToMongo();
-    const collections = await db.db.listCollections().toArray();
+    const collections = await connection.db?.listCollections().toArray() ?? [];
     const collectionNames = collections.map((c) => c.name);
 
     const userColExists = collectionNames.includes('users');
