@@ -18,8 +18,13 @@ export async function GET(_req: NextRequest) {
     // Check MongoDB connection
     const connection = await connectToMongo();
 
+    // Verify connection.db exists
+    if (!connection.db) {
+      throw new Error('MongoDB connection database is undefined');
+    }
+
     // Verify collections exist
-    const collections = await connection.db?.listCollections().toArray() ?? [];
+    const collections = await connection.db.listCollections().toArray();
     const collectionNames = collections.map((c) => c.name);
 
     const userColExists = collectionNames.includes('users');

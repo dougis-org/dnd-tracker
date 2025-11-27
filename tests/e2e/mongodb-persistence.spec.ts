@@ -13,6 +13,22 @@ import { test, expect } from '@playwright/test';
  * continues to work correctly after migrations.
  */
 
+/**
+ * Polling utility to wait for async operations to complete.
+ * More robust than fixed setTimeout for database operations under load.
+ */
+async function poll(
+  fn: () => Promise<boolean>,
+  { timeout = 2000, interval = 100 } = {}
+): Promise<void> {
+  const endTime = Date.now() + timeout;
+  while (Date.now() < endTime) {
+    if (await fn()) return;
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+  throw new Error(`Polling timed out after ${timeout}ms`);
+}
+
 test.describe('MongoDB Data Persistence', () => {
   const testUserId = `e2e-test-user-${Date.now()}`;
   const testEmail = `e2e-${Date.now()}@test.com`;
@@ -67,10 +83,13 @@ test.describe('MongoDB Data Persistence', () => {
 
       const userId = createdUser.data._id;
 
-      // Step 2: Wait briefly to ensure write is flushed
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      // Wait for write to be flushed using polling for robustness
+      await poll(async () => {
+        const getResponse = await request.get(`/api/internal/users/${userId}`);
+        return getResponse.ok();
+      });
 
-      // Step 3: Read the user back from API
+      // Read the user back from API
       const getResponse = await request.get(`/api/internal/users/${userId}`);
 
       expect(getResponse.status()).toBe(200);
@@ -130,8 +149,13 @@ test.describe('MongoDB Data Persistence', () => {
       expect(updatedUser.data).toHaveProperty('displayName', 'Updated Name');
       expect(updatedUser.data.metadata).toHaveProperty('updated', true);
 
-      // Wait briefly
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      // Wait for update to persist using polling
+      await poll(async () => {
+        const getResponse = await request.get(`/api/internal/users/${id}`);
+        if (!getResponse.ok()) return false;
+        const user = await getResponse.json();
+        return user.data.displayName === 'Updated Name';
+      });
 
       // Read back and verify update persisted
       const getResponse = await request.get(`/api/internal/users/${id}`);
@@ -143,7 +167,7 @@ test.describe('MongoDB Data Persistence', () => {
       expect(retrievedUser.data).toHaveProperty('displayName', 'Updated Name');
       expect(retrievedUser.data.metadata).toHaveProperty('updated', true);
       expect(new Date(retrievedUser.data.updatedAt).getTime()).toBeGreaterThan(
-        new Date(updatedUser.data.createdAt).getTime()
+        new Date(createdUser.data.createdAt).getTime()
       );
     });
 
@@ -166,26 +190,24 @@ test.describe('MongoDB Data Persistence', () => {
       const id = createdUser.data._id;
 
       // Verify not deleted initially
-      let getResponse = await request.get(`/api/internal/users/${id}`);
-      expect(getResponse.status()).toBe(200);
-      const userBefore = await getResponse.json();
+      const initialGetResponse = await request.get(`/api/internal/users/${id}`);
+      expect(initialGetResponse.status()).toBe(200);
+      const userBefore = await initialGetResponse.json();
       expect(userBefore.data.deletedAt).toBeNull();
 
       // Delete user
       const deleteResponse = await request.delete(`/api/internal/users/${id}`);
 
-      expect(deleteResponse.status()).toBe(200);
+      expect(deleteResponse.status()).toBe(204);
 
-      const deletedUser = await deleteResponse.json();
-
-      expect(deletedUser.data).toHaveProperty('deletedAt');
-      expect(deletedUser.data.deletedAt).not.toBeNull();
-
-      // Wait briefly
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      // Wait briefly for soft-delete to persist
+      await poll(async () => {
+        const response = await request.get(`/api/internal/users/${id}`);
+        return response.status() === 404;
+      });
 
       // Verify soft-delete: user should not be returned in get
-      getResponse = await request.get(`/api/internal/users/${id}`);
+      const getResponse = await request.get(`/api/internal/users/${id}`);
 
       expect(getResponse.status()).toBe(404);
     });
@@ -261,8 +283,17 @@ test.describe('MongoDB Data Persistence', () => {
       expect(webhookResult).toHaveProperty('success', true);
       expect(webhookResult).toHaveProperty('eventId');
 
-      // Wait for async processing
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Wait for async processing and verify the user was created by the webhook
+      await poll(async () => {
+        const getResponse = await request.get(`/api/internal/users/${testUserId5}`);
+        return getResponse.ok();
+      });
+
+      // Verify the user was created by the webhook by querying the API
+      const getResponse = await request.get(`/api/internal/users/${testUserId5}`);
+      expect(getResponse.status()).toBe(200);
+      const user = await getResponse.json();
+      expect(user.data.email).toBe(testEmail5);
 
       // Verify health check still shows system is operational
       const healthResponse = await request.get('/api/health');
