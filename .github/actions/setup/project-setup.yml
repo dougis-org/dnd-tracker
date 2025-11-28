@@ -7,6 +7,8 @@ runs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        ref: ${{ github.head_ref }}
         fetch-depth: 0
 
     - name: Clean all caches
@@ -16,7 +18,7 @@ runs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: "25"
+        node-version: '25'
 
     - name: Install dependencies
       shell: bash
