@@ -17,7 +17,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 **Phase 4 Status**: In Progress (1 of 5 features complete)  
 **Next Feature**: Feature 015 - Profile Setup Wizard  
 **Started**: 2025-11-01  
-**Latest Completion**: Feature 014 (2025-11-26 via PR #469)
+**Latest Completion**: Feature 014 (2025-11-26 via PR #469) — Migration persistence implemented (Merged via PR #471 on 2025-11-28)
 
 > **Note**: Feature numbers F018+ have been renumbered to accommodate decomposed features. See `docs/feature-renumbering-plan.md` for complete mappings.
 
