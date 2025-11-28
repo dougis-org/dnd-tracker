@@ -44,11 +44,22 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build application
+        id: build
         run: npm run build
         env:
           NODE_ENV: production
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '' }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY || '' }}
+        continue-on-error: true
+
+      - name: Check build status
+        run: |
+          if [ ${{ steps.build.outcome }} = "failure" ]; then
+            echo "❌ Build step reported failure!"
+            exit 1
+          else
+            echo "✓ Build step completed (exit code: ${{ steps.build.outcome }})"
+          fi
 
       - name: Verify build output
         run: |
