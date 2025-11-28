@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Clean all caches
         run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
@@ -43,6 +45,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Clean all caches
         run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
@@ -84,6 +88,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Clean all caches
         run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
@@ -118,6 +124,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Clean all caches
         run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
