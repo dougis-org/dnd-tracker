@@ -12,21 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Clean all caches
-        run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "25"
-
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup environment
+        uses: ./.github/actions/setup
 
       - name: Run TypeScript type check
         run: npm run type-check
@@ -43,21 +30,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Clean all caches
-        run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "25"
-
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup environment
+        uses: ./.github/actions/setup
 
       - name: Build application
         run: npm run build
@@ -86,21 +60,8 @@ jobs:
           - 27017:27017
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Clean all caches
-        run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "25"
-
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup environment
+        uses: ./.github/actions/setup
 
       - name: Run tests with coverage
         run: npm run test:ci:parallel
@@ -122,21 +83,8 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Clean all caches
-        run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "25"
-
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup environment
+        uses: ./.github/actions/setup
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps

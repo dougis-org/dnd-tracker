@@ -1,0 +1,23 @@
+name: Setup Environment
+description: Common setup steps (checkout, cache cleanup, Node.js, install dependencies)
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Clean all caches
+      shell: bash
+      run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "25"
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci
