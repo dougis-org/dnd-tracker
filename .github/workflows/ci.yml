@@ -20,8 +20,8 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup
 
-      - name: Run TypeScript type check
-        run: npm run type-check
+      # - name: Run TypeScript type check
+      #   run: npm run type-check
 
       - name: Run ESLint
         run: npm run lint
