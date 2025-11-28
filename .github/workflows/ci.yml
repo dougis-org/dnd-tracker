@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Setup environment
-        uses: ./.github/actions/setup/project-setup.yml
+        uses: ./.github/actions/setup/
 
       - name: Run TypeScript type check
         run: npm run type-check
@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: Setup environment
-        uses: ./.github/actions/setup/project-setup.yml
+        uses: ./.github/actions/setup/
 
       - name: Build application
         run: npm run build
@@ -61,7 +61,7 @@ jobs:
 
     steps:
       - name: Setup environment
-        uses: ./.github/actions/setup/project-setup.yml
+        uses: ./.github/actions/setup/
 
       - name: Run tests with coverage
         run: npm run test:ci:parallel
@@ -84,7 +84,7 @@ jobs:
 
     steps:
       - name: Setup environment
-        uses: ./.github/actions/setup/project-setup.yml
+        uses: ./.github/actions/setup/
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
