@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup environment
         uses: ./.github/actions/setup
 
@@ -30,6 +35,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup environment
         uses: ./.github/actions/setup
 
@@ -60,6 +70,11 @@ jobs:
           - 27017:27017
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup environment
         uses: ./.github/actions/setup
 
@@ -83,6 +98,11 @@ jobs:
     timeout-minutes: 60
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup environment
         uses: ./.github/actions/setup
 
