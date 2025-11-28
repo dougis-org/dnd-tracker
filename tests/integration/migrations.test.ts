@@ -9,6 +9,7 @@ import mongoose from 'mongoose';
  * 1. Migrations create collections and indexes
  * 2. Migrations are idempotent (can be run multiple times safely)
  * 3. User and UserEvent models can persist data after migration
+ * 4. Health endpoint properly verifies migration state
  */
 describe('MongoDB Migrations Integration Tests', () => {
   let connection: mongoose.Connection;

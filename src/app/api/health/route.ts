@@ -10,6 +10,9 @@ import { logStructured } from '@/lib/utils/logger';
  * 2. Collections exist
  * 3. Indexes are created
  * 4. Database is writable (for monitoring/alerting systems)
+ *
+ * @param _req - NextRequest (unused, marked with underscore)
+ * @returns Health status JSON with database details
  */
 export async function GET(_req: NextRequest) {
   const startTime = Date.now();
@@ -17,6 +20,11 @@ export async function GET(_req: NextRequest) {
   try {
     // Check MongoDB connection
     const connection = await connectToMongo();
+
+    // Verify connection.db exists
+    if (!connection.db) {
+      throw new Error('MongoDB connection database is undefined');
+    }
 
     // Verify collections exist
     const collections = await connection.db?.listCollections().toArray() ?? [];
