@@ -86,7 +86,7 @@ All issues have been addressed through targeted fixes and test simplification to
 **Files Modified:**
 
 - `src/lib/auth/authConfig.ts` (new)
-- `src/lib/auth/mockAuthClient.ts` (new)  
+- `src/lib/auth/mockAuthClient.ts` (new)
 - `src/lib/auth/mockSession.ts` (new)
 - `tests/e2e/test-data/mock-auth.ts` (new)
 

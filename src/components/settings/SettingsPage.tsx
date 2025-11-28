@@ -118,8 +118,7 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <h1 className="text-4xl font-bold mb-4">Settings</h1>
-          <CardTitle>Manage Your Settings</CardTitle>
+          <CardTitle className="text-4xl font-bold">Settings</CardTitle>
         </CardHeader>
       </Card>
       <div className="flex gap-2 border-b">

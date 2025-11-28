@@ -43,8 +43,7 @@ function useMockAuthSession(): Session {
     window.addEventListener('storage', handleChange)
     window.addEventListener(MOCK_AUTH_EVENT_NAME, handleChange)
 
-    // Call handleChange immediately to ensure we have the latest storage state
-    // in case it was updated before this component mounted
+    // Sync state immediately in case storage was updated during component mount
     handleChange()
 
     return () => {

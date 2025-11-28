@@ -101,12 +101,12 @@ test.describe('Profile & Settings Pages', () => {
       const emailInput = page.locator(`input[name="${emailField.name}"]`);
       await emailInput.blur();
 
-      // Wait for validation
-      await page.waitForTimeout(500);
+      // Let UI update before checking for error message
+      await page.locator('text=invalid email').or(page.locator('input')).first().waitFor({ state: 'attached', timeout: 500 });
 
       // Check for error message
       const errorMessage = page.locator('text=invalid email', { exact: false });
-      const hasError = await errorMessage.isVisible().catch(() => false);
+      const hasError = (await errorMessage.count()) > 0;
 
       // Gracefully handle if error not visible (implementation may vary)
       if (hasError) {
@@ -159,7 +159,8 @@ test.describe('Profile & Settings Pages', () => {
 
       if (optionCount > 1) {
         await firstSelect.selectOption({ index: 1 });
-        await page.waitForTimeout(500);
+        // Let state update before navigation
+        await page.waitForLoadState('networkidle');
 
         // Navigate away and back
         await validator.navigateTo('profile');
@@ -183,11 +184,7 @@ test.describe('Profile & Settings Pages', () => {
     // Look for checkboxes - settings may not have notification toggles if incomplete
     const checkboxes = page.locator('input[type="checkbox"]');
     const checkboxCount = await checkboxes.count();
-    let checkboxExists = false;
-    if (checkboxCount > 0) {
-      const checkbox = checkboxes.first();
-      checkboxExists = await checkbox.isVisible({ timeout: 1000 }).catch(() => false);
-    }
+    const checkboxExists = checkboxCount > 0;
 
     if (!checkboxExists) {
       // If no checkboxes, verify page loaded successfully instead
@@ -209,7 +206,7 @@ test.describe('Profile & Settings Pages', () => {
 
     // Try to save
     const saveButton = page.locator('button:has-text("Save")').first();
-    if (await saveButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+    if ((await saveButton.count()) > 0) {
       await saveButton.click();
 
       // Wait for success message
@@ -239,11 +236,12 @@ test.describe('Profile & Settings Pages', () => {
 
     // Trigger validation
     await nameInput.blur();
-    await page.waitForTimeout(500);
+    // Let validation complete before checking
+    await page.locator('text=maximum').or(nameInput).first().waitFor({ state: 'attached', timeout: 500 }).catch(() => {});
 
     // Check for error feedback
     const errorMessage = page.locator('text=maximum', { exact: false });
-    const hasError = await errorMessage.isVisible().catch(() => false);
+    const hasError = (await errorMessage.count()) > 0;
 
     // Should either show error or keep value (graceful handling)
     expect(hasError || (await nameInput.inputValue()).length > 0).toBeTruthy();

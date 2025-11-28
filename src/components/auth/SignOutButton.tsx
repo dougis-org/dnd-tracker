@@ -27,34 +27,26 @@ export function SignOutButton({
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
-  if (mockAuthEnabledClient) {
-    const handleMockSignOut = async () => {
-      setIsLoading(true)
-      setMockAuthState('signed-out')
-      router.push('/sign-in')
-      router.refresh()
-      setIsLoading(false)
-    }
-
-    return (
-      <Button
-        onClick={handleMockSignOut}
-        disabled={isLoading}
-        variant={variant}
-        size={size}
-        className={className}
-      >
-        {isLoading ? 'Signing out...' : 'Sign Out'}
-      </Button>
-    )
-  }
-
-  const { signOut } = useClerk()
-
-  const handleSignOut = async () => {
+  const performSignOut = async (callback?: () => Promise<void>) => {
     try {
       setIsLoading(true)
+      if (callback) {
+        await callback()
+      }
+      router.push('/sign-in')
+      router.refresh()
+    } catch (error) {
+      console.error('Error signing out:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
+  const handleMockSignOut = () => performSignOut(() => Promise.resolve(setMockAuthState('signed-out')))
+
+  const handleClerkSignOut = async () => {
+    const { signOut } = useClerk()
+    await performSignOut(async () => {
       try {
         await fetch('/api/auth/sign-out', {
           method: 'POST',
@@ -63,20 +55,15 @@ export function SignOutButton({
       } catch (error) {
         console.error('Error calling server sign-out endpoint:', error)
       }
-
       await signOut({ redirectUrl: '/' })
-
-      router.push('/')
-      router.refresh()
-    } catch (error) {
-      console.error('Error signing out:', error)
-      setIsLoading(false)
-    }
+    })
   }
+
+  const handleClick = mockAuthEnabledClient ? handleMockSignOut : handleClerkSignOut
 
   return (
     <Button
-      onClick={handleSignOut}
+      onClick={handleClick}
       disabled={isLoading}
       variant={variant}
       size={size}

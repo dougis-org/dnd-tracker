@@ -117,8 +117,7 @@ export default function ProfileForm({
   return (
     <Card data-testid={testId}>
       <CardHeader>
-        <h1 className="text-4xl font-bold mb-4">Profile</h1>
-        <CardTitle>User Profile</CardTitle>
+        <CardTitle className="text-4xl font-bold">Profile</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Save Message */}

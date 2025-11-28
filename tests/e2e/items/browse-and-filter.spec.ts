@@ -21,10 +21,10 @@ test.describe('Item Catalog - Browse and Filter (E2E)', () => {
     await searchInput.fill('longsword');
     
     // Wait for search results to update
-    await page.waitForTimeout(600);
+    const longswordHeading = page.getByRole('heading', { name: /longsword/i });
+    await longswordHeading.waitFor({ state: 'visible', timeout: 5000 });
 
     // Verify search results
-    const longswordHeading = page.getByRole('heading', { name: /longsword/i });
     await expect(longswordHeading).toBeVisible();
   });
 
@@ -37,10 +37,10 @@ test.describe('Item Catalog - Browse and Filter (E2E)', () => {
     await categorySelect.selectOption('Weapon');
     
     // Wait for filter to be applied
-    await page.waitForTimeout(500);
+    const longswordHeading = page.getByRole('heading', { name: /longsword/i });
+    await longswordHeading.waitFor({ state: 'visible', timeout: 5000 });
 
     // Verify filtered results - Longsword should be visible (it's a Weapon)
-    const longswordHeading = page.getByRole('heading', { name: /longsword/i });
     await expect(longswordHeading).toBeVisible();
   });
 
@@ -53,10 +53,10 @@ test.describe('Item Catalog - Browse and Filter (E2E)', () => {
     await raritySelect.selectOption('Common');
     
     // Wait for filter to be applied
-    await page.waitForTimeout(500);
+    const shortswordHeading = page.getByRole('heading', { name: /shortsword/i });
+    await shortswordHeading.waitFor({ state: 'visible', timeout: 5000 });
 
     // Verify filtered results - Items with Common rarity should be visible
-    const shortswordHeading = page.getByRole('heading', { name: /shortsword/i });
     await expect(shortswordHeading).toBeVisible();
   });
 
@@ -67,7 +67,8 @@ test.describe('Item Catalog - Browse and Filter (E2E)', () => {
     await categorySelect.selectOption('Weapon');
     
     // Wait for first filter to apply
-    await page.waitForTimeout(500);
+    const categoryFilterApplied = page.getByRole('heading', { name: /longsword/i });
+    await categoryFilterApplied.waitFor({ state: 'visible', timeout: 5000 });
     
     // Select rarity
     const raritySelect = page.locator('#rarity-select');
@@ -75,7 +76,8 @@ test.describe('Item Catalog - Browse and Filter (E2E)', () => {
     await raritySelect.selectOption('Common');
     
     // Wait for combined filters to apply
-    await page.waitForTimeout(500);
+    const finalResults = page.getByRole('heading', { name: /longsword|shortsword/i });
+    await finalResults.waitFor({ state: 'visible', timeout: 5000 });
 
     // Verify combined filter results - Both filters should reduce results to weapons of Common rarity
     const longswordHeading = page.getByRole('heading', { name: /longsword/i });
@@ -87,10 +89,11 @@ test.describe('Item Catalog - Browse and Filter (E2E)', () => {
     await searchInput.fill('nonexistent artifact xyz');
     
     // Wait for search results to update
-    await page.waitForTimeout(600);
+    const emptyStateMsg = page.getByText(/no items match your criteria/i);
+    await emptyStateMsg.waitFor({ state: 'visible', timeout: 5000 });
 
     // Verify empty state message
-    await expect(page.getByText(/no items match your criteria/i)).toBeVisible();
+    await expect(emptyStateMsg).toBeVisible();
   });
 
   test('results count updates as filters change', async ({ page }) => {
@@ -102,9 +105,7 @@ test.describe('Item Catalog - Browse and Filter (E2E)', () => {
     await page.locator('#category-select').selectOption('Weapon');
     
     // Wait for filter to apply and results count to update
-    await page.waitForTimeout(500);
-
-    await expect(statusRegion).toContainText('2 of 3 items');
+    await expect(statusRegion).toContainText('2 of 3 items', { timeout: 5000 });
   });
 
   test('page is keyboard navigable', async ({ page }) => {

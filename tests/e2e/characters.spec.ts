@@ -42,9 +42,9 @@ test.describe('Character Management E2E', () => {
 
     // Try to find and click character link
     const link = page.locator('a[href*="/characters/char-"]').first();
-    const linkVisible = await link.isVisible({ timeout: 1000 }).catch(() => false);
+    const linkExists = (await link.count()) > 0;
 
-    if (linkVisible) {
+    if (linkExists) {
       await link.click();
       // Wait for navigation
       await page.waitForURL(/\/characters\/[a-zA-Z0-9-]+/, { timeout: 5000 });
@@ -71,7 +71,7 @@ test.describe('Character Management E2E', () => {
 
     // Verify form exists with input fields
     const nameField = page.getByLabel('Name');
-    const nameExists = (await nameField.count()) > 0 && await nameField.isVisible({ timeout: 1000 }).catch(() => false);
+    const nameExists = (await nameField.count()) > 0 && await nameField.isVisible({ timeout: 1000 });
 
     if (nameExists) {
       // Fill form
