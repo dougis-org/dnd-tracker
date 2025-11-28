@@ -31,7 +31,7 @@ All issues have been addressed through targeted fixes and test simplification to
   - Character persistence across page loads
 
 ### Root Causes Identified
-
+**Problem:** useAuth hook reads state synchronously before mock auth listener could update localStorage  
 #### 1. Mock Auth State Propagation (CRITICAL)
 
 **Problem:** useAuth hook reads state synchronously before mock auth listener could update localStorage  
