@@ -5,6 +5,7 @@ This document explains the MongoDB migration system used to set up collections a
 ## Overview
 
 The migration system ensures that:
+
 1. **Collections are created** with the correct schema
 2. **Indexes are created** for optimal query performance
 3. **Migrations are idempotent** - can be run safely multiple times
@@ -22,6 +23,7 @@ When the application starts in production:
 4. Logs success/failure for monitoring
 
 **Advantages:**
+
 - Runs on every deployment automatically
 - No manual steps required
 - Safe to run multiple times
@@ -43,6 +45,7 @@ release_command = 'npm run migrate'
 ```
 
 **Advantages:**
+
 - Runs before the new application version is live
 - Safer than running during request handling
 - Clear log output for debugging deployment issues
@@ -70,6 +73,7 @@ Migrations are tracked in a `_migrations` collection:
 ```
 
 **Benefits:**
+
 - Each migration runs only once
 - Can be run multiple times safely (idempotent)
 - Clear audit trail of which migrations have been applied
@@ -80,6 +84,7 @@ Migrations are tracked in a `_migrations` collection:
 ### Users Collection
 
 **Indexes Created:**
+
 - `userId` (unique) - Fast lookup by auth provider ID
 - `email` (unique) - Fast lookup and prevents duplicates
 - `(deletedAt, updatedAt)` (compound) - Efficient soft-delete queries
@@ -87,6 +92,7 @@ Migrations are tracked in a `_migrations` collection:
 ### UserEvents Collection
 
 **Indexes Created:**
+
 - `(eventType, receivedAt)` (compound) - Filter by event type + sort by recency
 - `(status, receivedAt)` (compound) - Find failed/pending events
 - `(userId, receivedAt)` (compound) - User audit trails
@@ -100,6 +106,7 @@ GET /api/health
 ```
 
 **Response:**
+
 ```json
 {
   "status": "healthy",
@@ -129,6 +136,7 @@ GET /api/health
 ```
 
 This endpoint is useful for:
+
 - Monitoring services (verify DB is ready)
 - Pre-flight checks (ensure indexes are created)
 - Debugging deployment issues
@@ -155,7 +163,8 @@ To add a new migration:
 3. Test locally: `npm run migrate`
 4. Commit and deploy - the migration will run automatically
 
-**Important:** 
+**Important:**
+
 - Keep migration names unique
 - Increment version numbers
 - Make migrations idempotent (safe to run multiple times)
@@ -167,6 +176,7 @@ To add a new migration:
 ### Collections Not Created
 
 1. Check `MONGODB_URI` is set correctly:
+
    ```bash
    echo $MONGODB_URI
    ```
@@ -174,11 +184,13 @@ To add a new migration:
 2. Verify MongoDB is running and accessible
 
 3. Run health check:
+
    ```bash
    curl http://localhost:3000/api/health
    ```
 
 4. Check logs for errors:
+
    ```bash
    npm run migrate
    ```
@@ -186,6 +198,7 @@ To add a new migration:
 ### Indexes Not Created
 
 1. Check migrations ran successfully:
+
    ```bash
    # Connect to MongoDB
    mongosh $MONGODB_URI
@@ -194,6 +207,7 @@ To add a new migration:
    ```
 
 2. Verify indexes were created:
+
    ```bash
    db.users.getIndexes()
    db.user_events.getIndexes()
@@ -251,6 +265,7 @@ npm run test:ci:integration -- tests/integration/migrations.test.ts
 ```
 
 Tests verify:
+
 - Collections are created
 - Indexes are created correctly
 - Migrations are idempotent
