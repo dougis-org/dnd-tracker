@@ -31,7 +31,9 @@ All issues have been addressed through targeted fixes and test simplification to
   - Character persistence across page loads
 
 ### Root Causes Identified
+
 **Problem:** useAuth hook reads state synchronously before mock auth listener could update localStorage  
+
 #### 1. Mock Auth State Propagation (CRITICAL)
 
 **Problem:** useAuth hook reads state synchronously before mock auth listener could update localStorage  
@@ -72,6 +74,7 @@ All issues have been addressed through targeted fixes and test simplification to
 
 **Problem:** Test looked for `section[aria-label]` but sections have `role="region"` in addition  
 **Symptom:** landing.a11y.spec.ts ARIA label test failure  
+
 - `src/lib/auth/mockAuthClient.ts` (new)
 
 ---
