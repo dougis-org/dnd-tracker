@@ -27,7 +27,7 @@ export async function GET(_req: NextRequest) {
     }
 
     // Verify collections exist
-    const collections = await connection.db.listCollections().toArray();
+    const collections = await connection.db?.listCollections().toArray() ?? [];
     const collectionNames = collections.map((c) => c.name);
 
     const userColExists = collectionNames.includes('users');
