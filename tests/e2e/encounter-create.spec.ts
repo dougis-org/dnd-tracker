@@ -72,8 +72,8 @@ test.describe('Encounter Creation (User Story 1)', () => {
         (await saveBtn.isVisible())
       ) {
         await saveBtn.click();
-        // Either navigate away or show success
-        await page.waitForTimeout(500);
+        // Wait for page state update or navigation
+        await page.waitForLoadState('networkidle');
         expect(true).toBeTruthy();
       }
     }

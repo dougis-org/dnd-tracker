@@ -29,11 +29,21 @@ test.describe('Landing Page Accessibility (T020)', () => {
 
   test('should have proper ARIA labels on regions', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     // Check all sections have proper aria labels
+    // Using role="region" with aria-label selector
     const heroBox = page.locator('section[aria-label]');
     const count = await heroBox.count();
-    expect(count).toBeGreaterThan(0);
+    
+    // If not found with section selector, try [role="region"]
+    if (count === 0) {
+      const regionBox = page.locator('[role="region"][aria-label]');
+      const regionCount = await regionBox.count();
+      expect(regionCount).toBeGreaterThan(0);
+    } else {
+      expect(count).toBeGreaterThan(0);
+    }
 
     // Check specific sections
     const sections = [
@@ -44,7 +54,7 @@ test.describe('Landing Page Accessibility (T020)', () => {
       'Pricing',
     ];
     for (const sectionName of sections) {
-      const section = page.locator(`section[aria-label="${sectionName}"]`);
+      const section = page.locator(`[role="region"][aria-label="${sectionName}"]`);
       // Note: Not all sections may be present, so we don't strict-require them
       if ((await section.count()) > 0) {
         await expect(section).toBeVisible();

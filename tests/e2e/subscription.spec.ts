@@ -1,8 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { PageValidator } from './test-data/page-validator';
 import { PAGE_STRUCTURES } from './test-data/page-structure-map';
+import { mockSignIn } from './test-data/mock-auth';
 
 test.describe('Subscription E2E', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockSignIn(page, '/subscription');
+  });
+
   test('can navigate directly to /subscription and view header', async ({
     page,
   }) => {

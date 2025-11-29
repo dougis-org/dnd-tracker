@@ -1,0 +1,22 @@
+name: Setup Environment
+description: Common setup steps (cache cleanup, Node.js, install dependencies)
+
+runs:
+  using: composite
+  steps:
+    - name: Clean all caches
+      shell: bash
+      run: rm -rf .next .turbo node_modules tsconfig.tsbuildinfo
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '25'
+
+    - name: Update browser baseline mapping
+      shell: bash
+      run: npm i baseline-browser-mapping@latest -D
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci

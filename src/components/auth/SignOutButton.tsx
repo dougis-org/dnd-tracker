@@ -10,6 +10,8 @@ import { useClerk } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { mockAuthEnabledClient } from '@/lib/auth/authConfig'
+import { setMockAuthState } from '@/lib/auth/mockAuthClient'
 
 interface SignOutButtonProps {
   className?: string
@@ -22,15 +24,29 @@ export function SignOutButton({
   variant = 'ghost',
   size = 'sm',
 }: SignOutButtonProps) {
-  const { signOut } = useClerk()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSignOut = async () => {
+  const performSignOut = async (callback?: () => Promise<void>) => {
     try {
       setIsLoading(true)
+      if (callback) {
+        await callback()
+      }
+      router.push('/sign-in')
+      router.refresh()
+    } catch (error) {
+      console.error('Error signing out:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-      // Call server-side sign-out endpoint to clear session
+  const handleMockSignOut = () => performSignOut(() => Promise.resolve(setMockAuthState('signed-out')))
+
+  const handleClerkSignOut = async () => {
+    const { signOut } = useClerk()
+    await performSignOut(async () => {
       try {
         await fetch('/api/auth/sign-out', {
           method: 'POST',
@@ -38,24 +54,16 @@ export function SignOutButton({
         })
       } catch (error) {
         console.error('Error calling server sign-out endpoint:', error)
-        // Continue with client-side sign-out even if server call fails
       }
-
-      // Sign out using Clerk client SDK
       await signOut({ redirectUrl: '/' })
-
-      // Ensure we redirect to home page
-      router.push('/')
-      router.refresh()
-    } catch (error) {
-      console.error('Error signing out:', error)
-      setIsLoading(false)
-    }
+    })
   }
+
+  const handleClick = mockAuthEnabledClient ? handleMockSignOut : handleClerkSignOut
 
   return (
     <Button
-      onClick={handleSignOut}
+      onClick={handleClick}
       disabled={isLoading}
       variant={variant}
       size={size}
