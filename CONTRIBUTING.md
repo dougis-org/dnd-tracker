@@ -52,7 +52,29 @@ and security. All contributors—including any AI agents **must** follow these u
 
 - Commit and push after local checks pass.
 
-### 3. Pre-PR Checklist
+### 3. Pre-Commit Hook (Mandatory—No Bypass)
+
+A Git pre-commit hook is configured to prevent commits that fail quality checks. **This hook MUST NOT be bypassed under any circumstances.**
+
+The precommit hook runs the following checks and **will abort the commit if ANY check fails**:
+
+- `npm run type-check` — TypeScript type validation
+- `npm run lint` — ESLint code style & quality
+- `npm run lint:markdown` — Markdown lint
+- `npm run build` — Production build validation
+
+**Correction Process:**
+
+If the precommit hook fails, you **MUST**:
+
+1. Read and understand the error message
+2. Fix the issue in your code
+3. Re-run the precommit checks locally: `npm run type-check && npm run lint:fix && npm run lint:markdown:fix && npm run build`
+4. Attempt to commit again
+
+**CRITICAL for AI Agents:** Do not attempt to bypass this hook via `git commit --no-verify` or similar. The hook failure is authoritative and indicates real quality issues that must be fixed. Bypassing the hook to force a commit will result in PR failure and wasted effort.
+
+### 4. Pre-PR Checklist
 
 Before creating a PR, ensure all of the following pass locally:
 
@@ -70,7 +92,7 @@ Also verify:
 - [ ] Environment variables are documented in `.env.example`
 - [ ] Code follows all project conventions and best practices
 
-### 4. Pull Request Creation
+### 5. Pull Request Creation
 
 - AI Agents should use the tools outlined in [PR Instructions](.github/instructions/pr.instructions.md)
 - Humans can choose whatever tooling works best for them
@@ -100,7 +122,7 @@ Also verify:
 6. Once all of those items are complete and addressed, enable auto merge on the PR
 7. **NEVER** force merge without repository owner approval
 
-### 5. Post-PR Merge Process
+### 6. Post-PR Merge Process
 
 - Remove the `in-progress` label from the GitHub issue after merge
 - Update the issue status to `completed` in GitHub (if using issue status/state field)

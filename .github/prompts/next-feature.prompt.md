@@ -117,4 +117,3 @@ This command selects the next eligible feature marked "Planned" in `docs/Feature
      Please now run
      /speckit.specify FEATURE_NUMBER=[FEATURE_NUMBER] BRANCH_NAME=[BRANCH_NAME] SHORT_NAME=[SHORT_NAME]
      ```
-
