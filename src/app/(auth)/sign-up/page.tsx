@@ -7,8 +7,44 @@
  */
 
 import { SignUp } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { mockAuthEnabledClient } from '@/lib/auth/authConfig'
+import { setMockAuthState } from '@/lib/auth/mockAuthClient'
 
 export default function SignUpPage() {
+  const router = useRouter()
+
+  if (mockAuthEnabledClient) {
+    const handleMockSignUp = () => {
+      setMockAuthState('signed-in')
+      router.push('/')
+      router.refresh()
+    }
+
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="w-full max-w-md space-y-4 rounded-lg border border-border bg-card p-6 shadow-lg">
+          <h1 className="text-center text-3xl font-bold">Create Mock Account</h1>
+          <p className="text-center text-muted-foreground">
+            Skip the hosted auth provider and explore the app with a demo user.
+          </p>
+          <Button
+            className="w-full"
+            size="lg"
+            data-testid="mock-sign-up-button"
+            onClick={handleMockSignUp}
+          >
+            Continue to App
+          </Button>
+          <p className="text-center text-xs text-muted-foreground">
+            You can switch back to the real provider by disabling mock auth.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">

@@ -117,7 +117,7 @@ export default function ProfileForm({
   return (
     <Card data-testid={testId}>
       <CardHeader>
-        <CardTitle>User Profile</CardTitle>
+        <CardTitle className="text-4xl font-bold">Profile</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Save Message */}
@@ -137,6 +137,7 @@ export default function ProfileForm({
         <div className="space-y-2">
           <label className="text-sm font-medium">Name</label>
           <Input
+            name="name"
             value={profile.name}
             onChange={handleProfileChange('name')}
             onBlur={handleBlur('name')}
@@ -150,6 +151,7 @@ export default function ProfileForm({
         <div className="space-y-2">
           <label className="text-sm font-medium">Email</label>
           <Input
+            name="email"
             type="email"
             value={profile.email}
             onChange={handleProfileChange('email')}

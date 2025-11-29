@@ -6,7 +6,10 @@
  * Built on Clerk's useAuth() hook with additional helpers
  */
 
+import { useEffect, useState } from 'react'
 import { useAuth as useClerkAuth, useUser } from '@clerk/nextjs'
+import { mockAuthEnabledClient, MOCK_AUTH_EVENT_NAME } from '@/lib/auth/authConfig'
+import { readMockSessionFromStorage } from '@/lib/auth/mockSession'
 import type { Session, UserProfile } from '@/types/auth'
 
 /**
@@ -25,6 +28,33 @@ function transformClerkUserToProfile(clerkUser: ReturnType<typeof useUser>['user
   }
 }
 
+function useMockAuthSession(): Session {
+  const [session, setSession] = useState<Session>(() => readMockSessionFromStorage())
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const handleChange = () => {
+      setSession(readMockSessionFromStorage())
+    }
+
+    window.addEventListener('storage', handleChange)
+    window.addEventListener(MOCK_AUTH_EVENT_NAME, handleChange)
+
+    // Sync state immediately in case storage was updated during component mount
+    handleChange()
+
+    return () => {
+      window.removeEventListener('storage', handleChange)
+      window.removeEventListener(MOCK_AUTH_EVENT_NAME, handleChange)
+    }
+  }, [])
+
+  return session
+}
+
 /**
  * Custom useAuth hook that combines Clerk's useAuth and useUser hooks
  * Returns user profile, authentication state, and loading status
@@ -39,6 +69,10 @@ function transformClerkUserToProfile(clerkUser: ReturnType<typeof useUser>['user
  * return <Dashboard username={user.name} />
  */
 export function useAuth(): Session {
+  if (mockAuthEnabledClient) {
+    return useMockAuthSession()
+  }
+
   const clerkAuth = useClerkAuth()
   const { user: clerkUser, isLoaded } = useUser()
 

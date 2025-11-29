@@ -1,6 +1,6 @@
 ---
 description: 'Return only the next GitHub issue number that can safely be started (critical-path label first); if none, explain blockers.'
-tools: ['Codacy MCP Server/codacy_cli_analyze', 'Codacy MCP Server/codacy_get_file_issues', 'GitKraken/git_add_or_commit', 'GitKraken/git_branch', 'GitKraken/git_checkout', 'GitKraken/git_push', 'GitKraken/git_status', 'GitKraken/issues_add_comment', 'GitKraken/issues_assigned_to_me', 'GitKraken/issues_get_detail', 'GitKraken/repository_get_file_content', 'desktop-commander-wonderwhy/edit_block', 'desktop-commander-wonderwhy/get_file_info', 'desktop-commander-wonderwhy/get_more_search_results', 'desktop-commander-wonderwhy/list_searches', 'desktop-commander-wonderwhy/read_file', 'desktop-commander-wonderwhy/read_multiple_files', 'desktop-commander-wonderwhy/start_search', 'desktop-commander-wonderwhy/stop_search', 'desktop-commander-wonderwhy/write_file', 'github/github-mcp-server/get_commit', 'github/github-mcp-server/get_me', 'github/github-mcp-server/issue_read', 'github/github-mcp-server/issue_write', 'github/github-mcp-server/list_issues', 'github/github-mcp-server/search_code', 'sequentialthinking/*']
+tools: ['search', 'Codacy MCP Server/codacy_cli_analyze', 'Codacy MCP Server/codacy_get_file_issues', 'GitKraken/git_add_or_commit', 'GitKraken/git_branch', 'GitKraken/git_checkout', 'GitKraken/git_push', 'GitKraken/git_status', 'GitKraken/issues_add_comment', 'GitKraken/issues_assigned_to_me', 'GitKraken/issues_get_detail', 'GitKraken/repository_get_file_content', 'deepcontext/*', 'desktop-commander-wonderwhy/edit_block', 'desktop-commander-wonderwhy/get_file_info', 'desktop-commander-wonderwhy/get_more_search_results', 'desktop-commander-wonderwhy/list_searches', 'desktop-commander-wonderwhy/read_file', 'desktop-commander-wonderwhy/read_multiple_files', 'desktop-commander-wonderwhy/start_search', 'desktop-commander-wonderwhy/stop_search', 'desktop-commander-wonderwhy/write_file', 'github/github-mcp-server/get_commit', 'github/github-mcp-server/get_me', 'github/github-mcp-server/issue_read', 'github/github-mcp-server/issue_write', 'github/github-mcp-server/list_issues', 'github/github-mcp-server/search_code', 'sequentialthinking/*']
 ---
 
 # Find Next Issue Chat Mode Specification
@@ -28,12 +28,6 @@ An issue qualifies if:
 1. State = OPEN/Not Started/Blank
 2. All predecessors state = CLOSED/Complete
 3. Issue is not in draft/discussion status
-
-
-
-
-
-
 
 ## Non-Goals
 

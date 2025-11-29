@@ -7,12 +7,12 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  getSubscription,
-  getUsageMetrics,
-  getAvailablePlans,
-} from '@/lib/adapters/subscriptionAdapter';
 import type { SubscriptionResponse } from '@/lib/schemas/subscriptionSchema';
+import {
+  createDefaultSubscription,
+  createDefaultUsageMetrics,
+  createDefaultPlans,
+} from '@/lib/adapters/subscriptionDefaults';
 
 export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
@@ -20,12 +20,12 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     // For MVP, use a mock userId
     const userId = 'user-123';
 
-    // Fetch subscription data in parallel for better performance
-    const [subscription, usageMetrics, availablePlans] = await Promise.all([
-      getSubscription(userId),
-      getUsageMetrics(userId),
-      getAvailablePlans(),
-    ]);
+    // TODO [Technical Debt]: subscriptionAdapter is currently client-only and cannot be used in SSR/server routes.
+    // See issue #45: Refactor subscriptionAdapter to support server-side usage and replace mock data with real fetching.
+    // Temporary workaround: return mock data for MVP. Planned for Feature 030 (Item Model & API with MongoDB / Mongoose).
+    const subscription = createDefaultSubscription(userId);
+    const usageMetrics = createDefaultUsageMetrics(userId);
+    const availablePlans = createDefaultPlans();
 
     const response: SubscriptionResponse = {
       subscription,

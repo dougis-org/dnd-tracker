@@ -4,6 +4,7 @@
  */
 
 import { test, expect } from '@playwright/test'
+import { mockSignOut } from './test-data/mock-auth'
 
 // Test data
 const testPages = {
@@ -17,6 +18,7 @@ test.describe('Authentication Flows (E2E)', () => {
   test.beforeEach(async ({ page }) => {
     // Clear cookies for clean state
     await page.context().clearCookies()
+    await mockSignOut(page)
   })
 
   test('should navigate to sign-in page', async ({ page }) => {
