@@ -36,10 +36,10 @@
 
 **⚠️ CRITICAL**: No wizard component work can begin until this phase is complete
 
-- [ ] T003 [P] Write failing unit tests for avatar compression in `tests/unit/lib/avatarCompression.test.ts` (8 test cases: JPEG/PNG/WebP compression, format validation, timeout, base64 size limit, error handling)
-- [ ] T004 [P] Implement avatar compression utility in `src/lib/wizards/avatarCompression.ts` (~80 lines: Canvas API, quality adjustment loop, base64 export, error handling)
-- [ ] T005 [P] Write failing unit tests for Zod validation schemas in `tests/unit/lib/wizardValidation.test.ts` (10 test cases: displayName validation, avatar size limits, preferences enum, full schema validation)
-- [ ] T006 [P] Implement Zod validation schemas in `src/lib/wizards/wizardValidation.ts` (~30 lines: displayName, avatar, preferences, profileSetupSchema)
+- [X] T003 [P] Write failing unit tests for avatar compression in `tests/unit/lib/avatarCompression.test.ts` (8 test cases: JPEG/PNG/WebP compression, format validation, timeout, base64 size limit, error handling)
+- [X] T004 [P] Implement avatar compression utility in `src/lib/wizards/avatarCompression.ts` (~80 lines: Canvas API, quality adjustment loop, base64 export, error handling)
+- [X] T005 [P] Write failing unit tests for Zod validation schemas in `tests/unit/lib/wizardValidation.test.ts` (10 test cases: displayName validation, avatar size limits, preferences enum, full schema validation)
+- [X] T006 [P] Implement Zod validation schemas in `src/lib/wizards/wizardValidation.ts` (~30 lines: displayName, avatar, preferences, profileSetupSchema)
 - [ ] T007 Write failing unit tests for useProfileSetupWizard hook in `tests/unit/hooks/useProfileSetupWizard.test.ts` (15 test cases: state init, screen nav, form updates, submission, error handling, retry logic, localStorage persistence)
 - [ ] T008 Implement useProfileSetupWizard custom hook in `src/hooks/useProfileSetupWizard.ts` (~120 lines: state management, navigation, submission, error toast, retry)
 
