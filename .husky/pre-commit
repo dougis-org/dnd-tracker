@@ -7,6 +7,8 @@ export NVM_DIR="$HOME/.nvm"
 
 # Husky pre-commit hook: run lint, lint:markdown and build. Fail commit if any command fails.
 echo "Running pre-commit checks: lint, lint:markdown, build"
+# make sure to install dependencies
+npm install
 
 # Run linter
 npm run lint
