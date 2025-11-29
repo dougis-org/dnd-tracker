@@ -163,6 +163,7 @@ jobs:
           cat /tmp/server.log
         env:
           NODE_ENV: production
+          PORT: "3000"
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '' }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY || '' }}
 
