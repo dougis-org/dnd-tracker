@@ -5,10 +5,11 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? parseInt(process.env.PLAYWRIGHT_WORKERS || '4', 10) : undefined,
   reporter: 'html',
-  // NOTE: E2E tests use port 3002 to avoid conflicts with the standard development server (port 3000).
-  // If you are running the development server on port 3000, E2E tests will start a separate instance on port 3002.
+  // NOTE: E2E tests use port 3002 locally to avoid conflicts with development server (port 3000).
+  // In CI, the server runs on port 3000 via PLAYWRIGHT_TEST_BASE_URL override.
+  // If you are running the development server on port 3000, local E2E tests will start a separate instance on port 3002.
   use: {
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3002',
     trace: 'on-first-retry',
@@ -19,7 +20,8 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  // The web server for E2E tests runs on port 3002 to avoid interfering with local development on port 3000.
+  // The web server for E2E tests runs on port 3002 locally to avoid interfering with development on port 3000.
+  // In CI, the server is started externally on port 3000.
   webServer: process.env.SKIP_WEB_SERVER ? undefined : {
     command: 'PORT=3002 NEXT_PUBLIC_FEATURE_LANDING=true NEXT_PUBLIC_ENABLE_MOCK_AUTH=true npm run dev',
     url: 'http://localhost:3002',
