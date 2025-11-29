@@ -104,6 +104,7 @@ export default [
         CanvasRenderingContext2D: 'readonly',
         Canvas: 'readonly',
         AbortController: 'readonly',
+        AbortSignal: 'readonly',
         Event: 'readonly',
       },
     },
