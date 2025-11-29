@@ -84,7 +84,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F013 | Clerk Integration & Auth Flow | ✅ Complete | F001, F002, F012 | [#367](https://github.com/dougis-org/dnd-tracker/issues/367) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F014 | MongoDB User Model & Webhook | ✅ Complete (Merged via PR #469) | F013 | [#368](https://github.com/dougis-org/dnd-tracker/issues/368) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F015 | Profile Setup Wizard | In Progress | F014 | [#369](https://github.com/dougis-org/dnd-tracker/issues/369) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F016 | User Dashboard with Real Data | Planned | F004, F014 | [#370](https://github.com/dougis-org/dnd-tracker/issues/370) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F016 | User Dashboard with Real Data | In Progress | F004, F014 | [#370](https://github.com/dougis-org/dnd-tracker/issues/370) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F017 | Profile Page Functionality | Planned | F010, F014 | [#371](https://github.com/dougis-org/dnd-tracker/issues/371) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F018 | Character Read Operations | Planned | F014 | [#372](https://github.com/dougis-org/dnd-tracker/issues/372) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
 | F019 | Character Write Operations | Planned | F018 | [#426](https://github.com/dougis-org/dnd-tracker/issues/426) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
@@ -884,6 +884,10 @@ WEBHOOK_TIMEOUT_MS=3000                   # 3s default
 ---
 
 ### Feature 016: User Dashboard with Real Data
+
+**Status**: In Progress
+**Branch**: feature/016-user-dashboard-real-data
+**Spec Location**: specs/016-user-dashboard-real-data/
 
 **Depends on**: Feature 004, Feature 014
 **Duration**: Day 1
