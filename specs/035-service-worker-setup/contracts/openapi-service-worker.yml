@@ -11,6 +11,9 @@ info:
   contact:
     name: dnd-tracker API Team
     email: devops@dougis-org.example
+tags:
+  - name: sync
+    description: Endpoints for offline synchronization of queued operations
 paths:
   /sync/offline-ops:
     post:

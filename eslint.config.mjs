@@ -17,6 +17,24 @@ export default [
       'specs/',
     ],
   },
+  // Node-only test helpers (global setup/teardown) run under Node and use
+  // CommonJS globals; ensure ESLint treats them as Node files and relaxes
+  // rules which are common false-positives in this context.
+  {
+    files: ['tests/test-helpers/**/*.js'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+      'no-console': 'off',
+    },
+  },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     plugins: {
@@ -53,6 +71,13 @@ export default [
         IDBTransaction: 'readonly',
         IDBObjectStore: 'readonly',
         crypto: 'readonly',
+        CryptoKey: 'readonly',
+        Crypto: 'readonly',
+        SubtleCrypto: 'readonly',
+        btoa: 'readonly',
+        atob: 'readonly',
+        TextEncoder: 'readonly',
+        TextDecoder: 'readonly',
         caches: 'readonly',
         ServiceWorkerRegistration: 'readonly',
         global: 'readonly',
@@ -66,11 +91,14 @@ export default [
         expect: 'readonly',
         beforeEach: 'readonly',
         afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
         jest: 'readonly',
         HTMLFormElement: 'readonly',
         HTMLInputElement: 'readonly',
         HTMLSelectElement: 'readonly',
         AbortController: 'readonly',
+        Event: 'readonly',
       },
     },
     rules: {

@@ -55,7 +55,7 @@ export default function PartyListPage() {
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">
-      <h1 className="text-4xl font-bold text-gray-900 mb-8">Parties</h1>
+      <h1 className="text-4xl font-bold mb-8">Parties</h1>
 
       {/* Search Bar */}
       <div className="mb-8 flex gap-4">
@@ -69,7 +69,7 @@ export default function PartyListPage() {
         />
         <button
           onClick={handleCreateParty}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          className="px-6 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors font-medium"
         >
           Create Party
         </button>
@@ -78,10 +78,10 @@ export default function PartyListPage() {
       {/* Empty State */}
       {filteredParties.length === 0 && parties.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-600 mb-4">Create your first party to get started!</p>
+          <p className="mb-4">Create your first party to get started!</p>
           <button
             onClick={handleCreateParty}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Create Your First Party
           </button>
@@ -91,7 +91,7 @@ export default function PartyListPage() {
       {/* No Search Results */}
       {filteredParties.length === 0 && parties.length > 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-600">No parties match your search.</p>
+          <p>No parties match your search.</p>
         </div>
       )}
 

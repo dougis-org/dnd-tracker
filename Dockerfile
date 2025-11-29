@@ -19,7 +19,7 @@ COPY . .
 # Set build-time environment variables with placeholders
 # Actual secrets will be injected at runtime by Fly.io
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=placeholder
+ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_bGVnYWwtd2FzcC0xNi5jbGVyay5hY2NvdW50cy5kZXYk
 ENV CLERK_SECRET_KEY=placeholder
 
 # Build Next.js application

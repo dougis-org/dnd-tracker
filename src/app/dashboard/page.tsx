@@ -1,8 +1,10 @@
+'use client'
+
 import React from 'react'
-import { MainLayout } from '@/components/layouts/MainLayout'
 import { StatCard } from '@/components/dashboard/StatCard'
 import { QuickActions } from '@/components/dashboard/QuickActions'
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed'
+import { ProtectedRouteGuard } from '@/components/auth/ProtectedRouteGuard'
 
 const widgets = [
   { id: 'active_parties', label: 'Active Parties', value: 3, detailUrl: '/parties' },
@@ -20,9 +22,9 @@ const recentActivity = [
 
 export default function DashboardPage() {
   return (
-    <MainLayout>
+    <ProtectedRouteGuard>
       <section className="container mx-auto px-4 md:px-6 py-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-50 mb-8">Dashboard</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-8">Dashboard</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {widgets.map((w) => (
@@ -32,16 +34,15 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-4">Recent Activity</h2>
+            <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
             <ActivityFeed items={recentActivity} />
           </div>
           <aside className="lg:col-span-1">
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-4">Quick Actions</h2>
+            <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
             <QuickActions actions={actions} />
           </aside>
         </div>
       </section>
-    </MainLayout>
+    </ProtectedRouteGuard>
   )
 }
-

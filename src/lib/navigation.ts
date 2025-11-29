@@ -1,14 +1,22 @@
-export type NavigationAlignment = 'left' | 'right'
+export type NavigationAlignment = 'left' | 'right';
 
 export interface NavigationItem {
-  label: string
-  href?: string
-  alignment?: NavigationAlignment
-  mobileOrder?: number
-  children?: NavigationItem[]
+  label: string;
+  href?: string;
+  alignment?: NavigationAlignment;
+  mobileOrder?: number;
+  children?: NavigationItem[];
 }
 
 export const NAVIGATION_ITEMS: NavigationItem[] = [
+  {
+    label: 'Home',
+    href: '/',
+    // Intentionally do not set `alignment` or `mobileOrder` for Home.
+    // This keeps Home distinct from the main navigation clusters which are
+    // used for desktop left/right clusters and mobile ordering. Tests and
+    // usage expect 'Home' to not be included in the list of cluster items.
+  },
   {
     label: 'Dashboard',
     href: '/dashboard',
@@ -55,14 +63,14 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     alignment: 'right',
     mobileOrder: 6,
   },
-]
+];
 
 export interface RouteDefinition {
-  path: string
-  label: string
-  parent?: string
+  path: string;
+  label: string;
+  parent?: string;
   /** Optional hint for dynamic segments (e.g., [id]). */
-  dynamicLabel?: string
+  dynamicLabel?: string;
 }
 
 export const ROUTE_DEFINITIONS: RouteDefinition[] = [
@@ -120,44 +128,44 @@ export const ROUTE_DEFINITIONS: RouteDefinition[] = [
   { path: '/subscription', label: 'Subscription' },
   { path: '/pricing', label: 'Pricing' },
   { path: '/help', label: 'Help' },
-]
+];
 
 export interface BreadcrumbSegment {
-  label: string
-  href?: string
+  label: string;
+  href?: string;
 }
 
 interface MatchedRoute {
-  definition: RouteDefinition
-  params: Record<string, string>
+  definition: RouteDefinition;
+  params: Record<string, string>;
 }
 
 function normalizePath(pathname: string): string {
   if (!pathname) {
-    return '/'
+    return '/';
   }
 
   if (pathname === '/') {
-    return '/'
+    return '/';
   }
 
-  return pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
+  return pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
 }
 
 function splitPath(pathname: string): string[] {
-  const normalized = normalizePath(pathname)
+  const normalized = normalizePath(pathname);
   if (normalized === '/') {
-    return []
+    return [];
   }
-  return normalized.slice(1).split('/')
+  return normalized.slice(1).split('/');
 }
 
 function extractParamName(segment: string): string {
-  return segment.slice(1, -1)
+  return segment.slice(1, -1);
 }
 
 function isDynamicSegment(segment: string): boolean {
-  return segment.startsWith('[') && segment.endsWith(']')
+  return segment.startsWith('[') && segment.endsWith(']');
 }
 
 function matchSegments(
@@ -165,122 +173,130 @@ function matchSegments(
   pathSegments: string[]
 ): Record<string, string> | null {
   if (defSegments.length !== pathSegments.length) {
-    return null
+    return null;
   }
 
-  const params: Record<string, string> = {}
+  const params: Record<string, string> = {};
 
   for (let index = 0; index < defSegments.length; index += 1) {
-    const current = defSegments[index]
-    const actual = pathSegments[index]
+    const current = defSegments[index];
+    const actual = pathSegments[index];
 
     if (isDynamicSegment(current)) {
-      const paramName = extractParamName(current)
-      params[paramName] = decodeURIComponent(actual)
-      continue
+      const paramName = extractParamName(current);
+      params[paramName] = decodeURIComponent(actual);
+      continue;
     }
 
     if (current !== actual) {
-      return null
+      return null;
     }
   }
 
-  return params
+  return params;
 }
 
 function matchRoute(pathname: string): MatchedRoute | null {
-  const pathSegments = splitPath(pathname)
+  const pathSegments = splitPath(pathname);
 
   for (const definition of ROUTE_DEFINITIONS) {
-    const defSegments = splitPath(definition.path)
-    const params = matchSegments(defSegments, pathSegments)
+    const defSegments = splitPath(definition.path);
+    const params = matchSegments(defSegments, pathSegments);
 
     if (params !== null) {
-      return { definition, params }
+      return { definition, params };
     }
   }
 
-  return null
+  return null;
 }
 
-function buildConcretePath(pattern: string, params: Record<string, string>): string {
-  const segments = splitPath(pattern)
+function buildConcretePath(
+  pattern: string,
+  params: Record<string, string>
+): string {
+  const segments = splitPath(pattern);
   if (segments.length === 0) {
-    return '/'
+    return '/';
   }
 
   const resolved = segments.map((segment) => {
     if (isDynamicSegment(segment)) {
-      const paramName = extractParamName(segment)
-      return params[paramName] ?? segment
+      const paramName = extractParamName(segment);
+      return params[paramName] ?? segment;
     }
-    return segment
-  })
+    return segment;
+  });
 
-  return `/${resolved.join('/')}`
+  return `/${resolved.join('/')}`;
 }
 
 function extractLastDynamicParam(
   definition: RouteDefinition,
   params: Record<string, string>
 ): string | undefined {
-  const dynamicSegments = definition.path.match(/\[(.*?)\]/g) ?? []
+  const dynamicSegments = definition.path.match(/\[(.*?)\]/g) ?? [];
   if (dynamicSegments.length === 0) {
-    return undefined
+    return undefined;
   }
 
-  const lastDynamic = dynamicSegments[dynamicSegments.length - 1]
-  const paramName = extractParamName(lastDynamic)
-  return params[paramName]
+  const lastDynamic = dynamicSegments[dynamicSegments.length - 1];
+  const paramName = extractParamName(lastDynamic);
+  return params[paramName];
 }
 
-function resolveLabel(definition: RouteDefinition, params: Record<string, string>): string {
-  const paramValue = extractLastDynamicParam(definition, params)
+function resolveLabel(
+  definition: RouteDefinition,
+  params: Record<string, string>
+): string {
+  const paramValue = extractLastDynamicParam(definition, params);
 
   if (paramValue) {
-    return definition.dynamicLabel ? `${definition.dynamicLabel} ${paramValue}` : paramValue
+    return definition.dynamicLabel
+      ? `${definition.dynamicLabel} ${paramValue}`
+      : paramValue;
   }
 
-  return definition.dynamicLabel ?? definition.label
+  return definition.dynamicLabel ?? definition.label;
 }
 
 function fallbackBreadcrumb(pathname: string): BreadcrumbSegment[] {
-  const normalized = normalizePath(pathname)
-  const segments = splitPath(normalized)
+  const normalized = normalizePath(pathname);
+  const segments = splitPath(normalized);
 
   if (segments.length === 0) {
-    return [{ label: 'Home' }]
+    return [{ label: 'Home' }];
   }
 
-  const crumbs: BreadcrumbSegment[] = [{ label: 'Home', href: '/' }]
-  let currentPath = ''
+  const crumbs: BreadcrumbSegment[] = [{ label: 'Home', href: '/' }];
+  let currentPath = '';
 
   segments.forEach((segment, index) => {
-    currentPath += `/${segment}`
-    const label = decodeURIComponent(segment)
+    currentPath += `/${segment}`;
+    const label = decodeURIComponent(segment);
     crumbs.push({
       label,
       href: index === segments.length - 1 ? undefined : currentPath,
-    })
-  })
+    });
+  });
 
-  return crumbs
+  return crumbs;
 }
 
 function buildBreadcrumbStack(route: MatchedRoute): MatchedRoute[] {
-  const stack: MatchedRoute[] = []
-  let cursor: MatchedRoute | null = route
+  const stack: MatchedRoute[] = [];
+  let cursor: MatchedRoute | null = route;
 
   while (true) {
-    stack.unshift(cursor)
-    const parentPath = cursor.definition.parent
+    stack.unshift(cursor);
+    const parentPath = cursor.definition.parent;
     if (!parentPath) {
-      break
+      break;
     }
 
-    const parentMatch = matchRoute(parentPath)
+    const parentMatch = matchRoute(parentPath);
     if (parentMatch) {
-      cursor = parentMatch
+      cursor = parentMatch;
     } else {
       stack.unshift({
         definition: {
@@ -288,17 +304,17 @@ function buildBreadcrumbStack(route: MatchedRoute): MatchedRoute[] {
           label: decodeURIComponent(parentPath.split('/').pop() ?? 'Home'),
         },
         params: {},
-      })
-      break
+      });
+      break;
     }
   }
 
-  return stack
+  return stack;
 }
 
 function ensureHomeFirst(stack: MatchedRoute[]): void {
   if (stack[0]?.definition.path !== '/') {
-    stack.unshift({ definition: ROUTE_DEFINITIONS[0], params: {} })
+    stack.unshift({ definition: ROUTE_DEFINITIONS[0], params: {} });
   }
 }
 
@@ -307,29 +323,31 @@ function stackToBreadcrumbs(
   normalized: string
 ): BreadcrumbSegment[] {
   return stack.map((entry, index) => {
-    const resolvedLabel = entry.definition.path === '/'
-      ? 'Home'
-      : resolveLabel(entry.definition, entry.params)
-    const isCurrent = index === stack.length - 1
-    const href = isCurrent ? undefined : buildConcretePath(entry.definition.path, entry.params)
+    const resolvedLabel =
+      entry.definition.path === '/'
+        ? 'Home'
+        : resolveLabel(entry.definition, entry.params);
+    const isCurrent = index === stack.length - 1;
+    const href = isCurrent
+      ? undefined
+      : buildConcretePath(entry.definition.path, entry.params);
 
     return {
       label: resolvedLabel,
       href: href === normalized ? undefined : href,
-    }
-  })
+    };
+  });
 }
 
-
 export function buildBreadcrumbSegments(pathname: string): BreadcrumbSegment[] {
-  const normalized = normalizePath(pathname)
-  const matched = matchRoute(normalized)
+  const normalized = normalizePath(pathname);
+  const matched = matchRoute(normalized);
 
   if (!matched) {
-    return fallbackBreadcrumb(normalized)
+    return fallbackBreadcrumb(normalized);
   }
 
-  const stack = buildBreadcrumbStack(matched)
-  ensureHomeFirst(stack)
-  return stackToBreadcrumbs(stack, normalized)
+  const stack = buildBreadcrumbStack(matched);
+  ensureHomeFirst(stack);
+  return stackToBreadcrumbs(stack, normalized);
 }

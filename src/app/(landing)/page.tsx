@@ -78,11 +78,11 @@ export default function LandingPage() {
       {/* Final CTA */}
       <section className="w-full py-16 md:py-24 bg-linear-to-b from-slate-900 to-slate-800">
         <div className="container mx-auto px-4 md:px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Transform Your Game?
           </h2>
           <p className="text-xl text-slate-300 mb-8">
-            Join thousands of Dungeon Masters using D&D Tracker today
+            Join all the Dungeon Masters using the D&D Tracker right now
           </p>
           <CallToAction
             primaryText="Start Free"

@@ -1,0 +1,226 @@
+openapi: 3.0.3
+info:
+  title: Offline Operations Sync API
+  description: API for synchronizing offline operations when connectivity is restored
+  version: 1.0.0
+  contact:
+    name: D&D Tracker Team
+
+servers:
+  - url: https://api.dndtracker.com
+    description: Production server
+  - url: http://localhost:3000
+    description: Development server
+tags:
+  - name: Offline Sync
+    description: Endpoints that support syncing operations recorded while offline
+
+paths:
+  /sync/offline-ops:
+    post:
+      summary: Synchronize offline operations
+      description: |
+        Accepts a batch of operations performed while offline and processes them.
+        Operations are validated, deduplicated, and executed in order.
+        Returns success/failure status for each operation.
+      operationId: syncOfflineOperations
+      tags:
+        - Offline Sync
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - operations
+                - clientId
+                - syncId
+              properties:
+                operations:
+                  type: array
+                  description: List of offline operations to sync
+                  items:
+                    $ref: '#/components/schemas/OfflineOperation'
+                  minItems: 1
+                  maxItems: 100
+                clientId:
+                  type: string
+                  description: Unique client identifier
+                  example: 'client-uuid-123'
+                syncId:
+                  type: string
+                  description: Unique sync session identifier
+                  example: 'sync-uuid-456'
+                timestamp:
+                  type: string
+                  format: date-time
+                  description: When the sync was initiated
+      responses:
+        '200':
+          description: Sync completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Sync conflict - some operations already processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictResponse'
+        '429':
+          description: Too many requests - rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    OfflineOperation:
+      type: object
+      required:
+        - id
+        - type
+        - payload
+        - timestamp
+      properties:
+        id:
+          type: string
+          description: Unique operation identifier
+          example: 'op-uuid-789'
+        type:
+          type: string
+          description: Operation type
+          enum:
+            [
+              CREATE_CHARACTER,
+              UPDATE_CHARACTER,
+              DELETE_CHARACTER,
+              CREATE_ENCOUNTER,
+            ]
+          example: 'CREATE_CHARACTER'
+        payload:
+          type: object
+          description: Operation-specific data
+          example:
+            name: 'Thorin Oakenshield'
+            class: 'Fighter'
+            level: 5
+        timestamp:
+          type: string
+          format: date-time
+          description: When the operation was performed
+        retryCount:
+          type: integer
+          minimum: 0
+          maximum: 10
+          description: Number of retry attempts
+          default: 0
+
+    SyncResponse:
+      type: object
+      required:
+        - success
+        - results
+        - syncId
+      properties:
+        success:
+          type: boolean
+          description: Overall sync success
+          example: true
+        results:
+          type: array
+          description: Individual operation results
+          items:
+            $ref: '#/components/schemas/OperationResult'
+        syncId:
+          type: string
+          description: Echoed sync session identifier
+        processedAt:
+          type: string
+          format: date-time
+          description: When processing completed
+
+    OperationResult:
+      type: object
+      required:
+        - operationId
+        - success
+      properties:
+        operationId:
+          type: string
+          description: Operation identifier
+        success:
+          type: boolean
+          description: Whether this operation succeeded
+        error:
+          type: string
+          description: Error message if failed
+          example: 'Character name already exists'
+        result:
+          type: object
+          description: Operation result data
+          example:
+            characterId: 'char-uuid-101'
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: 'VALIDATION_ERROR'
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: object
+          description: Additional error details
+
+    ConflictResponse:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+      properties:
+        conflicts:
+          type: array
+          description: List of conflicting operations
+          items:
+            type: object
+            properties:
+              operationId:
+                type: string
+              reason:
+                type: string
+                enum: [ALREADY_PROCESSED, CONFLICTING_UPDATE]
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

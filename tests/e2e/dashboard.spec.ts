@@ -3,7 +3,8 @@ import { test, expect } from '@playwright/test';
 test('dashboard shows widgets and quick actions', async ({ page }) => {
   await page.goto('/dashboard');
 
-  await expect(page.getByText('Dashboard')).toBeVisible();
+  // Use role selector to avoid strict mode violations with multiple text matches
+  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
   await expect(page.getByText('Active Parties')).toBeVisible();
 
   // Open quick actions area and click New Party
@@ -12,5 +13,6 @@ test('dashboard shows widgets and quick actions', async ({ page }) => {
   await newParty.click();
 
   // Expect NotImplemented fallback after clicking an unimplemented route
-  await expect(page.getByText(/on the roadmap/i)).toBeVisible();
+  // Look for the text 'On the roadmap' using user-centric selector
+  await expect(page.getByText('On the roadmap')).toBeVisible();
 });

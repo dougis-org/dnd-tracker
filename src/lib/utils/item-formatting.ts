@@ -1,7 +1,7 @@
 import { Item, ItemRarity } from '@/types/item';
 
 export const rarityStyles: Record<ItemRarity, string> = {
-  [ItemRarity.Common]: 'bg-slate-100 text-slate-800 border border-slate-200',
+  [ItemRarity.Common]: 'bg-slate-100 text-slate-800 border',
   [ItemRarity.Uncommon]:
     'bg-emerald-100 text-emerald-800 border border-emerald-200',
   [ItemRarity.Rare]: 'bg-sky-100 text-sky-800 border border-sky-200',

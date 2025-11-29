@@ -6,15 +6,15 @@ import {
   afterAll,
   beforeEach,
 } from '@jest/globals';
-import EncounterModel from '../../../src/lib/models/encounter';
-import type { EncounterDoc } from '../../../src/lib/models/encounter';
+import EncounterModel from '@/lib/models/encounter';
+import type { EncounterDoc } from '@/lib/models/encounter';
 import {
   startMongoContainer,
   stopMongoContainer,
   connectToMongo,
   clearMongoDatabase,
   disconnectMongo,
-} from '../../test-helpers/mongo-testcontainers';
+} from '@test-helpers/mongo-testcontainers';
 
 // T016: Full integration tests for Encounter model with real MongoDB (testcontainers)
 describe('Encounter model integration tests (T016 - MongoDB)', () => {

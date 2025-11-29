@@ -11,12 +11,13 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ## Progress Tracking
 
-**Current Progress**: 12 of 75 features complete (16.0%) - Week 1 of 10  
+**Current Progress**: 15 of 75 features complete (20.0%) - Week 2 of 10  
 **Phase 1 Status**: Complete ✅ (12 of 12 features complete)  
-**Phase 2 Status**: In Progress (2 of 5 features complete)  
-**Next Feature**: Feature 013 - Clerk Integration & Auth Flow  
+**Phase 2 Status**: In Progress (4 of 5 features complete)  
+**Phase 4 Status**: In Progress (1 of 5 features complete)  
+**Next Feature**: Feature 015 - Profile Setup Wizard  
 **Started**: 2025-11-01  
-**Latest Completion**: Feature 012 (2025-11-14 via PR #450)
+**Latest Completion**: Feature 014 (2025-11-26 via PR #469) — Migration persistence implemented (Merged via PR #471 on 2025-11-28)
 
 > **Note**: Feature numbers F018+ have been renumbered to accommodate decomposed features. See `docs/feature-renumbering-plan.md` for complete mappings.
 
@@ -33,11 +34,14 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
   - ✅ F010: User Profile & Settings Pages (Merged via PR #446 on 2025-11-12)
   - ✅ F011: Item Catalog Pages (Merged via PR #447 on 2025-11-13)
   - ✅ F012: Subscription & Billing Pages (Merged via PR #450 on 2025-11-14)
-- **Phase 2 (Authentication)**: 2/5 complete
+- **Phase 2 (Authentication)**: 4/5 complete
   - ✅ F004: Dashboard Page (Merged via PR #413 on 2025-11-07)
   - ✅ F005: Character Management Pages (Merged via PR #414 on 2025-11-08)
+  - ✅ F013: Clerk Integration & Auth Flow (Merged via PR #463 on 2025-11-19)
+  - ✅ F014: MongoDB User Model & Webhook (Merged via PR #469 on 2025-11-26)
 - **Phase 3 (Entity Management)**: 0/17 complete
-- **Phase 4 (Offline)**: 0/5 complete
+- **Phase 4 (Offline)**: 1/5 complete
+  - ✅ F035: Service Worker Setup (Merged via PR #458 on 2025-11-18)
 - **Phase 5 (Combat Engine)**: 0/16 complete
 - **Phase 6 (Combat Polish)**: 0/7 complete
 - **Phase 7 (Monetization)**: 0/9 complete
@@ -77,8 +81,8 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F010 | User Profile & Settings Pages | ✅ Complete (Merged via PR #446) | F001, F002 | [#364](https://github.com/dougis-org/dnd-tracker/issues/364) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F011 | Item Catalog Pages | ✅ Complete (Merged via PR #447) | F001, F002 | [#365](https://github.com/dougis-org/dnd-tracker/issues/365) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F012 | Subscription & Billing Pages | ✅ Complete (Merged via PR #450) | F001, F002 | [#366](https://github.com/dougis-org/dnd-tracker/issues/366) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
-| F013 | Clerk Integration & Auth Flow | Planned | F001, F002, F012 | [#367](https://github.com/dougis-org/dnd-tracker/issues/367) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F014 | MongoDB User Model & Webhook | Planned | F013 | [#368](https://github.com/dougis-org/dnd-tracker/issues/368) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F013 | Clerk Integration & Auth Flow | ✅ Complete | F001, F002, F012 | [#367](https://github.com/dougis-org/dnd-tracker/issues/367) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F014 | MongoDB User Model & Webhook | ✅ Complete (Merged via PR #469) | F013 | [#368](https://github.com/dougis-org/dnd-tracker/issues/368) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F015 | Profile Setup Wizard | Planned | F014 | [#369](https://github.com/dougis-org/dnd-tracker/issues/369) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F016 | User Dashboard with Real Data | Planned | F004, F014 | [#370](https://github.com/dougis-org/dnd-tracker/issues/370) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F017 | Profile Page Functionality | Planned | F010, F014 | [#371](https://github.com/dougis-org/dnd-tracker/issues/371) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
@@ -99,7 +103,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F032 | Party Model & Read Operations | Planned | F014, F018 | [#382](https://github.com/dougis-org/dnd-tracker/issues/382) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
 | F033 | Party Management Operations | Planned | F032 | [#430](https://github.com/dougis-org/dnd-tracker/issues/430) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
 | F034 | Party Management Integration | Planned | F006, F032 | [#383](https://github.com/dougis-org/dnd-tracker/issues/383) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
-| F035 | Service Worker Setup | In Progress | F001 | [#384](https://github.com/dougis-org/dnd-tracker/issues/384) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
+| F035 | Service Worker Setup | ✅ Complete (Merged via PR #458) | F001 | [#384](https://github.com/dougis-org/dnd-tracker/issues/384) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
 | F036 | IndexedDB Setup | Planned | F035 | [#385](https://github.com/dougis-org/dnd-tracker/issues/385) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
 | F037 | Offline Combat with Local Storage | Planned | F036, F044 | [#386](https://github.com/dougis-org/dnd-tracker/issues/386) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
 | F038 | Sync Queue & Conflict Detection | Planned | F037 | [#432](https://github.com/dougis-org/dnd-tracker/issues/432) | [Phase 4](https://github.com/dougis-org/dnd-tracker/milestone/4) |
@@ -676,83 +680,178 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 **Milestone**: [Phase 2: Authentication & User Management](https://github.com/dougis-org/dnd-tracker/milestone/2)  
 **PRD Alignment**: §§4.1, 6.3 (User Management & Security)
 
-### Feature 013: Clerk Integration & Auth Flow
+### ✅ Feature 013: Clerk Integration & Auth Flow
+
+**Status**: Complete ✅ (Merged via PR #463)
+**Completed**: 2025-11-19
+**Branch**: feature/013-clerk-integration-auth
+**Spec Location**: `specs/013-clerk-integration-auth/`
 
 **Depends on**: Feature 001
 **Duration**: Day 2
-**Deliverables**:
+**Deliverables** (All Complete):
 
-- Clerk authentication setup
-- Sign in/sign up pages
-- Email/password and social login
-- Protected route middleware
-- Redirect to login for unauthenticated users
-- Session management
-- Sign out functionality
-- Tests: Auth flow E2E tests
+- ✅ Clerk authentication setup with @clerk/nextjs 2.x
+- ✅ Sign in/sign up pages with Clerk hosted components
+- ✅ Email/password and social login configured
+- ✅ Protected route middleware with exact-match logic (prevents false positives)
+- ✅ Redirect to login for unauthenticated users
+- ✅ Session management with useAuth hooks (useAuth, useIsAuthenticated, useCurrentUser)
+- ✅ Sign out functionality via Clerk
+- ✅ Auth flow E2E tests with Playwright
+- ✅ Test complexity reduced 40% through parameterization
 
-**Technical Tasks**:
+**Implementation Details**:
 
-- Configure Clerk with environment variables
-- Add ClerkProvider to app
-- Create sign-in/sign-up pages
-- Add middleware for protected routes
-- Update navigation with auth state
+- **Auth Middleware**: `src/middleware.ts` with exact-match route protection
+  - Prevents `/dashboard-info` false positives by using `pathname === route || pathname.startsWith(route + '/')`
+  - Protected routes: `/dashboard`, `/subscription`, `/profile`, `/settings`
+  
+- **Route Handler**: `src/app/api/auth/check/route.ts` for client-side auth verification
+  - Returns `{ isAuthenticated, requiresAuth, redirectUrl }` for ProtectedRouteGuard
+  
+- **Auth Hooks**: `src/components/auth/useAuth.ts` with three hooks:
+  - `useAuth()`: Full auth state from Clerk
+  - `useIsAuthenticated()`: Boolean authentication status
+  - `useCurrentUser()`: Current user profile data
+  
+- **Protected Components**: ProtectedRouteGuard wrapper for client-side route protection
+  
+- **Auth Flow Pages**: Sign-in and sign-up with Clerk hosted components
+  
+- **Tests**: 55 parameterized tests across integration and unit suites
+  - Route protection: 8 protected routes + 4 public routes
+  - Redirect encoding: 3 test cases
+  - Auth state validation: 3 scenarios
+  - Response construction: 4 flow scenarios
+  - useAuth hooks: 11 test cases across 3 hooks
+  - Auth middleware: 9 edge cases
+  
+- **Code Quality**:
+  - 1,082/1,082 tests passing (0 failures)
+  - 66.11% statement coverage, 67.61% line coverage
+  - useAuth.ts: 92.85% coverage
+  - Codacy analysis: Clean (0 issues)
+  - ESLint: Clean (0 errors)
+  - TypeScript strict mode: Clean (0 errors)
+  - Build time: 11.1s compile with zero warnings
 
-**Acceptance Criteria**:
+**Refactoring (Test Complexity Reduction)**:
 
-- [ ] User can sign up with email
-- [ ] User can sign in
-- [ ] Protected pages redirect to login
-- [ ] Sign out works
-- [ ] Social login buttons present
+- **Before**: 477 lines across 3 files with complexity 31-53
+- **After**: 286 lines with parameterized tests
+- **Reduction**: 40% lines eliminated through describe.each/it.each
+- **Complexity**: All flagged complexity issues resolved
+
+**Acceptance Criteria** (All Met):
+
+- ✅ User can sign up with email via Clerk
+- ✅ User can sign in with email/password
+- ✅ Protected pages redirect to `/sign-in` for unauthenticated users
+- ✅ Sign out works via Clerk session management
+- ✅ Social login buttons present and configured (Google, GitHub, etc.)
+- ✅ Session persists across page refreshes via Clerk session token
+- ✅ Route protection uses exact match (no false positives like `/dashboard-info`)
+- ✅ All 1,082 tests passing
+- ✅ Build clean (11.1s compile, zero errors/warnings)
+- ✅ ESLint clean, TypeScript strict mode clean
+- ✅ Codacy analysis passing with zero issues
+- ✅ Test complexity reduced 40% through parameterization
 
 ---
 
-### Feature 014: MongoDB User Model & Webhook
+### ✅ Feature 014: MongoDB User Model & Webhook
+
+**Status**: Complete ✅ (Merged via PR #469)
+**Completed**: 2025-11-26
+**Branch**: feature/014-mongodb-user-model
+**Spec Location**: specs/014-mongodb-user-model/
 
 **Depends on**: Feature 013
 **Duration**: Day 1
-**Deliverables**:
+**Deliverables** (All Complete):
 
-- MongoDB connection setup
-- User Mongoose model
-- Clerk webhook handler
-- User creation on sign-up
-- User profile fields in database
-- Profile data persistence
-- Tests: Webhook handling, database operations
+- ✅ MongoDB connection setup with serverless caching via mongoose 8.19.1
+- ✅ User Mongoose model with soft-delete and immutable fields
+- ✅ UserEvent model for audit trail (fire-and-forget processing)
+- ✅ Clerk webhook handler with HMAC-SHA256 validation
+- ✅ User creation on sign-up via webhook
+- ✅ User profile fields in database
+- ✅ Profile data persistence with timestamp-based conflict resolution
+- ✅ CRUD endpoints (POST, GET, PATCH, DELETE)
+- ✅ Comprehensive test suite: 130+ tests with 80%+ coverage
+- ✅ Structured JSON logging (INFO/WARN/ERROR)
+- ✅ Webhook receiver with fire-and-forget event processing
+- ✅ Zod validation schemas for all payloads
+
+**Implementation Details**:
+
+- **MongoDB Connection**: `src/lib/db/connection.ts` with serverless caching and connection pooling
+- **User Model**: `src/lib/models/user.ts` with soft-delete (deletedAt), immutable userId/email, updatedAt tracking
+- **UserEvent Model**: Audit trail for all user modifications, fire-and-forget processing
+- **Webhook Handler**: `src/app/api/webhooks/user-events/route.ts`
+  - HMAC-SHA256 signature validation
+  - Fire-and-forget event storage (returns 200 immediately)
+  - Timestamp-based conflict resolution (skip if event.timestamp ≤ current.updatedAt)
+  - Max payload size: 1MB, timeout: 3s
+- **CRUD Endpoints**: `src/app/api/internal/users/`
+  - POST: Create user
+  - GET /[userId]: Get user (excludes soft-deleted)
+  - PATCH /[userId]: Update displayName, metadata only
+  - DELETE /[userId]: Soft-delete user
+- **Validation**: Zod schemas for webhook payloads, request/response types
+- **Logging**: Structured JSON logging with context throughout all operations
+- **Tests**: 130+ tests (42 model validation, 30 logging format, 25 error handling, 25+ integration)
 
 **Database Schema**:
 
 ```typescript
 {
-  clerkId: string,
-  email: string,
-  name: string,
-  profile: {
-    experienceLevel: string,
-    preferredRole: string,
-    ruleset: string,
-    createdAt: Date
-  },
-  subscription: {
-    tier: string,
-    status: string
-  },
-  usage: {
-    parties: number,
-    encounters: number,
-    characters: number
-  }
+  _id: ObjectId,
+  userId: string (immutable),
+  email: string (immutable),
+  displayName: string,
+  metadata: Record<string, any>,
+  createdAt: Date,
+  updatedAt: Date,
+  deletedAt: Date | null (soft-delete),
+  __v: number (versioning)
 }
 ```
 
-**Acceptance Criteria**:
+**Configuration**:
 
-- [ ] Webhook creates user in MongoDB
-- [ ] User data persists
-- [ ] Profile fields stored correctly
+```env
+MONGODB_URI=mongodb+srv://...
+MONGODB_DB_NAME=dnd-tracker
+WEBHOOK_SECRET=your-hmac-key              # Optional
+WEBHOOK_MAX_PAYLOAD_SIZE=1048576          # 1MB default
+WEBHOOK_TIMEOUT_MS=3000                   # 3s default
+```
+
+**Key Patterns**:
+
+- **Soft-Delete**: Set deletedAt timestamp, exclude from default queries
+- **Fire-and-Forget**: Return 200 immediately after event storage
+- **Conflict Resolution**: Skip update if event.timestamp ≤ current.updatedAt
+- **Immutable Fields**: userId and email cannot change after creation
+- **Error Codes**: 400 (validation), 401 (signature), 404 (not found), 409 (duplicate), 413 (size), 500 (error)
+
+**Acceptance Criteria** (All Met):
+
+- ✅ Webhook creates user in MongoDB
+- ✅ User data persists across requests
+- ✅ Profile fields stored and retrieved correctly
+- ✅ Soft-delete prevents user data from showing in queries
+- ✅ Timestamp-based conflict resolution prevents race conditions
+- ✅ HMAC-SHA256 webhook signature validation prevents unauthorized access
+- ✅ Fire-and-forget processing ensures quick webhook responses
+- ✅ All 1,242 tests passing (1056 unit + 186 integration)
+- ✅ ESLint clean, TypeScript strict mode clean
+- ✅ Build successful
+- ✅ 80%+ code coverage on all files
+- ✅ All Codacy issues resolved (8 code quality fixes applied)
+- ✅ Merged via PR #469 on 2025-11-26
 
 ---
 
@@ -1276,28 +1375,59 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 > **Note**: Features F035-F039 represent offline-first architecture. See issue descriptions for decomposition details.
 
-### Feature 035: Service Worker Setup
+### ✅ Feature 035: Service Worker Setup
 
-**Status**: In Progress
+**Status**: Complete ✅ (Merged via PR #458)
+**Completed**: 2025-11-18
 **Branch**: feature/035-service-worker-setup
 **Spec Location**: specs/035-service-worker-setup/
 
 **Previously**: F030 (renumbered)  
 **Depends on**: Feature 001
 **Duration**: Day 1
-**Deliverables**:
+**Deliverables** (All Complete):
 
-- Service worker registration
-- Cache strategy
-- Offline detection
-- Online/offline indicator
-- Tests: Service worker
+- ✅ Service worker registration with `registerServiceWorker()` function
+- ✅ App shell precaching (`public/sw.js`) with cache-first strategy for static assets
+- ✅ Runtime caching strategies: network-first for APIs, cache fallback for dynamic content
+- ✅ Offline detection with `OfflineBanner` component
+- ✅ Online/offline indicator with network event listeners
+- ✅ Comprehensive test suite: 1038 tests passing
+- ✅ Service worker lifecycle events (install, activate, fetch, message)
+- ✅ Cache management with version naming and old cache cleanup
+- ✅ Encryption support for sensitive offline data
+- ✅ Offline queue integration for synced operations
 
-**Acceptance Criteria**:
+**Implementation Details**:
 
-- [ ] Service worker registers in supported browsers
-- [ ] Caching strategy validated against `docs/Tech-Stack.md`
-- [ ] Offline state detection surfaces UI banner
+- **`src/lib/sw/register.ts`**: Service worker registration with lifecycle callbacks, periodic update checks, state tracking
+- **`src/lib/sw/strategies.ts`**: Cache strategies (cache-first, network-first, network-with-fallback) with intelligent routing
+- **`src/components/OfflineBanner/OfflineBanner.tsx`**: Network status indicator with async setup
+- **`public/sw.js`**: Service worker entry point with precaching manifest, cache versioning, request routing
+- **Types**: `ServiceWorkerCallbacks`, `ServiceWorkerState` interfaces for type safety
+- **Error Handling**: Graceful fallbacks for unsupported browsers, promise-based async handling
+
+**Test Coverage**:
+
+- All 1038 tests passing (no failures)
+- 100+ unit tests for SW registration and strategies
+- Integration tests for offline/online transitions
+- E2E tests for SW lifecycle and cache behavior
+- Builder: Exit code 0 (Turbopack compiled successfully)
+- Linting: Exit code 0 (ESLint clean)
+
+**Acceptance Criteria** (All Met):
+
+- ✅ Service worker registers in supported browsers
+- ✅ Caching strategy validates against `docs/Tech-Stack.md`
+- ✅ Offline state detection surfaces UI banner
+- ✅ App shell precached on install
+- ✅ Runtime caching applied for assets and APIs
+- ✅ Old caches cleaned on activation
+- ✅ Clients claim on activation for immediate control
+- ✅ TypeScript strict mode clean
+- ✅ Build succeeds
+- ✅ All tests passing
 
 ---
 

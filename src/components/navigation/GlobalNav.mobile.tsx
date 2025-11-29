@@ -5,7 +5,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X } from 'lucide-react'
+import { ChevronDown, Menu, X } from 'lucide-react'
 import type { Route } from 'next'
 import { NAVIGATION_ITEMS, type NavigationItem } from '@/lib/navigation'
 import { Button } from '@/components/ui/button'
@@ -218,6 +218,9 @@ function MobileNavItemButton({
         onClick={() => onToggleSubmenu(item.label)}
       >
         {item.label}
+         <span className="ml-1" aria-hidden>
+          <ChevronDown className="h-4 w-4" />
+        </span>
       </button>
       <MobileSubmenu
         label={item.label}
@@ -295,6 +298,7 @@ function MobileNavPanel({ open, pathname, onClose, panelRef, items }: MobileNavP
         aria-modal="true"
         aria-label="Primary navigation"
         className="absolute inset-y-0 right-0 flex w-80 max-w-full flex-col gap-6 border-l bg-background p-6 shadow-lg"
+        style={{ backgroundColor: 'hsl(var(--background-opaque))' }}
       >
         <div className="flex items-center justify-between">
           <p className="text-base font-semibold">Explore the app</p>

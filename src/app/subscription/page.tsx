@@ -1,7 +1,12 @@
-'use client';
+'use client'
 
-import { NotImplementedPage } from '@/components/NotImplementedPage';
+import { SubscriptionPage as SubscriptionPageComponent } from '@/components/subscription'
+import { ProtectedRouteGuard } from '@/components/auth/ProtectedRouteGuard'
 
 export default function SubscriptionPage() {
-  return <NotImplementedPage />;
+  return (
+    <ProtectedRouteGuard>
+      <SubscriptionPageComponent />
+    </ProtectedRouteGuard>
+  )
 }

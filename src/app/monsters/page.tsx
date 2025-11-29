@@ -41,21 +41,21 @@ export default function MonstersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Monsters</h1>
           <div className="flex gap-2">
             <button
               onClick={() => setShowPickerDemo(!showPickerDemo)}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="px-4 py-2 bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
               title="Demo: MonsterPicker component for encounters"
             >
               {showPickerDemo ? 'Hide' : 'Demo'} Picker
             </button>
             <Link
               href="/monsters/new"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Add Monster
             </Link>
@@ -64,12 +64,12 @@ export default function MonstersPage() {
 
         {selectedForEncounter && (
           <div className="mb-6 p-4 bg-blue-100 border-l-4 border-blue-600 rounded">
-            <p className="font-semibold text-blue-900">
+            <p className="font-semibold">
               Selected for encounter: <span className="font-bold">{selectedForEncounter.name}</span> (CR {selectedForEncounter.cr})
             </p>
             <button
               onClick={() => setSelectedForEncounter(null)}
-              className="text-sm text-blue-600 hover:underline mt-2"
+              className="text-sm hover:underline mt-2"
             >
               Clear selection
             </button>
@@ -78,7 +78,7 @@ export default function MonstersPage() {
 
         {showPickerDemo && (
           <div className="mb-8 p-6 bg-white border-2 border-green-600 rounded-lg">
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm mb-4">
               T017 Demo: Click a monster below to add it to an encounter (shows integration pattern)
             </p>
             <MonsterPicker
@@ -94,8 +94,8 @@ export default function MonstersPage() {
 
         {monsters.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-600 mb-4">No monsters found.</p>
-            <Link href="/monsters/new" className="text-blue-600 hover:underline">
+            <p className="mb-4">No monsters found.</p>
+            <Link href="/monsters/new" className="hover:underline">
               Create your first monster
             </Link>
           </div>

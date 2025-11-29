@@ -2,7 +2,14 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    /* Default (light) theme background — light gray */
+    --background: 211 13% 87%; /* swapped from main-body */
+    /* Opaque copy used for utility backgrounds (keeps components solid) */
+    --background-opaque: 211 13% 87%;
+    --background-main-body: 210 8% 95%; /* swapped from background, was #f2f4f8 */
+    /* Map Tailwind background tokens to our opaque background variable so utilities like bg-background are solid */
+    --color-background-100: hsl(var(--background-opaque));
+    --color-background-200: hsl(var(--background-opaque));
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -22,10 +29,21 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
+    --link-hover: hsla(203, 19%, 54%, 0.856);
+    --border: 214.3 9.4% 33.35%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    /* Dark theme background — matches #4d545da5 with alpha */
+    /* --background format supports alpha: 'h s% l% / alpha' */
+    --background: 214.3 9.4% 33.35% / 0.647; /* approx hsl for #4d545d with 
+    alpha 0.647 */
+    /* Keep an opaque version for UI elements that shouldn't inherit alpha */
+    --background-opaque: 214.3 9.4% 33.35%; /* no alpha */
+    --background-main-body: 214.3 9.4% 33.35% / 0.647; /* swapped from background, was #2c3034 */
+    /* Make Tailwind background tokens follow our dark background variable */
+    --color-background-100: hsl(var(--background-opaque));
+    --color-background-200: hsl(var(--background-opaque));
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
@@ -41,9 +59,10 @@
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
+    --border: 210 8% 66%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+    --link-hover: hsla(203, 19%, 69%, 0.856); 
   }
 }
 
@@ -52,7 +71,34 @@
     border-color: hsl(var(--border));
   }
   body {
+    /* Fallback for older browsers */
+    background-color: #f2f4f8;
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+  }
+
+  /* Fallback for older browsers when using .dark mode */
+  .dark body {
+    /* Fallback uses the actual hex with alpha (keeps the user's requested color) */
+    background-color: #4d545da5;
+  }
+  /* a.hover\:text-link-hover:hover span{
+    color: hsl(var(--link-hover));
+  } */
+  a:hover, a:hover span, .card-border:hover {
+    color: var(--link-hover);
+  }
+  #main-content {
+    background: hsl(var(--background-main-body));
+  }
+  footer {
+    background: hsl(var(--background-main-body));
+  }
+
+  .card-border {
+    border-color: hsl(var(--border));
+  }
+  .card-border:hover {
+    border-color: var(--link-hover);
   }
 }

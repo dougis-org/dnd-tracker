@@ -25,7 +25,7 @@ export function CallToAction({
       {/* Primary CTA Button */}
       <Link
         href={primaryHref as Route}
-        className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors inline-block"
+        className="px-8 py-3 bg-blue-600 hover:bg-blue-700 font-semibold rounded-lg transition-colors inline-block"
       >
         {primaryText}
       </Link>
@@ -33,7 +33,7 @@ export function CallToAction({
       {/* Secondary CTA Button */}
       <Link
         href={secondaryHref as Route}
-        className="px-8 py-3 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold rounded-lg transition-colors inline-block"
+        className="px-8 py-3 border-2 border-blue-600 hover:bg-blue-50 font-semibold rounded-lg transition-colors inline-block"
       >
         {secondaryText}
       </Link>

@@ -30,15 +30,15 @@ function toInternalHref(path: string): LinkProps<string>['href'] {
 function LegalLinks() {
   return (
     <nav aria-label="Legal">
-      <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-600 dark:text-slate-400">
+      <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
         {legalLinks.map((link) => (
           <li key={link.label}>
             {isExternalLink(link.href) ? (
-              <a className="hover:text-slate-900 dark:hover:text-slate-50 transition-colors" href={link.href}>
+              <a className="transition-colors" href={link.href}>
                 {link.label}
               </a>
             ) : (
-              <Link className="hover:text-slate-900 dark:hover:text-slate-50 transition-colors" href={toInternalHref(link.href)}>
+              <Link className="transition-colors" href={toInternalHref(link.href)}>
                 {link.label}
               </Link>
             )}
@@ -57,7 +57,7 @@ function SocialLinks() {
           <li key={link.label}>
             {isExternalLink(link.href) ? (
               <a
-                className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-medium transition-colors"
                 href={link.href}
                 target="_blank"
                 rel="noreferrer noopener"
@@ -68,7 +68,7 @@ function SocialLinks() {
               </a>
             ) : (
               <Link
-                className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-medium transition-colors"
                 href={toInternalHref(link.href)}
               >
                 {link.label === 'GitHub' ? <Github className="h-4 w-4" aria-hidden /> : null}
@@ -93,18 +93,18 @@ export function Footer({ className }: FooterProps) {
   return (
     <footer
       className={cn(
-        'border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 py-12 text-center text-sm text-slate-600 dark:text-slate-400',
+        'border-t py-12 text-center text-sm',
         className
       )}
     >
       <div className="container mx-auto px-4 md:px-6 space-y-6">
         <div>
-          <p className="font-semibold text-slate-900 dark:text-slate-50">D&D Tracker</p>
-          <p className="text-slate-600 dark:text-slate-400">Built for dungeon masters who want to run smoother encounters.</p>
+          <p className="font-semibold">D&D Tracker</p>
+          <p>Built for dungeon masters who want to run smoother encounters.</p>
         </div>
         <LegalLinks />
         <SocialLinks />
-        <p className="text-slate-500 dark:text-slate-500">&copy; {currentYear} D&D Tracker. All rights reserved.</p>
+        <p>&copy; {currentYear} D&D Tracker. All rights reserved.</p>
       </div>
     </footer>
   )
