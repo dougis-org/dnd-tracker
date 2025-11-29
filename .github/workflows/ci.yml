@@ -127,6 +127,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
+    services:
+      mongodb:
+        image: mongo:8.0
+        ports:
+          - 27017:27017
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -162,6 +168,7 @@ jobs:
         env:
           NODE_ENV: production
           PORT: "3000"
+          MONGODB_URI: "mongodb://localhost:27017/test-db"
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '' }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY || '' }}
 
