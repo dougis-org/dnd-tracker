@@ -5,7 +5,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 4 : undefined,
   reporter: 'html',
   // NOTE: E2E tests use port 3002 to avoid conflicts with the standard development server (port 3000).
   // If you are running the development server on port 3000, E2E tests will start a separate instance on port 3002.
