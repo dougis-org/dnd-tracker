@@ -193,7 +193,7 @@ jobs:
           exit 1
 
       - name: Run E2E Tests
-        run: npx playwright test --ignore=tests/e2e/sw/
+        run: npx playwright test --grep-invert '/sw/'
         env:
           NODE_ENV: test
           SKIP_WEB_SERVER: "true"
