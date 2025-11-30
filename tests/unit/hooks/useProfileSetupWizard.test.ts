@@ -386,7 +386,7 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
       });
 
       // Force re-render to ensure state is updated
-      rerender();
+      rerender({ userId: 'user123' });
 
       await act(async () => {
         await result.current.submitWizard();

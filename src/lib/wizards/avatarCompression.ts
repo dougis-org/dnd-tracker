@@ -137,8 +137,8 @@ function calculateBase64Size(base64String: string): number {
     ? base64String.split(',')[1]
     : base64String;
 
-  // Calculate size: base64 adds ~33% overhead, so (length * 3/4) bytes
-  // But more accurate is: (length - padding) / 4 * 3
+  // Calculate size in bytes: (base64.length / 4) * 3 minus padding
+  // Padding characters ('=') do not represent data and are subtracted
   const padding = (base64.match(/=/g) || []).length;
   return Math.ceil((base64.length / 4) * 3) - padding;
 }

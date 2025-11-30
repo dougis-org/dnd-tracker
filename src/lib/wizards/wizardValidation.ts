@@ -56,9 +56,10 @@ export const avatarSchema = z
   })
   .refine(
     (avatar) => {
-      // Calculate base64 size in bytes
+      // Calculate base64 size in bytes, accounting for padding for consistency
       const base64Part = avatar.split(',')[1] || '';
-      const sizeBytes = Math.ceil((base64Part.length * 3) / 4);
+      const padding = (base64Part.match(/=/g) || []).length;
+      const sizeBytes = Math.ceil((base64Part.length / 4) * 3) - padding;
       return sizeBytes <= AVATAR_CONSTRAINTS.MAX_BASE64_SIZE_BYTES;
     },
     {

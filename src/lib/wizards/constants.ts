@@ -99,11 +99,11 @@ export const WIZARD_SCREEN_ORDER = [
 export const ERROR_MESSAGES = {
   DISPLAY_NAME_REQUIRED: 'Display name is required',
   DISPLAY_NAME_TOO_SHORT: 'Display name must be at least 1 character',
-  DISPLAY_NAME_TOO_LONG: `Display name must be 50 characters or less`,
+  DISPLAY_NAME_TOO_LONG: `Display name must be ${DISPLAY_NAME_CONSTRAINTS.MAX_LENGTH} characters or less`,
 
   AVATAR_INVALID_FORMAT: 'Invalid image format. Please use JPEG, PNG, or WebP',
-  AVATAR_TOO_LARGE: `Avatar file size must be 2MB or less`,
-  AVATAR_COMPRESSED_TOO_LARGE: `Compressed avatar exceeds 250KB. Please use a smaller image`,
+  AVATAR_TOO_LARGE: `Avatar file size must be ${AVATAR_CONSTRAINTS.MAX_FILE_SIZE_BYTES / 1024 / 1024}MB or less`,
+  AVATAR_COMPRESSED_TOO_LARGE: `Compressed avatar exceeds ${AVATAR_CONSTRAINTS.MAX_BASE64_SIZE_KB}KB. Please use a smaller image`,
   AVATAR_COMPRESSION_FAILED:
     'Failed to compress avatar. Please try a different image',
   AVATAR_COMPRESSION_TIMEOUT:

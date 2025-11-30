@@ -110,9 +110,6 @@ export function useProfileSetupWizard(
     return initialState;
   });
 
-  // Helper to update state safely
-  // (Removed - using setState directly in each function instead)
-
   // Save draft to localStorage whenever form changes
   useEffect(() => {
     try {
@@ -287,14 +284,13 @@ export function useProfileSetupWizard(
         });
 
         if (response.ok) {
-          // Success
+          // Success - show completion screen before closing
           await response.json();
-          setState({
-            ...getInitialModalState(),
-            canDismiss: true,
-            isOpen: false,
+          setState((prev) => ({
+            ...prev,
+            isSubmitting: false,
             currentScreen: WIZARD_SCREENS.COMPLETION,
-          });
+          }));
 
           // Show success toast
           toast.success(SUCCESS_MESSAGES.PROFILE_SAVED);

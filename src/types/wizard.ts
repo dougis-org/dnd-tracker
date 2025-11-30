@@ -273,7 +273,11 @@ export interface WizardScreenProps {
  */
 export interface WelcomeScreenProps
   extends Omit<WizardScreenProps, 'formState' | 'validationState'> {
-  /** No additional props needed for welcome screen */
+  /**
+   * Inherits navigation and submission props from WizardScreenProps
+   * (onNext, onPrevious, isNextDisabled, isSubmitting, showErrors).
+   * No additional props are defined for the welcome screen.
+   */
 }
 
 /**
