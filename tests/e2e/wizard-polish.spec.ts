@@ -118,7 +118,7 @@ test.describe('T032: Integration & Edge Cases', () => {
     await page.goto(BASE_URL);
 
     // App should show loading state
-    const spinner = page
+    const _spinner = page
       .locator('[data-testid="spinner"]')
       .or(page.locator('text=/loading/i'));
 
@@ -133,7 +133,7 @@ test.describe('T032: Integration & Edge Cases', () => {
 
     // Check main app navigation works
     const navLinks = page.locator('[role="navigation"] a, nav a');
-    const hasNavigation = await navLinks
+    const _hasNavigation = await navLinks
       .first()
       .isVisible()
       .catch(() => false);
@@ -235,7 +235,7 @@ test.describe('T032: Integration & Edge Cases', () => {
         for (let i = 0; i < 5; i++) {
           localStorage.setItem(`test-${i}`, largeData);
         }
-      } catch (e) {
+      } catch (_e) {
         // Expected quota exceeded
       }
     });
@@ -281,7 +281,6 @@ test.describe('T032: Integration & Edge Cases', () => {
     await page.goto(BASE_URL);
 
     // Check initial memory (if available)
-    let openCount = 0;
     const maxIterations = 5;
 
     for (let i = 0; i < maxIterations; i++) {
@@ -289,8 +288,6 @@ test.describe('T032: Integration & Edge Cases', () => {
       const isOpen = await modal.isVisible().catch(() => false);
 
       if (isOpen) {
-        openCount++;
-
         // Try to close if dismissible
         const closeBtn = modal.locator('button[aria-label*="close" i]');
         if (await closeBtn.isVisible()) {
@@ -336,10 +333,10 @@ test.describe('T032: Integration & Edge Cases', () => {
 
     await page.goto(BASE_URL);
 
-    let strictModeWarnings = 0;
+    let _strictModeWarnings = 0;
     page.on('console', (msg) => {
       if (msg.type() === 'warning' && msg.text().includes('Strict Mode')) {
-        strictModeWarnings++;
+        _strictModeWarnings++;
       }
     });
 

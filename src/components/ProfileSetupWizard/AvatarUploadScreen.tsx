@@ -13,7 +13,8 @@
  * - Size validation (max 2MB raw, max 250KB base64)
  * - Optional (user can skip)
  */
-/* eslint-disable no-undef */
+/* eslint-disable-next-line no-undef */
+type FileType = File;
 
 import React, { useState } from 'react';
 
@@ -47,7 +48,7 @@ export default function AvatarUploadScreen({
     }
   };
 
-  const handleFileSelect = (file: File) => {
+  const handleFileSelect = (file: FileType) => {
     // Validate file type
     const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!validTypes.includes(file.type)) {

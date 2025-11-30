@@ -12,6 +12,9 @@
  * - wizardHook: Complete hook return with state and all methods
  */
 
+/* eslint-disable-next-line no-undef */
+type HTMLDiv = HTMLDivElement;
+
 import React, { useRef } from 'react';
 import WelcomeScreen from './WelcomeScreen';
 import DisplayNameScreen from './DisplayNameScreen';
@@ -27,7 +30,7 @@ interface ProfileSetupWizardModalProps {
 export default function ProfileSetupWizardModal({
   wizardHook,
 }: ProfileSetupWizardModalProps) {
-  const modalRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDiv>(null);
   const {
     state,
     nextScreen,
@@ -44,7 +47,7 @@ export default function ProfileSetupWizardModal({
   }
 
   // Handle keyboard events
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDiv>) => {
     if (e.key === 'Escape' && state.canDismiss) {
       closeWizard();
     }

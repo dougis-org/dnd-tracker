@@ -29,7 +29,7 @@ async function waitForWizardModal(page: Page) {
 }
 
 // Helper: Get current screen title
-async function getCurrentScreenTitle(page: Page): Promise<string> {
+async function _getCurrentScreenTitle(page: Page): Promise<string> {
   const title = await page
     .locator('[data-testid^="-screen"]')
     .first()
@@ -50,7 +50,7 @@ async function fillDisplayName(page: Page, name: string) {
 }
 
 // Helper: Upload avatar
-async function uploadAvatar(page: Page, imagePath: string) {
+async function _uploadAvatar(page: Page, imagePath: string) {
   const fileInput = page.locator('input[type="file"]');
   if (await fileInput.isVisible()) {
     await fileInput.setInputFiles(imagePath);
@@ -179,7 +179,7 @@ test.describe('Profile Setup Wizard E2E Tests', () => {
     test('T022.2 should navigate through all 5 screens', async ({ page }) => {
       await waitForWizardModal(page);
 
-      const screens = [
+      const _screens = [
         'welcome',
         'displayName',
         'avatar',
@@ -337,7 +337,7 @@ test.describe('Profile Setup Wizard E2E Tests', () => {
       await clickNext(page); // Display Name
 
       // Create a small test image (1x1 pixel PNG)
-      const testImagePath = '/tmp/test-avatar.png';
+      const _testImagePath = '/tmp/test-avatar.png';
 
       // Try to upload (may not work in test env without actual file)
       // Just verify the upload field exists
@@ -441,7 +441,7 @@ test.describe('Profile Setup Wizard E2E Tests', () => {
         await page.waitForTimeout(1000);
 
         // Should succeed this time
-        const successOrClosed = page
+        const _successOrClosed = page
           .locator('text=/success|complete/i')
           .or(page.locator('[role="dialog"]').first());
         // Just verify we tried to retry
@@ -473,7 +473,7 @@ test.describe('Profile Setup Wizard E2E Tests', () => {
 
       // Should show timeout error
       const timeoutText = page.locator('text=/timeout|taking too long/i');
-      const isTimeoutVisible = await timeoutText.isVisible().catch(() => false);
+      const _isTimeoutVisible = await timeoutText.isVisible().catch(() => false);
 
       // At minimum, modal shouldn't hang
       const modal = page.locator('[role="dialog"]');
@@ -499,7 +499,7 @@ test.describe('Profile Setup Wizard E2E Tests', () => {
 
       // Verify max size validation message exists
       const maxSizeText = page.locator('text=/2MB|max size/i');
-      const hasMaxSizeText = await maxSizeText.isVisible().catch(() => false);
+      const _hasMaxSizeText = await maxSizeText.isVisible().catch(() => false);
 
       // File input should exist for validation
       await expect(fileInput).toBeVisible();
@@ -590,7 +590,7 @@ test.describe('Profile Setup Wizard E2E Tests', () => {
 
       // Look for live region or ARIA announcements
       const liveRegion = page.locator('[aria-live]');
-      const hasLiveRegion = await liveRegion.isVisible().catch(() => false);
+      const _hasLiveRegion = await liveRegion.isVisible().catch(() => false);
 
       // At minimum, modal should have accessible structure
       const modal = page.locator('[role="dialog"]');

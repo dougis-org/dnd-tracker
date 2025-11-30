@@ -30,13 +30,13 @@ jest.mock('react-hot-toast', () => ({
 
 // Mock child components (they'll be tested separately)
 jest.mock('@/components/ProfileSetupWizard/WelcomeScreen', () => {
-  return function MockWelcomeScreen({ onNext }: any) {
+  return function MockWelcomeScreen({ onNext }: { onNext: () => void }) {
     return <div data-testid="welcome-screen">Welcome <button onClick={onNext}>Next</button></div>;
   };
 });
 
 jest.mock('@/components/ProfileSetupWizard/DisplayNameScreen', () => {
-  return function MockDisplayNameScreen({ value, onChange, onNext }: any) {
+  return function MockDisplayNameScreen({ value, onChange, onNext }: { value: string; onChange: (val: string) => void; onNext: () => void }) {
     const isValid = value && value.trim().length > 0 && value.trim().length <= 50;
     return (
       <div data-testid="display-name-screen">
@@ -49,13 +49,13 @@ jest.mock('@/components/ProfileSetupWizard/DisplayNameScreen', () => {
 });
 
 jest.mock('@/components/ProfileSetupWizard/AvatarUploadScreen', () => {
-  return function MockAvatarUploadScreen({ onNext }: any) {
+  return function MockAvatarUploadScreen({ onNext }: { onNext: () => void }) {
     return <div data-testid="avatar-screen">Avatar Upload <button onClick={onNext}>Next</button></div>;
   };
 });
 
 jest.mock('@/components/ProfileSetupWizard/PreferencesScreen', () => {
-  return function MockPreferencesScreen({ theme, onThemeChange, notifications, onNotificationsChange, onNext }: any) {
+  return function MockPreferencesScreen({ theme, onThemeChange, notifications, onNotificationsChange, onNext }: { theme: string; onThemeChange: (val: string) => void; notifications: boolean; onNotificationsChange: (val: boolean) => void; onNext: () => void }) {
     return (
       <div data-testid="preferences-screen">
         <label>
@@ -77,7 +77,7 @@ jest.mock('@/components/ProfileSetupWizard/PreferencesScreen', () => {
 });
 
 jest.mock('@/components/ProfileSetupWizard/CompletionScreen', () => {
-  return function MockCompletionScreen({ onClose }: any) {
+  return function MockCompletionScreen({ onClose }: { onClose: () => void }) {
     return <div data-testid="completion-screen">Complete <button onClick={onClose}>Close</button></div>;
   };
 });

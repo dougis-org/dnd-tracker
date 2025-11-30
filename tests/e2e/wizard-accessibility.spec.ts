@@ -28,7 +28,7 @@ async function waitForWizardModal(page: Page) {
 }
 
 // Helper: Get all focusable elements
-async function getAllFocusableElements(page: Page) {
+async function _getAllFocusableElements(page: Page) {
   return page.locator(
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
   );
@@ -36,7 +36,7 @@ async function getAllFocusableElements(page: Page) {
 
 // Helper: Verify focus visible
 async function expectFocusVisible(page: Page, element: any) {
-  const outline = await element.evaluate((el: HTMLElement) => {
+  const outline = await (element as any).evaluate((el: HTMLElement) => {
     const style = window.getComputedStyle(el);
     const outlineWidth = style.outlineWidth;
     const boxShadow = style.boxShadow;
@@ -52,7 +52,7 @@ async function expectFocusVisible(page: Page, element: any) {
 
 // Helper: Check color contrast (basic)
 async function checkColorContrast(page: Page, element: any): Promise<boolean> {
-  const result = await element.evaluate((el: HTMLElement) => {
+  const result = await (element as any).evaluate((el: HTMLElement) => {
     const style = window.getComputedStyle(el);
     const bgColor = style.backgroundColor;
     const textColor = style.color;
@@ -156,13 +156,13 @@ test.describe('Profile Setup Wizard - WCAG 2.1 AA Accessibility Tests', () => {
       await waitForWizardModal(page);
 
       const modalBefore = page.locator('[role="dialog"]');
-      const isVisibleBefore = await modalBefore.isVisible();
+      const _isVisibleBefore = await modalBefore.isVisible();
 
       // Press Escape
       await page.press('body', 'Escape');
 
       const modalAfter = page.locator('[role="dialog"]');
-      const isVisibleAfter = await modalAfter.isVisible().catch(() => false);
+      const _isVisibleAfter = await modalAfter.isVisible().catch(() => false);
 
       // Modal may or may not close depending on dismissible state
       // Just verify no crash
@@ -187,7 +187,7 @@ test.describe('Profile Setup Wizard - WCAG 2.1 AA Accessibility Tests', () => {
       }
 
       // Focus should cycle back to first element (focus trap)
-      const focused = page.locator(':focus');
+      const _focused = page.locator(':focus');
       const focusedInModal = await modal
         .locator(':focus')
         .isVisible()
@@ -207,13 +207,13 @@ test.describe('Profile Setup Wizard - WCAG 2.1 AA Accessibility Tests', () => {
 
       // Verify focus
       let focused = page.locator(':focus');
-      const firstButtonText = await focused.textContent();
+      const _firstButtonText = await focused.textContent();
 
       // Shift+Tab to go back
       await page.press('body', 'Shift+Tab');
 
       focused = page.locator(':focus');
-      const previousFocus = await focused.getAttribute('class');
+      const _previousFocus = await focused.getAttribute('class');
 
       // Focus should move to different element
       expect(true).toBe(true);
@@ -270,7 +270,7 @@ test.describe('Profile Setup Wizard - WCAG 2.1 AA Accessibility Tests', () => {
       await page.click('button:has-text("Next")');
 
       // Try to submit with empty input
-      const nextButton = page.locator('button:has-text("Next")');
+      const _nextButton = page.locator('button:has-text("Next")');
 
       // Check for error message with proper ARIA attributes
       const errorMessage = page
@@ -432,8 +432,8 @@ test.describe('Profile Setup Wizard - WCAG 2.1 AA Accessibility Tests', () => {
         const text = await el.textContent().catch(() => '');
 
         if (text && text.trim().length > 0) {
-          const fontSize = await el.evaluate((e: HTMLElement) => {
-            const size = window.getComputedStyle(e).fontSize;
+          const fontSize = await (el as any).evaluate((e: any) => {
+            const size = window.getComputedStyle(e as HTMLElement).fontSize;
             return parseFloat(size);
           });
 
