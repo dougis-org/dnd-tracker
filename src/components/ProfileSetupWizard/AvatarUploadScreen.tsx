@@ -13,6 +13,7 @@
  * - Size validation (max 2MB raw, max 250KB base64)
  * - Optional (user can skip)
  */
+/* eslint-disable no-undef */
 
 import React, { useState } from 'react';
 

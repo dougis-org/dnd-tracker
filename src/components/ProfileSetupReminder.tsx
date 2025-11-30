@@ -35,14 +35,23 @@ export default function ProfileSetupReminder({
   const [isDismissed, setIsDismissed] = useState(false);
 
   // Load dismissal state from localStorage on mount
+  // If setup is still incomplete (isVisible=true), clear dismissal flag
+  // to show the reminder again on next visit
   useEffect(() => {
     try {
-      const dismissed = localStorage.getItem(REMINDER_DISMISSED_KEY);
-      setIsDismissed(dismissed === 'true');
+      if (isVisible) {
+        // Setup still incomplete - reset dismissal flag to show reminder again
+        localStorage.setItem(REMINDER_DISMISSED_KEY, 'false');
+        setIsDismissed(false);
+      } else {
+        // Setup is complete - don't need to show reminder anymore
+        const dismissed = localStorage.getItem(REMINDER_DISMISSED_KEY);
+        setIsDismissed(dismissed === 'true');
+      }
     } catch {
       // Ignore localStorage errors
     }
-  }, []);
+  }, [isVisible]);
 
   // Handle dismiss action
   const handleDismiss = () => {
@@ -104,7 +113,6 @@ export default function ProfileSetupReminder({
         <button
           onClick={handleCompleteSetup}
           className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
-          aria-label="Complete profile setup"
         >
           Get Started
         </button>

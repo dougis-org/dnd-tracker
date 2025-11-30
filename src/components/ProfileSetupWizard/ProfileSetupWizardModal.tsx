@@ -12,7 +12,7 @@
  * - wizardHook: Complete hook return with state and all methods
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import WelcomeScreen from './WelcomeScreen';
 import DisplayNameScreen from './DisplayNameScreen';
 import AvatarUploadScreen from './AvatarUploadScreen';
@@ -33,8 +33,6 @@ export default function ProfileSetupWizardModal({
     nextScreen,
     previousScreen,
     setDisplayName,
-    setAvatar,
-    setAvatarPreview,
     setTheme,
     setNotifications,
     closeWizard,

@@ -205,32 +205,35 @@ function mockBson() {
 function setupLocalStorage() {
   if (typeof global === 'undefined') return;
 
-  // Create localStorage mock
-  const localStorageMock = (() => {
-    let store = {};
+  // Store to hold localStorage data
+  let store = {};
 
-    return {
-      getItem: (key) => store[key] || null,
-      setItem: (key, value) => {
-        store[key] = String(value);
-      },
-      removeItem: (key) => {
-        delete store[key];
-      },
-      clear: () => {
-        store = {};
-      },
-      key: (index) => {
-        const keys = Object.keys(store);
-        return keys[index] || null;
-      },
-      get length() {
-        return Object.keys(store).length;
-      },
-    };
-  })();
+  // Create Jest spy functions for localStorage methods
+  const getItemImpl = jest.fn((key) => store[key] || null);
+  const setItemImpl = jest.fn((key, value) => {
+    store[key] = String(value);
+  });
+  const removeItemImpl = jest.fn((key) => {
+    delete store[key];
+  });
+  const clearImpl = jest.fn(() => {
+    store = {};
+  });
 
-  global.localStorage = localStorageMock;
+  // Mock localStorage with spy functions
+  global.localStorage = {
+    getItem: getItemImpl,
+    setItem: setItemImpl,
+    removeItem: removeItemImpl,
+    clear: clearImpl,
+    key: (index) => {
+      const keys = Object.keys(store);
+      return keys[index] || null;
+    },
+    get length() {
+      return Object.keys(store).length;
+    },
+  };
 }
 
 /**

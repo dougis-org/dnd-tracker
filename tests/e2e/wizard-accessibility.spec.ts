@@ -106,7 +106,7 @@ test.describe('Profile Setup Wizard - WCAG 2.1 AA Accessibility Tests', () => {
       await page.press('body', 'Tab');
 
       // Get focused element
-      let focused = page.locator(':focus');
+      const focused = page.locator(':focus');
       const focusedText = await focused.textContent();
       expect(focusedText).toContain('Next');
 

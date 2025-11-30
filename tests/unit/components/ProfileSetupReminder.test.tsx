@@ -25,8 +25,34 @@ describe('ProfileSetupReminder Component', () => {
   };
 
   beforeEach(() => {
+    // Clear jest mocks for component callbacks
     jest.clearAllMocks();
-    localStorage.clear();
+    // Manually clear localStorage data and reset spies
+    Object.defineProperty(global, 'localStorage', {
+      value: {
+        store: {},
+        getItem: jest.fn(function(key) {
+          return this.store[key] || null;
+        }),
+        setItem: jest.fn(function(key, value) {
+          this.store[key] = String(value);
+        }),
+        removeItem: jest.fn(function(key) {
+          delete this.store[key];
+        }),
+        clear: jest.fn(function() {
+          this.store = {};
+        }),
+        key(index) {
+          const keys = Object.keys(this.store);
+          return keys[index] || null;
+        },
+        get length() {
+          return Object.keys(this.store).length;
+        },
+      },
+      writable: true,
+    });
   });
 
   describe('Rendering', () => {
@@ -179,7 +205,7 @@ describe('ProfileSetupReminder Component', () => {
     // T018.5d: Dismissed state persists in localStorage
     test('T018.5d should store dismissal state in localStorage', () => {
       const onDismiss = jest.fn();
-      const { rerender } = render(
+      render(
         <ProfileSetupReminder
           {...defaultProps}
           isVisible={true}

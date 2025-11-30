@@ -13,10 +13,6 @@
 
 import { renderHook, act, waitFor } from '@testing-library/react';
 import useProfileSetupWizard from '@/hooks/useProfileSetupWizard';
-import type {
-  UseProfileSetupWizardReturn,
-  WizardModalState,
-} from '@/types/wizard';
 
 // Mock API response types
 interface MockUserProfile {
@@ -284,7 +280,6 @@ describe('Profile Setup Wizard - Complete Flow Integration', () => {
       });
 
       // Try to progress without setting displayName
-      const initialScreen = result.current.state.currentScreen;
       await act(async () => {
         // Attempt next without valid displayName should be blocked by component
         // (hook allows it; component should disable button)
