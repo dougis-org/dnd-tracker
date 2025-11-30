@@ -141,5 +141,38 @@ describe('characterStore - scaffold tests', () => {
         });
       }).toThrow();
     });
+
+    it('clears all characters from the store', () => {
+      const { result } = renderHook(() => useCharacterStore(), {
+        wrapper: CharacterProvider,
+      });
+
+      act(() => {
+        result.current.init();
+      });
+
+      expect(result.current.state.characters.length).toBeGreaterThan(0);
+
+      act(() => {
+        result.current.clear();
+      });
+
+      expect(result.current.state.characters.length).toBe(0);
+      expect(result.current.state.history.length).toBe(0);
+    });
+
+    it('returns to initial state when undo called with no history', () => {
+      const { result } = renderHook(() => useCharacterStore(), {
+        wrapper: CharacterProvider,
+      });
+
+      const initialCharCount = result.current.state.characters.length;
+
+      act(() => {
+        result.current.undo();
+      });
+
+      expect(result.current.state.characters.length).toBe(initialCharCount);
+    });
   });
 });
