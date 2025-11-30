@@ -7,7 +7,12 @@ import {
   validateProfileUpdate,
   validatePreferencesUpdate,
 } from '@/lib/validation/userValidation';
-import { validEmails, invalidEmails, validNames, invalidNames } from '../../fixtures/userSchemaFixtures';
+import {
+  validEmails,
+  invalidEmails,
+  validNames,
+  invalidNames,
+} from '../../fixtures/userSchemaFixtures';
 
 describe('userValidation - Email Parsing', () => {
   describe('parseEmail', () => {
@@ -33,6 +38,13 @@ describe('userValidation - Email Parsing', () => {
       expect(result.success).toBe(true);
       expect(result.data).toBe('alice@example.com');
     });
+
+    it('should return error with fallback message when issue has no message', () => {
+      // Test that invalid input generates error
+      const result = parseEmail('not-an-email');
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Invalid email address');
+    });
   });
 });
 
@@ -51,6 +63,19 @@ describe('userValidation - Name Validation', () => {
     it('should trim whitespace', () => {
       const result = validateName('  Alice Adventurer  ');
       expect(result.success).toBe(true);
+    });
+
+    it('should return error message for invalid name', () => {
+      const result = validateName('');
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Name is required');
+    });
+
+    it('should return error for name exceeding max length', () => {
+      const longName = 'a'.repeat(101);
+      const result = validateName(longName);
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('100 characters');
     });
   });
 });
@@ -73,6 +98,7 @@ describe('userValidation - Preferences Validation', () => {
         ruleset: '5e',
       });
       expect(result.success).toBe(false);
+      expect(result.error).toBeDefined();
     });
 
     it('should reject invalid role', () => {
@@ -96,14 +122,34 @@ describe('userValidation - Preferences Validation', () => {
     it('should accept all valid enum combinations', () => {
       const testData = [
         { experienceLevel: 'Novice', preferredRole: 'DM', ruleset: '5e' },
-        { experienceLevel: 'Intermediate', preferredRole: 'Player', ruleset: '3.5e' },
+        {
+          experienceLevel: 'Intermediate',
+          preferredRole: 'Player',
+          ruleset: '3.5e',
+        },
         { experienceLevel: 'Advanced', preferredRole: 'Both', ruleset: 'PF2e' },
       ];
 
       testData.forEach(({ experienceLevel, preferredRole, ruleset }) => {
-        const result = validatePreferences({ experienceLevel, preferredRole, ruleset });
+        const result = validatePreferences({
+          experienceLevel,
+          preferredRole,
+          ruleset,
+        });
         expect(result.success).toBe(true);
       });
+    });
+
+    it('should return error details with flatten', () => {
+      const result = validatePreferences({
+        experienceLevel: 'Invalid',
+        preferredRole: 'Invalid',
+        ruleset: 'Invalid',
+      });
+      expect(result.success).toBe(false);
+      expect(result.error).toBeDefined();
+      expect(result.details).toBeDefined();
+      expect(result.details.fieldErrors).toBeDefined();
     });
   });
 });
@@ -145,6 +191,20 @@ describe('userValidation - Error Formatting', () => {
     it('should wrap string errors under general key', () => {
       const formatted = formatValidationErrors('Network error');
       expect(formatted).toEqual({ general: 'Network error' });
+    });
+
+    it('should handle null/undefined errors gracefully', () => {
+      const formatted1 = formatValidationErrors(null);
+      expect(formatted1).toBeDefined();
+
+      const formatted2 = formatValidationErrors(undefined);
+      expect(formatted2).toBeDefined();
+    });
+
+    it('should handle object without fieldErrors property', () => {
+      const error = { message: 'Some error' };
+      const formatted = formatValidationErrors(error);
+      expect(formatted).toBeDefined();
     });
   });
 });

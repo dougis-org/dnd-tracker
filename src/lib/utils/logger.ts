@@ -81,3 +81,16 @@ export function logStructured(
     console.log(JSON.stringify(log));
   }
 }
+
+/**
+ * Logger object with convenience methods (info, warn, error)
+ * Wraps logStructured for easier use in application code
+ */
+export const logger = {
+  info: (message: string, data?: Record<string, unknown>) =>
+    logStructured('info', message, data),
+  warn: (message: string, data?: Record<string, unknown>) =>
+    logStructured('warn', message, data),
+  error: (message: string, data?: Record<string, unknown>) =>
+    logStructured('error', message, data),
+};

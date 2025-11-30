@@ -114,7 +114,9 @@ describe('combatHelpers', () => {
       const result = advanceTurn(session);
 
       expect(result.participants[0].statusEffects).toHaveLength(1);
-      expect(result.participants[0].statusEffects[0].durationInRounds).toBeNull();
+      expect(
+        result.participants[0].statusEffects[0].durationInRounds
+      ).toBeNull();
     });
 
     it('updates timestamp', () => {
@@ -135,7 +137,11 @@ describe('combatHelpers', () => {
     });
 
     it('wraps to last participant and decrements round', () => {
-      const session = { ...mockSession, currentTurnIndex: 0, currentRoundNumber: 2 };
+      const session = {
+        ...mockSession,
+        currentTurnIndex: 0,
+        currentRoundNumber: 2,
+      };
       const result = rewindTurn(session);
 
       expect(result.currentTurnIndex).toBe(mockSession.participants.length - 1);
@@ -143,7 +149,11 @@ describe('combatHelpers', () => {
     });
 
     it('does not go below round 1', () => {
-      const session = { ...mockSession, currentTurnIndex: 0, currentRoundNumber: 1 };
+      const session = {
+        ...mockSession,
+        currentTurnIndex: 0,
+        currentRoundNumber: 1,
+      };
       const result = rewindTurn(session);
 
       expect(result.currentRoundNumber).toBe(1);
@@ -161,7 +171,11 @@ describe('combatHelpers', () => {
     });
 
     it('absorbs damage with temp HP first', () => {
-      const participant = { ...mockParticipant1, currentHP: 10, temporaryHP: 5 };
+      const participant = {
+        ...mockParticipant1,
+        currentHP: 10,
+        temporaryHP: 5,
+      };
       const result = applyDamage(participant, 8);
 
       expect(result.temporaryHP).toBe(0);
@@ -169,7 +183,11 @@ describe('combatHelpers', () => {
     });
 
     it('applies full damage to current HP when temp HP insufficient', () => {
-      const participant = { ...mockParticipant2, currentHP: 30, temporaryHP: 3 };
+      const participant = {
+        ...mockParticipant2,
+        currentHP: 30,
+        temporaryHP: 3,
+      };
       const result = applyDamage(participant, 10);
 
       expect(result.temporaryHP).toBe(0);
@@ -188,6 +206,14 @@ describe('combatHelpers', () => {
       const result = applyDamage(participant, 0);
 
       expect(result.currentHP).toBe(10);
+    });
+
+    it('handles negative damage', () => {
+      const participant = { ...mockParticipant1, currentHP: 10 };
+      const result = applyDamage(participant, -5);
+
+      expect(result.currentHP).toBe(10);
+      expect(result.temporaryHP).toBe(0);
     });
   });
 
@@ -219,6 +245,20 @@ describe('combatHelpers', () => {
 
       expect(result.temporaryHP).toBe(5);
     });
+
+    it('handles zero healing', () => {
+      const participant = { ...mockParticipant1, currentHP: 3 };
+      const result = applyHealing(participant, 0);
+
+      expect(result.currentHP).toBe(3);
+    });
+
+    it('handles negative healing', () => {
+      const participant = { ...mockParticipant1, currentHP: 5 };
+      const result = applyHealing(participant, -3);
+
+      expect(result.currentHP).toBe(5);
+    });
   });
 
   describe('decrementEffectDurations', () => {
@@ -233,7 +273,12 @@ describe('combatHelpers', () => {
         {
           ...mockParticipant2,
           statusEffects: [
-            { id: 'e2', name: 'Restrained', durationInRounds: 2, appliedAtRound: 1 },
+            {
+              id: 'e2',
+              name: 'Restrained',
+              durationInRounds: 2,
+              appliedAtRound: 1,
+            },
           ],
         },
       ];
@@ -262,7 +307,12 @@ describe('combatHelpers', () => {
         {
           ...mockParticipant1,
           statusEffects: [
-            { id: 'e1', name: 'Blessed', durationInRounds: null, appliedAtRound: 1 },
+            {
+              id: 'e1',
+              name: 'Blessed',
+              durationInRounds: null,
+              appliedAtRound: 1,
+            },
           ],
         },
       ];

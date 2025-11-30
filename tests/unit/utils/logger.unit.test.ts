@@ -62,4 +62,25 @@ describe('logStructured gating behavior', () => {
     logStructured('error', 'allowed-error');
     expect(errorSpy).toHaveBeenCalled();
   });
+
+  test('setLogLevelOverride with warn level suppresses info', () => {
+    setLogLevelOverride('warn');
+    logStructured('info', 'should-be-suppressed');
+    expect(logSpy).not.toHaveBeenCalled();
+
+    logStructured('warn', 'should-be-allowed');
+    expect(warnSpy).toHaveBeenCalled();
+  });
+
+  test('setLogLevelOverride with error level suppresses warn and info', () => {
+    setLogLevelOverride('error');
+    logStructured('info', 'should-be-suppressed');
+    expect(logSpy).not.toHaveBeenCalled();
+
+    logStructured('warn', 'should-be-suppressed');
+    expect(warnSpy).not.toHaveBeenCalled();
+
+    logStructured('error', 'should-be-allowed');
+    expect(errorSpy).toHaveBeenCalled();
+  });
 });
