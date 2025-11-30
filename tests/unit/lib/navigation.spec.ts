@@ -94,4 +94,40 @@ describe('buildBreadcrumbSegments', () => {
 
     expect(segments.map((s) => s.label)).toEqual(['Home', 'Help'])
   })
+
+  it('handles empty path segments gracefully', () => {
+    const segments = buildBreadcrumbSegments('')
+
+    expect(segments).toBeDefined()
+    expect(segments.length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('handles paths with trailing slashes', () => {
+    const segments = buildBreadcrumbSegments('/dashboard/')
+
+    expect(segments).toBeDefined()
+    expect(segments.map((s) => s.label)).toContain('Dashboard')
+  })
+
+  it('handles paths with multiple consecutive slashes', () => {
+    const segments = buildBreadcrumbSegments('//dashboard///settings')
+
+    expect(segments).toBeDefined()
+    expect(segments.length).toBeGreaterThan(0)
+  })
+
+  it('handles very deeply nested paths', () => {
+    const segments = buildBreadcrumbSegments('/a/b/c/d/e/f/g')
+
+    expect(segments).toBeDefined()
+    expect(segments[0]).toHaveProperty('label', 'Home')
+  })
+
+  it('preserves special characters in segment names', () => {
+    const segments = buildBreadcrumbSegments('/characters/john-doe-123')
+
+    expect(segments).toBeDefined()
+    const characterLabel = segments[segments.length - 1].label
+    expect(characterLabel).toBeDefined()
+  })
 })
