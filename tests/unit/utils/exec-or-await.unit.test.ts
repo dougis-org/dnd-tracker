@@ -21,4 +21,14 @@ describe('execOrAwait helper', () => {
     const res = await execOrAwait(value as unknown);
     expect(res).toBe(42);
   });
+
+  test('handles null input gracefully', async () => {
+    const res = await execOrAwait(null);
+    expect(res).toBeNull();
+  });
+
+  test('handles undefined input gracefully', async () => {
+    const res = await execOrAwait(undefined);
+    expect(res).toBeUndefined();
+  });
 });
