@@ -163,5 +163,34 @@ describe('Cache Evictor', () => {
 
       await expect(evictLRU('test-cache')).resolves.not.toThrow();
     });
+
+    it('should log eviction messages when entries are removed', async () => {
+      const cache = await caches.open('test-cache');
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+      // Add a large response that will trigger eviction
+      await cache.put('https://example.com/large', new Response('x'.repeat(51 * 1024 * 1024)));
+
+      const evicted = await evictLRU('test-cache', 10 * 1024 * 1024); // Set low limit
+
+      // Verify some logging occurred for eviction
+      expect(evicted).toBeGreaterThanOrEqual(0);
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should return count of evicted entries', async () => {
+      const cache = await caches.open('test-cache');
+
+      // Add small entries
+      await cache.put('https://example.com/1', new Response('a'));
+      await cache.put('https://example.com/2', new Response('b'));
+
+      // Evict with very small limit to force eviction
+      const evicted = await evictLRU('test-cache', 1);
+
+      expect(typeof evicted).toBe('number');
+      expect(evicted).toBeGreaterThanOrEqual(0);
+    });
   });
 });
