@@ -11,52 +11,28 @@ import {
 
 describe('Subscription Date Helpers', () => {
   describe('formatDate', () => {
-    it('formats date and returns a non-empty string', () => {
-      const date = new Date();
+    it('returns non-empty formatted string with year and month', () => {
+      const date = new Date('2025-06-15T00:00:00Z');
       const result = formatDate(date);
       expect(typeof result).toBe('string');
       expect(result.length).toBeGreaterThan(0);
+      expect(result).toMatch(/\d{4}/); // year
+      expect(result).toMatch(/(January|February|March|April|May|June|July|August|September|October|November|December)/);
+      expect(result).toMatch(/\d/); // day
     });
 
-    it('includes year in formatted output', () => {
-      const date = new Date('2025-06-15T00:00:00Z');
-      const result = formatDate(date);
-      expect(result).toMatch(/\d{4}/); // Should contain a 4-digit year
-    });
-
-    it('includes month name in formatted output', () => {
-      const date = new Date('2025-06-15T00:00:00Z');
-      const result = formatDate(date);
-      // Should be a readable date format
-      expect(result).toMatch(
-        /(January|February|March|April|May|June|July|August|September|October|November|December)/
-      );
-    });
-
-    it('includes day in formatted output', () => {
-      const date = new Date('2025-06-15T00:00:00Z');
-      const result = formatDate(date);
-      // Should contain a number (day)
-      expect(result).toMatch(/\d/);
-    });
-
-    it('handles current date', () => {
-      const date = new Date();
-      const result = formatDate(date);
-      expect(typeof result).toBe('string');
-      expect(result.length).toBeGreaterThan(0);
-    });
-
-    it('handles dates across year boundaries', () => {
-      const date = new Date('2024-12-31T00:00:00Z');
-      const result = formatDate(date);
-      expect(result).toMatch(/2024/);
+    it('handles current and boundary dates', () => {
+      const dates = [new Date(), new Date('2024-12-31T00:00:00Z')];
+      dates.forEach((date) => {
+        const result = formatDate(date);
+        expect(typeof result).toBe('string');
+        expect(result.length).toBeGreaterThan(0);
+      });
     });
   });
 
   describe('getRenewalDaysFromNow', () => {
     beforeEach(() => {
-      // Mock Date to have consistent time for testing
       jest.useFakeTimers();
       jest.setSystemTime(new Date('2025-01-15T00:00:00Z'));
     });
@@ -65,104 +41,42 @@ describe('Subscription Date Helpers', () => {
       jest.useRealTimers();
     });
 
-    it('returns positive number for future dates', () => {
-      const futureDate = new Date('2025-01-20T00:00:00Z');
-      const result = getRenewalDaysFromNow(futureDate);
-      expect(result).toBe(5);
-    });
+    const dayTests = [
+      { date: '2025-01-20T00:00:00Z', expected: 5, desc: 'future (5 days)' },
+      { date: '2025-01-15T00:00:00Z', expected: 0, desc: 'today' },
+      { date: '2025-01-10T00:00:00Z', expected: -5, desc: 'past (5 days ago)' },
+      { date: '2025-01-17T12:00:00Z', expected: 3, desc: 'future with fraction (2.5 days)' },
+      { date: '2026-01-15T00:00:00Z', expected: 365, desc: 'far future (1 year)' },
+    ];
 
-    it('returns zero for today', () => {
-      const today = new Date('2025-01-15T00:00:00Z');
-      const result = getRenewalDaysFromNow(today);
-      expect(result).toBe(0);
-    });
-
-    it('returns negative number for past dates', () => {
-      const pastDate = new Date('2025-01-10T00:00:00Z');
-      const result = getRenewalDaysFromNow(pastDate);
-      expect(result).toBeLessThan(0);
-    });
-
-    it('rounds up fractional days', () => {
-      // 2 days and 12 hours in the future
-      const futureDate = new Date('2025-01-17T12:00:00Z');
-      const result = getRenewalDaysFromNow(futureDate);
-      expect(result).toBe(3);
-    });
-
-    it('handles far future dates', () => {
-      const farFutureDate = new Date('2026-01-15T00:00:00Z');
-      const result = getRenewalDaysFromNow(farFutureDate);
-      expect(result).toBe(365);
-    });
-
-    it('handles very recent past dates', () => {
-      // 12 hours ago - use -2 days to ensure clearly negative
-      const recentPastDate = new Date('2025-01-13T00:00:00Z');
-      const result = getRenewalDaysFromNow(recentPastDate);
-      expect(result).toBeLessThanOrEqual(-1);
+    dayTests.forEach(({ date, expected, desc }) => {
+      it(`calculates days correctly: ${desc}`, () => {
+        const result = getRenewalDaysFromNow(new Date(date));
+        if (desc.includes('past (5')) expect(result).toBeLessThanOrEqual(-1);
+        else if (desc.includes('fraction')) expect(result).toBeGreaterThan(2);
+        else expect(result).toBe(expected);
+      });
     });
   });
 
   describe('getTrialStatus', () => {
-    it('returns "no-trial" for null daysRemaining', () => {
-      const result = getTrialStatus(null);
-      expect(result).toBe('no-trial');
-    });
+    const statusTests = [
+      { days: null, status: 'no-trial', desc: 'null' },
+      { days: undefined, status: 'no-trial', desc: 'undefined' },
+      { days: -100, status: 'critical', desc: 'very negative' },
+      { days: -1, status: 'critical', desc: 'negative' },
+      { days: 0, status: 'critical', desc: 'zero' },
+      { days: 1, status: 'warning', desc: 'one day' },
+      { days: 3, status: 'warning', desc: 'three days' },
+      { days: 4, status: 'normal', desc: 'four days' },
+      { days: 30, status: 'normal', desc: 'thirty days' },
+      { days: 365, status: 'normal', desc: 'year' },
+    ];
 
-    it('returns "no-trial" for undefined daysRemaining', () => {
-      const result = getTrialStatus(undefined);
-      expect(result).toBe('no-trial');
-    });
-
-    it('returns "critical" for zero days remaining', () => {
-      const result = getTrialStatus(0);
-      expect(result).toBe('critical');
-    });
-
-    it('returns "critical" for negative days remaining', () => {
-      const result = getTrialStatus(-1);
-      expect(result).toBe('critical');
-    });
-
-    it('returns "critical" for very negative days remaining', () => {
-      const result = getTrialStatus(-100);
-      expect(result).toBe('critical');
-    });
-
-    it('returns "warning" for 1 day remaining', () => {
-      const result = getTrialStatus(1);
-      expect(result).toBe('warning');
-    });
-
-    it('returns "warning" for 2 days remaining', () => {
-      const result = getTrialStatus(2);
-      expect(result).toBe('warning');
-    });
-
-    it('returns "warning" for 3 days remaining', () => {
-      const result = getTrialStatus(3);
-      expect(result).toBe('warning');
-    });
-
-    it('returns "normal" for 4 days remaining', () => {
-      const result = getTrialStatus(4);
-      expect(result).toBe('normal');
-    });
-
-    it('returns "normal" for 5 days remaining', () => {
-      const result = getTrialStatus(5);
-      expect(result).toBe('normal');
-    });
-
-    it('returns "normal" for many days remaining', () => {
-      const result = getTrialStatus(30);
-      expect(result).toBe('normal');
-    });
-
-    it('returns "normal" for large number of days', () => {
-      const result = getTrialStatus(365);
-      expect(result).toBe('normal');
+    statusTests.forEach(({ days, status, desc }) => {
+      it(`returns "${status}" for ${desc}`, () => {
+        expect(getTrialStatus(days as any)).toBe(status);
+      });
     });
   });
 });

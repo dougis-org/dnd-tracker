@@ -13,179 +13,79 @@ import { Item, ItemRarity } from '@/types/item';
 
 describe('Item Formatting Utilities', () => {
   describe('formatWeight', () => {
-    it('returns "—" for null weight', () => {
-      expect(formatWeight(null)).toBe('—');
-    });
+    const weightTests = [
+      { input: null, expected: '—', desc: 'null' },
+      { input: undefined, expected: '—', desc: 'undefined' },
+      { input: 0, expected: '0 lbs', desc: 'zero' },
+      { input: 1, expected: '1 lb', desc: 'singular' },
+      { input: 5, expected: '5 lbs', desc: 'plural' },
+      { input: -5, expected: '-5 lbs', desc: 'negative' },
+      { input: 1000, expected: '1000 lbs', desc: 'large number' },
+      { input: 0.5, expected: '0.5 lbs', desc: 'decimal' },
+      { input: 5.0, expected: '5 lbs', desc: 'decimal integer' },
+      { input: 5.234, expected: '5.2 lbs', desc: 'rounded decimal' },
+      { input: 5.15, expected: '5.2 lbs', desc: 'rounded with trailing zero' },
+    ];
 
-    it('returns "—" for undefined weight', () => {
-      expect(formatWeight(undefined)).toBe('—');
-    });
-
-    it('formats integer weight with plural "lbs"', () => {
-      expect(formatWeight(5)).toBe('5 lbs');
-    });
-
-    it('formats weight of 1 with singular "lb"', () => {
-      expect(formatWeight(1)).toBe('1 lb');
-    });
-
-    it('formats weight of 0 with plural "lbs"', () => {
-      expect(formatWeight(0)).toBe('0 lbs');
-    });
-
-    it('rounds decimal weight to 1 decimal place', () => {
-      expect(formatWeight(5.234)).toBe('5.2 lbs');
-    });
-
-    it('rounds decimal weight to 1 decimal place and removes trailing zero', () => {
-      expect(formatWeight(5.15)).toBe('5.2 lbs');
-    });
-
-    it('handles very small decimal numbers', () => {
-      expect(formatWeight(0.5)).toBe('0.5 lbs');
-    });
-
-    it('handles large numbers', () => {
-      expect(formatWeight(1000)).toBe('1000 lbs');
-    });
-
-    it('handles negative numbers', () => {
-      expect(formatWeight(-5)).toBe('-5 lbs');
-    });
-
-    it('correctly identifies integer decimal numbers', () => {
-      expect(formatWeight(5.0)).toBe('5 lbs');
+    weightTests.forEach(({ input, expected, desc }) => {
+      it(`formats weight (${desc})`, () => {
+        expect(formatWeight(input)).toBe(expected);
+      });
     });
   });
 
   describe('formatProperties', () => {
-    it('returns "No special properties" for undefined properties', () => {
-      expect(formatProperties(undefined)).toBe('No special properties');
-    });
+    const propertyTests = [
+      { input: undefined, expected: 'No special properties' },
+      { input: [], expected: 'No special properties' },
+      { input: ['Magical'], expected: 'Magical' },
+      { input: ['Property1', 'Property2'], expected: 'Property1 +1 more' },
+      { input: ['Magical', 'Cursed', 'Legendary'], expected: 'Magical +2 more' },
+      { input: ['Magical & Cursed', 'Legendary'], expected: 'Magical & Cursed +1 more' },
+      { input: Array.from({ length: 10 }, (_, i) => `Prop${i}`), expected: 'Prop0 +9 more' },
+      { input: ['Magical Property Name'], expected: 'Magical Property Name' },
+    ];
 
-    it('returns "No special properties" for empty array', () => {
-      expect(formatProperties([])).toBe('No special properties');
-    });
-
-    it('returns single property as-is', () => {
-      expect(formatProperties(['Magical'])).toBe('Magical');
-    });
-
-    it('returns first property plus count for multiple properties', () => {
-      expect(formatProperties(['Magical', 'Cursed', 'Legendary'])).toBe(
-        'Magical +2 more'
-      );
-    });
-
-    it('handles exactly two properties', () => {
-      expect(formatProperties(['Property1', 'Property2'])).toBe(
-        'Property1 +1 more'
-      );
-    });
-
-    it('handles many properties', () => {
-      const properties = Array.from({ length: 10 }, (_, i) => `Prop${i}`);
-      expect(formatProperties(properties)).toBe('Prop0 +9 more');
-    });
-
-    it('preserves property names exactly', () => {
-      expect(formatProperties(['Magical Property Name'])).toBe(
-        'Magical Property Name'
-      );
-    });
-
-    it('handles properties with special characters', () => {
-      expect(formatProperties(['Magical & Cursed', 'Legendary'])).toBe(
-        'Magical & Cursed +1 more'
-      );
+    propertyTests.forEach(({ input, expected }) => {
+      it(`formats properties: ${Array.isArray(input) ? `${input.length} items` : input}`, () => {
+        expect(formatProperties(input as any)).toBe(expected);
+      });
     });
   });
 
   describe('resolveSource', () => {
-    it('returns "User Created" for non-system items', () => {
-      const item: Partial<Item> = {
-        isSystemItem: false,
-        source: 'Some Source',
-      };
+    const sourceTests = [
+      { isSystem: false, source: 'Any', expected: 'User Created', desc: 'non-system item' },
+      { isSystem: true, source: 'Player Handbook', expected: 'Player Handbook', desc: 'system with source' },
+      { isSystem: true, source: undefined, expected: 'System Catalog', desc: 'system without source' },
+      { isSystem: true, source: null, expected: 'System Catalog', desc: 'system with null source' },
+      { isSystem: true, source: '', expected: '', desc: 'system with empty source' },
+    ];
 
-      expect(resolveSource(item as Item)).toBe('User Created');
-    });
-
-    it('returns item source for system items with source', () => {
-      const item: Partial<Item> = {
-        isSystemItem: true,
-        source: 'Player Handbook',
-      };
-
-      expect(resolveSource(item as Item)).toBe('Player Handbook');
-    });
-
-    it('returns "System Catalog" for system items without source', () => {
-      const item: Partial<Item> = {
-        isSystemItem: true,
-        source: undefined,
-      };
-
-      expect(resolveSource(item as Item)).toBe('System Catalog');
-    });
-
-    it('returns "System Catalog" for system items with null source', () => {
-      const item: Partial<Item> = {
-        isSystemItem: true,
-        source: null,
-      };
-
-      expect(resolveSource(item as Item)).toBe('System Catalog');
-    });
-
-    it('ignores source when item is not system item', () => {
-      const item: Partial<Item> = {
-        isSystemItem: false,
-        source: 'Should be ignored',
-      };
-
-      expect(resolveSource(item as Item)).toBe('User Created');
-    });
-
-    it('handles empty string source for system items', () => {
-      const item: Partial<Item> = {
-        isSystemItem: true,
-        source: '',
-      };
-
-      expect(resolveSource(item as Item)).toBe('');
+    sourceTests.forEach(({ isSystem, source, expected, desc }) => {
+      it(`resolves source (${desc})`, () => {
+        const item: Partial<Item> = { isSystemItem: isSystem, source: source as any };
+        expect(resolveSource(item as Item)).toBe(expected);
+      });
     });
   });
 
   describe('rarityStyles', () => {
-    it('defines styles for Common rarity', () => {
-      expect(rarityStyles[ItemRarity.Common]).toBeDefined();
-      expect(typeof rarityStyles[ItemRarity.Common]).toBe('string');
-    });
+    const rarities = [
+      ItemRarity.Common,
+      ItemRarity.Uncommon,
+      ItemRarity.Rare,
+      ItemRarity.VeryRare,
+      ItemRarity.Legendary,
+      ItemRarity.Artifact,
+    ];
 
-    it('defines styles for Uncommon rarity', () => {
-      expect(rarityStyles[ItemRarity.Uncommon]).toBeDefined();
-      expect(typeof rarityStyles[ItemRarity.Uncommon]).toBe('string');
-    });
-
-    it('defines styles for Rare rarity', () => {
-      expect(rarityStyles[ItemRarity.Rare]).toBeDefined();
-      expect(typeof rarityStyles[ItemRarity.Rare]).toBe('string');
-    });
-
-    it('defines styles for VeryRare rarity', () => {
-      expect(rarityStyles[ItemRarity.VeryRare]).toBeDefined();
-      expect(typeof rarityStyles[ItemRarity.VeryRare]).toBe('string');
-    });
-
-    it('defines styles for Legendary rarity', () => {
-      expect(rarityStyles[ItemRarity.Legendary]).toBeDefined();
-      expect(typeof rarityStyles[ItemRarity.Legendary]).toBe('string');
-    });
-
-    it('defines styles for Artifact rarity', () => {
-      expect(rarityStyles[ItemRarity.Artifact]).toBeDefined();
-      expect(typeof rarityStyles[ItemRarity.Artifact]).toBe('string');
+    rarities.forEach((rarity) => {
+      it(`defines styles for ${rarity} rarity`, () => {
+        expect(rarityStyles[rarity]).toBeDefined();
+        expect(typeof rarityStyles[rarity]).toBe('string');
+        expect(rarityStyles[rarity]).toMatch(/bg-|text-/);
+      });
     });
 
     it('all rarity styles contain Tailwind classes', () => {
