@@ -15,11 +15,14 @@ import { DISPLAY_NAME_CONSTRAINTS, AVATAR_CONSTRAINTS } from './constants';
  */
 export const displayNameSchema = z
   .string()
-  .min(1, { message: 'Display name is required' })
-  .max(DISPLAY_NAME_CONSTRAINTS.MAX_LENGTH, {
-    message: `Display name must be ${DISPLAY_NAME_CONSTRAINTS.MAX_LENGTH} characters or less`,
-  })
-  .trim();
+  .transform((val) => val.trim())
+  .refine((val) => val.length > 0, { message: 'Display name is required' })
+  .refine(
+    (val) => val.length <= DISPLAY_NAME_CONSTRAINTS.MAX_LENGTH,
+    {
+      message: `Display name must be ${DISPLAY_NAME_CONSTRAINTS.MAX_LENGTH} characters or less`,
+    }
+  );
 
 /**
  * Theme preference validation schema
@@ -101,7 +104,7 @@ export function wizardValidationError(error: z.ZodError | undefined): string {
   // Get first error for display
   const firstError = issues[0];
   const field = firstError.path.join('.');
-  
+
   // Prefer custom message if available
   if (firstError.message) {
     return firstError.message;
@@ -117,7 +120,10 @@ export function wizardValidationError(error: z.ZodError | undefined): string {
  * @param name - Display name to validate
  * @returns Validation result with error if invalid
  */
-export function validateDisplayName(name: string): { isValid: boolean; error?: string } {
+export function validateDisplayName(name: string): {
+  isValid: boolean;
+  error?: string;
+} {
   const result = displayNameSchema.safeParse(name);
   if (result.success) {
     return { isValid: true };
@@ -134,7 +140,10 @@ export function validateDisplayName(name: string): { isValid: boolean; error?: s
  * @param preferences - Preferences object to validate
  * @returns Validation result with error if invalid
  */
-export function validatePreferences(preferences: unknown): { isValid: boolean; error?: string } {
+export function validatePreferences(preferences: unknown): {
+  isValid: boolean;
+  error?: string;
+} {
   const result = preferencesSchema.safeParse(preferences);
   if (result.success) {
     return { isValid: true };
@@ -151,7 +160,10 @@ export function validatePreferences(preferences: unknown): { isValid: boolean; e
  * @param avatar - Base64 avatar string to validate
  * @returns Validation result with error if invalid
  */
-export function validateAvatar(avatar: string | undefined): { isValid: boolean; error?: string } {
+export function validateAvatar(avatar: string | undefined): {
+  isValid: boolean;
+  error?: string;
+} {
   if (!avatar) {
     return { isValid: true }; // Avatar is optional
   }
@@ -172,7 +184,9 @@ export function validateAvatar(avatar: string | undefined): { isValid: boolean; 
  * @param profile - Profile setup data to validate
  * @returns Validation result with full error details
  */
-export function validateProfileSetup(profile: unknown):
+export function validateProfileSetup(
+  profile: unknown
+):
   | { isValid: true; data: z.infer<typeof profileSetupSchema> }
   | { isValid: false; error: string; issues: z.ZodIssue[] } {
   const result = profileSetupSchema.safeParse(profile);

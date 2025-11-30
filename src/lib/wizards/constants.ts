@@ -9,19 +9,19 @@
 export const AVATAR_CONSTRAINTS = {
   /** Maximum avatar file size in bytes (client-side) */
   MAX_FILE_SIZE_BYTES: 2 * 1024 * 1024, // 2MB
-  
+
   /** Maximum compressed base64 size in bytes (for API payload) */
   MAX_BASE64_SIZE_BYTES: 250 * 1024, // 250KB
-  
+
   /** Maximum compressed base64 size as string (for calculations) */
   MAX_BASE64_SIZE_KB: 250,
-  
+
   /** Target compressed size before API submission */
   TARGET_COMPRESSED_SIZE_KB: 100,
-  
+
   /** Allowed image MIME types */
   ALLOWED_MIME_TYPES: ['image/jpeg', 'image/png', 'image/webp'],
-  
+
   /** Allowed image file extensions */
   ALLOWED_EXTENSIONS: ['.jpg', '.jpeg', '.png', '.webp'],
 };
@@ -30,7 +30,7 @@ export const AVATAR_CONSTRAINTS = {
 export const DISPLAY_NAME_CONSTRAINTS = {
   /** Minimum display name length (after trim) */
   MIN_LENGTH: 1,
-  
+
   /** Maximum display name length */
   MAX_LENGTH: 50,
 };
@@ -39,10 +39,10 @@ export const DISPLAY_NAME_CONSTRAINTS = {
 export const PREFERENCES_CONSTRAINTS = {
   /** Allowed theme values */
   ALLOWED_THEMES: ['light', 'dark'] as const,
-  
+
   /** Default theme preference */
   DEFAULT_THEME: 'light' as const,
-  
+
   /** Default notifications preference */
   DEFAULT_NOTIFICATIONS: true,
 };
@@ -51,13 +51,13 @@ export const PREFERENCES_CONSTRAINTS = {
 export const API_CONSTRAINTS = {
   /** Maximum total payload size in bytes */
   MAX_PAYLOAD_SIZE_BYTES: 1024 * 1024, // 1MB
-  
+
   /** Request timeout in milliseconds */
   TIMEOUT_MS: 10000, // 10 seconds
-  
+
   /** Maximum retry attempts */
   MAX_RETRIES: 3,
-  
+
   /** Retry delay in milliseconds */
   RETRY_DELAY_MS: 1000,
 };
@@ -66,13 +66,13 @@ export const API_CONSTRAINTS = {
 export const AVATAR_COMPRESSION = {
   /** Initial JPEG quality setting (0-1) */
   INITIAL_QUALITY: 0.9,
-  
+
   /** Minimum JPEG quality setting */
   MIN_QUALITY: 0.3,
-  
+
   /** Quality decrement per iteration */
   QUALITY_STEP: 0.1,
-  
+
   /** Compression timeout in milliseconds */
   TIMEOUT_MS: 2000,
 };
@@ -100,18 +100,20 @@ export const ERROR_MESSAGES = {
   DISPLAY_NAME_REQUIRED: 'Display name is required',
   DISPLAY_NAME_TOO_SHORT: 'Display name must be at least 1 character',
   DISPLAY_NAME_TOO_LONG: `Display name must be 50 characters or less`,
-  
+
   AVATAR_INVALID_FORMAT: 'Invalid image format. Please use JPEG, PNG, or WebP',
   AVATAR_TOO_LARGE: `Avatar file size must be 2MB or less`,
   AVATAR_COMPRESSED_TOO_LARGE: `Compressed avatar exceeds 250KB. Please use a smaller image`,
-  AVATAR_COMPRESSION_FAILED: 'Failed to compress avatar. Please try a different image',
-  AVATAR_COMPRESSION_TIMEOUT: 'Avatar compression took too long. Please try a smaller image',
-  
+  AVATAR_COMPRESSION_FAILED:
+    'Failed to compress avatar. Please try a different image',
+  AVATAR_COMPRESSION_TIMEOUT:
+    'Avatar compression took too long. Please try a smaller image',
+
   THEME_REQUIRED: 'Theme preference is required',
   THEME_INVALID: 'Invalid theme preference',
-  
+
   NOTIFICATIONS_INVALID: 'Invalid notifications preference',
-  
+
   SUBMISSION_FAILED: 'Failed to save your profile. Please try again',
   SUBMISSION_TIMEOUT: 'Profile save took too long. Please try again',
   NETWORK_ERROR: 'Network error. Please check your connection and try again',
@@ -127,7 +129,7 @@ export const SUCCESS_MESSAGES = {
 export const TOAST_CONFIG = {
   /** Toast display duration in milliseconds */
   DURATION_MS: 4000,
-  
+
   /** Toast position on screen */
   POSITION: 'bottom-right' as const,
 };
@@ -136,10 +138,10 @@ export const TOAST_CONFIG = {
 export const A11Y_CONFIG = {
   /** Focus trap enabled for modal */
   FOCUS_TRAP_ENABLED: true,
-  
+
   /** Escape key closes modal (on subsequent visits only) */
   ESCAPE_KEY_CLOSES: true,
-  
+
   /** Modal role for screen readers */
   MODAL_ROLE: 'dialog' as const,
 };
@@ -148,10 +150,10 @@ export const A11Y_CONFIG = {
 export const STORAGE_KEYS = {
   /** Dismissed reminder count */
   REMINDER_DISMISSED_COUNT: 'wizard:reminder:dismissed',
-  
+
   /** Last wizard dismissal timestamp */
   REMINDER_LAST_DISMISSED: 'wizard:reminder:lastDismissed',
-  
+
   /** Draft wizard data (not submitted) */
   WIZARD_DRAFT: 'wizard:draft',
 };

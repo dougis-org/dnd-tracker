@@ -10,8 +10,15 @@
 
 /// <reference lib="dom" />
 
-import { AVATAR_COMPRESSION, AVATAR_CONSTRAINTS, ERROR_MESSAGES } from './constants';
-import type { AvatarCompressionResult, AvatarValidationResult } from '@/types/wizard';
+import {
+  AVATAR_COMPRESSION,
+  AVATAR_CONSTRAINTS,
+  ERROR_MESSAGES,
+} from './constants';
+import type {
+  AvatarCompressionResult,
+  AvatarValidationResult,
+} from '@/types/wizard';
 
 /**
  * Compression options
@@ -19,13 +26,13 @@ import type { AvatarCompressionResult, AvatarValidationResult } from '@/types/wi
 interface CompressionOptions {
   /** Timeout in milliseconds */
   timeoutMs?: number;
-  
+
   /** Initial quality (0-1) */
   initialQuality?: number;
-  
+
   /** Minimum quality (0-1) */
   minQuality?: number;
-  
+
   /** Quality step (0-1) */
   qualityStep?: number;
 }
@@ -86,10 +93,7 @@ function blobToImage(blob: Blob): Promise<HTMLImageElement> {
 /**
  * Draw image to canvas and return as data URL
  */
-function drawImageToCanvas(
-  img: HTMLImageElement,
-  quality: number
-): string {
+function drawImageToCanvas(img: HTMLImageElement, quality: number): string {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
@@ -176,7 +180,8 @@ export async function compressAvatar(
 
     // Iteratively reduce quality until size target is reached
     while (
-      compressedSizeBytes > AVATAR_CONSTRAINTS.TARGET_COMPRESSED_SIZE_KB * 1024 &&
+      compressedSizeBytes >
+        AVATAR_CONSTRAINTS.TARGET_COMPRESSED_SIZE_KB * 1024 &&
       quality > minQuality
     ) {
       // Check for timeout
@@ -191,7 +196,10 @@ export async function compressAvatar(
       compressedSizeBytes = calculateBase64Size(compressed);
 
       // Reduce quality if needed
-      if (compressedSizeBytes > AVATAR_CONSTRAINTS.TARGET_COMPRESSED_SIZE_KB * 1024) {
+      if (
+        compressedSizeBytes >
+        AVATAR_CONSTRAINTS.TARGET_COMPRESSED_SIZE_KB * 1024
+      ) {
         quality -= qualityStep;
       }
     }
@@ -225,7 +233,9 @@ export async function compressAvatar(
 
     // Wrap any other errors
     throw new Error(
-      error instanceof Error ? error.message : ERROR_MESSAGES.AVATAR_COMPRESSION_FAILED
+      error instanceof Error
+        ? error.message
+        : ERROR_MESSAGES.AVATAR_COMPRESSION_FAILED
     );
   }
 }

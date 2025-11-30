@@ -32,7 +32,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 1: Initialize with default state
     test('T007.1 should initialize with welcome screen and empty form', () => {
       // Arrange & Act
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Assert
       expect(result.current.state.isOpen).toBe(false);
@@ -72,7 +74,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
       localStorage.setItem('wizard:draft', JSON.stringify(draft));
 
       // Act
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Assert
       expect(result.current.state.formState.displayName).toBe('Saved Name');
@@ -85,7 +89,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 4: Navigate to next screen
     test('T007.4 should navigate to next screen', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -99,7 +105,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 5: Navigate to previous screen
     test('T007.5 should navigate to previous screen', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -115,7 +123,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 6: Go to specific screen
     test('T007.6 should jump to specific screen', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -129,7 +139,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 7: Prevent navigation past final screen
     test('T007.7 should not navigate past final screen', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -144,7 +156,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 8: Prevent navigation before first screen
     test('T007.8 should not navigate before first screen', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -160,7 +174,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 9: Update display name
     test('T007.9 should update display name', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -174,7 +190,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 10: Update theme preference
     test('T007.10 should update theme preference', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -188,7 +206,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 11: Update notifications preference
     test('T007.11 should update notifications preference', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -202,7 +222,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 12: Update avatar
     test('T007.12 should update avatar and preview', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
       const avatar = 'data:image/jpeg;base64,ABC123';
       const preview = 'blob:preview123';
 
@@ -220,7 +242,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 13: Save draft to localStorage after updates
     test('T007.13 should save draft to localStorage after updates', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -239,7 +263,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 14: Open and close modal
     test('T007.14 should open and close modal', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act & Assert
       expect(result.current.state.isOpen).toBe(false);
@@ -279,11 +305,16 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
       // Arrange
       const mockResponse = {
         ok: true,
-        json: async () => ({ userId: 'user123', profile: { completedSetup: true } }),
+        json: async () => ({
+          userId: 'user123',
+          profile: { completedSetup: true },
+        }),
       };
       (fetch as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -312,11 +343,16 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
       // Arrange
       const mockResponse = {
         ok: false,
-        json: async () => ({ error: 'Validation error', message: 'Invalid display name' }),
+        json: async () => ({
+          error: 'Validation error',
+          message: 'Invalid display name',
+        }),
       };
       (fetch as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       await act(async () => {
@@ -331,13 +367,18 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 18: Retry logic with exponential backoff
     test('T007.18 should retry failed submission up to 3 times', async () => {
       // Arrange
-      const mockResponse = { ok: false, json: async () => ({ error: 'Network error' }) };
+      const mockResponse = {
+        ok: false,
+        json: async () => ({ error: 'Network error' }),
+      };
       (fetch as jest.Mock)
         .mockResolvedValueOnce(mockResponse)
         .mockResolvedValueOnce(mockResponse)
         .mockResolvedValueOnce(mockResponse);
 
-      const { result, rerender } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result, rerender } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -361,7 +402,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 19: Clear validation errors
     test('T007.19 should clear validation errors', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -370,14 +413,20 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
 
       // Assert
       // ValidationState should be reset
-      expect(result.current.state.validationState.displayName.isValid).toBe(true);
-      expect(result.current.state.validationState.displayName.error).toBeUndefined();
+      expect(result.current.state.validationState.displayName.isValid).toBe(
+        true
+      );
+      expect(
+        result.current.state.validationState.displayName.error
+      ).toBeUndefined();
     });
 
     // Test 20: Reset wizard to initial state
     test('T007.20 should reset wizard to initial state', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -397,7 +446,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
     // Test 21: Validate display name on change
     test('T007.21 should validate display name field on update', () => {
       // Arrange
-      const { result } = renderHook(() => useProfileSetupWizard({ userId: 'user123' }));
+      const { result } = renderHook(() =>
+        useProfileSetupWizard({ userId: 'user123' })
+      );
 
       // Act
       act(() => {
@@ -405,7 +456,9 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
       });
 
       // Assert
-      expect(result.current.state.validationState.displayName.isValid).toBe(true);
+      expect(result.current.state.validationState.displayName.isValid).toBe(
+        true
+      );
 
       // Act
       act(() => {
@@ -413,8 +466,12 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
       });
 
       // Assert
-      expect(result.current.state.validationState.displayName.isValid).toBe(false);
-      expect(result.current.state.validationState.displayName.error).toBeDefined();
+      expect(result.current.state.validationState.displayName.isValid).toBe(
+        false
+      );
+      expect(
+        result.current.state.validationState.displayName.error
+      ).toBeDefined();
     });
   });
 });

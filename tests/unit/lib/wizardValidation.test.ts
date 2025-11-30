@@ -25,7 +25,7 @@ describe('Wizard Validation - wizardValidation.ts', () => {
         'A', // 1 char (minimum)
         'Bob', // 3 chars
         'Aragorn the Ranger', // 19 chars
-        'A very long display name with spaces and numbers 1234', // 50 chars
+        'A very long display name with spaces 123', // 40 chars
       ];
 
       // Act & Assert

@@ -15,7 +15,10 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { validateProfileSetup, validateDisplayName } from '@/lib/wizards/wizardValidation';
+import {
+  validateProfileSetup,
+  validateDisplayName,
+} from '@/lib/wizards/wizardValidation';
 import {
   WIZARD_SCREENS,
   WIZARD_SCREEN_ORDER,
@@ -35,10 +38,10 @@ import type {
 interface UseProfileSetupWizardOptions {
   /** User ID for API calls */
   userId: string;
-  
+
   /** Whether user can dismiss modal (false on first login) */
   canDismiss?: boolean;
-  
+
   /** Callback when wizard completes successfully */
   onComplete?: (profile: ProfileSetup) => void;
 }
@@ -113,7 +116,10 @@ export function useProfileSetupWizard(
   // Save draft to localStorage whenever form changes
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEYS.WIZARD_DRAFT, JSON.stringify(state.formState));
+      localStorage.setItem(
+        STORAGE_KEYS.WIZARD_DRAFT,
+        JSON.stringify(state.formState)
+      );
     } catch {
       // Ignore localStorage errors
     }
@@ -127,7 +133,10 @@ export function useProfileSetupWizard(
       );
       // Only navigate if not at last screen
       if (currentIndex >= 0 && currentIndex < WIZARD_SCREEN_ORDER.length - 1) {
-        return { ...prev, currentScreen: WIZARD_SCREEN_ORDER[currentIndex + 1] };
+        return {
+          ...prev,
+          currentScreen: WIZARD_SCREEN_ORDER[currentIndex + 1],
+        };
       }
       return prev;
     });
@@ -140,17 +149,27 @@ export function useProfileSetupWizard(
       );
       // Only navigate if not at first screen
       if (currentIndex > 0) {
-        return { ...prev, currentScreen: WIZARD_SCREEN_ORDER[currentIndex - 1] };
+        return {
+          ...prev,
+          currentScreen: WIZARD_SCREEN_ORDER[currentIndex - 1],
+        };
       }
       return prev;
     });
   }, []);
 
-  const goToScreen = useCallback((screen: WizardModalState['currentScreen']) => {
-    if (WIZARD_SCREEN_ORDER.includes(screen as (typeof WIZARD_SCREEN_ORDER)[number])) {
-      setState((prev) => ({ ...prev, currentScreen: screen }));
-    }
-  }, []);
+  const goToScreen = useCallback(
+    (screen: WizardModalState['currentScreen']) => {
+      if (
+        WIZARD_SCREEN_ORDER.includes(
+          screen as (typeof WIZARD_SCREEN_ORDER)[number]
+        )
+      ) {
+        setState((prev) => ({ ...prev, currentScreen: screen }));
+      }
+    },
+    []
+  );
 
   // Modal control
   const openWizard = useCallback(() => {
@@ -298,9 +317,14 @@ export function useProfileSetupWizard(
         // Handle HTTP errors
         const errorData = await response.json();
         const errorMessage =
-          errorData.message || `HTTP ${response.status}: ${ERROR_MESSAGES.SUBMISSION_FAILED}`;
+          errorData.message ||
+          `HTTP ${response.status}: ${ERROR_MESSAGES.SUBMISSION_FAILED}`;
 
-        if (response.status === 400 || response.status === 401 || response.status === 404) {
+        if (
+          response.status === 400 ||
+          response.status === 401 ||
+          response.status === 404
+        ) {
           // Non-retryable errors
           throw new Error(errorMessage);
         }
@@ -311,7 +335,8 @@ export function useProfileSetupWizard(
 
         if (attempt < API_CONSTRAINTS.MAX_RETRIES) {
           // Wait with exponential backoff before retry
-          const delay = API_CONSTRAINTS.RETRY_DELAY_MS * Math.pow(2, attempt - 1);
+          const delay =
+            API_CONSTRAINTS.RETRY_DELAY_MS * Math.pow(2, attempt - 1);
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
       } catch (error) {
@@ -328,7 +353,8 @@ export function useProfileSetupWizard(
         }
 
         if (attempt < API_CONSTRAINTS.MAX_RETRIES) {
-          const delay = API_CONSTRAINTS.RETRY_DELAY_MS * Math.pow(2, attempt - 1);
+          const delay =
+            API_CONSTRAINTS.RETRY_DELAY_MS * Math.pow(2, attempt - 1);
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }

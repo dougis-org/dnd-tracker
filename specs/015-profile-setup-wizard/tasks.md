@@ -57,8 +57,8 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T009 [P] [US1] Write failing component integration tests in `tests/unit/components/ProfileSetupWizard.test.tsx` (25 test cases: component rendering, validation, screen transitions, accessibility, error states, submission)
-- [ ] T010 [P] [US1] Write failing integration tests for full wizard flow in `tests/integration/wizard-flow.integration.test.ts` (15 test cases: complete flow, skip behavior, error recovery, retry logic, MongoDB save, non-dismissible on first login, dismissible on repeat visits, close button visible/hidden, Escape key behavior)
+- [X] T009 [P] [US1] Write failing component integration tests in `tests/unit/components/ProfileSetupWizard.test.tsx` (25 test cases: component rendering, validation, screen transitions, accessibility, error states, submission)
+- [X] T010 [P] [US1] Write failing integration tests for full wizard flow in `tests/integration/wizard-flow.integration.test.ts` (15 test cases: complete flow, skip behavior, error recovery, retry logic, MongoDB save, non-dismissible on first login, dismissible on repeat visits, close button visible/hidden, Escape key behavior)
 
 ### Implementation for User Story 1
 
