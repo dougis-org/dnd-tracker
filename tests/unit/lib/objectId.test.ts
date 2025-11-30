@@ -46,4 +46,17 @@ describe('generateObjectId', () => {
     // All generated IDs should be unique
     expect(ids.size).toBe(batchSize);
   });
+
+  it('should generate valid hex strings with byte distribution', () => {
+    // Generate multiple IDs and verify byte distribution
+    const ids = Array.from({ length: 50 }, () => generateObjectId());
+
+    ids.forEach((id) => {
+      expect(id).toMatch(/^[0-9a-f]{24}$/);
+    });
+
+    // Check that we get variety in the IDs (not all the same pattern)
+    const uniqueIds = new Set(ids);
+    expect(uniqueIds.size).toBeGreaterThan(40); // Should have high uniqueness
+  });
 });

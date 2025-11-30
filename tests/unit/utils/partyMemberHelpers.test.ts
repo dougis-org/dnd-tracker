@@ -28,6 +28,23 @@ describe('partyMemberHelpers', () => {
       expect(member.id.length).toBeGreaterThan(0);
     });
 
+    it('should generate unique IDs for multiple calls', () => {
+      const memberData1 = createMemberData({ id: undefined });
+      const memberData2 = createMemberData({ id: undefined });
+      const member1 = createFullMember(memberData1);
+      const member2 = createFullMember(memberData2);
+
+      expect(member1.id).not.toBe(member2.id);
+    });
+
+    it('should handle null ID explicitly', () => {
+      const memberData = createMemberData({ id: null as unknown as string });
+      const member = createFullMember(memberData);
+
+      expect(member.id).toBeDefined();
+      expect(typeof member.id).toBe('string');
+    });
+
     it('should use provided ID if given', () => {
       const memberData = createMemberData({ id: 'custom-id-123' });
       const member = createFullMember(memberData);

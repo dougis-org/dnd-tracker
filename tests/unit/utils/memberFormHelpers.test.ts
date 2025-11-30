@@ -56,14 +56,14 @@ describe('memberFormHelpers', () => {
     });
 
     it('should return error for missing class', () => {
-      const formData = createValidFormData({ class: '' as any });
+      const formData = createValidFormData({ class: '' as unknown as FormData['class'] });
       const errors = validateMemberForm(formData);
 
       expect(errors.class).toBe('Class is required');
     });
 
     it('should return error for missing race', () => {
-      const formData = createValidFormData({ race: '' as any });
+      const formData = createValidFormData({ race: '' as unknown as FormData['race'] });
       const errors = validateMemberForm(formData);
 
       expect(errors.race).toBe('Race is required');
@@ -177,10 +177,10 @@ describe('memberFormHelpers', () => {
 
     it('should use defaults for undefined member fields', () => {
       const member = createPartyMember({
-        characterName: undefined as any,
-        level: undefined as any,
-        ac: undefined as any,
-        hp: undefined as any,
+        characterName: undefined as unknown as string,
+        level: undefined as unknown as number,
+        ac: undefined as unknown as number,
+        hp: undefined as unknown as number,
       });
 
       const formData = createDefaultFormData(member);
