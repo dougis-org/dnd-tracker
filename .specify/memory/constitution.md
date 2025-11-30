@@ -17,9 +17,6 @@ Sync Impact Report
 
 All contributors MUST prioritize correctness, maintainability, and code clarity over speed. Code is considered incomplete until:
 
-
-
-
 Rationale: The project enforces high engineering standards (see `CONTRIBUTING.md`) and relies on shared ownership to reduce regressions.
 
 ### Test-First (TDD) (NON-NEGOTIABLE)
@@ -34,6 +31,7 @@ Rationale: TDD yields safer refactors, clearer acceptance criteria, and measurab
 ### Simplicity & Composability
 
 Design decisions MUST prefer small, focused modules and components. Files SHOULD stay under 450 lines and functions under 50 lines. Code SHOULD be composition-friendly and avoid premature generalization.
+Code MUST reuse existing helper libraries and utilities.
 
 
 

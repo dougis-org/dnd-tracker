@@ -9,6 +9,7 @@ import { ServiceWorkerProvider } from '@/components/ServiceWorkerProvider'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { clerkPublishableKey, mockAuthEnabledClient } from '@/lib/auth/authConfig'
+import { ProfileSetupWizardWrapper } from '@/components/ProfileSetupWizard/ProfileSetupWizardWrapper'
 
 // Force dynamic rendering - entire app uses ClerkProvider which requires runtime
 export const dynamic = 'force-dynamic'
@@ -44,6 +45,7 @@ export default function RootLayout({
           >
             Skip to main content
           </a>
+          <ProfileSetupWizardWrapper />
           <div className="flex min-h-screen flex-col">
             <header className="relative z-40 border-b bg-background">
               <div className="container relative z-50 flex items-center justify-between gap-4 py-3 px-3 md:px-4">
