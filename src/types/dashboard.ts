@@ -100,7 +100,11 @@ export class DashboardBuilder {
    */
   static buildPageData(
     userId: string,
-    user: { email: string; displayName: string; subscriptionTier: SubscriptionTier },
+    user: {
+      email: string;
+      displayName: string;
+      subscriptionTier: SubscriptionTier;
+    },
     usage: ResourceUsage
   ): DashboardPageData {
     const tier = user.subscriptionTier;
@@ -108,9 +112,13 @@ export class DashboardBuilder {
     const percentages = {
       parties: limits.parties > 0 ? (usage.parties / limits.parties) * 100 : 0,
       characters:
-        limits.characters > 0 ? (usage.characters / limits.characters) * 100 : 0,
+        limits.characters > 0
+          ? (usage.characters / limits.characters) * 100
+          : 0,
       encounters:
-        limits.encounters > 0 ? (usage.encounters / limits.encounters) * 100 : 0,
+        limits.encounters > 0
+          ? (usage.encounters / limits.encounters) * 100
+          : 0,
     };
 
     return {
@@ -123,7 +131,8 @@ export class DashboardBuilder {
       usage,
       limits,
       percentages,
-      isEmpty: usage.parties === 0 && usage.characters === 0 && usage.encounters === 0,
+      isEmpty:
+        usage.parties === 0 && usage.characters === 0 && usage.encounters === 0,
       createdAt: new Date().toISOString(),
     };
   }
@@ -176,7 +185,9 @@ export class DashboardBuilder {
     );
   }
 
-  private static isValidPercentages(percentages: unknown): percentages is UsagePercentages {
+  private static isValidPercentages(
+    percentages: unknown
+  ): percentages is UsagePercentages {
     if (typeof percentages !== 'object' || percentages === null) return false;
     const p = percentages as Record<string, unknown>;
     return (

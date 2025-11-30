@@ -41,7 +41,9 @@ async function getResourceCounts(
     });
     return { parties: 0, characters: 0, encounters }; // Others default to 0 until features complete
   } catch {
-    logger.warn('Resource count query failed, defaulting to 0', { context: { userId } });
+    logger.warn('Resource count query failed, defaulting to 0', {
+      context: { userId },
+    });
     return { parties: 0, characters: 0, encounters: 0 };
   }
 }
@@ -53,16 +55,23 @@ export async function GET(
     const userId = getAuthenticatedUserId(request);
     if (!userId) {
       return NextResponse.json(
-        { error: 'Please log in to view your dashboard', code: 'AUTH_REQUIRED' },
+        {
+          error: 'Please log in to view your dashboard',
+          code: 'AUTH_REQUIRED',
+        },
         { status: 401 }
       );
     }
 
     await connectToMongo();
-    const user = await UserModel.findOne({ userId }).select('email displayName subscriptionTier');
+    const user = await UserModel.findOne({ userId }).select(
+      'email displayName subscriptionTier'
+    );
 
     if (!user) {
-      logger.warn('Dashboard API called for non-existent user', { context: { userId } });
+      logger.warn('Dashboard API called for non-existent user', {
+        context: { userId },
+      });
       return NextResponse.json(
         { error: 'Your profile could not be found', code: 'USER_NOT_FOUND' },
         { status: 404 }
@@ -73,24 +82,33 @@ export async function GET(
     const response = DashboardBuilder.buildPageData(userId, user, usage);
 
     logger.info('Dashboard data fetched successfully', {
-      context: { userId, tier: user.subscriptionTier, isEmpty: response.isEmpty },
+      context: {
+        userId,
+        tier: user.subscriptionTier,
+        isEmpty: response.isEmpty,
+      },
     });
 
     return NextResponse.json(response, {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Cache-Control':
+          'no-store, no-cache, must-revalidate, proxy-revalidate',
         Pragma: 'no-cache',
         Expires: '0',
       },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
+    const message =
+      error instanceof Error ? error.message : 'Unknown error occurred';
     logger.error('Dashboard API error', { context: { error: message } });
 
     return NextResponse.json(
-      { error: 'We encountered an error. Please try again.', code: 'INTERNAL_ERROR' },
+      {
+        error: 'We encountered an error. Please try again.',
+        code: 'INTERNAL_ERROR',
+      },
       { status: 500 }
     );
   }

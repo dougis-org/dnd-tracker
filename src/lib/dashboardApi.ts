@@ -6,7 +6,11 @@
  */
 
 import { logger } from '@/lib/utils/logger';
-import { DashboardBuilder, type DashboardPageData, type DashboardErrorResponse } from '@/types/dashboard';
+import {
+  DashboardBuilder,
+  type DashboardPageData,
+  type DashboardErrorResponse,
+} from '@/types/dashboard';
 
 /**
  * Dashboard API error class
@@ -32,7 +36,10 @@ export async function getDashboardData(): Promise<DashboardPageData> {
 
   try {
     logger.info('Fetching dashboard data', {
-      context: { endpoint: '/api/v1/dashboard/usage', timestamp: new Date().toISOString() },
+      context: {
+        endpoint: '/api/v1/dashboard/usage',
+        timestamp: new Date().toISOString(),
+      },
     });
 
     const response = await fetch('/api/v1/dashboard/usage', {
@@ -42,12 +49,19 @@ export async function getDashboardData(): Promise<DashboardPageData> {
     });
 
     if (!response.ok) {
-      const errorData = (await response.json().catch(() => ({}))) as Partial<DashboardErrorResponse>;
+      const errorData = (await response
+        .json()
+        .catch(() => ({}))) as Partial<DashboardErrorResponse>;
       const errorCode = errorData?.code || 'INTERNAL_ERROR';
-      const userMessage = errorData?.error || 'We encountered an error. Please try again.';
+      const userMessage =
+        errorData?.error || 'We encountered an error. Please try again.';
 
       logger.warn('Dashboard API error', {
-        context: { statusCode: response.status, errorCode, elapsedTime: Date.now() - startTime },
+        context: {
+          statusCode: response.status,
+          errorCode,
+          elapsedTime: Date.now() - startTime,
+        },
       });
 
       throw new DashboardApiError(response.status, errorCode, userMessage);
@@ -55,12 +69,22 @@ export async function getDashboardData(): Promise<DashboardPageData> {
 
     const data = (await response.json()) as unknown;
     if (!DashboardBuilder.isValidPageData(data)) {
-      logger.error('Invalid dashboard API response', { context: { elapsedTime: Date.now() - startTime } });
-      throw new DashboardApiError(500, 'INVALID_RESPONSE', 'Invalid response format. Please refresh.');
+      logger.error('Invalid dashboard API response', {
+        context: { elapsedTime: Date.now() - startTime },
+      });
+      throw new DashboardApiError(
+        500,
+        'INVALID_RESPONSE',
+        'Invalid response format. Please refresh.'
+      );
     }
 
     logger.info('Dashboard data fetched successfully', {
-      context: { tier: data.user.tier, isEmpty: data.isEmpty, elapsedTime: Date.now() - startTime },
+      context: {
+        tier: data.user.tier,
+        isEmpty: data.isEmpty,
+        elapsedTime: Date.now() - startTime,
+      },
     });
 
     return data;
@@ -68,9 +92,15 @@ export async function getDashboardData(): Promise<DashboardPageData> {
     if (error instanceof DashboardApiError) throw error;
 
     const message = error instanceof Error ? error.message : 'Unknown error';
-    logger.error('Dashboard API error', { context: { error: message, elapsedTime: Date.now() - startTime } });
+    logger.error('Dashboard API error', {
+      context: { error: message, elapsedTime: Date.now() - startTime },
+    });
 
-    throw new DashboardApiError(500, 'INTERNAL_ERROR', 'We encountered an error. Please try again.');
+    throw new DashboardApiError(
+      500,
+      'INTERNAL_ERROR',
+      'We encountered an error. Please try again.'
+    );
   }
 }
 
