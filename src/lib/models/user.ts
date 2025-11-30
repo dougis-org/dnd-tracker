@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import type { SubscriptionTier } from '@/types/subscription';
 
 /**
  * User document interface - represents a persistent user record
@@ -9,6 +10,7 @@ export interface UserDoc extends Document {
   userId: string;
   email: string;
   displayName: string;
+  subscriptionTier: SubscriptionTier;
   metadata?: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
@@ -64,6 +66,19 @@ const UserSchema = new Schema<UserDoc>(
       required: true,
       minlength: 1,
       maxlength: 255,
+    },
+    subscriptionTier: {
+      type: String,
+      enum: [
+        'free_adventurer',
+        'seasoned_adventurer',
+        'expert_dungeon_master',
+        'master_of_dungeons',
+        'guild_master',
+      ],
+      required: true,
+      default: 'free_adventurer',
+      index: true,
     },
     metadata: {
       type: Schema.Types.Mixed,
