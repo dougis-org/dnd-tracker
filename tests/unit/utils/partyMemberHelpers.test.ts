@@ -7,7 +7,9 @@ import {
 import { PartyMember } from '../../../src/types/party';
 
 describe('partyMemberHelpers', () => {
-  const createMemberData = (overrides: Partial<PartyMember> = {}): Partial<PartyMember> => ({
+  const createMemberData = (
+    overrides: Partial<PartyMember> = {}
+  ): Partial<PartyMember> => ({
     characterName: 'Test Member',
     class: 'Fighter',
     race: 'Human',
@@ -119,9 +121,15 @@ describe('partyMemberHelpers', () => {
   });
 
   describe('updateOrAddMember', () => {
-    const member1 = createFullMember(createMemberData({ id: 'member-1', characterName: 'Frodo' }));
-    const member2 = createFullMember(createMemberData({ id: 'member-2', characterName: 'Sam' }));
-    const member3 = createFullMember(createMemberData({ id: 'member-3', characterName: 'Merry' }));
+    const member1 = createFullMember(
+      createMemberData({ id: 'member-1', characterName: 'Frodo' })
+    );
+    const member2 = createFullMember(
+      createMemberData({ id: 'member-2', characterName: 'Sam' })
+    );
+    const member3 = createFullMember(
+      createMemberData({ id: 'member-3', characterName: 'Merry' })
+    );
 
     it('should add a new member when no editing ID provided', () => {
       const members = [member1, member2];
@@ -137,7 +145,11 @@ describe('partyMemberHelpers', () => {
 
     it('should update existing member when editing ID provided', () => {
       const members = [member1, member2, member3];
-      const updatedData = createMemberData({ id: 'member-2', characterName: 'Sam Updated', level: 8 });
+      const updatedData = createMemberData({
+        id: 'member-2',
+        characterName: 'Sam Updated',
+        level: 8,
+      });
 
       const updated = updateOrAddMember(members, updatedData, 'member-2');
 
@@ -150,7 +162,10 @@ describe('partyMemberHelpers', () => {
 
     it('should preserve other members when updating', () => {
       const members = [member1, member2, member3];
-      const updatedData = createMemberData({ id: 'member-1', characterName: 'Frodo Jr.' });
+      const updatedData = createMemberData({
+        id: 'member-1',
+        characterName: 'Frodo Jr.',
+      });
 
       const updated = updateOrAddMember(members, updatedData, 'member-1');
 
@@ -181,7 +196,10 @@ describe('partyMemberHelpers', () => {
 
     it('should not modify original members array on update', () => {
       const members = [member1, member2];
-      const updatedData = createMemberData({ id: 'member-1', characterName: 'Modified' });
+      const updatedData = createMemberData({
+        id: 'member-1',
+        characterName: 'Modified',
+      });
 
       const updated = updateOrAddMember(members, updatedData, 'member-1');
 
@@ -191,9 +209,15 @@ describe('partyMemberHelpers', () => {
   });
 
   describe('removeMember', () => {
-    const member1 = createFullMember(createMemberData({ id: 'member-1', characterName: 'Frodo' }));
-    const member2 = createFullMember(createMemberData({ id: 'member-2', characterName: 'Sam' }));
-    const member3 = createFullMember(createMemberData({ id: 'member-3', characterName: 'Merry' }));
+    const member1 = createFullMember(
+      createMemberData({ id: 'member-1', characterName: 'Frodo' })
+    );
+    const member2 = createFullMember(
+      createMemberData({ id: 'member-2', characterName: 'Sam' })
+    );
+    const member3 = createFullMember(
+      createMemberData({ id: 'member-3', characterName: 'Merry' })
+    );
 
     it('should remove member by ID', () => {
       const members = [member1, member2, member3];
@@ -253,9 +277,15 @@ describe('partyMemberHelpers', () => {
   });
 
   describe('findMemberById', () => {
-    const member1 = createFullMember(createMemberData({ id: 'member-1', characterName: 'Frodo' }));
-    const member2 = createFullMember(createMemberData({ id: 'member-2', characterName: 'Sam' }));
-    const member3 = createFullMember(createMemberData({ id: 'member-3', characterName: 'Merry' }));
+    const member1 = createFullMember(
+      createMemberData({ id: 'member-1', characterName: 'Frodo' })
+    );
+    const member2 = createFullMember(
+      createMemberData({ id: 'member-2', characterName: 'Sam' })
+    );
+    const member3 = createFullMember(
+      createMemberData({ id: 'member-3', characterName: 'Merry' })
+    );
 
     it('should find member by ID', () => {
       const members = [member1, member2, member3];

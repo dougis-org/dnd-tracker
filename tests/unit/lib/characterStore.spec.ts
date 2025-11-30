@@ -1,7 +1,10 @@
 import seedCharacters from '../../../src/lib/mock/characters';
 import { describe, it, expect } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
-import { CharacterProvider, useCharacterStore } from '../../../src/lib/characterStore';
+import {
+  CharacterProvider,
+  useCharacterStore,
+} from '../../../src/lib/characterStore';
 import type { PartialCharacter, Character } from '../../../types/character';
 
 describe('characterStore - scaffold tests', () => {
@@ -49,7 +52,9 @@ describe('characterStore - scaffold tests', () => {
       });
 
       expect(result.current.state.characters.length).toBe(initialCount + 1);
-      expect(result.current.state.characters[initialCount].name).toBe('Test Wizard');
+      expect(result.current.state.characters[initialCount].name).toBe(
+        'Test Wizard'
+      );
     });
 
     it('updates a character in the store', () => {
@@ -68,7 +73,9 @@ describe('characterStore - scaffold tests', () => {
         result.current.update(updated);
       });
 
-      const foundChar = result.current.state.characters.find((c) => c.id === firstChar.id);
+      const foundChar = result.current.state.characters.find(
+        (c) => c.id === firstChar.id
+      );
       expect(foundChar?.name).toBe('Updated Name');
     });
 
@@ -89,7 +96,9 @@ describe('characterStore - scaffold tests', () => {
       });
 
       expect(result.current.state.characters.length).toBe(initialCount - 1);
-      expect(result.current.state.characters.find((c) => c.id === firstChar.id)).toBeUndefined();
+      expect(
+        result.current.state.characters.find((c) => c.id === firstChar.id)
+      ).toBeUndefined();
     });
 
     it('undoes a deletion', () => {
@@ -107,13 +116,17 @@ describe('characterStore - scaffold tests', () => {
         result.current.remove(firstChar.id);
       });
 
-      expect(result.current.state.characters.find((c) => c.id === firstChar.id)).toBeUndefined();
+      expect(
+        result.current.state.characters.find((c) => c.id === firstChar.id)
+      ).toBeUndefined();
 
       act(() => {
         result.current.undo();
       });
 
-      expect(result.current.state.characters.find((c) => c.id === firstChar.id)).toBeDefined();
+      expect(
+        result.current.state.characters.find((c) => c.id === firstChar.id)
+      ).toBeDefined();
     });
 
     it('throws error when adding character with missing required fields', () => {

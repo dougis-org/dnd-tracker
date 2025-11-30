@@ -9,7 +9,9 @@ import {
 import { PartyMember } from '../../../src/types/party';
 
 describe('memberFormHelpers', () => {
-  const createValidFormData = (overrides: Partial<FormData> = {}): FormData => ({
+  const createValidFormData = (
+    overrides: Partial<FormData> = {}
+  ): FormData => ({
     characterName: 'Test Character',
     class: 'Fighter',
     race: 'Human',
@@ -20,7 +22,9 @@ describe('memberFormHelpers', () => {
     ...overrides,
   });
 
-  const createPartyMember = (overrides: Partial<PartyMember> = {}): PartyMember => ({
+  const createPartyMember = (
+    overrides: Partial<PartyMember> = {}
+  ): PartyMember => ({
     id: '1',
     partyId: 'party-1',
     characterName: 'Test Character',
@@ -56,14 +60,18 @@ describe('memberFormHelpers', () => {
     });
 
     it('should return error for missing class', () => {
-      const formData = createValidFormData({ class: '' as unknown as FormData['class'] });
+      const formData = createValidFormData({
+        class: '' as unknown as FormData['class'],
+      });
       const errors = validateMemberForm(formData);
 
       expect(errors.class).toBe('Class is required');
     });
 
     it('should return error for missing race', () => {
-      const formData = createValidFormData({ race: '' as unknown as FormData['race'] });
+      const formData = createValidFormData({
+        race: '' as unknown as FormData['race'],
+      });
       const errors = validateMemberForm(formData);
 
       expect(errors.race).toBe('Race is required');
@@ -217,26 +225,44 @@ describe('memberFormHelpers', () => {
     });
 
     it('should clamp level between 1 and 20', () => {
-      const tooLow = formDataToPartyMember(createValidFormData({ level: -5 }), 'party-1');
+      const tooLow = formDataToPartyMember(
+        createValidFormData({ level: -5 }),
+        'party-1'
+      );
       expect(tooLow.level).toBe(1);
 
-      const tooHigh = formDataToPartyMember(createValidFormData({ level: 100 }), 'party-1');
+      const tooHigh = formDataToPartyMember(
+        createValidFormData({ level: 100 }),
+        'party-1'
+      );
       expect(tooHigh.level).toBe(20);
     });
 
     it('should clamp AC between 1 and 30', () => {
-      const tooLow = formDataToPartyMember(createValidFormData({ ac: -5 }), 'party-1');
+      const tooLow = formDataToPartyMember(
+        createValidFormData({ ac: -5 }),
+        'party-1'
+      );
       expect(tooLow.ac).toBe(1);
 
-      const tooHigh = formDataToPartyMember(createValidFormData({ ac: 100 }), 'party-1');
+      const tooHigh = formDataToPartyMember(
+        createValidFormData({ ac: 100 }),
+        'party-1'
+      );
       expect(tooHigh.ac).toBe(30);
     });
 
     it('should ensure HP is at least 1', () => {
-      const tooLow = formDataToPartyMember(createValidFormData({ hp: -10 }), 'party-1');
+      const tooLow = formDataToPartyMember(
+        createValidFormData({ hp: -10 }),
+        'party-1'
+      );
       expect(tooLow.hp).toBe(1);
 
-      const zero = formDataToPartyMember(createValidFormData({ hp: 0 }), 'party-1');
+      const zero = formDataToPartyMember(
+        createValidFormData({ hp: 0 }),
+        'party-1'
+      );
       expect(zero.hp).toBe(1);
     });
 

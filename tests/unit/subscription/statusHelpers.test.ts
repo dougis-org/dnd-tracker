@@ -3,7 +3,10 @@
  * Tests for badge color and usage bar color utilities
  */
 
-import { getPlanStatusBadge, getUsageBarColor } from '@/lib/subscription/statusHelpers';
+import {
+  getPlanStatusBadge,
+  getUsageBarColor,
+} from '@/lib/subscription/statusHelpers';
 
 describe('statusHelpers', () => {
   describe('getPlanStatusBadge', () => {

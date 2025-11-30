@@ -169,7 +169,10 @@ describe('Cache Evictor', () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
       // Add a large response that will trigger eviction
-      await cache.put('https://example.com/large', new Response('x'.repeat(51 * 1024 * 1024)));
+      await cache.put(
+        'https://example.com/large',
+        new Response('x'.repeat(51 * 1024 * 1024))
+      );
 
       const evicted = await evictLRU('test-cache', 10 * 1024 * 1024); // Set low limit
 

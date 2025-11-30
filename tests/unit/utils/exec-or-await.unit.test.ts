@@ -3,7 +3,9 @@ import { execOrAwait } from '@/lib/utils/exec-or-await';
 describe('execOrAwait helper', () => {
   test('calls exec() on objects with exec function', async () => {
     const value = { id: '123' };
-    const q = { exec: jest.fn().mockResolvedValue(value) } as { exec: jest.Mock };
+    const q = { exec: jest.fn().mockResolvedValue(value) } as {
+      exec: jest.Mock;
+    };
     const res = await execOrAwait(q);
     expect(q.exec).toHaveBeenCalled();
     expect(res).toEqual(value);

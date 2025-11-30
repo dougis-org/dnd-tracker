@@ -96,7 +96,11 @@ describe('Monster Service', () => {
 
       const result = await monsterService.update('1', input, 'user-123');
 
-      expect(monsterAdapter.update).toHaveBeenCalledWith('1', input, 'user-123');
+      expect(monsterAdapter.update).toHaveBeenCalledWith(
+        '1',
+        input,
+        'user-123'
+      );
       expect(result).toEqual(mockMonster);
     });
 
