@@ -24,44 +24,59 @@ describe('Monster Service', () => {
     jest.clearAllMocks();
   });
 
-  describe('list', () => {
-    it('should call adapter.list with filters', async () => {
-      const mockMonsters = [{ id: '1', name: 'Dragon' }];
-      (monsterAdapter.list as jest.Mock).mockResolvedValue(mockMonsters);
+  const adapterMethods = [
+    {
+      method: 'list',
+      input: { cr: { min: 5 } },
+      expected: [{ id: '1', name: 'Dragon' }],
+      desc: 'list with filters',
+    },
+    {
+      method: 'getById',
+      input: '1',
+      expected: { id: '1', name: 'Goblin' },
+      desc: 'getById returns monster',
+    },
+    {
+      method: 'search',
+      input: 'dragon',
+      expected: [{ id: '1', name: 'Dragon' }],
+      desc: 'search returns results',
+    },
+  ];
 
-      const result = await monsterService.list({ cr: { min: 5 } });
+  adapterMethods.forEach(({ method, input, expected, desc }) => {
+    it(`should call adapter.${method} and return result for ${desc}`, async () => {
+      (
+        monsterAdapter[method as keyof typeof monsterAdapter] as jest.Mock
+      ).mockResolvedValue(expected);
 
-      expect(monsterAdapter.list).toHaveBeenCalledWith({ cr: { min: 5 } });
-      expect(result).toEqual(mockMonsters);
-    });
+      const result =
+        await monsterService[method as keyof typeof monsterService](input);
 
-    it('should call adapter.list without filters', async () => {
-      (monsterAdapter.list as jest.Mock).mockResolvedValue([]);
-
-      await monsterService.list();
-
-      expect(monsterAdapter.list).toHaveBeenCalledWith(undefined);
+      expect(
+        monsterAdapter[method as keyof typeof monsterAdapter]
+      ).toHaveBeenCalledWith(input);
+      expect(result).toEqual(expected);
     });
   });
 
-  describe('getById', () => {
-    it('should call adapter.getById with id', async () => {
-      const mockMonster = { id: '1', name: 'Goblin' };
-      (monsterAdapter.getById as jest.Mock).mockResolvedValue(mockMonster);
+  it('should call adapter.list without filters', async () => {
+    (monsterAdapter.list as jest.Mock).mockResolvedValue([]);
+    await monsterService.list();
+    expect(monsterAdapter.list).toHaveBeenCalledWith(undefined);
+  });
 
-      const result = await monsterService.getById('1');
+  it('should return null if getById not found', async () => {
+    (monsterAdapter.getById as jest.Mock).mockResolvedValue(null);
+    const result = await monsterService.getById('999');
+    expect(result).toBeNull();
+  });
 
-      expect(monsterAdapter.getById).toHaveBeenCalledWith('1');
-      expect(result).toEqual(mockMonster);
-    });
-
-    it('should return null if monster not found', async () => {
-      (monsterAdapter.getById as jest.Mock).mockResolvedValue(null);
-
-      const result = await monsterService.getById('999');
-
-      expect(result).toBeNull();
-    });
+  it('should return empty array if search has no matches', async () => {
+    (monsterAdapter.search as jest.Mock).mockResolvedValue([]);
+    const result = await monsterService.search('nonexistent');
+    expect(result).toEqual([]);
   });
 
   describe('create', () => {
@@ -78,9 +93,7 @@ describe('Monster Service', () => {
 
     it('should use default userId if not provided', async () => {
       (monsterAdapter.create as jest.Mock).mockResolvedValue({});
-
       await monsterService.create({ name: 'Test', challenge: 3 });
-
       expect(monsterAdapter.create).toHaveBeenCalledWith(
         expect.any(Object),
         'current-user'
@@ -106,17 +119,13 @@ describe('Monster Service', () => {
 
     it('should return null if update fails', async () => {
       (monsterAdapter.update as jest.Mock).mockResolvedValue(null);
-
       const result = await monsterService.update('999', {}, 'user-123');
-
       expect(result).toBeNull();
     });
 
     it('should use default userId for update', async () => {
       (monsterAdapter.update as jest.Mock).mockResolvedValue({});
-
       await monsterService.update('1', { name: 'Test' });
-
       expect(monsterAdapter.update).toHaveBeenCalledWith(
         '1',
         expect.any(Object),
@@ -128,39 +137,15 @@ describe('Monster Service', () => {
   describe('delete', () => {
     it('should call adapter.delete with id', async () => {
       (monsterAdapter.delete as jest.Mock).mockResolvedValue(true);
-
       const result = await monsterService.delete('1');
-
       expect(monsterAdapter.delete).toHaveBeenCalledWith('1');
       expect(result).toBe(true);
     });
 
     it('should return false if delete fails', async () => {
       (monsterAdapter.delete as jest.Mock).mockResolvedValue(false);
-
       const result = await monsterService.delete('999');
-
       expect(result).toBe(false);
-    });
-  });
-
-  describe('search', () => {
-    it('should call adapter.search with query', async () => {
-      const mockResults = [{ id: '1', name: 'Dragon' }];
-      (monsterAdapter.search as jest.Mock).mockResolvedValue(mockResults);
-
-      const result = await monsterService.search('dragon');
-
-      expect(monsterAdapter.search).toHaveBeenCalledWith('dragon');
-      expect(result).toEqual(mockResults);
-    });
-
-    it('should return empty array if no matches', async () => {
-      (monsterAdapter.search as jest.Mock).mockResolvedValue([]);
-
-      const result = await monsterService.search('nonexistent');
-
-      expect(result).toEqual([]);
     });
   });
 

@@ -139,64 +139,68 @@ describe('Dashboard API Client', () => {
   });
 
   describe('isRetryableError', () => {
-    it('returns true for 5xx errors', () => {
-      const error = new DashboardApiError(500, 'SERVER_ERROR', 'Server error');
-      expect(isRetryableError(error)).toBe(true);
+    const retryableTests = [
+      { status: 500, code: 'SERVER_ERROR', desc: '500 Server Error' },
+      { status: 501, code: 'NOT_IMPLEMENTED', desc: '501 Not Implemented' },
+      { status: 502, code: 'BAD_GATEWAY', desc: '502 Bad Gateway' },
+      {
+        status: 503,
+        code: 'SERVICE_UNAVAILABLE',
+        desc: '503 Service Unavailable',
+      },
+      { status: 504, code: 'GATEWAY_TIMEOUT', desc: '504 Gateway Timeout' },
+      { status: 0, code: 'NETWORK_ERROR', desc: 'network error (status 0)' },
+    ];
 
-      const error503 = new DashboardApiError(
-        503,
-        'SERVICE_UNAVAILABLE',
-        'Unavailable'
-      );
-      expect(isRetryableError(error503)).toBe(true);
+    const nonRetryableTests = [
+      { status: 400, code: 'BAD_REQUEST', desc: '400 Bad Request' },
+      { status: 401, code: 'UNAUTHORIZED', desc: '401 Unauthorized' },
+      { status: 403, code: 'FORBIDDEN', desc: '403 Forbidden' },
+      { status: 404, code: 'NOT_FOUND', desc: '404 Not Found' },
+      { status: 429, code: 'RATE_LIMITED', desc: '429 Rate Limited' },
+    ];
+
+    retryableTests.forEach(({ status, code, desc }) => {
+      it(`returns true for ${desc}`, () => {
+        const error = new DashboardApiError(status, code, 'Error');
+        expect(isRetryableError(error)).toBe(true);
+      });
     });
 
-    it('returns true for network errors (status 0)', () => {
-      const error = new DashboardApiError(0, 'NETWORK_ERROR', 'Network error');
-      expect(isRetryableError(error)).toBe(true);
+    nonRetryableTests.forEach(({ status, code, desc }) => {
+      it(`returns false for ${desc}`, () => {
+        const error = new DashboardApiError(status, code, 'Error');
+        expect(isRetryableError(error)).toBe(false);
+      });
     });
 
-    it('returns false for 401 errors', () => {
-      const error = new DashboardApiError(401, 'UNAUTHORIZED', 'Unauthorized');
-      expect(isRetryableError(error)).toBe(false);
-    });
+    const invalidTests = [
+      { value: new Error('Generic error'), desc: 'generic Error' },
+      { value: null, desc: 'null' },
+      { value: undefined, desc: 'undefined' },
+      { value: 'error string', desc: 'string' },
+      { value: {}, desc: 'empty object' },
+      { value: { statusCode: 500 }, desc: 'object without statusCode' },
+    ];
 
-    it('returns false for 404 errors', () => {
-      const error = new DashboardApiError(404, 'NOT_FOUND', 'Not found');
-      expect(isRetryableError(error)).toBe(false);
-    });
-
-    it('returns false for 4xx errors (except 401, 404)', () => {
-      const error = new DashboardApiError(400, 'BAD_REQUEST', 'Bad request');
-      expect(isRetryableError(error)).toBe(false);
-
-      const error429 = new DashboardApiError(
-        429,
-        'RATE_LIMITED',
-        'Rate limited'
-      );
-      expect(isRetryableError(error429)).toBe(false);
-    });
-
-    it('returns false for non-DashboardApiError instances', () => {
-      expect(isRetryableError(new Error('Generic error'))).toBe(false);
-      expect(isRetryableError(null)).toBe(false);
-      expect(isRetryableError(undefined)).toBe(false);
-      expect(isRetryableError('error string')).toBe(false);
+    invalidTests.forEach(({ value, desc }) => {
+      it(`returns false for ${desc}`, () => {
+        expect(isRetryableError(value)).toBe(false);
+      });
     });
   });
 
   describe('API Integration Scenarios', () => {
-    it('handles successful fetch with different tier data', async () => {
-      const tiers: SubscriptionTier[] = [
-        'free_adventurer',
-        'seasoned_adventurer',
-        'expert_dungeon_master',
-        'master_of_dungeons',
-        'guild_master',
-      ];
+    const tiers: SubscriptionTier[] = [
+      'free_adventurer',
+      'seasoned_adventurer',
+      'expert_dungeon_master',
+      'master_of_dungeons',
+      'guild_master',
+    ];
 
-      for (const tier of tiers) {
+    tiers.forEach((tier) => {
+      it(`handles successful fetch with ${tier} data`, async () => {
         jest.clearAllMocks();
 
         const mockData = DashboardBuilder.buildPageData(
@@ -216,64 +220,7 @@ describe('Dashboard API Client', () => {
 
         const result = await getDashboardData();
         expect(result.user.tier).toBe(tier);
-      }
-    });
-
-    it('retries on server errors', () => {
-      const serverError = new DashboardApiError(
-        502,
-        'BAD_GATEWAY',
-        'Bad gateway'
-      );
-      expect(isRetryableError(serverError)).toBe(true);
-
-      const serviceError = new DashboardApiError(
-        503,
-        'SERVICE_UNAVAILABLE',
-        'Service unavailable'
-      );
-      expect(isRetryableError(serviceError)).toBe(true);
-    });
-
-    it('does not retry on client errors', () => {
-      const badRequest = new DashboardApiError(
-        400,
-        'BAD_REQUEST',
-        'Bad request'
-      );
-      expect(isRetryableError(badRequest)).toBe(false);
-
-      const forbidden = new DashboardApiError(403, 'FORBIDDEN', 'Forbidden');
-      expect(isRetryableError(forbidden)).toBe(false);
-    });
-
-    it('retries on specific 5xx codes', () => {
-      const codes = [500, 501, 502, 503, 504, 505];
-      codes.forEach((code) => {
-        const error = new DashboardApiError(code, 'SERVER_ERROR', 'Error');
-        expect(isRetryableError(error)).toBe(true);
       });
-    });
-
-    it('distinguishes between 401 and 403', () => {
-      const unauthorized = new DashboardApiError(
-        401,
-        'UNAUTHORIZED',
-        'Unauthorized'
-      );
-      expect(isRetryableError(unauthorized)).toBe(false);
-
-      const forbidden = new DashboardApiError(403, 'FORBIDDEN', 'Forbidden');
-      expect(isRetryableError(forbidden)).toBe(false);
-    });
-
-    it('handles undefined error gracefully', () => {
-      expect(isRetryableError(undefined)).toBe(false);
-    });
-
-    it('handles unknown error type gracefully', () => {
-      expect(isRetryableError({})).toBe(false);
-      expect(isRetryableError({ statusCode: 500 })).toBe(false);
     });
   });
 
@@ -322,10 +269,10 @@ describe('Dashboard API Client', () => {
       expect(result).toEqual(mockData);
     });
 
-    it('treats any non-ok status as error', async () => {
-      const statusCodes = [400, 401, 402, 403, 404, 500, 502, 503];
+    const errorStatusCodes = [400, 401, 402, 403, 404, 500, 502, 503];
 
-      for (const status of statusCodes) {
+    errorStatusCodes.forEach((status) => {
+      it(`treats ${status} status as error`, async () => {
         jest.clearAllMocks();
         (global.fetch as jest.Mock).mockResolvedValueOnce({
           ok: false,
@@ -334,7 +281,7 @@ describe('Dashboard API Client', () => {
         });
 
         await expect(getDashboardData()).rejects.toThrow(DashboardApiError);
-      }
+      });
     });
 
     it('uses default code for missing error code', async () => {
@@ -349,8 +296,8 @@ describe('Dashboard API Client', () => {
   });
 
   describe('Fetch Options Validation', () => {
-    it('uses correct HTTP method', async () => {
-      const mockData = DashboardBuilder.buildPageData(
+    const createMockData = () =>
+      DashboardBuilder.buildPageData(
         'user-1',
         {
           email: 'test@example.com',
@@ -360,59 +307,36 @@ describe('Dashboard API Client', () => {
         { parties: 0, characters: 0, encounters: 0 }
       );
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockData),
+    const optionTests = [
+      { option: 'method', expected: 'GET', desc: 'uses correct HTTP method' },
+      {
+        option: 'headers.Content-Type',
+        expected: 'application/json',
+        desc: 'includes correct content type',
+      },
+      { option: 'cache', expected: 'no-store', desc: 'disables caching' },
+    ];
+
+    optionTests.forEach(({ option, expected, desc }) => {
+      it(desc, async () => {
+        jest.clearAllMocks();
+        const mockData = createMockData();
+
+        (global.fetch as jest.Mock).mockResolvedValueOnce({
+          ok: true,
+          json: jest.fn().mockResolvedValueOnce(mockData),
+        });
+
+        await getDashboardData();
+
+        const callArgs = (global.fetch as jest.Mock).mock.calls[0];
+        const value =
+          option === 'headers.Content-Type'
+            ? callArgs[1].headers['Content-Type']
+            : callArgs[1][option];
+
+        expect(value).toBe(expected);
       });
-
-      await getDashboardData();
-
-      const callArgs = (global.fetch as jest.Mock).mock.calls[0];
-      expect(callArgs[1].method).toBe('GET');
-    });
-
-    it('includes correct content type header', async () => {
-      const mockData = DashboardBuilder.buildPageData(
-        'user-1',
-        {
-          email: 'test@example.com',
-          displayName: 'Test',
-          subscriptionTier: 'free_adventurer' as SubscriptionTier,
-        },
-        { parties: 0, characters: 0, encounters: 0 }
-      );
-
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockData),
-      });
-
-      await getDashboardData();
-
-      const callArgs = (global.fetch as jest.Mock).mock.calls[0];
-      expect(callArgs[1].headers['Content-Type']).toBe('application/json');
-    });
-
-    it('disables caching', async () => {
-      const mockData = DashboardBuilder.buildPageData(
-        'user-1',
-        {
-          email: 'test@example.com',
-          displayName: 'Test',
-          subscriptionTier: 'free_adventurer' as SubscriptionTier,
-        },
-        { parties: 0, characters: 0, encounters: 0 }
-      );
-
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockData),
-      });
-
-      await getDashboardData();
-
-      const callArgs = (global.fetch as jest.Mock).mock.calls[0];
-      expect(callArgs[1].cache).toBe('no-store');
     });
   });
 });
