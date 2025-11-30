@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import type { SubscriptionTier } from '@/types/subscription';
+import type { SubscriptionTier } from '@/types/dashboard';
 
 /**
  * User document interface - represents a persistent user record
