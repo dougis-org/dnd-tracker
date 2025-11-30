@@ -95,6 +95,7 @@ Created minimal stub implementations to provide test targets:
 6. **CompletionScreen.tsx** - Success message + Done button
 
 All stubs:
+
 - Have basic JSX structure
 - Include TODO comments for full implementation
 - Match test expectations for data-testid attributes
@@ -109,6 +110,7 @@ All stubs:
 - T010 tests: 15 failures (integration flow not implemented)
 
 **When to mark passing**:
+
 - After ProfileSetupWizardModal full implementation (T016)
 - After all 5 screen components complete (T011-T015)
 - After modal integration into RootLayout (T017)
@@ -118,11 +120,13 @@ All stubs:
 ### Phase 3 Implementation (Component Development)
 
 **T011-T015**: Implement screen components (5 files, ~300 lines total)
+
 - Each component receives props from modal parent
 - Each implements full validation, error display, accessibility
 - Each passes corresponding unit tests
 
 **T016**: Implement ProfileSetupWizardModal (100+ lines)
+
 - Screen router based on currentScreen state
 - Navigation buttons (Next/Prev/Skip/Finish)
 - Focus trap and keyboard handling
@@ -130,6 +134,7 @@ All stubs:
 - Makes T009 tests pass
 
 **T017**: Implement RootLayout trigger logic
+
 - Fetch user profile after Clerk auth
 - Check completedSetup flag
 - Conditionally render modal
@@ -139,6 +144,7 @@ All stubs:
 ### Phase 4 - User Story 2
 
 After Phase 3 complete:
+
 - T018-T020: Reminder component for incomplete profiles
 - Dismissible banner on profile page
 - Reappears on next visit if setup incomplete
@@ -190,12 +196,14 @@ tests/integration/
 ## Testing Strategy Recap
 
 **TDD Workflow**:
+
 1. ✅ Write failing tests (T009-T010) - COMPLETE
 2. ⏳ Create stubs to provide structure - COMPLETE
 3. → Implement components to pass tests (T011-T017) - NEXT
 4. → Refactor and optimize - AFTER IMPLEMENTATION
 
 **Test Execution**:
+
 ```bash
 npm test -- tests/unit/components/ProfileSetupWizard.test.tsx    # 25 tests
 npm test -- tests/integration/wizard-flow.integration.test.ts    # 15 tests
@@ -207,18 +215,21 @@ npm test -- tests/unit/lib/wizardValidation.test.ts              # 14 tests (pas
 ## Key Decisions
 
 ### Test Organization
+
 - Component tests isolated in `/tests/unit/components/`
 - Integration tests (full flow) in `/tests/integration/`
 - Tests mocked child components to avoid circular dependencies
 - Used React Testing Library best practices (fireEvent, userEvent, waitFor)
 
 ### Component Architecture
+
 - Screen components receive props from parent modal
 - Modal handles all state management via useProfileSetupWizard hook
 - Each screen independently testable
 - No direct API calls in components (delegated to hook)
 
 ### Accessibility
+
 - All form inputs labeled
 - Modal has proper ARIA role and title
 - Escape key handling with canDismiss check
@@ -228,17 +239,20 @@ npm test -- tests/unit/lib/wizardValidation.test.ts              # 14 tests (pas
 ## Previous Phases Status
 
 ### Phase 1 ✅ COMPLETE
+
 - T000: react-hot-toast installed
 - T001: constants.ts created (150+ lines)
 - T002: wizard.ts types created (350+ lines)
 
 ### Phase 2a ✅ COMPLETE
+
 - T003: Avatar compression tests (10 cases, all passing)
 - T004: Avatar compression implementation (250 lines)
 - T005: Zod validation tests (14 cases, all passing)
 - T006: Zod validation schemas (200 lines)
 
 ### Phase 2b ✅ COMPLETE
+
 - T007: useProfileSetupWizard tests (21 cases, all passing)
 - T008: useProfileSetupWizard hook implementation (240 lines)
 
@@ -247,11 +261,13 @@ npm test -- tests/unit/lib/wizardValidation.test.ts              # 14 tests (pas
 ## Known Issues & Mitigation
 
 ### Git Commit Issues
+
 - GitKraken MCP tool returning exit status 1
 - Workaround: Tests created and committed will be handled manually
 - Not blocking: test files are ready for validation
 
 ### Component Stub Complexity
+
 - Stubs intentionally minimal to avoid implementation bias
 - Full implementations will require careful state flow
 - Estimated 300-400 lines for all 6 components combined
@@ -259,6 +275,7 @@ npm test -- tests/unit/lib/wizardValidation.test.ts              # 14 tests (pas
 ## Effort Estimate
 
 ### Remaining Work
+
 - T011-T015: Screen implementations: ~2-3 hours
 - T016: Modal wrapper: ~1-2 hours
 - T017: RootLayout integration: ~30 minutes
@@ -272,6 +289,7 @@ npm test -- tests/unit/lib/wizardValidation.test.ts              # 14 tests (pas
 ## Next Immediate Action
 
 Begin T011 implementation:
+
 - Implement WelcomeScreen.tsx (~40 lines)
 - Run test to verify renders
 - Repeat for T012-T015

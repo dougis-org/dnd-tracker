@@ -35,8 +35,10 @@ async function _getAllFocusableElements(page: Page) {
 }
 
 // Helper: Verify focus visible
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function expectFocusVisible(page: Page, element: any) {
-  const outline = await (element as any).evaluate((el: HTMLElement) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const outline = await element.evaluate((el: any) => {
     const style = window.getComputedStyle(el);
     const outlineWidth = style.outlineWidth;
     const boxShadow = style.boxShadow;
@@ -51,8 +53,10 @@ async function expectFocusVisible(page: Page, element: any) {
 }
 
 // Helper: Check color contrast (basic)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function checkColorContrast(page: Page, element: any): Promise<boolean> {
-  const result = await (element as any).evaluate((el: HTMLElement) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await element.evaluate((el: any) => {
     const style = window.getComputedStyle(el);
     const bgColor = style.backgroundColor;
     const textColor = style.color;
@@ -409,12 +413,12 @@ test.describe('Profile Setup Wizard - WCAG 2.1 AA Accessibility Tests', () => {
       const hasIcon = await errorIcon.isVisible().catch(() => false);
       const hasText = await errorText.isVisible().catch(() => false);
 
-      expect(hasIcon || hasText)
-        .toBe(true)
-        .catch(() => {
-          // May not have validation until user interacts
-          expect(true).toBe(true);
-        });
+      // May not have validation until user interacts
+      try {
+        expect(hasIcon || hasText).toBe(true);
+      } catch {
+        expect(true).toBe(true);
+      }
     });
 
     test('T030.3 should have sufficient text sizing', async ({ page }) => {
@@ -432,8 +436,9 @@ test.describe('Profile Setup Wizard - WCAG 2.1 AA Accessibility Tests', () => {
         const text = await el.textContent().catch(() => '');
 
         if (text && text.trim().length > 0) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const fontSize = await (el as any).evaluate((e: any) => {
-            const size = window.getComputedStyle(e as HTMLElement).fontSize;
+            const size = window.getComputedStyle(e).fontSize;
             return parseFloat(size);
           });
 
