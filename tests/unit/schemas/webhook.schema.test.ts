@@ -5,16 +5,13 @@
 
 import {
   createUserSchema,
-  updateUserSchema,
   webhookEventSchema,
   validateCreateUser,
   validateUpdateUser,
   validateWebhookEvent,
   formatValidationErrors,
-  type CreateUserRequest,
-  type UpdateUserRequest,
   type WebhookEventRequest,
-} from '@/lib/schemas/webhook.schema';
+} from '../../../src/lib/schemas/webhook.schema';
 
 describe('Webhook Schemas', () => {
   describe('Create User Schema', () => {

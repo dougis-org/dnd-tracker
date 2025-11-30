@@ -310,7 +310,9 @@ describe('Dashboard Utilities', () => {
       const afterDate = new Date();
 
       const createdAtDate = new Date(data.createdAt);
-      expect(createdAtDate.getTime()).toBeGreaterThanOrEqual(beforeDate.getTime());
+      expect(createdAtDate.getTime()).toBeGreaterThanOrEqual(
+        beforeDate.getTime()
+      );
       expect(createdAtDate.getTime()).toBeLessThanOrEqual(afterDate.getTime());
     });
 
@@ -346,10 +348,18 @@ describe('Dashboard Utilities', () => {
       expect(DashboardBuilder.isValidPageData(data)).toBe(true);
 
       // Should be invalid with missing fields
-      expect(DashboardBuilder.isValidPageData({ ...data, user: null })).toBe(false);
-      expect(DashboardBuilder.isValidPageData({ ...data, usage: null })).toBe(false);
-      expect(DashboardBuilder.isValidPageData({ ...data, limits: null })).toBe(false);
-      expect(DashboardBuilder.isValidPageData({ ...data, percentages: null })).toBe(false);
+      expect(DashboardBuilder.isValidPageData({ ...data, user: null })).toBe(
+        false
+      );
+      expect(DashboardBuilder.isValidPageData({ ...data, usage: null })).toBe(
+        false
+      );
+      expect(DashboardBuilder.isValidPageData({ ...data, limits: null })).toBe(
+        false
+      );
+      expect(
+        DashboardBuilder.isValidPageData({ ...data, percentages: null })
+      ).toBe(false);
     });
   });
 });

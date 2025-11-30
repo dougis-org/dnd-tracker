@@ -143,7 +143,11 @@ describe('Dashboard API Client', () => {
       const error = new DashboardApiError(500, 'SERVER_ERROR', 'Server error');
       expect(isRetryableError(error)).toBe(true);
 
-      const error503 = new DashboardApiError(503, 'SERVICE_UNAVAILABLE', 'Unavailable');
+      const error503 = new DashboardApiError(
+        503,
+        'SERVICE_UNAVAILABLE',
+        'Unavailable'
+      );
       expect(isRetryableError(error503)).toBe(true);
     });
 
@@ -166,7 +170,11 @@ describe('Dashboard API Client', () => {
       const error = new DashboardApiError(400, 'BAD_REQUEST', 'Bad request');
       expect(isRetryableError(error)).toBe(false);
 
-      const error429 = new DashboardApiError(429, 'RATE_LIMITED', 'Rate limited');
+      const error429 = new DashboardApiError(
+        429,
+        'RATE_LIMITED',
+        'Rate limited'
+      );
       expect(isRetryableError(error429)).toBe(false);
     });
 
@@ -212,7 +220,11 @@ describe('Dashboard API Client', () => {
     });
 
     it('retries on server errors', () => {
-      const serverError = new DashboardApiError(502, 'BAD_GATEWAY', 'Bad gateway');
+      const serverError = new DashboardApiError(
+        502,
+        'BAD_GATEWAY',
+        'Bad gateway'
+      );
       expect(isRetryableError(serverError)).toBe(true);
 
       const serviceError = new DashboardApiError(
@@ -224,7 +236,11 @@ describe('Dashboard API Client', () => {
     });
 
     it('does not retry on client errors', () => {
-      const badRequest = new DashboardApiError(400, 'BAD_REQUEST', 'Bad request');
+      const badRequest = new DashboardApiError(
+        400,
+        'BAD_REQUEST',
+        'Bad request'
+      );
       expect(isRetryableError(badRequest)).toBe(false);
 
       const forbidden = new DashboardApiError(403, 'FORBIDDEN', 'Forbidden');
@@ -240,7 +256,11 @@ describe('Dashboard API Client', () => {
     });
 
     it('distinguishes between 401 and 403', () => {
-      const unauthorized = new DashboardApiError(401, 'UNAUTHORIZED', 'Unauthorized');
+      const unauthorized = new DashboardApiError(
+        401,
+        'UNAUTHORIZED',
+        'Unauthorized'
+      );
       expect(isRetryableError(unauthorized)).toBe(false);
 
       const forbidden = new DashboardApiError(403, 'FORBIDDEN', 'Forbidden');
