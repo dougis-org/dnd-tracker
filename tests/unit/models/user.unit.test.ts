@@ -28,7 +28,6 @@ describe('User & UserEvent Models (Unit Tests)', () => {
           email: 'test@example.com',
           displayName: 'Test User',
         });
-
         expect(user._id).toBeDefined();
         expect(user.userId).toBe('user_123');
         expect(user.email).toBe('test@example.com');
@@ -44,7 +43,6 @@ describe('User & UserEvent Models (Unit Tests)', () => {
           email: 'test@example.com',
           displayName: 'Test User',
         });
-
         expect(user.metadata).toEqual({});
       });
 
@@ -56,40 +54,29 @@ describe('User & UserEvent Models (Unit Tests)', () => {
           displayName: 'Test User',
           metadata,
         });
-
         expect(user.metadata).toEqual(metadata);
       });
 
-      it('should enforce userId uniqueness', async () => {
-        await UserModel.create({
-          userId: 'user_123',
-          email: 'test1@example.com',
-          displayName: 'Test User 1',
+      const uniquenessTests = [
+        { field: 'userId', desc: 'enforce userId uniqueness', email1: 'test1@example.com', email2: 'test2@example.com' },
+        { field: 'email', desc: 'enforce email uniqueness (case-insensitive)', email1: 'test@example.com', email2: 'TEST@EXAMPLE.COM' },
+      ];
+
+      uniquenessTests.forEach(({ field, desc, email1, email2 }) => {
+        it(`should ${desc}`, async () => {
+          await UserModel.create({
+            userId: field === 'userId' ? 'user_1' : 'user_1',
+            email: email1,
+            displayName: 'Test User 1',
+          });
+          await expect(
+            UserModel.create({
+              userId: field === 'userId' ? 'user_1' : 'user_2',
+              email: email2,
+              displayName: 'Test User 2',
+            })
+          ).rejects.toThrow(/duplicate key/);
         });
-
-        await expect(
-          UserModel.create({
-            userId: 'user_123',
-            email: 'test2@example.com',
-            displayName: 'Test User 2',
-          })
-        ).rejects.toThrow(/duplicate key/);
-      });
-
-      it('should enforce email uniqueness (case-insensitive)', async () => {
-        await UserModel.create({
-          userId: 'user_1',
-          email: 'test@example.com',
-          displayName: 'Test User 1',
-        });
-
-        await expect(
-          UserModel.create({
-            userId: 'user_2',
-            email: 'TEST@EXAMPLE.COM',
-            displayName: 'Test User 2',
-          })
-        ).rejects.toThrow(/duplicate key/);
       });
 
       it('should lowercase email on creation', async () => {
@@ -98,7 +85,6 @@ describe('User & UserEvent Models (Unit Tests)', () => {
           email: 'Test@EXAMPLE.COM',
           displayName: 'Test User',
         });
-
         expect(user.email).toBe('test@example.com');
       });
 
@@ -110,19 +96,10 @@ describe('User & UserEvent Models (Unit Tests)', () => {
           displayName: 'Test User',
         });
         const afterCreate = new Date();
-
-        expect(user.createdAt.getTime()).toBeGreaterThanOrEqual(
-          beforeCreate.getTime()
-        );
-        expect(user.createdAt.getTime()).toBeLessThanOrEqual(
-          afterCreate.getTime()
-        );
-        expect(user.updatedAt.getTime()).toBeGreaterThanOrEqual(
-          beforeCreate.getTime()
-        );
-        expect(user.updatedAt.getTime()).toBeLessThanOrEqual(
-          afterCreate.getTime()
-        );
+        expect(user.createdAt.getTime()).toBeGreaterThanOrEqual(beforeCreate.getTime());
+        expect(user.createdAt.getTime()).toBeLessThanOrEqual(afterCreate.getTime());
+        expect(user.updatedAt.getTime()).toBeGreaterThanOrEqual(beforeCreate.getTime());
+        expect(user.updatedAt.getTime()).toBeLessThanOrEqual(afterCreate.getTime());
       });
     });
 
@@ -137,30 +114,30 @@ describe('User & UserEvent Models (Unit Tests)', () => {
         });
       });
 
-      it('should allow updating displayName', async () => {
-        user.displayName = 'Updated User';
-        const updated = await user.save();
+      const updateTests = [
+        { field: 'displayName', value: 'Updated User', desc: 'allow updating displayName' },
+        { field: 'metadata', value: { role: 'dm', level: 10 }, desc: 'allow updating metadata' },
+      ];
 
-        expect(updated.displayName).toBe('Updated User');
+      updateTests.forEach(({ field, value, desc }) => {
+        it(`should ${desc}`, async () => {
+          (user as any)[field] = value;
+          const updated = await user.save();
+          expect((updated as any)[field]).toEqual(value);
+        });
       });
 
-      it('should allow updating metadata', async () => {
-        user.metadata = { role: 'dm', level: 10 };
-        const updated = await user.save();
+      const immutabilityTests = [
+        { field: 'userId', desc: 'prevent userId modification (immutable)' },
+        { field: 'email', desc: 'prevent email modification (immutable)' },
+      ];
 
-        expect(updated.metadata).toEqual({ role: 'dm', level: 10 });
-      });
-
-      it('should prevent userId modification (immutable)', async () => {
-        expect(() => {
-          user.userId = 'user_999';
-        }).toThrow();
-      });
-
-      it('should prevent email modification (immutable)', async () => {
-        expect(() => {
-          user.email = 'newemail@example.com';
-        }).toThrow();
+      immutabilityTests.forEach(({ field, desc }) => {
+        it(`should ${desc}`, async () => {
+          expect(() => {
+            (user as any)[field] = field === 'userId' ? 'user_999' : 'newemail@example.com';
+          }).toThrow();
+        });
       });
 
       it('should update updatedAt on modification', async () => {
@@ -168,10 +145,7 @@ describe('User & UserEvent Models (Unit Tests)', () => {
         await new Promise((resolve) => setTimeout(resolve, 10));
         user.displayName = 'Updated';
         const updated = await user.save();
-
-        expect(updated.updatedAt.getTime()).toBeGreaterThan(
-          originalUpdatedAt.getTime()
-        );
+        expect(updated.updatedAt.getTime()).toBeGreaterThan(originalUpdatedAt.getTime());
       });
     });
 
