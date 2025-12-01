@@ -266,20 +266,23 @@ export function useProfileSetupWizard(
     // Retry loop with exponential backoff
     while (attempt < API_CONSTRAINTS.MAX_RETRIES) {
       try {
+        // Build request body separately to reduce complexity
+        const body = {
+          profile: {
+            displayName: state.formState.displayName,
+            avatar: state.formState.avatar,
+            preferences: {
+              theme: state.formState.theme,
+              notifications: state.formState.notifications,
+            },
+            completedSetup: true,
+          },
+        };
+
         const response = await fetch(`/api/internal/users/${userId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            profile: {
-              displayName: state.formState.displayName,
-              avatar: state.formState.avatar,
-              preferences: {
-                theme: state.formState.theme,
-                notifications: state.formState.notifications,
-              },
-              completedSetup: true,
-            },
-          }),
+          body: JSON.stringify(body),
           signal: AbortSignal.timeout(API_CONSTRAINTS.TIMEOUT_MS),
         });
 

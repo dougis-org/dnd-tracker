@@ -33,6 +33,28 @@ interface UserProfile {
   updatedAt: string;
 }
 
+/**
+ * Helper: Fetch user profile from API
+ */
+async function fetchProfileFromAPI(userId: string): Promise<UserProfile | null> {
+  try {
+    const response = await fetch(`/api/internal/users/${userId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      console.warn('Failed to fetch user profile');
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    return null;
+  }
+}
+
 export default function ProfileSettingsPage() {
   const { isLoaded, user } = useUser();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -45,41 +67,23 @@ export default function ProfileSettingsPage() {
     onComplete: () => {
       // Refresh profile after wizard completion
       if (user?.id) {
-        fetchUserProfile(user.id);
+        loadProfile(user.id);
       }
     },
   });
 
-  // Fetch user profile to check completedSetup flag
-  const fetchUserProfile = async (userId: string) => {
-    try {
-      setIsCheckingProfile(true);
-      const response = await fetch(`/api/internal/users/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        console.warn('Failed to fetch user profile');
-        setIsCheckingProfile(false);
-        return;
-      }
-
-      const profile: UserProfile = await response.json();
-      setUserProfile(profile);
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-    } finally {
-      setIsCheckingProfile(false);
-    }
+  // Load profile data
+  const loadProfile = async (userId: string) => {
+    setIsCheckingProfile(true);
+    const profile = await fetchProfileFromAPI(userId);
+    setUserProfile(profile);
+    setIsCheckingProfile(false);
   };
 
   useEffect(() => {
     if (isLoaded && user?.id) {
-      fetchUserProfile(user.id);
-    } else if (isLoaded && !user?.id) {
+      loadProfile(user.id);
+    } else if (isLoaded) {
       setIsCheckingProfile(false);
     }
   }, [isLoaded, user?.id]);

@@ -34,6 +34,29 @@ interface UserProfile {
   updatedAt: string;
 }
 
+/**
+ * Helper: Determine if wizard should be shown based on profile
+ */
+async function isProfileSetupIncomplete(userId: string): Promise<boolean> {
+  try {
+    const response = await fetch(`/api/internal/users/${userId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      console.warn('Failed to fetch user profile, defaulting to hidden');
+      return false;
+    }
+
+    const profile: UserProfile = await response.json();
+    return !(profile?.profile?.completedSetup ?? false);
+  } catch (error) {
+    console.error('Error checking profile completion:', error);
+    return false;
+  }
+}
+
 export function ProfileSetupWizardWrapper() {
   const { isLoaded, user } = useUser();
   const [shouldShowWizard, setShouldShowWizard] = useState(false);
@@ -44,58 +67,26 @@ export function ProfileSetupWizardWrapper() {
     userId: user?.id || '',
     canDismiss: true, // Allow dismissal in wrapper (not first login)
     onComplete: () => {
-      // Close wizard when complete
       setShouldShowWizard(false);
     },
   });
 
   useEffect(() => {
-    /**
-     * Check if user profile is complete on app load.
-     * If completedSetup is false, show wizard modal.
-     */
-    const checkProfileCompletion = async () => {
+    const checkAndShowWizard = async () => {
       if (!isLoaded || !user?.id) {
         setIsCheckingProfile(false);
         return;
       }
 
       try {
-        setIsCheckingProfile(true);
-
-        // Fetch user profile from API (Feature 014)
-        const response = await fetch(`/api/internal/users/${user.id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          // If fetch fails, default to NOT showing wizard (fail-safe)
-          // User can access wizard from settings if needed
-          console.warn('Failed to fetch user profile, wizard hidden');
-          setIsCheckingProfile(false);
-          return;
-        }
-
-        const profile: UserProfile = await response.json();
-
-        // Check if setup is complete
-        const isComplete = profile?.profile?.completedSetup ?? false;
-
-        // Show wizard only if setup is incomplete
-        setShouldShowWizard(!isComplete);
-      } catch (error) {
-        console.error('Error checking profile completion:', error);
-        // Fail-safe: don't show wizard on error
-        setShouldShowWizard(false);
+        const shouldShow = await isProfileSetupIncomplete(user.id);
+        setShouldShowWizard(shouldShow);
       } finally {
         setIsCheckingProfile(false);
       }
     };
 
-    checkProfileCompletion();
+    checkAndShowWizard();
   }, [isLoaded, user?.id]);
 
   // Don't render while checking profile or if user not loaded
