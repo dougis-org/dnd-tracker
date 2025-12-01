@@ -41,74 +41,78 @@ describe('memberFormHelpers', () => {
     it('should return no errors for valid data', () => {
       const formData = createValidFormData();
       const errors = validateMemberForm(formData);
-
       expect(errors).toEqual({});
     });
 
-    it('should return error for missing character name', () => {
-      const formData = createValidFormData({ characterName: '' });
-      const errors = validateMemberForm(formData);
+    const missingFieldTests = [
+      {
+        field: 'characterName' as const,
+        value: '',
+        errorMsg: 'Character name is required',
+      },
+      {
+        field: 'characterName' as const,
+        value: '   ',
+        errorMsg: 'Character name is required',
+      },
+      {
+        field: 'class' as const,
+        value: '' as unknown as FormData['class'],
+        errorMsg: 'Class is required',
+      },
+      {
+        field: 'race' as const,
+        value: '' as unknown as FormData['race'],
+        errorMsg: 'Race is required',
+      },
+    ];
 
-      expect(errors.characterName).toBe('Character name is required');
-    });
-
-    it('should return error for whitespace-only character name', () => {
-      const formData = createValidFormData({ characterName: '   ' });
-      const errors = validateMemberForm(formData);
-
-      expect(errors.characterName).toBe('Character name is required');
-    });
-
-    it('should return error for missing class', () => {
-      const formData = createValidFormData({
-        class: '' as unknown as FormData['class'],
+    missingFieldTests.forEach(({ field, value, errorMsg }) => {
+      it(`should return error for missing ${field}`, () => {
+        const formData = createValidFormData({
+          [field]: value,
+        } as Partial<FormData>);
+        const errors = validateMemberForm(formData);
+        expect(errors[field]).toBe(errorMsg);
       });
-      const errors = validateMemberForm(formData);
-
-      expect(errors.class).toBe('Class is required');
     });
 
-    it('should return error for missing race', () => {
-      const formData = createValidFormData({
-        race: '' as unknown as FormData['race'],
+    const boundaryTests = [
+      {
+        field: 'level' as const,
+        low: 0,
+        high: 21,
+        msg: 'Level must be between 1 and 20',
+      },
+      {
+        field: 'ac' as const,
+        low: 0,
+        high: 31,
+        msg: 'AC must be between 1 and 30',
+      },
+    ];
+
+    boundaryTests.forEach(({ field, low, high, msg }) => {
+      it(`should return error for ${field} too low`, () => {
+        const formData = createValidFormData({
+          [field]: low,
+        } as Partial<FormData>);
+        const errors = validateMemberForm(formData);
+        expect(errors[field]).toBe(msg);
       });
-      const errors = validateMemberForm(formData);
 
-      expect(errors.race).toBe('Race is required');
-    });
-
-    it('should return error for level too low', () => {
-      const formData = createValidFormData({ level: 0 });
-      const errors = validateMemberForm(formData);
-
-      expect(errors.level).toBe('Level must be between 1 and 20');
-    });
-
-    it('should return error for level too high', () => {
-      const formData = createValidFormData({ level: 21 });
-      const errors = validateMemberForm(formData);
-
-      expect(errors.level).toBe('Level must be between 1 and 20');
-    });
-
-    it('should return error for AC too low', () => {
-      const formData = createValidFormData({ ac: 0 });
-      const errors = validateMemberForm(formData);
-
-      expect(errors.ac).toBe('AC must be between 1 and 30');
-    });
-
-    it('should return error for AC too high', () => {
-      const formData = createValidFormData({ ac: 31 });
-      const errors = validateMemberForm(formData);
-
-      expect(errors.ac).toBe('AC must be between 1 and 30');
+      it(`should return error for ${field} too high`, () => {
+        const formData = createValidFormData({
+          [field]: high,
+        } as Partial<FormData>);
+        const errors = validateMemberForm(formData);
+        expect(errors[field]).toBe(msg);
+      });
     });
 
     it('should return error for HP zero or negative', () => {
       const formData = createValidFormData({ hp: 0 });
       const errors = validateMemberForm(formData);
-
       expect(errors.hp).toBe('HP must be greater than 0');
     });
 
@@ -120,7 +124,6 @@ describe('memberFormHelpers', () => {
         hp: -1,
       });
       const errors = validateMemberForm(formData);
-
       expect(errors.characterName).toBeDefined();
       expect(errors.level).toBeDefined();
       expect(errors.ac).toBeDefined();
@@ -204,7 +207,6 @@ describe('memberFormHelpers', () => {
     it('should convert form data to party member', () => {
       const formData = createValidFormData();
       const partyId = 'party-123';
-
       const member = formDataToPartyMember(formData, partyId);
 
       expect(member.partyId).toBe(partyId);
@@ -220,37 +222,45 @@ describe('memberFormHelpers', () => {
     it('should trim character name whitespace', () => {
       const formData = createValidFormData({ characterName: '  Test  ' });
       const member = formDataToPartyMember(formData, 'party-1');
-
       expect(member.characterName).toBe('Test');
     });
 
-    it('should clamp level between 1 and 20', () => {
-      const tooLow = formDataToPartyMember(
-        createValidFormData({ level: -5 }),
-        'party-1'
-      );
-      expect(tooLow.level).toBe(1);
+    const clampTests = [
+      {
+        field: 'level' as const,
+        low: -5,
+        high: 100,
+        lowExpected: 1,
+        highExpected: 20,
+        desc: 'clamp level between 1 and 20',
+      },
+      {
+        field: 'ac' as const,
+        low: -5,
+        high: 100,
+        lowExpected: 1,
+        highExpected: 30,
+        desc: 'clamp AC between 1 and 30',
+      },
+    ];
 
-      const tooHigh = formDataToPartyMember(
-        createValidFormData({ level: 100 }),
-        'party-1'
-      );
-      expect(tooHigh.level).toBe(20);
-    });
+    clampTests.forEach(
+      ({ field, low, high, lowExpected, highExpected, desc }) => {
+        it(`should ${desc}`, () => {
+          const tooLow = formDataToPartyMember(
+            createValidFormData({ [field]: low } as Partial<FormData>),
+            'party-1'
+          );
+          expect(tooLow[field]).toBe(lowExpected);
 
-    it('should clamp AC between 1 and 30', () => {
-      const tooLow = formDataToPartyMember(
-        createValidFormData({ ac: -5 }),
-        'party-1'
-      );
-      expect(tooLow.ac).toBe(1);
-
-      const tooHigh = formDataToPartyMember(
-        createValidFormData({ ac: 100 }),
-        'party-1'
-      );
-      expect(tooHigh.ac).toBe(30);
-    });
+          const tooHigh = formDataToPartyMember(
+            createValidFormData({ [field]: high } as Partial<FormData>),
+            'party-1'
+          );
+          expect(tooHigh[field]).toBe(highExpected);
+        });
+      }
+    );
 
     it('should ensure HP is at least 1', () => {
       const tooLow = formDataToPartyMember(
@@ -269,7 +279,6 @@ describe('memberFormHelpers', () => {
     it('should include role when provided', () => {
       const formData = createValidFormData({ role: 'Healer' });
       const member = formDataToPartyMember(formData, 'party-1');
-
       expect(member.role).toBe('Healer');
     });
   });
