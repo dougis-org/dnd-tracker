@@ -113,22 +113,6 @@ function drawImageToCanvas(img: HTMLImageElement, quality: number): string {
 }
 
 /**
- * Convert data URL to Blob (currently unused but kept for reference)
- */
-function _dataUrlToBlob(dataUrl: string): Blob {
-  const parts = dataUrl.split(',');
-  const bstr = atob(parts[1]);
-  const n = bstr.length;
-  const u8arr = new Uint8Array(n);
-
-  for (let i = 0; i < n; i++) {
-    u8arr[i] = bstr.charCodeAt(i);
-  }
-
-  return new Blob([u8arr], { type: 'image/jpeg' });
-}
-
-/**
  * Calculate size of base64 string in bytes
  */
 function calculateBase64Size(base64String: string): number {
