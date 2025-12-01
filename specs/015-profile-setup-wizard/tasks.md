@@ -87,12 +87,12 @@
 
 ### Tests for User Story 2 (TDD-First)
 
-- [ ] T018 [P] [US2] Write failing unit tests for ProfileSetupReminder component in `tests/unit/components/ProfileSetupReminder.test.tsx` (5 test cases: render when incomplete, hidden when complete, dismiss button, banner text/link, reappear on next visit)
+- [X] T018 [P] [US2] Write failing unit tests for ProfileSetupReminder component in `tests/unit/components/ProfileSetupReminder.test.tsx` (5 test cases: render when incomplete, hidden when complete, dismiss button, banner text/link, reappear on next visit)
 
 ### Implementation for User Story 2
 
-- [ ] T019 [P] [US2] Implement ProfileSetupReminder component in `src/components/ProfileSetupReminder.tsx` (~50 lines: dismissible banner, warning/info styling, link to re-trigger modal)
-- [ ] T020 [US2] Add ProfileSetupReminder to profile settings page in `src/app/profile/settings/page.tsx` (embed reminder component at top if page exists; create if needed)
+- [X] T019 [P] [US2] Implement ProfileSetupReminder component in `src/components/ProfileSetupReminder.tsx` (~50 lines: dismissible banner, warning/info styling, link to re-trigger modal)
+- [X] T020 [US2] Add ProfileSetupReminder to profile settings page in `src/app/profile/settings/page.tsx` (embed reminder component at top if page exists; create if needed)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently. New users get wizard on first login; users who skip see reminder on profile page.
 
