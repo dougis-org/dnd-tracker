@@ -24,8 +24,7 @@ import { logger } from '@/lib/utils/logger';
  * For MVP testing: uses x-user-id header
  */
 function getAuthenticatedUserId(request: NextRequest): string | null {
-  const userId = request.headers.get('x-user-id');
-  return userId || null;
+  return request.headers.get('x-user-id');
 }
 
 /**
@@ -39,7 +38,7 @@ async function getResourceCounts(
     const encounters = await EncounterModel.countDocuments({
       owner_id: userId,
     });
-    return { parties: 0, characters: 0, encounters }; // Others default to 0 until features complete
+    return { parties: 0, characters: 0, encounters };
   } catch {
     logger.warn('Resource count query failed, defaulting to 0', {
       context: { userId },
@@ -48,18 +47,42 @@ async function getResourceCounts(
   }
 }
 
+/**
+ * Build response with cache headers
+ */
+function buildResponse(data: DashboardPageData): NextResponse<DashboardPageData> {
+  return NextResponse.json(data, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
+    },
+  });
+}
+
+/**
+ * Build error response
+ */
+function buildErrorResponse(
+  error: string,
+  code: string,
+  status: number
+): NextResponse<{ error: string; code: string }> {
+  return NextResponse.json({ error, code }, { status });
+}
+
 export async function GET(
   request: NextRequest
 ): Promise<NextResponse<DashboardPageData | { error: string; code: string }>> {
   try {
     const userId = getAuthenticatedUserId(request);
     if (!userId) {
-      return NextResponse.json(
-        {
-          error: 'Please log in to view your dashboard',
-          code: 'AUTH_REQUIRED',
-        },
-        { status: 401 }
+      return buildErrorResponse(
+        'Please log in to view your dashboard',
+        'AUTH_REQUIRED',
+        401
       );
     }
 
@@ -72,9 +95,10 @@ export async function GET(
       logger.warn('Dashboard API called for non-existent user', {
         context: { userId },
       });
-      return NextResponse.json(
-        { error: 'Your profile could not be found', code: 'USER_NOT_FOUND' },
-        { status: 404 }
+      return buildErrorResponse(
+        'Your profile could not be found',
+        'USER_NOT_FOUND',
+        404
       );
     }
 
@@ -82,34 +106,18 @@ export async function GET(
     const response = DashboardBuilder.buildPageData(userId, user, usage);
 
     logger.info('Dashboard data fetched successfully', {
-      context: {
-        userId,
-        tier: user.subscriptionTier,
-        isEmpty: response.isEmpty,
-      },
+      context: { userId, tier: user.subscriptionTier, isEmpty: response.isEmpty },
     });
 
-    return NextResponse.json(response, {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control':
-          'no-store, no-cache, must-revalidate, proxy-revalidate',
-        Pragma: 'no-cache',
-        Expires: '0',
-      },
-    });
+    return buildResponse(response);
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'Unknown error occurred';
     logger.error('Dashboard API error', { context: { error: message } });
-
-    return NextResponse.json(
-      {
-        error: 'We encountered an error. Please try again.',
-        code: 'INTERNAL_ERROR',
-      },
-      { status: 500 }
+    return buildErrorResponse(
+      'We encountered an error. Please try again.',
+      'INTERNAL_ERROR',
+      500
     );
   }
 }

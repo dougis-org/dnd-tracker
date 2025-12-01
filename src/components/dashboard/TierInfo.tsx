@@ -48,6 +48,39 @@ function formatTierName(tier: SubscriptionTier): string {
 }
 
 /**
+ * Display resource limits for a tier
+ */
+function ResourceLimitsDisplay({
+  limits,
+}: {
+  limits: ResourceLimits;
+}): React.ReactElement {
+  const formatLimit = (value: number): string => {
+    return value === Number.POSITIVE_INFINITY ? '∞' : String(value);
+  };
+
+  return (
+    <div>
+      <p className="text-sm font-semibold text-gray-700 mb-2">Resource Limits</p>
+      <div className="space-y-1 text-sm">
+        <div className="flex justify-between">
+          <span className="text-gray-600">Parties</span>
+          <span className="font-medium">{formatLimit(limits.parties)}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-600">Characters</span>
+          <span className="font-medium">{formatLimit(limits.characters)}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-600">Encounters</span>
+          <span className="font-medium">{formatLimit(limits.encounters)}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
  * Tier information card showing subscription level and limits
  */
 function TierInfo({
@@ -64,7 +97,6 @@ function TierInfo({
         <CardTitle>Your Subscription</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Tier and User Info */}
         <div className="flex items-start justify-between pb-4 border-b">
           <div>
             <p className="text-sm text-gray-600">Tier</p>
@@ -77,31 +109,7 @@ function TierInfo({
             </p>
           </div>
         </div>
-
-        {/* Limits Table */}
-        <div>
-          <p className="text-sm font-semibold text-gray-700 mb-2">Resource Limits</p>
-          <div className="space-y-1 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Parties</span>
-              <span className="font-medium">
-                {limits.parties === Number.POSITIVE_INFINITY ? '∞' : limits.parties}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Characters</span>
-              <span className="font-medium">
-                {limits.characters === Number.POSITIVE_INFINITY ? '∞' : limits.characters}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Encounters</span>
-              <span className="font-medium">
-                {limits.encounters === Number.POSITIVE_INFINITY ? '∞' : limits.encounters}
-              </span>
-            </div>
-          </div>
-        </div>
+        <ResourceLimitsDisplay limits={limits} />
       </CardContent>
     </Card>
   );

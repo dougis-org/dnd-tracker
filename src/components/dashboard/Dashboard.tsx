@@ -35,7 +35,6 @@ interface DashboardProps {
 function DashboardSkeleton(): React.ReactElement {
   return (
     <div className="space-y-6">
-      {/* Tier Card Skeleton */}
       <div className="rounded-lg border border-gray-200 p-6">
         <Skeleton className="h-8 w-48 mb-4" />
         <div className="space-y-2">
@@ -44,8 +43,6 @@ function DashboardSkeleton(): React.ReactElement {
           <Skeleton className="h-4 w-1/2" />
         </div>
       </div>
-
-      {/* Usage Metrics Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="rounded-lg border border-gray-200 p-4">
@@ -55,8 +52,6 @@ function DashboardSkeleton(): React.ReactElement {
           </div>
         ))}
       </div>
-
-      {/* Quick Actions Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {Array.from({ length: 3 }).map((_, i) => (
           <Skeleton key={i} className="h-10 w-full" />
@@ -108,20 +103,14 @@ function Dashboard({ maxRetries = 3 }: DashboardProps): React.ReactElement {
   const handleRetry = async (): Promise<void> => {
     if (retryCount >= maxRetries) {
       logger.warn('Maximum retry attempts exceeded', {
-        context: {
-          retryCount,
-          maxRetries,
-        },
+        context: { retryCount, maxRetries },
       });
       return;
     }
 
     setRetryCount(retryCount + 1);
     logger.info('Retrying dashboard fetch', {
-      context: {
-        retryCount: retryCount + 1,
-        maxRetries,
-      },
+      context: { retryCount: retryCount + 1, maxRetries },
     });
 
     try {
@@ -136,37 +125,28 @@ function Dashboard({ maxRetries = 3 }: DashboardProps): React.ReactElement {
     }
   };
 
-  // Show loading skeleton
-  if (isLoading) {
+  const containerClasses = 'container mx-auto px-4 md:px-6 py-8';
+  const headerClasses = 'text-3xl md:text-4xl font-bold mb-8';
+
+  if (isLoading || !data) {
     return (
-      <div className="container mx-auto px-4 md:px-6 py-8">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8">Dashboard</h1>
+      <div className={containerClasses}>
+        <h1 className={headerClasses}>Dashboard</h1>
         <DashboardSkeleton />
       </div>
     );
   }
 
-  // Show error state
   if (error) {
     return (
-      <div className="container mx-auto px-4 md:px-6 py-8">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8">Dashboard</h1>
+      <div className={containerClasses}>
+        <h1 className={headerClasses}>Dashboard</h1>
         <ErrorState
           error={error}
           retryCount={retryCount}
           maxRetries={maxRetries}
           onRetry={handleRetry}
         />
-      </div>
-    );
-  }
-
-  // Show dashboard content
-  if (!data) {
-    return (
-      <div className="container mx-auto px-4 md:px-6 py-8">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8">Dashboard</h1>
-        <DashboardSkeleton />
       </div>
     );
   }
