@@ -64,16 +64,16 @@
 
 #### Screen Components (Render → Pass Tests)
 
-- [ ] T011 [P] [US1] Implement WelcomeScreen component in `src/components/ProfileSetupWizard/WelcomeScreen.tsx` (~40 lines: intro text, Next button)
-- [ ] T012 [P] [US1] Implement DisplayNameScreen component in `src/components/ProfileSetupWizard/DisplayNameScreen.tsx` (~60 lines: text input, validation on blur, error display, disabled Next until valid)
-- [ ] T013 [P] [US1] Implement AvatarUploadScreen component in `src/components/ProfileSetupWizard/AvatarUploadScreen.tsx` (~100 lines: file picker, size validation, compression call, preview, error handling)
-- [ ] T014 [P] [US1] Implement PreferencesScreen component in `src/components/ProfileSetupWizard/PreferencesScreen.tsx` (~60 lines: theme radio buttons, notifications toggle, Next always enabled)
-- [ ] T015 [P] [US1] Implement CompletionScreen component in `src/components/ProfileSetupWizard/CompletionScreen.tsx` (~40 lines: success message, Finish button)
+- [X] T011 [P] [US1] Implement WelcomeScreen component in `src/components/ProfileSetupWizard/WelcomeScreen.tsx` (~40 lines: intro text, Next button)
+- [X] T012 [P] [US1] Implement DisplayNameScreen component in `src/components/ProfileSetupWizard/DisplayNameScreen.tsx` (~60 lines: text input, validation on blur, error display, disabled Next until valid)
+- [X] T013 [P] [US1] Implement AvatarUploadScreen component in `src/components/ProfileSetupWizard/AvatarUploadScreen.tsx` (~100 lines: file picker, size validation, compression call, preview, error handling)
+- [X] T014 [P] [US1] Implement PreferencesScreen component in `src/components/ProfileSetupWizard/PreferencesScreen.tsx` (~60 lines: theme radio buttons, notifications toggle, Next always enabled)
+- [X] T015 [P] [US1] Implement CompletionScreen component in `src/components/ProfileSetupWizard/CompletionScreen.tsx` (~40 lines: success message, Finish button)
 
 #### Modal & Navigation (State Integration)
 
-- [ ] T016 [US1] Implement ProfileSetupWizardModal main wrapper in `src/components/ProfileSetupWizard/ProfileSetupWizardModal.tsx` (~100 lines: screen router, navigation buttons, focus trap, keyboard escape handling, modal role/title)
-- [ ] T017 [US1] Implement modal trigger logic in `src/app/layout.tsx` (fetch user profile after Clerk auth, check completedSetup flag, render modal conditionally)
+- [X] T016 [US1] Implement ProfileSetupWizardModal main wrapper in `src/components/ProfileSetupWizard/ProfileSetupWizardModal.tsx` (~100 lines: screen router, navigation buttons, focus trap, keyboard escape handling, modal role/title)
+- [X] T017 [US1] Implement modal trigger logic in `src/app/layout.tsx` (fetch user profile after Clerk auth, check completedSetup flag, render modal conditionally)
 
 **Checkpoint**: At this point, User Story 1 (first login wizard) should be fully functional and testable independently. Tests for component rendering, validation, screen transitions, and full wizard flow should all pass. Mock MongoDB data should save correctly.
 
