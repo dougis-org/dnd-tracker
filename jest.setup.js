@@ -2,6 +2,7 @@
 /* eslint-env node, jest */
 /* eslint-disable no-undef */
 import '@testing-library/jest-dom';
+import 'jest-canvas-mock';
 
 // Ensure navigator and clipboard exist for user-event and DOM interactions in tests
 if (typeof global.navigator === 'undefined') {
@@ -245,7 +246,9 @@ function setupURLAPIMocks() {
   // Mock URL.createObjectURL and revokeObjectURL only if not already defined
   if (!global.URL || !global.URL.createObjectURL) {
     global.URL = global.URL || {};
-    global.URL.createObjectURL = jest.fn((blob) => `blob:mock-${Math.random().toString(36).substring(2)}`);
+    global.URL.createObjectURL = jest.fn(
+      (blob) => `blob:mock-${Math.random().toString(36).substring(2)}`
+    );
     global.URL.revokeObjectURL = jest.fn();
   }
 
@@ -261,7 +264,8 @@ function setupURLAPIMocks() {
         // Return a realistic base64 data URL
         const qualityFactor = Math.max(0.1, quality);
         const sizeMultiplier = Math.ceil(100 * qualityFactor);
-        const baseData = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+        const baseData =
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
         return `data:${type};base64,${baseData.repeat(sizeMultiplier)}`;
       }
 
