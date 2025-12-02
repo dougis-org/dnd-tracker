@@ -55,6 +55,13 @@ async function fetchProfileFromAPI(userId: string): Promise<UserProfile | null> 
   }
 }
 
+/**
+ * Helper: Determine if profile setup is incomplete
+ */
+function isProfileIncomplete(profile: UserProfile | null): boolean {
+  return !profile?.profile?.completedSetup;
+}
+
 export default function ProfileSettingsPage() {
   const { isLoaded, user } = useUser();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -98,12 +105,10 @@ export default function ProfileSettingsPage() {
     return <div className="container mx-auto p-6">Please log in to access settings.</div>;
   }
 
-  const isProfileIncomplete = !userProfile?.profile?.completedSetup;
-
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Show reminder if setup incomplete */}
-      {isProfileIncomplete && (
+      {isProfileIncomplete(userProfile) && (
         <ProfileSetupReminder
           isVisible={true}
           onStartWizard={() => wizardHook.openWizard()}

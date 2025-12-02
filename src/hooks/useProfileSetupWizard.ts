@@ -81,6 +81,24 @@ function getInitialModalState(): WizardModalState {
 }
 
 /**
+ * Helper: Determine if error is retryable
+ *
+ * Non-retryable errors: 400, 401, 404
+ * Retryable errors: 500, 504, network errors, timeouts
+ *
+ * @param error - Error object or message
+ * @returns true if error should trigger retry logic
+ */
+function isRetryableError(error: Error | string): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return !(
+    message.includes('HTTP 400') ||
+    message.includes('HTTP 401') ||
+    message.includes('HTTP 404')
+  );
+}
+
+/**
  * Custom hook for managing profile setup wizard state and logic
  *
  * @param options - Configuration options (userId, canDismiss, onComplete callback)
@@ -319,19 +337,15 @@ export function useProfileSetupWizard(
           errorData.message ||
           `HTTP ${response.status}: ${ERROR_MESSAGES.SUBMISSION_FAILED}`;
 
-        if (
-          response.status === 400 ||
-          response.status === 401 ||
-          response.status === 404
-        ) {
-          // Non-retryable errors
-          throw new Error(errorMessage);
+        lastError = new Error(errorMessage);
+
+        // Non-retryable errors exit immediately
+        if (!isRetryableError(lastError)) {
+          break;
         }
 
-        // Retryable errors (500, 504, etc.)
-        lastError = new Error(errorMessage);
+        // Retryable errors continue loop
         attempt++;
-
         if (attempt < API_CONSTRAINTS.MAX_RETRIES) {
           // Wait with exponential backoff before retry
           const delay =
@@ -343,11 +357,7 @@ export function useProfileSetupWizard(
         attempt++;
 
         // Check if error is non-retryable
-        if (
-          lastError.message.includes('HTTP 400') ||
-          lastError.message.includes('HTTP 401') ||
-          lastError.message.includes('HTTP 404')
-        ) {
+        if (!isRetryableError(lastError)) {
           break; // Exit retry loop for non-retryable errors
         }
 
