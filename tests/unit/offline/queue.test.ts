@@ -143,56 +143,36 @@ describe('offline queue', () => {
       );
     });
 
-    it('should handle API failure with retry', async () => {
-      const operations = [
-        {
-          id: 'op1',
-          type: 'create',
-          endpoint: '/api/test',
-          data: { name: 'test' },
-          status: 'pending',
-          retryCount: 0,
-          timestamp: Date.now(),
-        },
-      ];
+    const failureTests = [
+      { retryCount: 0, shouldFail: false, desc: 'with retry' },
+      { retryCount: 2, shouldFail: true, desc: 'after max retries' },
+    ];
 
-      mockIndexedDB.getAllItems.mockResolvedValue(operations);
-      (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+    failureTests.forEach(({ retryCount, shouldFail, desc }) => {
+      it(`should handle API failure ${desc}`, async () => {
+        const operations = [
+          {
+            id: 'op1',
+            type: 'create',
+            endpoint: '/api/test',
+            data: { name: 'test' },
+            status: 'pending',
+            retryCount,
+            timestamp: Date.now(),
+          },
+        ];
 
-      await processQueue();
+        mockIndexedDB.getAllItems.mockResolvedValue(operations);
+        (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
 
-      // Should update operation with retry info
-      expect(mockIndexedDB.putItem).toHaveBeenCalledWith('offline-queue', {
-        ...operations[0],
-        retryCount: 1,
-        lastError: 'Network error',
-        status: 'pending',
-      });
-    });
+        await processQueue();
 
-    it('should mark as failed after max retries', async () => {
-      const operations = [
-        {
-          id: 'op1',
-          type: 'create',
-          endpoint: '/api/test',
-          data: { name: 'test' },
-          status: 'pending',
-          retryCount: 2, // One less than max
-          timestamp: Date.now(),
-        },
-      ];
-
-      mockIndexedDB.getAllItems.mockResolvedValue(operations);
-      (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
-
-      await processQueue();
-
-      expect(mockIndexedDB.putItem).toHaveBeenCalledWith('offline-queue', {
-        ...operations[0],
-        retryCount: 3,
-        lastError: 'Network error',
-        status: 'failed',
+        expect(mockIndexedDB.putItem).toHaveBeenCalledWith('offline-queue', {
+          ...operations[0],
+          retryCount: retryCount + 1,
+          lastError: 'Network error',
+          status: shouldFail ? 'failed' : 'pending',
+        });
       });
     });
 

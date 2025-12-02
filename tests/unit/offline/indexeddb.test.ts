@@ -160,4 +160,86 @@ describe('IndexedDB Wrapper', () => {
       expect(wrongStoreResult).toBeNull();
     });
   });
+
+  describe('edge cases', () => {
+    it('should handle item with complex nested data', async () => {
+      const complexItem = {
+        id: 'complex-1',
+        data: {
+          nested: {
+            deeply: {
+              value: 'test',
+              array: [1, 2, 3],
+            },
+          },
+        },
+      };
+
+      await putItem(STORES.QUEUE, complexItem);
+      const result = await getItem(STORES.QUEUE, 'complex-1');
+
+      expect(result).toEqual(complexItem);
+    });
+
+    it('should handle null/undefined values in item', async () => {
+      const itemWithNulls = {
+        id: 'nulls-1',
+        value: null,
+        optional: undefined,
+      };
+
+      await putItem(STORES.QUEUE, itemWithNulls);
+      const result = await getItem(STORES.QUEUE, 'nulls-1');
+
+      expect(result).toBeDefined();
+      expect(result?.id).toBe('nulls-1');
+    });
+
+    it('should handle large number of items', async () => {
+      const itemCount = 50;
+      for (let i = 0; i < itemCount; i++) {
+        await putItem(STORES.QUEUE, {
+          id: `item-${i}`,
+          index: i,
+        });
+      }
+
+      const allItems = await getAllItems(STORES.QUEUE);
+      expect(allItems).toHaveLength(itemCount);
+    });
+
+    it('should handle deleteItem on already-deleted item gracefully', async () => {
+      const item = { id: 'dup-delete-1', data: 'test' };
+
+      await putItem(STORES.QUEUE, item);
+      await deleteItem(STORES.QUEUE, 'dup-delete-1');
+      // Should not throw when deleting non-existent item
+      await expect(
+        deleteItem(STORES.QUEUE, 'dup-delete-1')
+      ).resolves.not.toThrow();
+    });
+
+    it('should handle special characters in ID', async () => {
+      const specialIds = ['test:123', 'test/456', 'test@789', 'test-中文'];
+      for (const id of specialIds) {
+        const item = { id, data: 'test' };
+        await putItem(STORES.QUEUE, item);
+        const result = await getItem(STORES.QUEUE, id);
+        expect(result).toEqual(item);
+      }
+    });
+
+    it('should handle concurrent puts to same store', async () => {
+      const items = Array.from({ length: 10 }, (_, i) => ({
+        id: `concurrent-${i}`,
+        data: `item-${i}`,
+      }));
+
+      // Put all items concurrently
+      await Promise.all(items.map((item) => putItem(STORES.QUEUE, item)));
+
+      const allItems = await getAllItems(STORES.QUEUE);
+      expect(allItems).toHaveLength(10);
+    });
+  });
 });
