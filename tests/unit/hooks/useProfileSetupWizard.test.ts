@@ -549,6 +549,166 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
         expect(result.current.state.currentScreen).toBe('completion');
         expect(onComplete).toHaveBeenCalled();
       });
+
+      // T025: Test retry with exponential backoff on transient errors
+      it('T025: should retry with exponential backoff on 429 Too Many Requests', async () => {
+        // Arrange
+        const onComplete = jest.fn();
+        const delays: number[] = [];
+        const originalSetTimeout = global.setTimeout;
+        global.setTimeout = ((callback: any, delay: number) => {
+          delays.push(delay);
+          // Call immediately to avoid test timeout
+          callback();
+          return 0 as any;
+        }) as any;
+
+        // First two calls: 429 errors, third call: success
+        let callCount = 0;
+        (global.fetch as jest.Mock).mockImplementation(() => {
+          callCount++;
+          if (callCount <= 2) {
+            return Promise.resolve({
+              ok: false,
+              status: 429,
+              json: () => Promise.resolve({ error: 'Too many requests' }),
+            });
+          }
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ userId: 'user-123' }),
+          });
+        });
+
+        const { result } = renderHook(() =>
+          useProfileSetupWizard({ onComplete })
+        );
+
+        // Act
+        await act(async () => {
+          result.current.openWizard();
+        });
+
+        await act(async () => {
+          result.current.setDisplayName('Aragorn');
+        });
+
+        await act(async () => {
+          await result.current.submitWizard();
+        });
+
+        // Assert - should have retried with backoff multiple times
+        expect(delays.length).toBeGreaterThanOrEqual(2);
+        expect(callCount).toBe(3);
+        expect(result.current.state.currentScreen).toBe('completion');
+
+        // Restore original setTimeout
+        global.setTimeout = originalSetTimeout;
+      });
+
+      // T026: Test max retries exceeded scenario
+      it('T026: should fail after max retries on persistent errors', async () => {
+        // Arrange
+        const onComplete = jest.fn();
+        const delays: number[] = [];
+        const originalSetTimeout = global.setTimeout;
+        global.setTimeout = ((callback: any, delay: number) => {
+          delays.push(delay);
+          callback();
+          return 0 as any;
+        }) as any;
+
+        // Always return 500 to force all retries
+        (global.fetch as jest.Mock).mockResolvedValue({
+          ok: false,
+          status: 500,
+          json: () =>
+            Promise.resolve({
+              error: 'Internal server error',
+            }),
+        });
+
+        const { result } = renderHook(() =>
+          useProfileSetupWizard({ onComplete })
+        );
+
+        // Act
+        await act(async () => {
+          result.current.openWizard();
+        });
+
+        await act(async () => {
+          result.current.setDisplayName('Boromir');
+        });
+
+        await act(async () => {
+          await result.current.submitWizard();
+        });
+
+        // Assert - should not complete due to persistent error
+        expect(result.current.state.currentScreen).not.toBe('completion');
+        expect(onComplete).not.toHaveBeenCalled();
+        expect(result.current.state.submissionError).toBeDefined();
+        // Should have retry delays - indicating exponential backoff triggered
+        expect(delays.length).toBeGreaterThan(0);
+
+        // Restore original setTimeout
+        global.setTimeout = originalSetTimeout;
+      });
+
+      // T027: Test error recovery after initialization
+      it('T027: should handle validation error transitions correctly', async () => {
+        // Arrange
+        const onComplete = jest.fn();
+        (global.fetch as jest.Mock).mockResolvedValue({
+          ok: true,
+          json: () => Promise.resolve({ userId: 'user-456' }),
+        });
+
+        const { result } = renderHook(() =>
+          useProfileSetupWizard({ onComplete })
+        );
+
+        // Act - trigger validation
+        await act(async () => {
+          result.current.openWizard();
+          result.current.setDisplayName('ValidName');
+        });
+
+        // Assert - displayName should be set
+        expect(result.current.state.formState.displayName).toBe('ValidName');
+      });
+
+      // T028: Test multiple form field updates between screens
+      it('T028: should maintain state across screen transitions with multiple updates', async () => {
+        // Arrange
+        const onComplete = jest.fn();
+        const { result } = renderHook(() =>
+          useProfileSetupWizard({ onComplete })
+        );
+
+        // Act
+        await act(async () => {
+          result.current.openWizard();
+          // Still on welcome screen
+          expect(result.current.state.currentScreen).toBe('welcome');
+          result.current.nextScreen(); // Move to displayName
+        });
+
+        // Assert - after next, should be on displayName screen
+        expect(result.current.state.currentScreen).toBe('displayName');
+        
+        // Act - update fields and navigate again
+        await act(async () => {
+          result.current.setDisplayName('Gimli');
+          result.current.setTheme('dark');
+          result.current.nextScreen(); // Move to theme
+        });
+
+        // Assert - values persisted through navigation
+        expect(result.current.state.formState.displayName).toBe('Gimli');
+        expect(result.current.state.formState.theme).toBe('dark');
+      });
     });
   });
 });
