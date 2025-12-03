@@ -709,6 +709,96 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
         expect(result.current.state.formState.displayName).toBe('Gimli');
         expect(result.current.state.formState.theme).toBe('dark');
       });
+
+      // T029: Test non-retryable error (400) exits immediately
+      it('T029: should not retry on non-retryable errors (400)', async () => {
+        // Arrange
+        const onComplete = jest.fn();
+        let callCount = 0;
+
+        (global.fetch as jest.Mock).mockImplementation(() => {
+          callCount++;
+          return Promise.resolve({
+            ok: false,
+            status: 400,
+            json: () => Promise.resolve({ error: 'Bad request' }),
+          });
+        });
+
+        const { result } = renderHook(() =>
+          useProfileSetupWizard({ onComplete })
+        );
+
+        // Act
+        await act(async () => {
+          result.current.openWizard();
+        });
+
+        await act(async () => {
+          result.current.setDisplayName('Legolas');
+        });
+
+        await act(async () => {
+          await result.current.submitWizard();
+        });
+
+        // Assert - should not retry on 400 error
+        expect(callCount).toBe(1); // Only one attempt, no retries
+        expect(result.current.state.submissionError).toBeDefined();
+        expect(result.current.state.submissionError).toContain('400');
+      });
+
+      // T030: Test catch block retry logic with network errors
+      it('T030: should retry on network errors thrown from fetch', async () => {
+        // Arrange
+        const onComplete = jest.fn();
+        const delays: number[] = [];
+        const originalSetTimeout = global.setTimeout;
+        global.setTimeout = ((callback: any, delay: number) => {
+          delays.push(delay);
+          callback();
+          return 0 as any;
+        }) as any;
+
+        // First call: throws network error, second call: succeeds
+        let callCount = 0;
+        (global.fetch as jest.Mock).mockImplementation(() => {
+          callCount++;
+          if (callCount === 1) {
+            return Promise.reject(new Error('Network error'));
+          }
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ userId: 'user-456' }),
+          });
+        });
+
+        const { result } = renderHook(() =>
+          useProfileSetupWizard({ onComplete })
+        );
+
+        // Act
+        await act(async () => {
+          result.current.openWizard();
+        });
+
+        await act(async () => {
+          result.current.setDisplayName('Gandalf');
+        });
+
+        await act(async () => {
+          await result.current.submitWizard();
+        });
+
+        // Assert - should retry after network error
+        expect(callCount).toBe(2);
+        expect(delays.length).toBeGreaterThan(0);
+        expect(result.current.state.currentScreen).toBe('completion');
+        expect(onComplete).toHaveBeenCalled();
+
+        // Restore
+        global.setTimeout = originalSetTimeout;
+      });
     });
   });
 });
