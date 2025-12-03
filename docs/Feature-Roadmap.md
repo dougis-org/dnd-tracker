@@ -11,13 +11,13 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ## Progress Tracking
 
-**Current Progress**: 16 of 75 features complete (21.3%) - Week 2 of 10  
+**Current Progress**: 15 of 75 features complete (20%) - Week 2 of 10  
 **Phase 1 Status**: Complete ✅ (12 of 12 features complete)  
-**Phase 2 Status**: In Progress (5 of 5 features complete)  
+**Phase 2 Status**: In Progress (4 of 5 features complete)  
 **Phase 4 Status**: In Progress (1 of 5 features complete)  
 **Next Feature**: Feature 015 - Profile Setup Wizard  
 **Started**: 2025-11-01  
-**Latest Completion**: Feature 015 (2025-12-02 via PR #473)
+**Latest Completion**: Feature 014 (2025-11-26 via PR #469)
 
 > **Note**: Feature numbers F018+ have been renumbered to accommodate decomposed features. See `docs/feature-renumbering-plan.md` for complete mappings.
 
@@ -34,12 +34,11 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
   - ✅ F010: User Profile & Settings Pages (Merged via PR #446 on 2025-11-12)
   - ✅ F011: Item Catalog Pages (Merged via PR #447 on 2025-11-13)
   - ✅ F012: Subscription & Billing Pages (Merged via PR #450 on 2025-11-14)
-- **Phase 2 (Authentication)**: 5/5 complete ✅
+- **Phase 2 (Authentication)**: 4/5 complete
   - ✅ F004: Dashboard Page (Merged via PR #413 on 2025-11-07)
   - ✅ F005: Character Management Pages (Merged via PR #414 on 2025-11-08)
   - ✅ F013: Clerk Integration & Auth Flow (Merged via PR #463 on 2025-11-19)
   - ✅ F014: MongoDB User Model & Webhook (Merged via PR #469 on 2025-11-26)
-  - ✅ F015: Profile Setup Wizard (Merged via PR #473 on 2025-12-02)
 - **Phase 3 (Entity Management)**: 0/17 complete
 - **Phase 4 (Offline)**: 1/5 complete
   - ✅ F035: Service Worker Setup (Merged via PR #458 on 2025-11-18)
@@ -84,7 +83,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F012 | Subscription & Billing Pages | ✅ Complete (Merged via PR #450) | F001, F002 | [#366](https://github.com/dougis-org/dnd-tracker/issues/366) | [Phase 1](https://github.com/dougis-org/dnd-tracker/milestone/1) |
 | F013 | Clerk Integration & Auth Flow | ✅ Complete | F001, F002, F012 | [#367](https://github.com/dougis-org/dnd-tracker/issues/367) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F014 | MongoDB User Model & Webhook | ✅ Complete (Merged via PR #469) | F013 | [#368](https://github.com/dougis-org/dnd-tracker/issues/368) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F015 | Profile Setup Wizard | ✅ Complete (Merged via PR #473) | F014 | [#369](https://github.com/dougis-org/dnd-tracker/issues/369) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F015 | Profile Setup Wizard | 🚧 In Progress | F014 | [#369](https://github.com/dougis-org/dnd-tracker/issues/369) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F016 | User Dashboard with Real Data | Planned | F004, F014 | [#370](https://github.com/dougis-org/dnd-tracker/issues/370) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F017 | Profile Page Functionality | Planned | F010, F014 | [#371](https://github.com/dougis-org/dnd-tracker/issues/371) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F018 | Character Read Operations | Planned | F014 | [#372](https://github.com/dougis-org/dnd-tracker/issues/372) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
@@ -858,27 +857,26 @@ WEBHOOK_TIMEOUT_MS=3000                   # 3s default
 
 ### Feature 015: Profile Setup Wizard
 
-**Status**: Complete ✅ (Merged via PR #473)
-**Completed**: 2025-12-02
+**Status**: 🚧 In Progress
 **Branch**: feature/015-profile-setup-wizard
 **Spec Location**: specs/015-profile-setup-wizard/
 
 **Depends on**: Feature 014
 **Duration**: Day 1
-**Deliverables** (All Complete):
+**Deliverables**:
 
-- ✅ Multi-step wizard UI with progress tracking
-- ✅ First-login detection and automatic wizard trigger
-- ✅ Experience level selection (Beginner, Intermediate, Advanced)
-- ✅ Role preference selection (Player, DM, Both)
-- ✅ D&D ruleset selection (5e, Pathfinder, custom)
-- ✅ Campaign creation with optional first campaign setup
-- ✅ Skip/complete buttons with form validation
-- ✅ Save selections to MongoDB user profile
-- ✅ Prevent wizard re-display after completion
-- ✅ Comprehensive test suite: 40+ tests (unit, integration, E2E)
-- ✅ localStorage-backed mock adapter for development
-- ✅ Full TypeScript support with Zod validation
+- Multi-step wizard UI with progress tracking
+- First-login detection and automatic wizard trigger
+- Experience level selection (Beginner, Intermediate, Advanced)
+- Role preference selection (Player, DM, Both)
+- D&D ruleset selection (5e, Pathfinder, custom)
+- Campaign creation with optional first campaign setup
+- Skip/complete buttons with form validation
+- Save selections to MongoDB user profile
+- Prevent wizard re-display after completion
+- Comprehensive test suite: 40+ tests (unit, integration, E2E)
+- localStorage-backed mock adapter for development
+- Full TypeScript support with Zod validation
 
 **Implementation Details**:
 
@@ -902,20 +900,19 @@ WEBHOOK_TIMEOUT_MS=3000                   # 3s default
 - 40+ tests total with 85%+ coverage
 - Mock adapter tests with network simulation
 
-**Acceptance Criteria** (All Met):
+**Acceptance Criteria**:
 
-- ✅ New users see setup wizard on first login
-- ✅ Can complete all 4 steps
-- ✅ Can skip wizard with confirmation
-- ✅ Selections save to MongoDB user profile
-- ✅ Wizard doesn't display again after completion
-- ✅ Form validation prevents invalid entries
-- ✅ Optional campaign creation works
-- ✅ All 40+ tests passing
-- ✅ ESLint clean, TypeScript strict mode clean
-- ✅ Build successful
-- ✅ 85%+ code coverage
-- ✅ Merged via PR #473 on 2025-12-02
+- [ ] New users see setup wizard on first login
+- [ ] Can complete all 4 steps
+- [ ] Can skip wizard with confirmation
+- [ ] Selections save to MongoDB user profile
+- [ ] Wizard doesn't display again after completion
+- [ ] Form validation prevents invalid entries
+- [ ] Optional campaign creation works
+- [ ] All 40+ tests passing
+- [ ] ESLint clean, TypeScript strict mode clean
+- [ ] Build successful
+- [ ] 85%+ code coverage
 
 ---
 
