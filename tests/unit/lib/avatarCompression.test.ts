@@ -38,7 +38,9 @@ describe('Avatar Compression - avatarCompression.ts', () => {
     jest.clearAllMocks();
     if (typeof global !== 'undefined') {
       global.URL = global.URL || {};
-      global.URL.createObjectURL = jest.fn((_blob) => `blob:mock/${Math.random().toString(36).substring(2)}`);
+      global.URL.createObjectURL = jest.fn(
+        (_blob) => `blob:mock/${Math.random().toString(36).substring(2)}`
+      );
       global.URL.revokeObjectURL = jest.fn();
     }
   });

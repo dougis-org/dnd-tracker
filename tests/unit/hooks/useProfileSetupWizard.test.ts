@@ -473,5 +473,82 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
         result.current.state.validationState.displayName.error
       ).toBeDefined();
     });
+
+    // Additional tests for branch coverage
+    describe('Additional Coverage Tests', () => {
+      // Test 22: Navigate directly to specific screen
+      test('T007.22 should navigate directly to a specific screen', () => {
+        // Arrange
+        const { result } = renderHook(() =>
+          useProfileSetupWizard({ userId: 'user123' })
+        );
+
+        // Act
+        act(() => {
+          result.current.goToScreen('avatarUpload');
+        });
+
+        // Assert
+        expect(result.current.state.currentScreen).toBe('avatarUpload');
+
+        // Act - Go to another screen
+        act(() => {
+          result.current.goToScreen('completion');
+        });
+
+        // Assert
+        expect(result.current.state.currentScreen).toBe('completion');
+      });
+
+      // Test 23: Set multiple form fields and verify state
+      test('T007.23 should update multiple form fields independently', () => {
+        // Arrange
+        const { result } = renderHook(() =>
+          useProfileSetupWizard({ userId: 'user123' })
+        );
+
+        // Act - Set multiple fields
+        act(() => {
+          result.current.setDisplayName('Aragorn');
+          result.current.setTheme('dark');
+          result.current.setNotifications(false);
+        });
+
+        // Assert
+        expect(result.current.state.formState.displayName).toBe('Aragorn');
+        expect(result.current.state.formState.theme).toBe('dark');
+        expect(result.current.state.formState.notifications).toBe(false);
+      });
+
+      // Test 24: Test loading state during submission
+      test('T007.24 should track loading state during submission', async () => {
+        // Arrange
+        const onComplete = jest.fn();
+        (global.fetch as jest.Mock).mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            success: true,
+            data: { completedSetup: true },
+          }),
+        });
+
+        const { result } = renderHook(() =>
+          useProfileSetupWizard({ userId: 'user123', onComplete })
+        );
+
+        // Act - Submit wizard
+        act(() => {
+          result.current.setDisplayName('Legolas');
+        });
+
+        await act(async () => {
+          await result.current.submitWizard();
+        });
+
+        // Assert - should complete and call onComplete
+        expect(result.current.state.currentScreen).toBe('completion');
+        expect(onComplete).toHaveBeenCalled();
+      });
+    });
   });
 });

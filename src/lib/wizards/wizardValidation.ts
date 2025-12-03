@@ -17,12 +17,9 @@ export const displayNameSchema = z
   .string()
   .transform((val) => val.trim())
   .refine((val) => val.length > 0, { message: 'Display name is required' })
-  .refine(
-    (val) => val.length <= DISPLAY_NAME_CONSTRAINTS.MAX_LENGTH,
-    {
-      message: `Display name must be ${DISPLAY_NAME_CONSTRAINTS.MAX_LENGTH} characters or less`,
-    }
-  );
+  .refine((val) => val.length <= DISPLAY_NAME_CONSTRAINTS.MAX_LENGTH, {
+    message: `Display name must be ${DISPLAY_NAME_CONSTRAINTS.MAX_LENGTH} characters or less`,
+  });
 
 /**
  * Theme preference validation schema
