@@ -748,22 +748,22 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
         expect(result.current.state.submissionError).toContain('400');
       });
 
-      // T030: Test catch block retry logic with network errors
+      // T030: Test catch block retry logic with network errors  
       it('T030: should retry on network errors thrown from fetch', async () => {
         // Arrange
         const onComplete = jest.fn();
-
-        // First call: throws network error, second call: succeeds
         let callCount = 0;
-        (global.fetch as jest.Mock).mockImplementation(() => {
+
+        // Mock fetch to fail first time with retryable error, succeed second time
+        (global.fetch as jest.Mock).mockImplementation(async () => {
           callCount++;
           if (callCount === 1) {
-            return Promise.reject(new Error('Network error'));
+            throw new Error('Network error');
           }
-          return Promise.resolve({
+          return {
             ok: true,
             json: () => Promise.resolve({ userId: 'user-456' }),
-          });
+          };
         });
 
         const { result } = renderHook(() =>
@@ -779,23 +779,52 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
           result.current.setDisplayName('Gandalf');
         });
 
-        // Submit and wait for retry logic to complete
-        // The hook will retry with exponential backoff
-        let submitComplete = false;
-        const submitPromise = act(async () => {
+        // Submit - should trigger retry logic and succeed on second attempt
+        await act(async () => {
           await result.current.submitWizard();
-          submitComplete = true;
         });
 
-        // Wait for submission to complete (includes retry delays)
-        await submitPromise;
-
-        // Assert - should retry after network error
-        expect(submitComplete).toBe(true);
-        expect(callCount).toBeGreaterThanOrEqual(2); // At least 2 calls (1 fail, 1 success)
+        // Assert - should have retried after network error
+        expect(callCount).toBeGreaterThanOrEqual(2);
         expect(result.current.state.currentScreen).toBe('completion');
         expect(onComplete).toHaveBeenCalled();
-      }, 15000); // Increase timeout for retry delays
+      });
+
+      // T031: Test catch block with non-retryable errors (404)
+      it('T031: should NOT retry on non-retryable errors like 404', async () => {
+        // Arrange
+        const onComplete = jest.fn();
+        let callCount = 0;
+
+        // Mock fetch to throw non-retryable error (404)
+        (global.fetch as jest.Mock).mockImplementation(async () => {
+          callCount++;
+          throw new Error('HTTP 404: Not Found');
+        });
+
+        const { result } = renderHook(() =>
+          useProfileSetupWizard({ onComplete })
+        );
+
+        // Act
+        await act(async () => {
+          result.current.openWizard();
+        });
+
+        await act(async () => {
+          result.current.setDisplayName('Gandalf');
+        });
+
+        // Submit - should NOT retry on 404
+        await act(async () => {
+          await result.current.submitWizard();
+        });
+
+        // Assert - should only call once (no retry on 404)
+        expect(callCount).toBe(1);
+        expect(result.current.state.currentScreen).not.toBe('completion');
+        expect(result.current.state.submissionError).toBeTruthy();
+      });
     });
   });
 });
