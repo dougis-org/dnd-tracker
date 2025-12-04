@@ -859,7 +859,7 @@ WEBHOOK_TIMEOUT_MS=3000                   # 3s default
 
 **Status**: 🚧 In Progress
 **Branch**: feature/015-profile-setup-wizard
-**Spec Location**: specs/015-profile-setup-wizard/
+**Spec Location**: specs/015-profile-setup-wizard/spec.md
 
 **Depends on**: Feature 014
 **Duration**: Day 1

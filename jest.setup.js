@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires,no-undef,no-extend-native */
 /* eslint-env node, jest */
+/* eslint-disable no-undef */
 import '@testing-library/jest-dom';
+import 'jest-canvas-mock';
 
 // Ensure navigator and clipboard exist for user-event and DOM interactions in tests
 if (typeof global.navigator === 'undefined') {
@@ -203,33 +206,108 @@ function mockBson() {
 function setupLocalStorage() {
   if (typeof global === 'undefined') return;
 
-  // Create localStorage mock
-  const localStorageMock = (() => {
-    let store = {};
+  // Store to hold localStorage data
+  let store = {};
 
-    return {
-      getItem: (key) => store[key] || null,
-      setItem: (key, value) => {
-        store[key] = String(value);
-      },
-      removeItem: (key) => {
-        delete store[key];
-      },
-      clear: () => {
-        store = {};
-      },
-      key: (index) => {
-        const keys = Object.keys(store);
-        return keys[index] || null;
-      },
-      get length() {
-        return Object.keys(store).length;
-      },
-    };
-  })();
+  // Create Jest spy functions for localStorage methods
+  const getItemImpl = jest.fn((key) => store[key] || null);
+  const setItemImpl = jest.fn((key, value) => {
+    store[key] = String(value);
+  });
+  const removeItemImpl = jest.fn((key) => {
+    delete store[key];
+  });
+  const clearImpl = jest.fn(() => {
+    store = {};
+  });
 
-  global.localStorage = localStorageMock;
+  // Mock localStorage with spy functions
+  global.localStorage = {
+    getItem: getItemImpl,
+    setItem: setItemImpl,
+    removeItem: removeItemImpl,
+    clear: clearImpl,
+    key: (index) => {
+      const keys = Object.keys(store);
+      return keys[index] || null;
+    },
+    get length() {
+      return Object.keys(store).length;
+    },
+  };
 }
+
+/**
+ * Setup URL API mocks for canvas/image compression tests
+ */
+function setupURLAPIMocks() {
+  if (typeof global === 'undefined') return;
+
+  // Mock URL.createObjectURL and revokeObjectURL only if not already defined
+  if (!global.URL || !global.URL.createObjectURL) {
+    global.URL = global.URL || {};
+    global.URL.createObjectURL = jest.fn(
+      (blob) => `blob:mock-${Math.random().toString(36).substring(2)}`
+    );
+    global.URL.revokeObjectURL = jest.fn();
+  }
+
+  // Only setup canvas mock if not using JSDOM (which provides real Canvas)
+  if (typeof global.HTMLCanvasElement === 'undefined') {
+    global.HTMLCanvasElement = class HTMLCanvasElement {
+      constructor() {
+        this.width = 800;
+        this.height = 600;
+      }
+
+      toDataURL(type = 'image/png', quality = 0.92) {
+        // Return a realistic base64 data URL
+        const qualityFactor = Math.max(0.1, quality);
+        const sizeMultiplier = Math.ceil(100 * qualityFactor);
+        const baseData =
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+        return `data:${type};base64,${baseData.repeat(sizeMultiplier)}`;
+      }
+
+      getContext(contextType) {
+        return {
+          drawImage: jest.fn(),
+          fillRect: jest.fn(),
+          clearRect: jest.fn(),
+          getImageData: jest.fn(() => ({
+            data: new Uint8ClampedArray(4),
+          })),
+          putImageData: jest.fn(),
+          createImageData: jest.fn(() => ({
+            data: new Uint8ClampedArray(4),
+          })),
+          setTransform: jest.fn(),
+          fillText: jest.fn(),
+        };
+      }
+    };
+  }
+
+  // Mock Image constructor to auto-fire onload for avatar compression tests
+  if (typeof global.Image === 'function') {
+    const OriginalImage = global.Image;
+    global.Image = class MockImage extends OriginalImage {
+      constructor() {
+        super();
+        this.width = 800;
+        this.height = 600;
+        // Auto-fire onload asynchronously to simulate image loading
+        setTimeout(() => {
+          if (this.onload) {
+            this.onload();
+          }
+        }, 0);
+      }
+    };
+  }
+}
+
+setupURLAPIMocks();
 
 /**
  * Create mongoose mock object
