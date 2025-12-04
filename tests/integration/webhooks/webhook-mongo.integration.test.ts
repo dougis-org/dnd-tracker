@@ -129,4 +129,174 @@ describe('Webhook integration - MongoDB', () => {
     expect(user?.email).toBe(payload.user.email);
     expect(user?.displayName).toBe(payload.user.displayName);
   }, 60_000);
+
+  test('handles user updated event with timestamp conflict resolution', async () => {
+    process.env.WEBHOOK_SECRET = 'integration-secret';
+
+    // Create initial user
+    const userId = 'user_int_2';
+    const initialUser = await UserModel.create({
+      userId,
+      email: 'initial@example.com',
+      displayName: 'Initial',
+    });
+
+    // Create updated event with earlier timestamp (should be skipped)
+    const oldTimestamp = new Date(
+      initialUser.updatedAt.getTime() - 10000
+    ).toISOString();
+    const payload = {
+      eventId: 'evt_int_2_old',
+      timestamp: oldTimestamp,
+      eventType: 'updated',
+      user: {
+        userId,
+        displayName: 'Updated From Old Event',
+      },
+    };
+
+    const body = JSON.stringify(payload);
+    const signature = crypto
+      .createHmac('sha256', process.env.WEBHOOK_SECRET)
+      .update(body)
+      .digest('hex');
+
+    const req = createMockRequest(
+      'http://localhost:3000/api/webhooks/user-events',
+      'POST',
+      payload,
+      {
+        'X-Webhook-Signature': `sha256=${signature}`,
+        'Content-Type': 'application/json',
+      }
+    );
+
+    const res = await POST(req as unknown as Request);
+    expect(res.status).toBe(200);
+
+    // Wait for event to be stored
+    await waitFor(() =>
+      UserEventModel.findOne({ eventId: payload.eventId })
+    );
+
+    // User should NOT be updated (late-arriving event)
+    const user = await UserModel.findOne({ userId });
+    expect(user?.displayName).toBe('Initial');
+  }, 60_000);
+
+  test('handles user updated event when user does not exist', async () => {
+    process.env.WEBHOOK_SECRET = 'integration-secret';
+    const userId = 'user_int_3_new';
+
+    const payload = {
+      eventId: 'evt_int_3_new_user',
+      timestamp: new Date().toISOString(),
+      eventType: 'updated',
+      user: {
+        userId,
+        email: 'new@example.com',
+        displayName: 'New User From Update',
+      },
+    };
+
+    const body = JSON.stringify(payload);
+    const signature = crypto
+      .createHmac('sha256', process.env.WEBHOOK_SECRET)
+      .update(body)
+      .digest('hex');
+
+    const req = createMockRequest(
+      'http://localhost:3000/api/webhooks/user-events',
+      'POST',
+      payload,
+      {
+        'X-Webhook-Signature': `sha256=${signature}`,
+        'Content-Type': 'application/json',
+      }
+    );
+
+    const res = await POST(req as unknown as Request);
+    expect(res.status).toBe(200);
+
+    // Wait for event to be processed
+    await waitFor(() =>
+      UserEventModel.findOne({ eventId: payload.eventId })
+    );
+
+    // User should be created
+    const user = await UserModel.findOne({ userId });
+    expect(user).not.toBeNull();
+    expect(user?.displayName).toBe('New User From Update');
+  }, 60_000);
+
+  test('handles user deleted event (soft-delete)', async () => {
+    process.env.WEBHOOK_SECRET = 'integration-secret';
+    const userId = 'user_int_4_delete';
+
+    // Create user first
+    await UserModel.create({
+      userId,
+      email: 'delete@example.com',
+      displayName: 'To Delete',
+    });
+
+    const deleteTime = new Date();
+    const payload = {
+      eventId: 'evt_int_4_delete',
+      timestamp: deleteTime.toISOString(),
+      eventType: 'deleted',
+      user: { userId },
+    };
+
+    const body = JSON.stringify(payload);
+    const signature = crypto
+      .createHmac('sha256', process.env.WEBHOOK_SECRET)
+      .update(body)
+      .digest('hex');
+
+    const req = createMockRequest(
+      'http://localhost:3000/api/webhooks/user-events',
+      'POST',
+      payload,
+      {
+        'X-Webhook-Signature': `sha256=${signature}`,
+        'Content-Type': 'application/json',
+      }
+    );
+
+    const res = await POST(req as unknown as Request);
+    expect(res.status).toBe(200);
+
+    // Wait for event to be processed
+    await waitFor(() =>
+      UserEventModel.findOne({ eventId: payload.eventId })
+    );
+
+    // User should be soft-deleted
+    const user = await UserModel.findOne({ userId });
+    expect(user?.deletedAt).not.toBeNull();
+  }, 60_000);
+
+  test('rejects invalid webhook signature', async () => {
+    process.env.WEBHOOK_SECRET = 'integration-secret';
+    const payload = {
+      eventId: 'evt_int_5_bad_sig',
+      timestamp: new Date().toISOString(),
+      eventType: 'created',
+      user: { userId: 'user_int_5' },
+    };
+
+    const req = createMockRequest(
+      'http://localhost:3000/api/webhooks/user-events',
+      'POST',
+      payload,
+      {
+        'X-Webhook-Signature': 'sha256=invalidsignature123',
+        'Content-Type': 'application/json',
+      }
+    );
+
+    const res = await POST(req as unknown as Request);
+    expect(res.status).toBe(401);
+  });
 });

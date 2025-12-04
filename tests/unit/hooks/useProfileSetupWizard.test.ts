@@ -697,7 +697,7 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
 
         // Assert - after next, should be on displayName screen
         expect(result.current.state.currentScreen).toBe('displayName');
-        
+
         // Act - update fields and navigate again
         await act(async () => {
           result.current.setDisplayName('Gimli');
@@ -748,7 +748,7 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
         expect(result.current.state.submissionError).toContain('400');
       });
 
-      // T030: Test catch block retry logic with network errors  
+      // T030: Test catch block retry logic with network errors
       it('T030: should retry on network errors thrown from fetch', async () => {
         // Arrange
         const onComplete = jest.fn();
