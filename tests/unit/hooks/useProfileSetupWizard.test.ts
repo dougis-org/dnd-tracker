@@ -815,15 +815,17 @@ describe('useProfileSetupWizard Hook - useProfileSetupWizard.ts', () => {
           result.current.setDisplayName('Gandalf');
         });
 
-        // Submit - should NOT retry on 404
+        // Submit - should NOT retry on 404 (hits break at line 356)
         await act(async () => {
           await result.current.submitWizard();
         });
 
-        // Assert - should only call once (no retry on 404)
+        // Assert - should only call once (no retry on 404, break executes)
         expect(callCount).toBe(1);
         expect(result.current.state.currentScreen).not.toBe('completion');
         expect(result.current.state.submissionError).toBeTruthy();
+        // Verify the submission failed due to non-retryable error
+        expect(result.current.state.submissionError).toContain('404');
       });
     });
   });
