@@ -35,7 +35,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Copy package files for runtime scripts (e.g., npm run migrate)
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package-lock.json ./package-lock.json
+
 COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/scripts ./scripts
 
 # Set the correct permission for prerender cache
 RUN mkdir .next
