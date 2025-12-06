@@ -11,11 +11,11 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 
 ## Progress Tracking
 
-**Current Progress**: 16 of 75 features complete (21.3%) - Week 2 of 10  
+**Current Progress**: 17 of 75 features complete (22.7%) - Week 2 of 10  
 **Phase 1 Status**: Complete ✅ (12 of 12 features complete)  
-**Phase 2 Status**: Complete ✅ (5 of 5 features complete)  
+**Phase 2 Status**: Complete ✅ (6 of 6 features complete)  
 **Phase 4 Status**: In Progress (1 of 5 features complete)  
-**Next Feature**: Feature 016 - User Dashboard with Real Data  
+**Next Feature**: Feature 017 - Profile Page Functionality  
 **Started**: 2025-11-01  
 **Latest Completion**: Feature 015 (2025-12-04 via PR #474)
 
@@ -34,12 +34,13 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
   - ✅ F010: User Profile & Settings Pages (Merged via PR #446 on 2025-11-12)
   - ✅ F011: Item Catalog Pages (Merged via PR #447 on 2025-11-13)
   - ✅ F012: Subscription & Billing Pages (Merged via PR #450 on 2025-11-14)
-- **Phase 2 (Authentication)**: 5/5 complete ✅
+- **Phase 2 (Authentication)**: 6/6 complete ✅
   - ✅ F004: Dashboard Page (Merged via PR #413 on 2025-11-07)
   - ✅ F005: Character Management Pages (Merged via PR #414 on 2025-11-08)
   - ✅ F013: Clerk Integration & Auth Flow (Merged via PR #463 on 2025-11-19)
   - ✅ F014: MongoDB User Model & Webhook (Merged via PR #469 on 2025-11-26)
   - ✅ F015: Profile Setup Wizard (Merged via PR #474 on 2025-12-04)
+  - ✅ F016: User Dashboard with Real Data (Merged via PR #473 on 2025-12-02)
 - **Phase 3 (Entity Management)**: 0/17 complete
 - **Phase 4 (Offline)**: 1/5 complete
   - ✅ F035: Service Worker Setup (Merged via PR #458 on 2025-11-18)
@@ -85,7 +86,7 @@ This roadmap is the authoritative plan for delivery cadence and milestones. Scop
 | F013 | Clerk Integration & Auth Flow | ✅ Complete | F001, F002, F012 | [#367](https://github.com/dougis-org/dnd-tracker/issues/367) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F014 | MongoDB User Model & Webhook | ✅ Complete (Merged via PR #469) | F013 | [#368](https://github.com/dougis-org/dnd-tracker/issues/368) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F015 | Profile Setup Wizard | ✅ Complete (Merged via PR #474) | F014 | [#369](https://github.com/dougis-org/dnd-tracker/issues/369) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
-| F016 | User Dashboard with Real Data | Planned | F004, F014 | [#370](https://github.com/dougis-org/dnd-tracker/issues/370) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
+| F016 | User Dashboard with Real Data | ✅ Complete (Merged via PR #473) | F004, F014 | [#370](https://github.com/dougis-org/dnd-tracker/issues/370) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F017 | Profile Page Functionality | Planned | F010, F014 | [#371](https://github.com/dougis-org/dnd-tracker/issues/371) | [Phase 2](https://github.com/dougis-org/dnd-tracker/milestone/2) |
 | F018 | Character Read Operations | Planned | F014 | [#372](https://github.com/dougis-org/dnd-tracker/issues/372) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
 | F019 | Character Write Operations | Planned | F018 | [#426](https://github.com/dougis-org/dnd-tracker/issues/426) | [Phase 3](https://github.com/dougis-org/dnd-tracker/milestone/3) |
@@ -954,29 +955,94 @@ WEBHOOK_TIMEOUT_MS=3000                   # 3s default
 
 ---
 
-### Feature 016: User Dashboard with Real Data
+### ✅ Feature 016: User Dashboard with Real Data
 
-**Status**: In Progress
+**Status**: Complete ✅ (Merged via PR #473)
+**Completed**: 2025-12-02
 **Branch**: feature/016-user-dashboard-real-data
 **Spec Location**: specs/016-user-dashboard-real-data/
 
 **Depends on**: Feature 004, Feature 014
 **Duration**: Day 1
-**Deliverables**:
+**Deliverables** (All Complete):
 
-- Connect dashboard to user model
-- Display real usage metrics
-- Show user's actual tier
-- Personalized welcome message
-- Empty states for new users
-- Tests: Dashboard data loading
+- ✅ Connect dashboard to MongoDB user and subscription data
+- ✅ Display 5-tier subscription limits with progress bars
+- ✅ Color-coded resource states (green <80%, yellow 80-100%, red ≥100%)
+- ✅ Real-time usage metrics (parties, characters, encounters)
+- ✅ Show user's actual tier and limits
+- ✅ Personalized welcome message for new users
+- ✅ Empty state for users with no data
+- ✅ Graceful error handling (max 3 retries, user-friendly messages)
+- ✅ WCAG 2.1 AA accessibility compliance
+- ✅ Mobile responsive design
+- ✅ Cache-free data fetching per SC-010 (dual-enforced: server headers + SWR config)
+- ✅ Comprehensive test coverage: 100+ tests with 80%+ coverage
 
-**Acceptance Criteria**:
+**Implementation Details**:
 
-- [ ] Dashboard shows real user data
-- [ ] Usage metrics reflect database
-- [ ] Empty states display for new users
-- [ ] Tier limits shown correctly
+- **Types**:
+  - `subscription.ts`: 5 subscription tiers with TierLimits constant
+  - `dashboard.ts`: DashboardPageData interfaces with 10 validation helpers
+  
+- **API Layer**:
+  - `dashboardApi.ts`: SWR fetcher with DashboardApiError class and zero-cache config
+  - `GET /api/v1/dashboard/usage`: MongoDB endpoint with auth, resource aggregation, cache headers
+  
+- **React Components**:
+  - `Dashboard.tsx`: Container with SWR fetching, skeleton loading, error handling, retry logic
+  - `DashboardContent.tsx`: Router component (EmptyState vs main dashboard)
+  - `TierInfo.tsx`: Subscription tier display with user info and limits table
+  - `UsageMetrics.tsx`: Progress bars with color logic (green/yellow/red states)
+  - `QuickActions.tsx`: Three CTA buttons (New Character, Party, Encounter)
+  - `EmptyState.tsx`: Personalized welcome message with CTAs
+  - `ErrorState.tsx`: User-friendly error display with context-specific actions
+
+- **UI Components**:
+  - `alert.tsx`: Alert display component
+  - `progress.tsx`: Progress bar component
+
+- **Test Coverage**:
+  - **api.test.ts**: 50+ unit tests covering all 5 tiers, percentages, edge cases, error codes
+  - **dashboard.integration.test.tsx**: 20+ integration tests for data flow, errors, retries, network scenarios
+
+**Cache Strategy** (Dual-Enforced):
+
+- Server: Cache-Control: no-store, no-cache, must-revalidate
+- Client: SWR with revalidateOnFocus: false, dedupingInterval: 0
+
+**Error Handling**:
+
+- 401: Show login link
+- 404: Show support link
+- 500: Show retry button (max 3 attempts)
+
+**Tier Limits** (Hardcoded Business Rules):
+
+- free_adventurer: 1 party, 3 characters, 5 encounters
+- seasoned_adventurer: 3 parties, 10 characters, 20 encounters
+- expert_dungeon_master: 5 parties, 20 characters, 50 encounters
+- master_of_dungeons: 10 parties, 50 characters, 100 encounters
+- guild_master: Unlimited (Infinity)
+
+**Acceptance Criteria** (All Met):
+
+- ✅ Dashboard shows real user data from MongoDB
+- ✅ Usage metrics reflect actual database values
+- ✅ Empty states display for new users
+- ✅ Tier limits shown correctly for all 5 tiers
+- ✅ Color-coded progress bars update correctly
+- ✅ Error handling displays user-friendly messages
+- ✅ Retry logic works for transient errors
+- ✅ Cache headers enforce no-cache policy
+- ✅ Personalized welcome messages display
+- ✅ All 100+ tests passing
+- ✅ 80%+ code coverage on all components
+- ✅ ESLint clean, TypeScript strict mode clean
+- ✅ Build successful
+- ✅ WCAG 2.1 AA compliance verified
+- ✅ Mobile responsive (works on all screen sizes)
+- ✅ Merged via PR #473 on 2025-12-02
 
 ---
 
