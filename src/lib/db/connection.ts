@@ -47,7 +47,9 @@ export async function connectToMongo(): Promise<mongoose.Connection> {
       });
 
       await mongoose.connect(mongoUri, {
-        dbName: process.env.MONGODB_DB_NAME || 'dnd-tracker',
+        // Only override dbName if explicitly set via environment variable
+        // Otherwise let the connection string specify the database
+        ...(process.env.MONGODB_DB_NAME && { dbName: process.env.MONGODB_DB_NAME }),
         // For integration tests running against containers, prefer direct
         // connections to avoid the driver attempting to resolve internal
         // container hostnames (which are unreachable from host)
@@ -55,7 +57,7 @@ export async function connectToMongo(): Promise<mongoose.Connection> {
       });
 
       logStructured('info', 'Successfully connected to MongoDB', {
-        dbName: process.env.MONGODB_DB_NAME || 'dnd-tracker',
+        dbName: process.env.MONGODB_DB_NAME || '(from connection string)',
       });
 
       return mongoose.connection;
