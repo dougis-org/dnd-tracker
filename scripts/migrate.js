@@ -35,9 +35,9 @@ async function migrate() {
     console.log('🚀 Starting migration process...');
     console.log(`📍 Connecting to: ${mongoUri.replace(/:[^:]*@/, ':***@')}`);
 
-    // Import after environment is loaded
-    const { connectToMongo } = await import('../src/lib/db/connection.js');
-    const { runMigrations } = await import('../src/lib/db/migrations/index.js');
+    // Import after environment is loaded (remove .js extension to support .ts files)
+    const { connectToMongo } = await import('../src/lib/db/connection');
+    const { runMigrations } = await import('../src/lib/db/migrations/index');
 
     const connection = await connectToMongo();
     console.log('✅ Connected to MongoDB');

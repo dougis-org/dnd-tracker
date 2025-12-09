@@ -20,7 +20,7 @@
         "test:coverage": "jest --coverage",
         "test:e2e": "playwright test",
         "test:e2e:ui": "playwright test --ui",
-        "migrate": "node scripts/migrate.js",
+        "migrate": "tsx scripts/migrate.js",
         "deploy": "flyctl deploy"
     },
     "dependencies": {
@@ -79,6 +79,7 @@
         "tailwindcss-animate": "^1.0.7",
         "testcontainers": "^10.1.0",
         "ts-jest": "^29.2.5",
+        "tsx": "^4.20.6",
         "typescript": "5.9.2"
     }
 }
