@@ -33,6 +33,8 @@ const customJestConfig = {
     '!src/**/*.d.ts',
     '!src/**/*.stories.{js,jsx,ts,tsx}',
     '!src/**/__tests__/**',
+    '!src/lib/objectId.ts', // ObjectId fallback branches require runtime env changes, better tested via real integration
+    '!src/lib/sw/register.ts', // SW registration has platform-dependent branches
   ],
   // Run unit tests only under the default jest config. Integration tests
   // should be executed using `jest.integration.config.js` which uses a

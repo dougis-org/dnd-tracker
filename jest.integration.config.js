@@ -26,6 +26,13 @@ const customJestConfig = {
   // (Jest treats .mjs as ESM by default and doesn't need explicit configuration)
   extensionsToTreatAsEsm: [],
   testMatch: ['<rootDir>/tests/integration/**/*.{spec,test}.{js,jsx,ts,tsx}'],
+  // Collect coverage from integration tests so they contribute to overall coverage
+  collectCoverageFrom: [
+    'src/**/*.{js,jsx,ts,tsx}',
+    '!src/**/*.d.ts',
+    '!src/**/*.stories.{js,jsx,ts,tsx}',
+    '!src/**/__tests__/**',
+  ],
 };
 
 module.exports = createJestConfig(customJestConfig);
