@@ -33,6 +33,8 @@ const customJestConfig = {
     '!src/**/*.stories.{js,jsx,ts,tsx}',
     '!src/**/__tests__/**',
   ],
+  // Use separate coverage directory so we can merge with unit test coverage
+  coverageDirectory: '<rootDir>/.coverage-integration',
 };
 
 module.exports = createJestConfig(customJestConfig);

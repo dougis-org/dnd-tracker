@@ -116,9 +116,7 @@ describe('Service Worker Registration Module', () => {
 
     it('should handle registration with no callbacks gracefully', async () => {
       // Should not throw with empty callbacks
-      await expect(
-        registerServiceWorker('/sw.js', {})
-      ).resolves.not.toThrow();
+      await expect(registerServiceWorker('/sw.js', {})).resolves.not.toThrow();
     });
 
     it('should handle registration with partial callbacks', async () => {
@@ -136,9 +134,7 @@ describe('Service Worker Registration Module', () => {
     it('should handle update check failures gracefully', async () => {
       // This tests the periodic update check error handler
       // Just ensure no throw occurs
-      await expect(
-        registerServiceWorker('/sw.js')
-      ).resolves.not.toThrow();
+      await expect(registerServiceWorker('/sw.js')).resolves.not.toThrow();
     });
 
     it('should handle window being undefined', async () => {
@@ -175,9 +171,7 @@ describe('Service Worker Registration Module', () => {
     });
 
     it('should handle SKIP_WAITING message type', () => {
-      expect(() =>
-        postMessageToSW({ type: 'SKIP_WAITING' })
-      ).not.toThrow();
+      expect(() => postMessageToSW({ type: 'SKIP_WAITING' })).not.toThrow();
     });
 
     it('should handle window being undefined', () => {
