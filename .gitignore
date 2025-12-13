@@ -60,3 +60,4 @@ REMEDIATION-COMPLETE.md
 
 # clerk configuration (can include secrets)
 /.clerk/
+.coverage-integration/

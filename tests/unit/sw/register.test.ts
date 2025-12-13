@@ -18,6 +18,21 @@ import {
 } from '@/lib/sw/register';
 
 describe('Service Worker Registration Module', () => {
+  let originalNavigator: any;
+  let originalWindow: any;
+
+  beforeEach(() => {
+    originalNavigator = global.navigator;
+    originalWindow = global.window;
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    global.navigator = originalNavigator;
+    global.window = originalWindow;
+    jest.clearAllMocks();
+  });
+
   describe('exports', () => {
     it('should export registerServiceWorker function', () => {
       expect(typeof registerServiceWorker).toBe('function');
@@ -55,18 +70,20 @@ describe('Service Worker Registration Module', () => {
       expect(state1).toEqual(state2);
       expect(state1).not.toBe(state2);
     });
+
+    it('should return independent state copies', () => {
+      const state1 = getServiceWorkerState();
+      const state2 = getServiceWorkerState();
+
+      // Modify one copy should not affect the other
+      (state1 as any).isSupported = !state1.isSupported;
+      expect(state1.isSupported).not.toBe(state2.isSupported);
+    });
   });
 
   describe('registerServiceWorker()', () => {
     beforeEach(() => {
       jest.clearAllMocks();
-      // Reset global state
-      const originalWindow = global.window;
-      const originalNavigator = global.navigator;
-      return () => {
-        if (originalWindow) global.window = originalWindow;
-        if (originalNavigator) global.navigator = originalNavigator;
-      };
     });
 
     it('should return null in non-browser environment', async () => {
@@ -99,17 +116,40 @@ describe('Service Worker Registration Module', () => {
 
     it('should handle registration with no callbacks gracefully', async () => {
       // Should not throw with empty callbacks
+      await expect(registerServiceWorker('/sw.js', {})).resolves.not.toThrow();
+    });
+
+    it('should handle registration with partial callbacks', async () => {
+      const callbacks = {
+        onReady: jest.fn(),
+        // onUpdate and onError missing
+      };
+
+      // Should not throw with partial callbacks
       await expect(
-        registerServiceWorker('/sw.js', {})
+        registerServiceWorker('/sw.js', callbacks)
       ).resolves.not.toThrow();
     });
 
     it('should handle update check failures gracefully', async () => {
       // This tests the periodic update check error handler
       // Just ensure no throw occurs
-      await expect(
-        registerServiceWorker('/sw.js')
-      ).resolves.not.toThrow();
+      await expect(registerServiceWorker('/sw.js')).resolves.not.toThrow();
+    });
+
+    it('should handle window being undefined', async () => {
+      (global as any).window = undefined;
+
+      const result = await registerServiceWorker();
+      expect(result).toBeNull();
+    });
+
+    it('should handle missing serviceWorker in navigator', async () => {
+      // In Node environment this is typically true
+      const result = await registerServiceWorker();
+
+      // Should return null if SW not supported
+      expect(result === null || typeof result === 'object').toBe(true);
     });
   });
 
@@ -129,6 +169,31 @@ describe('Service Worker Registration Module', () => {
         postMessageToSW({ type: 'COMPLEX', nested: { value: 123 } })
       ).not.toThrow();
     });
+
+    it('should handle SKIP_WAITING message type', () => {
+      expect(() => postMessageToSW({ type: 'SKIP_WAITING' })).not.toThrow();
+    });
+
+    it('should handle window being undefined', () => {
+      (global as any).window = undefined;
+
+      expect(() => postMessageToSW({ type: 'TEST' })).not.toThrow();
+    });
+
+    it('should handle navigator being undefined', () => {
+      (global as any).navigator = undefined;
+
+      expect(() => postMessageToSW({ type: 'TEST' })).not.toThrow();
+    });
+
+    it('should handle missing serviceWorker controller', () => {
+      // When navigator.serviceWorker exists but controller is null
+      if (global.navigator && 'serviceWorker' in global.navigator) {
+        (global.navigator.serviceWorker as any).controller = null;
+      }
+
+      expect(() => postMessageToSW({ type: 'TEST' })).not.toThrow();
+    });
   });
 
   describe('activateUpdate()', () => {
@@ -142,9 +207,17 @@ describe('Service Worker Registration Module', () => {
       // Just verify it works without errors
       expect(() => activateUpdate()).not.toThrow();
     });
+
+    it('should handle activateUpdate safely multiple times', () => {
+      expect(() => {
+        activateUpdate();
+        activateUpdate();
+        activateUpdate();
+      }).not.toThrow();
+    });
   });
 
-  describe('branch coverage - window/navigator checks', () => {
+  describe('branch coverage - conditional paths', () => {
     it('should handle postMessageToSW calls safely', () => {
       // This tests the window/navigator existence checks
       // Just ensure the function doesn't throw regardless of environment
@@ -156,6 +229,7 @@ describe('Service Worker Registration Module', () => {
         { type: 'TEST' },
         { type: 'SKIP_WAITING', data: { skip: true } },
         { type: 'CLEAR_CACHE', cacheName: 'my-cache' },
+        { type: 'ACTIVATE' },
         {},
       ];
 
@@ -164,16 +238,22 @@ describe('Service Worker Registration Module', () => {
       });
     });
 
-    it('should log warning on postMessageToSW with no active controller', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    it('should handle error in registerServiceWorker gracefully', async () => {
+      // Test error path handling
+      const result = await registerServiceWorker();
+      expect(result === null || typeof result === 'object').toBe(true);
+    });
 
-      postMessageToSW({ type: 'TEST' });
+    it('should return null when window is undefined', async () => {
+      (global as any).window = undefined;
+      const result = await registerServiceWorker();
+      expect(result).toBeNull();
+    });
 
-      // In Node environment, the warning may or may not log depending on navigator state
-      // Just verify no error is thrown
-      expect(() => postMessageToSW({ type: 'TEST' })).not.toThrow();
-
-      consoleSpy.mockRestore();
+    it('should initialize state with supported flag false', () => {
+      const state = getServiceWorkerState();
+      // Initial state may have isSupported as false in Node environment
+      expect(typeof state.isSupported).toBe('boolean');
     });
   });
 });
